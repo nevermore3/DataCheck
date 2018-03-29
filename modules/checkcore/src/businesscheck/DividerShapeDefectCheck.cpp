@@ -23,7 +23,7 @@ namespace kd {
 
             }
 
-            map<string, > dividers_;
+            //map<string, > dividers_;
 
 
             return true;

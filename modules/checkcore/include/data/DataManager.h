@@ -8,6 +8,7 @@
 #include "CommonInclude.h"
 
 #include "MapDataModel.h"
+#include "DividerGeomModel.h"
 
 namespace kd {
    namespace dc {
@@ -43,6 +44,19 @@ namespace kd {
             map<string, shared_ptr<DCModelDefine>> modelDefines_;
 
         };
+
+       /**
+        *
+        */
+       class MapDataManager{
+
+       public:
+
+       public:
+           //所有的车道线对象，map的key为车道线的id
+           map<string, shared_ptr<DCDivider>> dividers_;
+
+       };
 
     }
 }

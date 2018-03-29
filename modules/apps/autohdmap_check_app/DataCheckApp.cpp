@@ -13,6 +13,8 @@
 #include "storage/CheckTaskInput.h"
 #include "storage/ModelDataInput.h"
 
+#include "businesscheck/MapDataLoader.h"
+
 using namespace kd::dc;
 
 void loadTaskInfo(string fileName, string & taskName, string & baseUrl,
@@ -47,8 +49,14 @@ void loadTaskInfo(string fileName, string & taskName, string & baseUrl,
 
 int dataCheck(string basePath, string taskFileName){
 
-    shared_ptr<DataAttCheck> attCheck = make_shared<DataAttCheck>(basePath, taskFileName);
-    attCheck->execute();
+    //shared_ptr<DataAttCheck> attCheck = make_shared<DataAttCheck>(basePath, taskFileName);
+    //attCheck->execute();
+
+
+    MapDataLoader loader(basePath + "/data");
+    shared_ptr<MapDataManager> mapDataManager = make_shared<MapDataManager>();
+    shared_ptr<CheckErrorOutput> errorOutput = make_shared<CheckErrorOutput>();
+    loader.execute(mapDataManager, errorOutput);
 
 
 

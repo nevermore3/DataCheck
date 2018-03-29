@@ -71,116 +71,61 @@ namespace kd {
         };
 
 
-        enum EnumOperType {
-            OPER_TYPE_AUTOMATIC = 1, //1：自动化
-            OPER_TYPE_MANUAL = 2 //2：人工
-        };
-
-
-        class KDModel {
+        class DCModel {
         public:
-            KDModel() : valid(true), visible_(true) {}
+            DCModel() : valid_(true) {}
 
         public:
-            string id;
-
-            string version_;
-
-            bool visible_;
+            string id_;
 
             //对象是否有效，默认true代表有效，当删除时，可将本变量置为false来实现逻辑删除
-            bool valid;
-
-            //
-            std::string changeset_;
-
-            //
-            std::string timestamp_;
-
-            //模型名称
-            std::string modelName_;
-
-            //任务id
-            string taskId_;
-
-            //批次信息
-            string batch_;
-
-            //序号信息
-            string seq_;
-
+            bool valid_;
         };
 
 
         /**
          * 坐标
          */
-        class KDCoord {
+        class DCCoord {
         public:
-            double lng;
-            double lat;
-            double z;
+            double lng_;
+            double lat_;
+            double z_;
         };
 
-        class KDDividerNode;
-        class KDMeasureInfo;
-
-        class KDDividerAttribute;
-
-        class KDDivider;
+        class DCDividerNode;
+        class DCDividerAttribute;
+        class DCDivider;
 
 
         /**
          * 道路分隔线节点
          */
-        class KDDividerNode : public KDModel {
+        class DCDividerNode : public DCModel {
         public:
-            KDDividerNode() {
+            DCDividerNode() {
                 dashType_ = 0; //
-                flag_ = 1; //
-                measureInfo = nullptr;
             }
 
         public:
-
             //坐标信息
-            KDCoord coord;
+            DCCoord coord_;
 
             //虚线起终点类型: "0：实线, 1：虚线起点, 2：虚线终点, 3：虚线中间点"
             long dashType_;
 
-            //自动化标识:"1：自动化, 2：人工"
-            long flag_;
-
-            //对象量测信息
-            shared_ptr<KDMeasureInfo> measureInfo;
-
         };
-
-        class KDMeasureInfo : public KDModel{
-        public:
-            string method_;
-
-            string parameter_;
-
-            string flag_;
-        };
-
 
         /**
          * 道路分隔线
          */
-        class KDDivider : public KDModel {
+        class DCDivider : public DCModel {
         public:
-            KDDivider() {
+            DCDivider() {
                 dividerNo_ = -1;
                 direction_ = 2; //
                 rLine_ = 0; //
                 tollFlag_ = 0; //
-                source_ = 1; //
-                sDate_ = -1; //
-                flag_ = 1;//
-                taskId_ = -1;
 
                 line_ = nullptr;
                 len_ = 0.0;
@@ -214,7 +159,7 @@ namespace kd {
              * @param node 属性变化点
              * @return -1代表未找到，大于等于零的数代表节点在线中的索引
              */
-            int getAttNodeIndex(shared_ptr<KDDividerNode> node);
+            int getAttNodeIndex(shared_ptr<DCDividerNode> node);
 
             /**
              * 创建几何对象，用于后期的空间判断
@@ -235,23 +180,11 @@ namespace kd {
             //收费站分隔线标识:"0：普通分隔线, 1：收费站分隔线"
             long tollFlag_;
 
-            //作业员
-            string operator_;
-
-            //生产参考资料: "1：图像, 2：图像点云, 3：第三方, 4：其它"
-            long source_;
-
-            //参考资料时效
-            long sDate_;
-
-            //自动化标识："1：自动化， 2：人工"
-            long flag_;
-
             //所有节点对象
-            std::vector<shared_ptr<KDDividerNode>> nodes_;
+            std::vector<shared_ptr<DCDividerNode>> nodes_;
 
             //所有属性变化点
-            std::vector<shared_ptr<KDDividerAttribute>> atts_;
+            std::vector<shared_ptr<DCDividerAttribute>> atts_;
 
             //geos线对象，用于空间运算判断
             shared_ptr<geos::geom::LineString> line_;
@@ -264,40 +197,35 @@ namespace kd {
         /**
          * 道路分隔线属性变化点
          */
-        class KDDividerAttribute : public KDModel {
+        class DCDividerAttribute : public DCModel {
 
         public:
-            KDDividerAttribute() {
+            DCDividerAttribute() {
                 virtual_ = 0; //
                 color_ = 1; //
                 type_ = 0; //
                 driveRule_ = 0; //
                 material_ = 1; //
                 width_ = 0; //
-                source_ = 1; //
-                sDate_ = -1; //
-                flag_ = 1;
-
-                divider_ = nullptr;
                 dividerNode_ = nullptr;
             }
 
             //判断两个属性变化点对象是否是同类型属性
-            bool typeSame(shared_ptr<KDDividerAttribute> dividerAtt);
+            bool typeSame(shared_ptr<DCDividerAttribute> dividerAtt);
 
             /**
              * 判断两个属性变化点对象的属性一致
              * @param dividerAtt 被判断的属性变化点对象
              * @return true代表相同，false代表不同
              */
-            bool valueSame(shared_ptr<KDDividerAttribute> dividerAtt);
+            bool valueSame(shared_ptr<DCDividerAttribute> dividerAtt);
 
             /**
              * 拷贝属性变化点的基本属性
              * @param srcDividerAtt 原始属性变化点
              * @return 拷贝是否成功
              */
-            bool copyBaseInfo(shared_ptr<KDDividerAttribute> srcDividerAtt);
+            bool copyBaseInfo(shared_ptr<DCDividerAttribute> srcDividerAtt);
 
         public:
 
@@ -325,26 +253,9 @@ namespace kd {
             //分隔线宽度："0：0CM, 1：15CM, 2：20CM, 3：25CM, 4：45CM, 5：50CM, 6：55CM, 7：60CM"
             long width_;
 
-            //作业员
-            string operator_;
-
-            //生产参考资料: "1：图像, 2：图像点云, 3：第三方, 4：其它"
-            long source_;
-
-            //参考资料时效
-            long sDate_;
-
-            //自动化标识："1：自动化， 2：人工"
-            long flag_;
-
-            //属性变化点关联的车道线
-            shared_ptr<KDDivider> divider_;
-
             //属性变化点关联的节点
-            shared_ptr<KDDividerNode> dividerNode_;
+            shared_ptr<DCDividerNode> dividerNode_;
         };
-
-
     }
 }
 

@@ -26,12 +26,12 @@ namespace kd {
         //  KDDividerAttribute
         /////////////////////////////////////////////////////////////////////////////////////////
 
-        bool KDDividerAttribute::typeSame(shared_ptr<KDDividerAttribute> dividerAtt) {
-            if (this->divider_ == nullptr || this->dividerNode_ == nullptr)
+        bool DCDividerAttribute::typeSame(shared_ptr<DCDividerAttribute> dividerAtt) {
+            if (this->dividerNode_ == nullptr)
                 return false;
 
 
-            if (this->flag_ == dividerAtt->flag_ && this->color_ == dividerAtt->color_ &&
+            if (this->color_ == dividerAtt->color_ &&
                 this->type_ == dividerAtt->type_ && this->driveRule_ == dividerAtt->driveRule_ &&
                 this->material_ == dividerAtt->material_) {
                 return true;
@@ -40,27 +40,20 @@ namespace kd {
             return false;
         }
 
-        bool KDDividerAttribute::valueSame(shared_ptr<KDDividerAttribute> srcDividerAtt) {
+        bool DCDividerAttribute::valueSame(shared_ptr<DCDividerAttribute> srcDividerAtt) {
 
             if (this->virtual_ != srcDividerAtt->virtual_ ||
                 this->color_ != srcDividerAtt->color_ ||
                 this->type_ != srcDividerAtt->type_ ||
                 this->driveRule_ != srcDividerAtt->driveRule_ ||
                 this->material_ != srcDividerAtt->material_ ||
-                this->width_ != srcDividerAtt->width_ ||
-                //this->operator_ != srcDividerAtt->operator_ ||
-                this->source_ != srcDividerAtt->source_ ||
-                this->sDate_ != srcDividerAtt->sDate_ ||
-                //this->flag_ != srcDividerAtt->flag_ ||
-                this->taskId_ != srcDividerAtt->taskId_ ||
-                this->batch_ != srcDividerAtt->batch_ ||
-                this->seq_ != srcDividerAtt->seq_)
+                this->width_ != srcDividerAtt->width_)
                 return false;
 
             return true;
         }
 
-        bool KDDividerAttribute::copyBaseInfo(shared_ptr<KDDividerAttribute> srcDividerAtt) {
+        bool DCDividerAttribute::copyBaseInfo(shared_ptr<DCDividerAttribute> srcDividerAtt) {
             if (srcDividerAtt == nullptr)
                 return false;
 
@@ -70,45 +63,38 @@ namespace kd {
             this->driveRule_ = srcDividerAtt->driveRule_;
             this->material_ = srcDividerAtt->material_;
             this->width_ = srcDividerAtt->width_;
-            this->operator_ = srcDividerAtt->operator_;
-            this->source_ = srcDividerAtt->source_;
-            this->sDate_ = srcDividerAtt->sDate_;
-            this->flag_ = srcDividerAtt->flag_;
-            this->taskId_ = srcDividerAtt->taskId_;
-            this->batch_ = srcDividerAtt->batch_;
-            this->seq_ = srcDividerAtt->seq_;
 
             return true;
         }
 
 
         /////////////////////////////////////////////////////////////////////////////////////////
-        //  KDDivider
+        // DCivider
         /////////////////////////////////////////////////////////////////////////////////////////
 
-        bool KDDivider::isValid() {
+        bool DCDivider::isValid() {
             if (line_ == nullptr || len_ == 0.0)
                 return false;
 
-            return valid;
+            return valid_;
         }
 
-        bool KDDivider::checkValid() {
+        bool DCDivider::checkValid() {
             //至少有两个节点
             if (nodes_.size() < 2) {
-                valid = false;
+                valid_ = false;
                 return false;
             }
 
             //至少有一个属性变化点
             if (atts_.size() == 0) {
-                valid = false;
+                valid_ = false;
                 return false;
             }
 
             //空间几何对象属性检查
             if (line_ == nullptr || len_ == 0.0) {
-                valid = false;
+                valid_ = false;
                 return false;
             }
 
@@ -118,18 +104,18 @@ namespace kd {
             return true;
         }
 
-        string KDDivider::toString() {
+        string DCDivider::toString() {
             return "";
         }
 
-        void KDDivider::sortAtts() {
+        void DCDivider::sortAtts() {
             if (atts_.size() <= 1)
                 return;
 
             //获取原有顺序
             vector<pair<int, int>> attIndexes;
             for (int i = 0; i < atts_.size(); i++) {
-                shared_ptr<KDDividerAttribute> &att = atts_[i];
+                shared_ptr<DCDividerAttribute> &att = atts_[i];
 
                 int nodeIndex = getAttNodeIndex(att->dividerNode_);
 
@@ -146,7 +132,7 @@ namespace kd {
             });
 
             //根据排序后的顺序重制列表
-            std::vector<shared_ptr<KDDividerAttribute>> attsTemp;
+            std::vector<shared_ptr<DCDividerAttribute>> attsTemp;
             for (pair<int, int> &attIndex : attIndexes) {
                 attsTemp.emplace_back(atts_[attIndex.first]);
             }
@@ -157,12 +143,12 @@ namespace kd {
 
 
 
-        int KDDivider::getAttNodeIndex(shared_ptr<KDDividerNode> node) {
+        int DCDivider::getAttNodeIndex(shared_ptr<DCDividerNode> node) {
             if(node == nullptr)
                 return -1;
 
             for (int i = 0; i < nodes_.size(); i++) {
-                shared_ptr<KDDividerNode> &tmpNode = nodes_[i];
+                shared_ptr<DCDividerNode> &tmpNode = nodes_[i];
                 if (tmpNode == node)
                     return i;
 
@@ -171,21 +157,21 @@ namespace kd {
             return -1;
         }
 
-        bool KDDivider::buildGeometryInfo() {
+        bool DCDivider::buildGeometryInfo() {
 
             //创建linestring
             CoordinateSequence *cl = new CoordinateArraySequence();
-            for (shared_ptr<KDDividerNode> node : nodes_) {
+            for (shared_ptr<DCDividerNode> node : nodes_) {
                 double X0, Y0;
                 char zone0[8] = {0};
 
-                Coordinates::ll2utm(node->coord.lat, node->coord.lng, X0, Y0, zone0);
+                Coordinates::ll2utm(node->coord_.lat_, node->coord_.lng_, X0, Y0, zone0);
 
-                cl->add(geos::geom::Coordinate(X0, Y0, node->coord.z));
+                cl->add(geos::geom::Coordinate(X0, Y0, node->coord_.z_));
             }
 
             if (cl->size() < 2) {
-                this->valid = false;
+                this->valid_ = false;
                 return false;
             }
 
@@ -213,7 +199,7 @@ namespace kd {
                 return true;
             } else {
                 delete cl;
-                this->valid = false;
+                this->valid_ = false;
                 return false;
             }
         }

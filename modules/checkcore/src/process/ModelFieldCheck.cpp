@@ -1,8 +1,8 @@
 //
-// Created by gaoyanhong on 2018/3/28.
+// Created by gaoyanhong on 2018/3/29.
 //
 
-#include "util/DCFieldCheckUtil.h"
+#include "process/ModelFieldCheck.h"
 
 //thirdparty
 #include "Poco/StringTokenizer.h"
@@ -10,20 +10,42 @@
 namespace kd {
     namespace dc {
 
-        void DCFieldCheckUtil::checkLongFieldIdentify(shared_ptr<DCModalData> modelData, string fieldName){
-            //TODO
-            //multimap
+
+        string ModelFieldCheck::getId() {
+            return id;
         }
 
-        void DCFieldCheckUtil::checkDoubleFieldIdentify(shared_ptr<DCModalData> modelData, string fieldName){
-            //TODO
+        bool ModelFieldCheck::execute(shared_ptr<DCModalData> modelData, shared_ptr<DCModelDefine> modelDefine) {
+
+            //检查基础字段
+            for (shared_ptr<DCFieldDefine> fieldDef : modelDefine->vecFieldDefines) {
+                if (fieldDef->valueLimit.length() == 0)
+                    continue;
+
+                string fieldName = fieldDef->name;
+                switch (fieldDef->type) {
+                    case DC_FIELD_TYPE_LONG:
+                        checkLongValueIn(fieldDef->valueLimit, modelData, fieldName);
+                        break;
+                    case DC_FIELD_TYPE_DOUBLE:
+                        checkDoubleValueIn(fieldDef->valueLimit, modelData, fieldName);
+                        break;
+                    case DC_FIELD_TYPE_VARCHAR:
+                    case DC_FIELD_TYPE_TEXT:
+                        //TODO
+                        cout << "[TODO] not support field type limit check ." << endl;
+                        break;
+                    default:
+                        cout << "[Error] not support field type limit check ." << endl;
+                        break;
+                }
+            }
+
+            return true;
         }
 
-        void DCFieldCheckUtil::checkStringFieldIdentify(shared_ptr<DCModalData> modelData, string fieldName){
-            //TODO
-        }
 
-        void DCFieldCheckUtil::checkDoubleValueIn(string valueLimit, shared_ptr<DCModalData> modelData, string fieldName) {
+        void ModelFieldCheck::checkDoubleValueIn(string valueLimit, shared_ptr<DCModalData> modelData, string fieldName) {
             Poco::StringTokenizer st(valueLimit, ",");
             map<double, double> mapValueLimits;
             long limitCount = st.count();
@@ -49,7 +71,7 @@ namespace kd {
             }
         }
 
-        void DCFieldCheckUtil::checkLongValueIn(string valueLimit, shared_ptr<DCModalData> modelData, string fieldName) {
+        void ModelFieldCheck::checkLongValueIn(string valueLimit, shared_ptr<DCModalData> modelData, string fieldName) {
 
             Poco::StringTokenizer st(valueLimit, ",");
             map<long, long> mapValueLimits;
@@ -75,5 +97,6 @@ namespace kd {
                 }
             }
         }
+
     }
 }

@@ -33,12 +33,6 @@ namespace kd {
             virtual bool execute() override;
 
         private:
-            void check(shared_ptr<DCModalData> modelData, shared_ptr<DCModelDefine> modelDefine);
-
-
-
-
-        private:
             const string id = "data_att_check_process";
 
             //基础数据路径

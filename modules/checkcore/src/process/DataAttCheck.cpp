@@ -11,10 +11,14 @@
 using namespace Poco;
 
 //module
-#include "storage/CheckTaskInput.h"
-#include "storage/ModelDataInput.h"
+#include "data/DataManager.h"
 
-#include "util/DCFieldCheckUtil.h"
+#include "storage/CheckTaskInput.h"
+
+#include "process/ModelDataLoader.h"
+#include "process/ModelFieldCheck.h"
+#include "process/ModelBussCheck.h"
+#include "process/ModelRelationCheck.h"
 
 
 namespace kd {
@@ -30,6 +34,7 @@ namespace kd {
         }
 
         bool DataAttCheck::execute() {
+
             CheckTaskInput taskInput;
 
             vector<shared_ptr<DCTask>> tasks;
@@ -37,108 +42,43 @@ namespace kd {
             taskInput.loadTaskInfo(taskPath, tasks);
             cout << "[Debug] task size is " << tasks.size() << endl;
 
+            shared_ptr<ModelDataManager> dataManager = make_shared<ModelDataManager>();
+
+            shared_ptr<ModelFieldCheck> fieldCheck = make_shared<ModelFieldCheck>();
+            shared_ptr<ModelBussCheck> bussCheck = make_shared<ModelBussCheck>();
+
+
             for (shared_ptr<DCTask> task : tasks) {
 
                 string modelPath = basePath_ + "/" + task->modelName + ".json";
+                string dataFilePath = basePath_ + "/" + task->fileName;
 
+                shared_ptr<ModelDataLoader> dataLoader = make_shared<ModelDataLoader>(modelPath, dataFilePath,
+                                                                                      task->fileType);
+
+                shared_ptr<DCModalData> modelData = make_shared<DCModalData>();
                 shared_ptr<DCModelDefine> modelDefine = make_shared<DCModelDefine>();
 
-                if (taskInput.loadTaskModel(modelPath, modelDefine)) {
+                //加载数据
+                if (dataLoader->execute(modelData, modelDefine)) {
 
-                    string dataFilePath = basePath_ + "/" + task->fileName;
+                    //加入缓存
+                    dataManager->modelDatas_.insert(pair<string, shared_ptr<DCModalData>>(task->modelName, modelData));
 
-                    shared_ptr<DCModalData> modelData = make_shared<DCModalData>();
-                    ModelDataInput dataInput;
-                    if (task->fileType == "point") {
-                        dataInput.loadPointFile(dataFilePath, modelDefine->vecFieldDefines, modelData);
-                    } else if (task->fileType == "arc") {
-                        dataInput.loadArcFile(dataFilePath, modelDefine->vecFieldDefines, modelData);
-                    } else if (task->fileType == "dbf") {
-                        dataInput.loadDBFFile(dataFilePath, modelDefine->vecFieldDefines, modelData);
-                    } else {
-                        cout << "[Error] data file type error " << task->fileType << endl;
-                    }
+                    dataManager->modelDefines_.insert(
+                            pair<string, shared_ptr<DCModelDefine>>(task->modelName, modelDefine));
 
-                    cout << "[Debug] load data count " << modelData->records.size() << endl;
+                    //属性检查
+                    fieldCheck->execute(modelData, modelDefine);
 
-                    check(modelData, modelDefine);
+                    bussCheck->execute(modelData, modelDefine);
                 }
             }
 
+            //关联关系检查
+            shared_ptr<ModelRelationCheck> relationCheck = make_shared<ModelRelationCheck>();
+            relationCheck->execute(dataManager);
             return true;
         }
-
-
-
-
-
-        void checkFieldIdentify(shared_ptr<DCModalData> modelData, shared_ptr<DCFieldDefine> fieldDef) {
-            switch (fieldDef->type) {
-                case DC_FIELD_TYPE_LONG:
-                    DCFieldCheckUtil::checkLongFieldIdentify(modelData, fieldDef->name);
-                    break;
-                case DC_FIELD_TYPE_DOUBLE:
-                    DCFieldCheckUtil::checkDoubleFieldIdentify(modelData, fieldDef->name);
-                    break;
-                case DC_FIELD_TYPE_VARCHAR:
-                case DC_FIELD_TYPE_TEXT:
-                    DCFieldCheckUtil::checkStringFieldIdentify(modelData, fieldDef->name);
-                    break;
-                default:
-                    cout << "[Error] checkFieldIdentify not support field type :" << fieldDef->type << endl;
-                    break;
-            }
-        }
-
-
-        void DataAttCheck::check(shared_ptr<DCModalData> modelData, shared_ptr<DCModelDefine> modelDefine) {
-
-            //检查基础字段
-            for (shared_ptr<DCFieldDefine> fieldDef : modelDefine->vecFieldDefines) {
-                if (fieldDef->valueLimit.length() == 0)
-                    continue;
-
-                string fieldName = fieldDef->name;
-                switch (fieldDef->type) {
-                    case DC_FIELD_TYPE_LONG:
-                        DCFieldCheckUtil::checkLongValueIn(fieldDef->valueLimit, modelData, fieldName);
-                        break;
-                    case DC_FIELD_TYPE_DOUBLE:
-                        DCFieldCheckUtil::checkDoubleValueIn(fieldDef->valueLimit, modelData, fieldName);
-                        break;
-                    case DC_FIELD_TYPE_VARCHAR:
-                    case DC_FIELD_TYPE_TEXT:
-                        //TODO
-                        cout << "[TODO] not support field type limit check ." << endl;
-                        break;
-                    default:
-                        cout << "[Error] not support field type limit check ." << endl;
-                        break;
-                }
-            }
-
-            //检查属性
-            vector<shared_ptr<DCFieldCheckDefine>> vecFieldChecks;
-            for (shared_ptr<DCFieldCheckDefine> check : modelDefine->vecFieldChecks) {
-
-                shared_ptr<DCFieldDefine> fieldDefine = modelDefine->getFieldDefine(check->fieldName);
-                if (fieldDefine == nullptr) {
-                    cout << "[Error] field check oper not find field " << check->fieldName << " define " << endl;
-                    continue;
-                }
-
-                switch (check->func) {
-                    case DC_FIELD_VALUE_FUNC_ID:
-                        checkFieldIdentify(modelData, fieldDefine);
-                        break;
-                    case DC_FIELD_VALUE_FUNC_GE:
-                        break;
-                    default:
-                        cout << "[TODO] function need to implement." << endl;
-                        break;
-                }
-            }
-        }
-
     }
 }

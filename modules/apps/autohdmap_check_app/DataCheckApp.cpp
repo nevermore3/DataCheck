@@ -1,6 +1,7 @@
 
 //third party
 #include <Poco/StringTokenizer.h>
+#include <process/DataAttCheck.h>
 
 
 
@@ -46,7 +47,8 @@ void loadTaskInfo(string fileName, string & taskName, string & baseUrl,
 
 int dataCheck(string basePath, string taskFileName){
 
-
+    shared_ptr<DataAttCheck> attCheck = make_shared<DataAttCheck>(basePath, taskFileName);
+    attCheck->execute();
 
 
 

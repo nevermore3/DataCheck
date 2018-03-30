@@ -149,9 +149,8 @@ namespace kd {
 
             for (int i = 0; i < nodes_.size(); i++) {
                 shared_ptr<DCDividerNode> &tmpNode = nodes_[i];
-                if (tmpNode == node)
+                if (tmpNode->id_ == node->id_)
                     return i;
-
             }
 
             return -1;

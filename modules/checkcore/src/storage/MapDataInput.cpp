@@ -71,7 +71,7 @@ namespace kd {
                     }
 
                     shared_ptr<DCDivider> div = divit->second;
-                    if(spIdx == -1 || spIdx >= div->nodes_.size()){
+                    if(spIdx < 0 || spIdx >= div->nodes_.size()){
                         cout << "[Error] divider node idx invalid. [dividerId:" << dividerId << "][nodeIdx:" << spIdx << "]" << endl;
                         div->valid_ = false;
                         continue;
@@ -113,10 +113,13 @@ namespace kd {
                     }
 
                     shared_ptr<DCDivider> div = divit->second;
-                    if(spIdx == -1 || spIdx >= div->nodes_.size()){
+                    if(spIdx < 0 || spIdx >= div->nodes_.size()){
                         cout << "[Error] divider att ref node idx invalid. [dividerId:" << dividerId << "][nodeIdx:" << spIdx << "]" << endl;
                         continue;
                     }
+
+                    //赋予节点关联
+                    divAtt->dividerNode_ = div->nodes_[spIdx];
 
                     div->atts_.emplace_back(divAtt);
                 }

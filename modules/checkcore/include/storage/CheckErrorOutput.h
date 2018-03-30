@@ -5,6 +5,8 @@
 #ifndef AUTOHDMAP_DATACHECK_CHECKERROROUTPUT_H
 #define AUTOHDMAP_DATACHECK_CHECKERROROUTPUT_H
 
+#include "data/ErrorDataModel.h"
+
 namespace kd {
     namespace dc {
 
@@ -12,7 +14,7 @@ namespace kd {
 
         public:
 
-
+            void saveError(shared_ptr<DCDividerCheckError> error);
 
         };
     }

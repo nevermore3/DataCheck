@@ -17,19 +17,19 @@ namespace kd {
         class DCAttCheckError{
         public:
             //模型名称，或表名
-            string modelName;
+            string modelName_;
 
             //字段名称
-            string fieldName;
+            string fieldName_;
 
             //错误类型
-            string errorType;
+            string errorType_;
 
             //错误值
-            string errorValue;
+            string errorValue_;
 
             //错误描述
-            string errorDesc;
+            string errorDesc_;
         };
 
         /**
@@ -38,26 +38,64 @@ namespace kd {
         class DCRelationCheckError{
         public:
             //模型名称
-            string modelName;
+            string modelName_;
 
             //字段名称
-            string fieldName;
+            string fieldName_;
 
             //关联模型名称
-            string refModelName;
+            string refModelName_;
 
             //关联字段名称
-            string refFieldName;
+            string refFieldName_;
 
             //原始记录值
-            string recordValue;
+            string recordValue_;
 
             //关联记录值
-            string refRecordValue;
+            string refRecordValue_;
 
             //错误类型, 相关联的记录不存在；关联的记录冗余
-            string errorType;
+            string errorType_;
 
+        };
+
+        class DCErrorCreator{
+
+        };
+
+
+        /**
+         * 车道线检查错误
+         */
+        class DCDividerCheckError{
+        public:
+            DCDividerCheckError(string checkModel){
+                checkModel_ = checkModel;
+            }
+
+            static shared_ptr<DCDividerCheckError> create(string checkModel);
+
+        public:
+            string toString();
+        public:
+            string dividerId_;
+
+            string attId_;
+
+            string nodeId_;
+
+            double lng_;
+
+            double lat_;
+
+            double z_;
+
+            string checkModel_;
+
+            string errorType_;
+
+            string errorDesc_;
         };
     }
 }

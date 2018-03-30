@@ -2,6 +2,7 @@
 //third party
 #include <Poco/StringTokenizer.h>
 #include <process/DataAttCheck.h>
+#include <DataCheckConfig.h>
 
 
 
@@ -52,6 +53,8 @@ int dataCheck(string basePath, string taskFileName){
     //shared_ptr<DataAttCheck> attCheck = make_shared<DataAttCheck>(basePath, taskFileName);
     //attCheck->execute();
 
+    //加载配置项
+    DataCheckConfig::getInstance().load("config.properties");
 
     MapDataLoader loader(basePath + "/data");
     shared_ptr<MapDataManager> mapDataManager = make_shared<MapDataManager>();

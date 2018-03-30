@@ -17,7 +17,7 @@ namespace kd {
         }
 
 
-        void getComparePair(shared_ptr<DCDivider> div, int begin, int end, vector<pair<int,int>> & pairs){
+        void DividerShapeDefectCheck::getComparePair(shared_ptr<DCDivider> div, int begin, int end, vector<pair<int,int>> & pairs){
 
             for( int i = begin ; i <= end ; i ++ ){
                 if(div->nodes_[i]->dashType_ == DN_DASH_TYPE_DOT_END){
@@ -34,7 +34,7 @@ namespace kd {
         }
 
 
-        void checkShapeDefect( string checkModel, double distLimit, shared_ptr<DCDivider> div, shared_ptr<DCDividerAttribute> divAtt,
+        void DividerShapeDefectCheck::checkShapeDefect( string checkModel, double distLimit, shared_ptr<DCDivider> div, shared_ptr<DCDividerAttribute> divAtt,
                                int beginNodexIdx, int endNodeIdx, shared_ptr<CheckErrorOutput> errorOutput){
             vector<pair<int,int>> nodeSegs;
             getComparePair(div, beginNodexIdx, endNodeIdx, nodeSegs);
@@ -62,7 +62,7 @@ namespace kd {
 
 
 
-        void checkShapeDefect(shared_ptr<DCDivider> div, shared_ptr<DCDividerAttribute> divAtt,
+        void DividerShapeDefectCheck::checkShapeDefect(shared_ptr<DCDivider> div, shared_ptr<DCDividerAttribute> divAtt,
                               int beginNodexIdx, int endNodeIdx, shared_ptr<CheckErrorOutput> errorOutput){
 
             if(divAtt->type_ == DA_TYPE_WHITE_DOTTED){
@@ -80,10 +80,8 @@ namespace kd {
             }
         }
 
-        bool DividerShapeDefectCheck::execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) {
-            if(mapDataManager == nullptr)
-                return false;
 
+        void DividerShapeDefectCheck::check_JH_C_1_AND_JH_C_2(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput){
             for( auto recordit : mapDataManager->dividers_){
 
                 shared_ptr<DCDivider> div = recordit.second;
@@ -107,6 +105,15 @@ namespace kd {
                     checkShapeDefect(div, divAtt, nodeBeginIndex, nodeEndIndex, errorOutput);
                 }
             }
+        }
+
+        bool DividerShapeDefectCheck::execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) {
+            if(mapDataManager == nullptr)
+                return false;
+
+            check_JH_C_1_AND_JH_C_2(mapDataManager, errorOutput);
+
+
 
             return true;
         }

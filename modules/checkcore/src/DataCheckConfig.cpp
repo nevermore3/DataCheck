@@ -13,6 +13,12 @@ namespace kd {
 
         const string DataCheckConfig::DOTLINE_DEFECT_LEN = "dotline_defect_len";
         const string DataCheckConfig::BUSELINE_DEFECT_LEN = "busline_defect_len";
+        const string DataCheckConfig::DA_SPACE_LEN = "da_space_len";
+
+        const string DataCheckConfig::DIVIDER_EDGE_ANGLE = "divider_edge_angle";
+        const string DataCheckConfig::DIVIDER_NODE_SPACE_LEN = "divider_node_space_len";
+        const string DataCheckConfig::DIVIDER_HEIGHT_CHANGE_PER_METER = "divider_height_change_per_meter";
+
 
         void DataCheckConfig::load(string fileName) {
             ifstream in(fileName.c_str());

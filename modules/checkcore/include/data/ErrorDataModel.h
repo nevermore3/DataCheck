@@ -7,6 +7,9 @@
 
 #include "CommonInclude.h"
 
+#include "DividerGeomModel.h"
+
+
 namespace kd {
     namespace dc {
 
@@ -14,7 +17,7 @@ namespace kd {
         /**
          * 数据字段约束检查
          */
-        class DCAttCheckError{
+        class DCAttCheckError {
         public:
             //模型名称，或表名
             string modelName_;
@@ -35,7 +38,7 @@ namespace kd {
         /**
          * 关联关系检查失败记录
          */
-        class DCRelationCheckError{
+        class DCRelationCheckError {
         public:
             //模型名称
             string modelName_;
@@ -60,7 +63,7 @@ namespace kd {
 
         };
 
-        class DCErrorCreator{
+        class DCErrorCreator {
 
         };
 
@@ -68,16 +71,21 @@ namespace kd {
         /**
          * 车道线检查错误
          */
-        class DCDividerCheckError{
+        class DCDividerCheckError {
         public:
-            DCDividerCheckError(string checkModel){
+            DCDividerCheckError(string checkModel) {
                 checkModel_ = checkModel;
             }
 
-            static shared_ptr<DCDividerCheckError> create(string checkModel);
+            static shared_ptr<DCDividerCheckError> createByAtt(string checkModel, shared_ptr<DCDivider> div,
+                                                               shared_ptr<DCDividerAttribute> att);
+
+            static shared_ptr<DCDividerCheckError>
+            createByNode(string checkModel, shared_ptr<DCDivider> div, shared_ptr<DCDividerNode> node);
 
         public:
             string toString();
+
         public:
             string dividerId_;
 

@@ -27,31 +27,31 @@ namespace kd {
         /////////////////////////////////////////////////////////////////////////////////////////
 
         bool DCDividerAttribute::typeSame(shared_ptr<DCDividerAttribute> dividerAtt) {
-            if (this->dividerNode_ == nullptr)
+            if (dividerAtt == nullptr)
                 return false;
 
 
-            if (this->color_ == dividerAtt->color_ &&
+            if (this->virtual_ == dividerAtt->virtual_ && this->color_ == dividerAtt->color_ &&
                 this->type_ == dividerAtt->type_ && this->driveRule_ == dividerAtt->driveRule_ &&
-                this->material_ == dividerAtt->material_) {
+                this->material_ == dividerAtt->material_ && this->width_ == dividerAtt->width_ ) {
                 return true;
             }
 
             return false;
         }
 
-        bool DCDividerAttribute::valueSame(shared_ptr<DCDividerAttribute> srcDividerAtt) {
-
-            if (this->virtual_ != srcDividerAtt->virtual_ ||
-                this->color_ != srcDividerAtt->color_ ||
-                this->type_ != srcDividerAtt->type_ ||
-                this->driveRule_ != srcDividerAtt->driveRule_ ||
-                this->material_ != srcDividerAtt->material_ ||
-                this->width_ != srcDividerAtt->width_)
-                return false;
-
-            return true;
-        }
+//        bool DCDividerAttribute::valueSame(shared_ptr<DCDividerAttribute> srcDividerAtt) {
+//
+//            if (this->virtual_ != srcDividerAtt->virtual_ ||
+//                this->color_ != srcDividerAtt->color_ ||
+//                this->type_ != srcDividerAtt->type_ ||
+//                this->driveRule_ != srcDividerAtt->driveRule_ ||
+//                this->material_ != srcDividerAtt->material_ ||
+//                this->width_ != srcDividerAtt->width_)
+//                return false;
+//
+//            return true;
+//        }
 
         bool DCDividerAttribute::copyBaseInfo(shared_ptr<DCDividerAttribute> srcDividerAtt) {
             if (srcDividerAtt == nullptr)

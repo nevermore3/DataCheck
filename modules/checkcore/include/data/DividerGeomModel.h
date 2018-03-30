@@ -218,7 +218,7 @@ namespace kd {
              * @param dividerAtt 被判断的属性变化点对象
              * @return true代表相同，false代表不同
              */
-            bool valueSame(shared_ptr<DCDividerAttribute> dividerAtt);
+            //bool valueSame(shared_ptr<DCDividerAttribute> dividerAtt);
 
             /**
              * 拷贝属性变化点的基本属性
@@ -256,6 +256,21 @@ namespace kd {
             //属性变化点关联的节点
             shared_ptr<DCDividerNode> dividerNode_;
         };
+
+
+       /**
+        * 共点节点信息
+        */
+       class DCDividerTopoNode{
+       public:
+           //节点id
+           string nodeId;
+
+           //与本拓扑节点共点的所有节点
+           map<string, string> startRelateNodes_;
+
+           map<string, string> endRelateNodes_;
+       };
     }
 }
 

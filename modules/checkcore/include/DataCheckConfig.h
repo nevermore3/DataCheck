@@ -13,6 +13,10 @@ namespace kd {
         public:
             const static string DOTLINE_DEFECT_LEN;
             const static string BUSELINE_DEFECT_LEN;
+            const static string DA_SPACE_LEN;
+            const static string DIVIDER_EDGE_ANGLE;
+            const static string DIVIDER_NODE_SPACE_LEN;
+            const static string DIVIDER_HEIGHT_CHANGE_PER_METER;
 
         public:
             static DataCheckConfig & getInstance() {

@@ -32,6 +32,19 @@ namespace kd {
 
         private:
 
+            void check_JH_C_1_AND_JH_C_2(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput);
+
+            void checkShapeDefect(shared_ptr<DCDivider> div, shared_ptr<DCDividerAttribute> divAtt,
+                                  int beginNodexIdx, int endNodeIdx, shared_ptr<CheckErrorOutput> errorOutput);
+
+            void checkShapeDefect( string checkModel, double distLimit, shared_ptr<DCDivider> div, shared_ptr<DCDividerAttribute> divAtt,
+                                   int beginNodexIdx, int endNodeIdx, shared_ptr<CheckErrorOutput> errorOutput);
+
+            void getComparePair(shared_ptr<DCDivider> div, int begin, int end, vector<pair<int,int>> & pairs);
+
+
+        private:
+
             const string id = "divider_shape_defect_check";
 
         };

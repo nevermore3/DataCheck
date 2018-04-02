@@ -7,6 +7,7 @@
 
 #include "data/MapDataModel.h"
 
+#include "storage/CheckErrorOutput.h"
 
 namespace kd {
     namespace dc {
@@ -15,11 +16,11 @@ namespace kd {
 
         public:
 
-            bool loadPointFile(const string & fileName, const vector<shared_ptr<DCFieldDefine>> & vecFieldDefines, shared_ptr<DCModalData> modelData);
+            bool loadPointFile(const string & fileName, const vector<shared_ptr<DCFieldDefine>> & vecFieldDefines, shared_ptr<DCModalData> modelData, shared_ptr<CheckErrorOutput> errorOutput);
 
-            bool loadArcFile(const string & fileName, const vector<shared_ptr<DCFieldDefine>> & vecFieldDefines, shared_ptr<DCModalData> modelData);
+            bool loadArcFile(const string & fileName, const vector<shared_ptr<DCFieldDefine>> & vecFieldDefines, shared_ptr<DCModalData> modelData, shared_ptr<CheckErrorOutput> errorOutput);
 
-            bool loadDBFFile(const string & fileName, const vector<shared_ptr<DCFieldDefine>> & vecFieldDefines, shared_ptr<DCModalData> modelData);
+            bool loadDBFFile(const string & fileName, const vector<shared_ptr<DCFieldDefine>> & vecFieldDefines, shared_ptr<DCModalData> modelData, shared_ptr<CheckErrorOutput> errorOutput);
         };
 
     }

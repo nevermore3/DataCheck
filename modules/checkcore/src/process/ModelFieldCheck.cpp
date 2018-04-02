@@ -15,7 +15,7 @@ namespace kd {
             return id;
         }
 
-        bool ModelFieldCheck::execute(shared_ptr<DCModalData> modelData, shared_ptr<DCModelDefine> modelDefine) {
+        bool ModelFieldCheck::execute(shared_ptr<DCModalData> modelData, shared_ptr<DCModelDefine> modelDefine, shared_ptr<CheckErrorOutput> errorOutput) {
 
             //检查基础字段
             for (shared_ptr<DCFieldDefine> fieldDef : modelDefine->vecFieldDefines) {

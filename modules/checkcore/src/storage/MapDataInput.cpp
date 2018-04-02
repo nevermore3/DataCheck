@@ -12,7 +12,7 @@ namespace kd {
     namespace dc {
 
 
-        bool MapDataInput::loadDivider(string basePath, map<string, shared_ptr<DCDivider>> &dividers) {
+        bool MapDataInput::loadDivider(string basePath, map<string, shared_ptr<DCDivider>> &dividers, shared_ptr<CheckErrorOutput> errorOutput) {
 
             //读取车道线基本信息
             string dividerFile = basePath + "/HD_DIVIDER";
@@ -128,6 +128,11 @@ namespace kd {
                 return false;
             }
 
+            return true;
+        }
+
+        bool MapDataInput::loadLane(string basePath, map<string, shared_ptr<DCLane>> & lanes, shared_ptr<CheckErrorOutput> errorOutput){
+            //TODO:
             return true;
         }
 

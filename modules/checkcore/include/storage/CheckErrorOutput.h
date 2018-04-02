@@ -14,7 +14,17 @@ namespace kd {
 
         public:
 
+            /**
+             * 保存车道线检查相关的业务检查错误
+             * @param error 错误信息
+             */
             void saveError(shared_ptr<DCDividerCheckError> error);
+
+            /**
+             * 保存各字段属性值检查错误信息
+             * @param error 错误信息
+             */
+            void saveError(shared_ptr<DCAttCheckError> error);
 
         };
     }

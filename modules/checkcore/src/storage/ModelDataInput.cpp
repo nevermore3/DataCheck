@@ -14,7 +14,7 @@ namespace kd {
 
         bool ModelDataInput::loadPointFile(const string &fileName,
                                            const vector<shared_ptr<DCFieldDefine>> &vecFieldDefines,
-                                           shared_ptr<DCModalData> modelData) {
+                                           shared_ptr<DCModalData> modelData, shared_ptr<CheckErrorOutput> errorOutput) {
 
             //加载文件
             ShpData shpData(fileName);
@@ -74,13 +74,13 @@ namespace kd {
 
         bool
         ModelDataInput::loadArcFile(const string &fileName, const vector<shared_ptr<DCFieldDefine>> &vecFieldDefines,
-                                    shared_ptr<DCModalData> modelData) {
+                                    shared_ptr<DCModalData> modelData, shared_ptr<CheckErrorOutput> errorOutput) {
             return false;
         }
 
         bool
         ModelDataInput::loadDBFFile(const string &fileName, const vector<shared_ptr<DCFieldDefine>> &vecFieldDefines,
-                                    shared_ptr<DCModalData> modelData) {
+                                    shared_ptr<DCModalData> modelData, shared_ptr<CheckErrorOutput> errorOutput) {
             return false;
         }
     }

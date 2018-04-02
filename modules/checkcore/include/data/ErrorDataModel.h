@@ -14,10 +14,44 @@ namespace kd {
     namespace dc {
 
 
+        class DCError{
+        public:
+
+            DCError(string checkModel);
+
+            /**
+             * 获得错误字段信息
+             * @return 字段信息描述字符串
+             */
+            virtual string getHeader() = 0;
+
+            /**
+             * 获得错误信息
+             * @return 错误信息字符串
+             */
+            virtual string toString() = 0;
+
+
+        protected:
+            //检测模型
+            string checkModel_;
+
+        };
+
         /**
          * 数据字段约束检查
          */
-        class DCAttCheckError {
+        class DCAttCheckError : public DCError {
+
+        public:
+            DCAttCheckError(string checkModel);
+
+            DCAttCheckError(string checkModel, string modelName, string fieldName, string recordId);
+
+            virtual string getHeader() override ;
+
+            virtual string toString() override ;
+
         public:
             //模型名称，或表名
             string modelName_;
@@ -25,11 +59,8 @@ namespace kd {
             //字段名称
             string fieldName_;
 
-            //错误类型
-            string errorType_;
-
-            //错误值
-            string errorValue_;
+            //记录id
+            string recordId_;
 
             //错误描述
             string errorDesc_;
@@ -38,7 +69,17 @@ namespace kd {
         /**
          * 关联关系检查失败记录
          */
-        class DCRelationCheckError {
+        class DCRelationCheckError : public DCError {
+
+        public:
+            DCRelationCheckError(string checkModel);
+
+            DCRelationCheckError(string checkModel, string modelName, string fieldName, string refModelName, string refFieldName);
+
+            virtual string getHeader() override ;
+
+            virtual string toString() override ;
+
         public:
             //模型名称
             string modelName_;
@@ -55,27 +96,17 @@ namespace kd {
             //原始记录值
             string recordValue_;
 
-            //关联记录值
-            string refRecordValue_;
-
-            //错误类型, 相关联的记录不存在；关联的记录冗余
-            string errorType_;
-
-        };
-
-        class DCErrorCreator {
-
+            //错误描述
+            string errorDesc_;
         };
 
 
         /**
          * 车道线检查错误
          */
-        class DCDividerCheckError {
+        class DCDividerCheckError : public DCError {
         public:
-            DCDividerCheckError(string checkModel) {
-                checkModel_ = checkModel;
-            }
+            DCDividerCheckError(string checkModel);
 
             static shared_ptr<DCDividerCheckError> createByAtt(string checkModel, shared_ptr<DCDivider> div,
                                                                shared_ptr<DCDividerAttribute> att);
@@ -84,25 +115,30 @@ namespace kd {
             createByNode(string checkModel, shared_ptr<DCDivider> div, shared_ptr<DCDividerNode> node);
 
         public:
-            string toString();
+            virtual string getHeader() override ;
+
+            virtual string toString() override ;
 
         public:
+            //车道线id
             string dividerId_;
 
+            //属性变化点id
             string attId_;
 
+            //节点id
             string nodeId_;
 
+            //节点、属性变化点对应的经度
             double lng_;
 
+            //节点、属性变化点对应的纬度
             double lat_;
 
+            //节点、属性变化点对应的高度
             double z_;
 
-            string checkModel_;
-
-            string errorType_;
-
+            //错误描述
             string errorDesc_;
         };
     }

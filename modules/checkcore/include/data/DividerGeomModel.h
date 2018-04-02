@@ -11,11 +11,12 @@
 
 //third party
 #include <geos/geom/LineString.h>
+
 using namespace geos::geom;
 
 
 namespace kd {
-   namespace dc {
+    namespace dc {
 
         enum EnumDividerAttributeType {
             DA_TYPE_UNINVESTIGATED = 0,  //0：未调查
@@ -94,8 +95,16 @@ namespace kd {
         };
 
         class DCDividerNode;
+
         class DCDividerAttribute;
+
         class DCDivider;
+
+        class DCLane;
+
+        class DCLaneAttribute;
+
+        class DCRoad;
 
 
         /**
@@ -154,11 +163,11 @@ namespace kd {
              */
             void sortAtts();
 
-           /**
-             * 获得节点的索引
-             * @param node 属性变化点
-             * @return -1代表未找到，大于等于零的数代表节点在线中的索引
-             */
+            /**
+              * 获得节点的索引
+              * @param node 属性变化点
+              * @return -1代表未找到，大于等于零的数代表节点在线中的索引
+              */
             int getAttNodeIndex(shared_ptr<DCDividerNode> node);
 
             /**
@@ -258,19 +267,217 @@ namespace kd {
         };
 
 
-       /**
-        * 共点节点信息
-        */
-       class DCDividerTopoNode{
-       public:
-           //节点id
-           string nodeId;
+        /**
+         * 车道对象
+         */
+        class DCLane : public DCModel {
+        public:
+            DCLane():road_(nullptr), leftDivider_(nullptr), rightDivider_(nullptr){}
 
-           //与本拓扑节点共点的所有节点
-           map<string, string> startRelateNodes_;
 
-           map<string, string> endRelateNodes_;
-       };
+            /**
+             * 按照关联的节点编号对属性变化点进行排序
+             */
+            void sortAtts();
+
+            /**
+              * 获得节点的索引
+              * @param node 属性变化点
+              * @return -1代表未找到，大于等于零的数代表节点在线中的索引
+              */
+            int getAttNodeIndex(shared_ptr<DCDividerNode> node);
+
+        public:
+            //车道编号
+            long laneNo_;
+
+            //关联道路
+            shared_ptr<DCRoad> road_;
+
+            //关联左侧车道分隔线
+            shared_ptr<DCDivider> leftDivider_;
+
+            //关联右侧车道分隔线
+            shared_ptr<DCDivider> rightDivider_;
+
+            //车道属性变化点
+            vector<shared_ptr<DCLaneAttribute>> atts_;
+
+        };
+
+        class DCLaneAttribute : public DCModel {
+
+        public:
+            //车道类型 "0：未调查, 1：普通车道, 2：停车道, 3：进入车道, 4：退出车道, 5：进入退出车道
+            // 6：连接车道, 7：专用车道, 8：潮汐车道, 9：应急车道, 10：可变导向车道, 11：收费站车道
+            //, 12：HOV车道, 13：摩托车道, 14：自行车道, 99：其他车道"
+            long laneType_;
+
+            //车道子类型"收费站车道：, 0：普通, 1：ETC
+            //        应急车道：, 0：普通, 1：导流带车道
+            //        进入车道：, 0：加速车道
+            //        退出车道：, 0：减速车道
+            //        进入退出车道, 0：加速减速车道
+            //        连接车道：, 0：加速车道, 1：减速车道"
+            long subType;
+
+            //车道方向 "1：双向, 2：正向, 3：逆向, 4：双向禁行"
+            long direction;
+
+            //车道宽度 0～99.999999
+            double width_;
+
+            //最高限速
+            long maxSpeed_;
+
+            //最低限速
+            long minSpeed_;
+
+            //车道分歧点类型 "-1：非分离合并点, 0：未调查, 1：车道合并, 2：车道分离"
+            long smType_;
+
+            //车道通行状态 "0：正常通行(默认), 1：建设中, 2：禁止通行"
+            long status_;
+
+            //关联的车道线节点信息
+            shared_ptr<DCDividerNode> dividerNode_;
+
+        };
+
+        /**
+         * 复杂路口
+         */
+        class DCCNode : public DCModel{
+        public:
+
+        };
+
+        /**
+         * 道路节点对象
+         */
+        class DCRoadNode{
+        public:
+            DCRoadNode():cNode_(nullptr){}
+        public:
+
+            //关联复杂路口
+            shared_ptr<DCCNode> cNode_;
+
+        };
+
+        /**
+         * 道路对象
+         */
+        class DCRoad : public DCModel {
+        public:
+            DCRoad():fNode_(nullptr), tNode_(nullptr){}
+
+        public:
+            //通行方向
+            long direction_;
+
+            //关联开始节点
+            shared_ptr<DCRoadNode> fNode_;
+
+            //关联结束节点
+            shared_ptr<DCRoadNode> tNode_;
+
+            //道路路线编号
+            string routeNo_;
+
+            //车道数
+            long sLanes_;
+
+
+        };
+
+        /**
+         * 复杂路口道路拓扑关系
+         */
+        class DCCNodeConn : public DCModel{
+        public:
+            DCCNodeConn():fRoad_(nullptr), cNode_(nullptr), tRoad_(nullptr){}
+
+        public:
+            //进入道路
+            shared_ptr<DCRoad> fRoad_;
+
+            //关联节点
+            shared_ptr<DCCNode> cNode_;
+
+            //退出道路
+            shared_ptr<DCRoad> tRoad_;
+
+            //通达标识 "0：能通达（默认）, 1：不能通达"
+            long accessabel_;
+        };
+
+        /**
+         * 简单节点道路拓扑关系
+         */
+        class DCNodeConn : public DCModel{
+        public:
+            DCNodeConn():fRoad_(nullptr), roadNode_(nullptr), tRoad_(nullptr){}
+
+        public:
+            //进入道路
+            shared_ptr<DCRoad> fRoad_;
+
+            //关联节点
+            shared_ptr<DCRoadNode> roadNode_;
+
+            //退出道路
+            shared_ptr<DCRoad> tRoad_;
+
+            //通达标识 "0：能通达（默认）, 1：不能通达"
+            long accessabel_;
+
+        };
+
+
+        /**
+         * 路口
+         */
+        class DCJunction : public DCModel{
+
+        public:
+            //坐标信息
+            DCCoord coord_;
+        };
+
+        /**
+         * 车道组
+         */
+        class DCLaneGroup : public DCModel{
+
+        public:
+            DCLaneGroup(): road_(nullptr){}
+
+        public:
+            //道路
+            shared_ptr<DCRoad> road_;
+
+            //组成车道组的所有车道，经过排序
+            vector<shared_ptr<DCLane>> lanes_;
+        };
+
+
+        //////////////////////////////////
+        // 辅助信息，为了提高检查速度
+        //////////////////////////////////
+        /**
+         * 共点节点信息
+         */
+        class DCDividerTopoNode {
+        public:
+            //节点id
+            string nodeId_;
+
+            //与本拓扑节点共点的所有车道线，key和value都是车道线id
+            map<string, string> startRelateNodes_;
+
+            map<string, string> endRelateNodes_;
+        };
     }
 }
 

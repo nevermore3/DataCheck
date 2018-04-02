@@ -25,7 +25,6 @@ namespace kd {
         /////////////////////////////////////////////////////////////////////////////////////////
         //  KDDividerAttribute
         /////////////////////////////////////////////////////////////////////////////////////////
-
         bool DCDividerAttribute::typeSame(shared_ptr<DCDividerAttribute> dividerAtt) {
             if (dividerAtt == nullptr)
                 return false;
@@ -69,9 +68,8 @@ namespace kd {
 
 
         /////////////////////////////////////////////////////////////////////////////////////////
-        // DCivider
+        // DCDivider
         /////////////////////////////////////////////////////////////////////////////////////////
-
         bool DCDivider::isValid() {
             if (line_ == nullptr || len_ == 0.0)
                 return false;
@@ -140,9 +138,6 @@ namespace kd {
             atts_.swap(attsTemp);
         }
 
-
-
-
         int DCDivider::getAttNodeIndex(shared_ptr<DCDividerNode> node) {
             if(node == nullptr)
                 return -1;
@@ -201,6 +196,56 @@ namespace kd {
                 this->valid_ = false;
                 return false;
             }
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////
+        // DCLane
+        /////////////////////////////////////////////////////////////////////////////////////////
+
+        void DCLane::sortAtts() {
+            if (atts_.size() <= 1)
+                return;
+
+            //获取原有顺序
+            vector<pair<int, int>> attIndexes;
+            for (int i = 0; i < atts_.size(); i++) {
+                shared_ptr<DCLaneAttribute> &att = atts_[i];
+
+                int nodeIndex = getAttNodeIndex(att->dividerNode_);
+
+                attIndexes.emplace_back(pair<int, int>(i, nodeIndex));
+            }
+
+            //排序
+            sort(attIndexes.begin(), attIndexes.end(), [](const pair<int, int> &v1, const pair<int, int> &v2) {
+                if (v1.second < v2.second) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            //根据排序后的顺序重制列表
+            std::vector<shared_ptr<DCLaneAttribute>> attsTemp;
+            for (pair<int, int> &attIndex : attIndexes) {
+                attsTemp.emplace_back(atts_[attIndex.first]);
+            }
+
+            atts_.swap(attsTemp);
+        }
+
+        int DCLane::getAttNodeIndex(shared_ptr<DCDividerNode> node) {
+            if(node == nullptr || rightDivider_ == nullptr)
+                return -1;
+
+            for (int i = 0; i < rightDivider_->nodes_.size(); i++) {
+                shared_ptr<DCDividerNode> &tmpNode = rightDivider_->nodes_[i];
+                if (tmpNode->id_ == node->id_)
+                    return i;
+            }
+
+            return -1;
         }
 
     }

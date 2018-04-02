@@ -21,18 +21,18 @@ namespace kd {
             return id;
         }
 
-        bool ModelDataLoader::execute(shared_ptr<DCModalData> modelData, shared_ptr<DCModelDefine> modelDefine) {
+        bool ModelDataLoader::execute(shared_ptr<DCModalData> modelData, shared_ptr<DCModelDefine> modelDefine, shared_ptr<CheckErrorOutput> errorOutput) {
 
             CheckTaskInput taskInput;
             if (taskInput.loadTaskModel(modelFile_, modelDefine)) {
 
                 ModelDataInput dataInput;
                 if (fileType_ == "point") {
-                    return dataInput.loadPointFile(dataFile_, modelDefine->vecFieldDefines, modelData);
+                    return dataInput.loadPointFile(dataFile_, modelDefine->vecFieldDefines, modelData, errorOutput);
                 } else if (fileType_ == "arc") {
-                    return dataInput.loadArcFile(dataFile_, modelDefine->vecFieldDefines, modelData);
+                    return dataInput.loadArcFile(dataFile_, modelDefine->vecFieldDefines, modelData, errorOutput);
                 } else if (fileType_ == "dbf") {
-                    return dataInput.loadDBFFile(dataFile_, modelDefine->vecFieldDefines, modelData);
+                    return dataInput.loadDBFFile(dataFile_, modelDefine->vecFieldDefines, modelData, errorOutput);
                 } else {
                     cout << "[Error] data file type error " << fileType_ << endl;
                     return false;

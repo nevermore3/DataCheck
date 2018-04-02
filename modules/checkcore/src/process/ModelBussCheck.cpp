@@ -12,7 +12,7 @@ namespace kd {
             return id;
         }
 
-        bool ModelBussCheck::execute(shared_ptr<DCModalData> modelData, shared_ptr<DCModelDefine> modelDefine) {
+        bool ModelBussCheck::execute(shared_ptr<DCModalData> modelData, shared_ptr<DCModelDefine> modelDefine, shared_ptr<CheckErrorOutput> errorOutput) {
 
             vector<shared_ptr<DCFieldCheckDefine>> vecFieldChecks;
             for (shared_ptr<DCFieldCheckDefine> check : modelDefine->vecFieldChecks) {

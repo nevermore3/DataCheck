@@ -7,12 +7,83 @@
 namespace kd {
     namespace dc {
 
-        string DCDividerCheckError::toString() {
+        /////////////////////////////////////////////////////////////////////////////////////////
+        // DCkError
+        /////////////////////////////////////////////////////////////////////////////////////////
+
+        DCError::DCError(string checkModel){
+            checkModel_ = checkModel;
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////
+        // DCAttCheckError
+        /////////////////////////////////////////////////////////////////////////////////////////
+        DCAttCheckError::DCAttCheckError(string checkModel): DCError(checkModel){
+
+        }
+
+        DCAttCheckError::DCAttCheckError(string checkModel, string modelName, string fieldName, string recordId):
+                DCError(checkModel){
+            modelName_ = modelName;
+            fieldName_ = fieldName;
+            recordId_  = recordId;
+        }
+
+        string DCAttCheckError::getHeader(){
+            return "checkModel,modelName,fieldName,recordId,errorDesc";
+        }
+
+        string DCAttCheckError::toString() {
             stringstream ss;
-            ss << "DCDividerCheckError: " << dividerId_ << "," << nodeId_ << endl;
+            ss << checkModel_ << "," << modelName_ << "," << fieldName_ << "," << recordId_ << "," << errorDesc_;
             return ss.str();
         }
 
+        /////////////////////////////////////////////////////////////////////////////////////////
+        // DCRelationCheckError
+        /////////////////////////////////////////////////////////////////////////////////////////
+        DCRelationCheckError::DCRelationCheckError(string checkModel) : DCError(checkModel){
+
+        }
+
+        DCRelationCheckError::DCRelationCheckError(string checkModel, string modelName, string fieldName,
+                                                   string refModelName, string refFieldName):
+                DCError(checkModel){
+            modelName_ = modelName;
+            fieldName_ = fieldName;
+            refModelName_ = refModelName;
+            refFieldName_ = refFieldName;
+        }
+
+        string DCRelationCheckError::getHeader(){
+            return "checkModel,modelName,fieldName,refModelName,refFieldName,recordValue,errorDesc";
+        }
+
+        string DCRelationCheckError::toString() {
+            stringstream ss;
+            ss << checkModel_ << "," << modelName_ << "," << fieldName_ << "," << refModelName_;
+            ss << "," << refFieldName_ << "," << recordValue_ << "," << errorDesc_;
+            return ss.str();
+        }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////
+        // DCDividerCheckError
+        /////////////////////////////////////////////////////////////////////////////////////////
+        DCDividerCheckError::DCDividerCheckError(string checkModel) : DCError(checkModel) {
+
+        }
+
+        string DCDividerCheckError::getHeader(){
+            return "checkModel,dividerId,attId,nodeId,lng,lat,z,errorDesc";
+        }
+
+        string DCDividerCheckError::toString() {
+            stringstream ss;
+            ss << checkModel_<< "," << dividerId_ << "," << attId_ << "," << nodeId_;
+            ss << "," << setprecision(12) << lng_ << "," << lat_ << "," << z_ << "," << errorDesc_;
+            return ss.str();
+        }
 
         shared_ptr<DCDividerCheckError>
         DCDividerCheckError::createByAtt(string checkModel, shared_ptr<DCDivider> div,

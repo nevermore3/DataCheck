@@ -12,7 +12,7 @@ namespace kd {
             return id;
         }
 
-        bool ModelRelationCheck::execute(shared_ptr<ModelDataManager> modelDataManager) {
+        bool ModelRelationCheck::execute(shared_ptr<ModelDataManager> modelDataManager, shared_ptr<CheckErrorOutput> errorOutput) {
 
             return false;
         }

@@ -7,6 +7,7 @@
 #include "IModelProcessor.h"
 
 #include "data/DataManager.h"
+#include "storage/CheckErrorOutput.h"
 
 namespace kd {
     namespace dc {
@@ -28,7 +29,7 @@ namespace kd {
              * @param modelDefine 模型定义
              * @return 操作是否成功
              */
-            virtual bool execute(shared_ptr<ModelDataManager> modelDataManager);
+            virtual bool execute(shared_ptr<ModelDataManager> modelDataManager, shared_ptr<CheckErrorOutput> errorOutput);
 
         private:
             const string id = "model_relation_check";

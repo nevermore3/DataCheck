@@ -59,6 +59,12 @@ namespace kd {
            //记录所有车道线共点信息， map的key为节点id
            map<string, shared_ptr<DCDividerTopoNode>> topoNodes_;
 
+           //所有车道对象，map的key为车道的id
+           map<string, shared_ptr<DCLane>> lanes_;
+
+           //车道组
+           map<string, shared_ptr<DCLaneGroup>> laneGroups_;
+
        };
 
     }

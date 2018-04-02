@@ -22,7 +22,7 @@ namespace kd {
                 return false;
 
             MapDataInput mapDataInput;
-            if(mapDataInput.loadDivider(basePath_, mapDataManager->dividers_)){
+            if(mapDataInput.loadDivider(basePath_, mapDataManager->dividers_, errorOutput)){
 
                 for(auto recordit : mapDataManager->dividers_){
                     string divid = recordit.first;

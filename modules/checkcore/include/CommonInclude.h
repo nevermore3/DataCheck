@@ -12,6 +12,9 @@
 #include <set>
 #include <vector>
 #include <memory>
+#include <iostream>
+#include <iomanip>
+#include <fstream>
 using namespace std;
 
 //thirdparty -- Eigen
@@ -19,7 +22,7 @@ using namespace std;
 using namespace Eigen;
 
 //thirdparty -- opencv
-#include <opencv2/opencv.hpp>
+//#include <opencv2/opencv.hpp>
 
 
 

@@ -392,7 +392,7 @@ namespace kd {
              * @param A
              * @return
              */
-            static bool polynomialCurveFit(std::vector<cv::Point3d> & key_point, int n, cv::Mat& A);
+            //static bool polynomialCurveFit(std::vector<cv::Point3d> & key_point, int n, cv::Mat& A);
 
         };
 

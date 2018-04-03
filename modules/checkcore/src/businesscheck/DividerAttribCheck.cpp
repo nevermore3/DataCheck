@@ -117,7 +117,7 @@ namespace kd {
 
                     auto whiteit = whiteTypes.find(refType);
                     if (whiteit != whiteTypes.end()) {
-                        //校验黄色车道线兼容性
+                        //校验白色车道线兼容性
                         for (int j = i + 1; j < div->atts_.size(); j++) {
                             long checkType = div->atts_[j]->type_;
                             if (whiteTypes.find(checkType) == whiteTypes.end()) {
@@ -135,7 +135,7 @@ namespace kd {
 
                         auto yellowit = yellowTypes.find(refType);
                         if (yellowit != yellowTypes.end()) {
-                            //校验白色车道线兼容性
+                            //校验黄色车道线兼容性
                             for (int j = i + 1; j < div->atts_.size(); j++) {
                                 long checkType = div->atts_[j]->type_;
                                 if (yellowTypes.find(checkType) == yellowTypes.end()) {
@@ -184,8 +184,8 @@ namespace kd {
                             shared_ptr<DCDividerCheckError> error =
                                     DCDividerCheckError::createByAtt("JH_C_11", div, att);
                             stringstream ss;
-                            ss << "virtual divider att error. [type:" << att->type_ << "],[color:";
-                            ss << att->color_ << "],[dirveRule:" << att->driveRule_ << "]";
+                            ss << "virtual divider att error. [type:" << att->type_ << "][color:";
+                            ss << att->color_ << "][dirveRule:" << att->driveRule_ << "]";
                             error->errorDesc_ = ss.str();
 
                             errorOutput->saveError(error);
@@ -198,17 +198,16 @@ namespace kd {
                     if(colormapit != colorDividerTypeMaps.end()){
                         auto dividerTypes = colormapit->second;
                         auto typeit = dividerTypes.find(att->type_);
-                        if(typeit != dividerTypes.end()){
+                        if(typeit == dividerTypes.end()){
                             //颜色和车道线线型不匹配
                             shared_ptr<DCDividerCheckError> error =
                                     DCDividerCheckError::createByAtt("JH_C_11", div, att);
                             stringstream ss;
-                            ss << "divider color & type not match. [color:" << att->color_ << "],[type:";
+                            ss << "divider color & type not match. [color:" << att->color_ << "][type:";
                             ss << att->type_ << "]";
                             error->errorDesc_ = ss.str();
 
                             errorOutput->saveError(error);
-
                         }
                     }
 
@@ -221,12 +220,12 @@ namespace kd {
                     if(driveruleit != driveRuleDividerTypeMaps.end()){
                         auto dividerTypes = driveruleit->second;
                         auto typeit = dividerTypes.find(att->type_);
-                        if(typeit != dividerTypes.end()){
+                        if(typeit == dividerTypes.end()){
                             //通行类型和车道线线型不匹配
                             shared_ptr<DCDividerCheckError> error =
                                     DCDividerCheckError::createByAtt("JH_C_11", div, att);
                             stringstream ss;
-                            ss << "divider driverule & type not match. [driveRule:" << att->driveRule_ << "],[type:";
+                            ss << "divider driverule & type not match. [driveRule:" << att->driveRule_ << "][type:";
                             ss << att->type_ << "]";
                             error->errorDesc_ = ss.str();
 
@@ -259,26 +258,38 @@ namespace kd {
                     continue;
                 }
 
-                //起点没有DA的情况
-                int startNodeIndex = div->getAttNodeIndex( div->atts_[0]->dividerNode_ );
-                if( (div->direction_ == DIV_DIR_FORWARD && startNodeIndex != 0) || //正向起点没有da
-                        (div->direction_ == DIV_DIR_BACKWORD && startNodeIndex != daCount-1) || //反向起点没有da
-                        ((div->direction_ == DIV_DIR_DUAL || div->direction_ == DIV_DIR_FORBIDDEN) && //双向或禁行在端点没有da
-                                startNodeIndex != 0 && startNodeIndex != daCount -1 )){
-                    //车道线起点没有属性变化点
-                    shared_ptr<DCDividerCheckError> error =
-                            DCDividerCheckError::createByAtt("JH_C_11", div, nullptr);
-                    error->errorDesc_ = "divider no da on start point";
-
-                    errorOutput->saveError(error);
-                    continue;
+                //判断属性变化点的控制方向
+                bool nodeDirection = true; //默认是正向
+                if(div->nodes_[0]->id_ == div->toNodeId_){
+                    nodeDirection = false;
                 }
 
-                //检查是不是起点和终点都有DA
-                if(daCount > 1){
-                    int endNodeIndex = div->getAttNodeIndex( div->atts_[daCount-1]->dividerNode_ );
-                    if(  (startNodeIndex==0 && endNodeIndex == daCount-1) ||
-                            (startNodeIndex == daCount-1 && endNodeIndex == 0)){
+                //起点没有DA的情况
+                {
+                    string startAttNodeId;
+                    if(nodeDirection)
+                        startAttNodeId = div->atts_[0]->dividerNode_->id_;
+                    else
+                        startAttNodeId = div->atts_[daCount-1]->dividerNode_->id_;
+
+                    if(startAttNodeId != div->fromNodeId_){
+                        //车道线起点没有属性变化点
+                        shared_ptr<DCDividerCheckError> error =
+                                DCDividerCheckError::createByAtt("JH_C_11", div, nullptr);
+                        error->errorDesc_ = "divider no da on start point";
+
+                        errorOutput->saveError(error);
+                        continue;
+                    }
+                }
+
+                //判断起点和终点都有属性变化点的情形
+                {
+                    string startAttNodeId = div->atts_[0]->dividerNode_->id_;
+                    string endAttNodeId = div->atts_[daCount-1]->dividerNode_->id_;
+
+                    if( (startAttNodeId == div->fromNodeId_ && endAttNodeId == div->toNodeId_) ||
+                        (startAttNodeId == div->toNodeId_ && endAttNodeId == div->fromNodeId_) ){
                         //车道线起点和终点都有属性变化点
                         shared_ptr<DCDividerCheckError> error =
                                 DCDividerCheckError::createByAtt("JH_C_11", div, nullptr);
@@ -286,6 +297,7 @@ namespace kd {
 
                         errorOutput->saveError(error);
                         continue;
+
                     }
                 }
             }

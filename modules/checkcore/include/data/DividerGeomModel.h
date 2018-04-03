@@ -73,10 +73,10 @@ namespace kd {
 
         //车道线方向信息
         enum EnumDividerDirection{
-            DIV_DIR_DUAL = 1, //双向
-            DIV_DIR_FORWARD = 2, //正向
-            DIV_DIR_BACKWORD = 3, //逆向
-            DIV_DIR_FORBIDDEN = 4 //双向禁行
+            DIV_DIR_BI_DIRECTION = 1, //双向
+            DIV_DIR_POSITIVE_DIRECTION = 2, //正向
+            DIV_DIR_NEGATIVE_DIRECTION = 3, //逆向
+            DIV_DIR_CLOSED_IN_BOTH_DIRECTION = 4 //双向禁行
         };
 
 
@@ -143,6 +143,8 @@ namespace kd {
                 direction_ = 2; //
                 rLine_ = 0; //
                 tollFlag_ = 0; //
+                fromNodeId_ = -1; //
+                toNodeId_ = -1; //
 
                 line_ = nullptr;
                 len_ = 0.0;
@@ -197,10 +199,16 @@ namespace kd {
             //收费站分隔线标识:"0：普通分隔线, 1：收费站分隔线"
             long tollFlag_;
 
-            //所有节点对象
+            //开始节点
+            string fromNodeId_;
+
+            //结束节点
+            string toNodeId_;
+
+            //所有节点对象，同数字化方向相同
             std::vector<shared_ptr<DCDividerNode>> nodes_;
 
-            //所有属性变化点
+            //所有属性变化点，最终是按照节点的顺序，从索引小到大排序
             std::vector<shared_ptr<DCDividerAttribute>> atts_;
 
             //geos线对象，用于空间运算判断

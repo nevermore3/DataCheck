@@ -17,16 +17,35 @@ namespace kd {
         }
 
 
-        void DividerShapeDefectCheck::getComparePair(shared_ptr<DCDivider> div, int begin, int end, vector<pair<int,int>> & pairs){
+        void DividerShapeDefectCheck::getComparePair(shared_ptr<DCDivider> div, int begin, int end, bool nodeDirection, vector<pair<int,int>> & pairs){
 
-            for( int i = begin ; i <= end ; i ++ ){
-                if(div->nodes_[i]->dashType_ == DN_DASH_TYPE_DOT_END){
+            if(nodeDirection){
+                //正向查找
+                for( int i = begin ; i <= end ; i ++ ){
+                    if(div->nodes_[i]->dashType_ == DN_DASH_TYPE_DOT_END){
 
-                    for( int j = i+1 ; j <= end ; j ++){
-                        if(div->nodes_[j]->dashType_ == DN_DASH_TYPE_DOT_START){
+                        for( int j = i+1 ; j <= end ; j ++){
+                            if(div->nodes_[j]->dashType_ == DN_DASH_TYPE_DOT_START){
 
-                            pairs.emplace_back(pair<int,int>(i,j));
-                            i = j+1;
+                                pairs.emplace_back(pair<int,int>(i,j));
+                                i = j; //check ???
+                                break;
+                            }
+                        }
+                    }
+                }
+            }else{
+                //反向查找
+                for( int i = begin ; i >= end ; i -- ){
+                    if(div->nodes_[i]->dashType_ == DN_DASH_TYPE_DOT_END){
+
+                        for( int j = i-1 ; j >= end ; j --){
+                            if(div->nodes_[j]->dashType_ == DN_DASH_TYPE_DOT_START){
+
+                                pairs.emplace_back(pair<int,int>(i,j));
+                                i = j; //check ???
+                                break;
+                            }
                         }
                     }
                 }
@@ -35,9 +54,9 @@ namespace kd {
 
 
         void DividerShapeDefectCheck::checkShapeDefect( string checkModel, double distLimit, shared_ptr<DCDivider> div, shared_ptr<DCDividerAttribute> divAtt,
-                               int beginNodexIdx, int endNodeIdx, shared_ptr<CheckErrorOutput> errorOutput){
+                               int beginNodexIdx, int endNodeIdx, bool nodeDirection, shared_ptr<CheckErrorOutput> errorOutput){
             vector<pair<int,int>> nodeSegs;
-            getComparePair(div, beginNodexIdx, endNodeIdx, nodeSegs);
+            getComparePair(div, beginNodexIdx, endNodeIdx, nodeDirection, nodeSegs);
 
             for( pair<int,int> oneseg : nodeSegs){
                 shared_ptr<DCDividerNode> node1 = div->nodes_[oneseg.first];
@@ -46,14 +65,12 @@ namespace kd {
                 double distance = KDGeoUtil::distanceLL( node1->coord_.lng_, node1->coord_.lat_, node2->coord_.lng_, node2->coord_.lat_);
 
                 if(distance > distLimit){
-                    shared_ptr<DCDividerCheckError> error = make_shared<DCDividerCheckError>(checkModel);
-                    error->dividerId_ = div->id_;
-                    error->nodeId_ = node1->id_;
-                    error->attId_ = divAtt->id_;
-                    error->lng_ = node1->coord_.lng_;
-                    error->lat_ = node1->coord_.lat_;
-                    error->z_ = node1->coord_.z_;
-                    error->errorDesc_ = to_string(distance);
+                    shared_ptr<DCDividerCheckError> error =
+                            DCDividerCheckError::createByNode(checkModel, div, node1);
+
+                    stringstream ss;
+                    ss << "from node " << node1->id_ << " to node " << node2->id_ << " distance is " << distance << " meter.";
+                    error->errorDesc_ = ss.str();
 
                     errorOutput->saveError(error);
                 }
@@ -63,20 +80,20 @@ namespace kd {
 
 
         void DividerShapeDefectCheck::checkShapeDefect(shared_ptr<DCDivider> div, shared_ptr<DCDividerAttribute> divAtt,
-                              int beginNodexIdx, int endNodeIdx, shared_ptr<CheckErrorOutput> errorOutput){
+                              int beginNodexIdx, int endNodeIdx, bool nodeDirection, shared_ptr<CheckErrorOutput> errorOutput){
 
             if(divAtt->type_ == DA_TYPE_WHITE_DOTTED){
                 //需求编号：JH_C_1
                 double distLimit = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::DOTLINE_DEFECT_LEN);
                 string checkModel = "JH_C_1";
-                checkShapeDefect(checkModel, distLimit, div, divAtt, beginNodexIdx, endNodeIdx, errorOutput);
+                checkShapeDefect(checkModel, distLimit, div, divAtt, beginNodexIdx, endNodeIdx, nodeDirection, errorOutput);
 
             }else if(divAtt->type_ == DA_TYPE_BUS_LANE){
                 //需求编号：JH_C_2
                 double distLimit = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::BUSELINE_DEFECT_LEN);
 
                 string checkModel = "JH_C_2";
-                checkShapeDefect(checkModel, distLimit, div, divAtt, beginNodexIdx, endNodeIdx, errorOutput);
+                checkShapeDefect(checkModel, distLimit, div, divAtt, beginNodexIdx, endNodeIdx, nodeDirection, errorOutput);
             }
         }
 
@@ -87,6 +104,12 @@ namespace kd {
                 shared_ptr<DCDivider> div = recordit.second;
                 if(!div->valid_)
                     continue;
+
+                //判断属性变化点的控制方向
+                bool nodeDirection = true; //默认是正向
+                if(div->nodes_[0]->id_ == div->toNodeId_){
+                    nodeDirection = false;
+                }
 
                 //检查每个DA控制的段
                 int attSize = div->atts_.size();
@@ -102,7 +125,7 @@ namespace kd {
                         nodeEndIndex = div->getAttNodeIndex(divAttEnd->dividerNode_);
                     }
 
-                    checkShapeDefect(div, divAtt, nodeBeginIndex, nodeEndIndex, errorOutput);
+                    checkShapeDefect(div, divAtt, nodeBeginIndex, nodeEndIndex, nodeDirection, errorOutput);
                 }
             }
         }

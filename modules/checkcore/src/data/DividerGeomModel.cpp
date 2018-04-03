@@ -248,5 +248,25 @@ namespace kd {
             return -1;
         }
 
+
+        /////////////////////////////////////////////////////////////////////////////////////////
+        //  KDLaneAttribute
+        /////////////////////////////////////////////////////////////////////////////////////////
+        bool DCLaneAttribute::typeSame(shared_ptr<DCLaneAttribute> laneAtt) {
+            if (laneAtt == nullptr)
+                return false;
+
+
+            if (this->laneType_ == laneAtt->laneType_ && this->subType_ == laneAtt->subType_ &&
+                this->direction_ == laneAtt->direction_ && this->width_ == laneAtt->width_ &&
+                this->maxSpeed_ == laneAtt->maxSpeed_ && this->minSpeed_ == laneAtt->minSpeed_ &&
+                this->smType_ == laneAtt->smType_ && this->status_ == laneAtt->status_) {
+                return true;
+            }
+
+            return false;
+        }
+
+
     }
 }

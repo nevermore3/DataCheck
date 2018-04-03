@@ -71,6 +71,14 @@ namespace kd {
             DN_DASH_TYPE_DOT_MIDDLE = 3 //3：虚线中间点
         };
 
+        //车道线方向信息
+        enum EnumDividerDirection{
+            DIV_DIR_DUAL = 1, //双向
+            DIV_DIR_FORWARD = 2, //正向
+            DIV_DIR_BACKWORD = 3, //逆向
+            DIV_DIR_FORBIDDEN = 4 //双向禁行
+        };
+
 
         class DCModel {
         public:
@@ -308,6 +316,10 @@ namespace kd {
         class DCLaneAttribute : public DCModel {
 
         public:
+            //判断两个属性变化点对象是否是同类型属性
+            bool typeSame(shared_ptr<DCLaneAttribute> laneAtt);
+
+        public:
             //车道类型 "0：未调查, 1：普通车道, 2：停车道, 3：进入车道, 4：退出车道, 5：进入退出车道
             // 6：连接车道, 7：专用车道, 8：潮汐车道, 9：应急车道, 10：可变导向车道, 11：收费站车道
             //, 12：HOV车道, 13：摩托车道, 14：自行车道, 99：其他车道"
@@ -319,10 +331,10 @@ namespace kd {
             //        退出车道：, 0：减速车道
             //        进入退出车道, 0：加速减速车道
             //        连接车道：, 0：加速车道, 1：减速车道"
-            long subType;
+            long subType_;
 
             //车道方向 "1：双向, 2：正向, 3：逆向, 4：双向禁行"
-            long direction;
+            long direction_;
 
             //车道宽度 0～99.999999
             double width_;

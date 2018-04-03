@@ -16,6 +16,10 @@ namespace kd {
         void CheckErrorOutput::saveError(shared_ptr<DCAttCheckError> error){
             cout << error->toString() << endl;
         }
+
+        void CheckErrorOutput::saveError(shared_ptr<DCLaneCheckError> error){
+            cout << error->toString() << endl;
+        }
     }
 }
 

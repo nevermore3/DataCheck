@@ -37,6 +37,9 @@ namespace kd {
 
         private:
 
+            //车道左右边线的通行方向（矢量化方向+车道线方向）冲突
+            void check_JH_C_16(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput);
+
             //车道右侧车道线起点没有LA
             void check_JH_C_19(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput);
 

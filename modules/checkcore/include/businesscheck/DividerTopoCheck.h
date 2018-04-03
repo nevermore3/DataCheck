@@ -33,6 +33,7 @@ namespace kd {
             execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) override;
 
         private:
+            //共点的车道线通行方向（矢量化方向+车道线方向）冲突
             void check_JH_C_6(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput);
 
         private:

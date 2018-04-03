@@ -135,6 +135,97 @@ namespace kd {
 
             return error;
         }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////
+        // DCLaneCheckError
+        /////////////////////////////////////////////////////////////////////////////////////////
+        DCLaneCheckError::DCLaneCheckError(string checkModel) : DCError(checkModel) {
+
+        }
+
+        string DCLaneCheckError::getHeader(){
+            return "checkModel,laneId,leftDividerId,rightDividerId,attId,nodeId,lng,lat,z,errorDesc";
+        }
+
+        string DCLaneCheckError::toString() {
+            stringstream ss;
+            ss << checkModel_<< "," << laneId_ << "," << leftDividerId_ << "," << rightDividerId_;
+            ss << "," << attId_ << "," << nodeId_;
+            ss << "," << setprecision(12) << lng_ << "," << lat_ << "," << z_ << "," << errorDesc_;
+            return ss.str();
+        }
+
+        shared_ptr<DCLaneCheckError>
+        DCLaneCheckError::createByAtt(string checkModel, shared_ptr<DCLane> lane,
+                                         shared_ptr<DCLaneAttribute> att) {
+
+            shared_ptr<DCLaneCheckError> error = make_shared<DCLaneCheckError>(checkModel);
+            if(lane == nullptr)
+                return error;
+
+            error->laneId_ = lane->id_;
+            if(lane->leftDivider_)
+                error->leftDividerId_ = lane->leftDivider_->id_;
+            else
+                error->leftDividerId_ = "";
+
+            if(lane->rightDivider_)
+                error->rightDividerId_ = lane->rightDivider_->id_;
+            else
+                error->rightDividerId_ = "";
+
+
+            if( att != nullptr){
+                error->nodeId_ = att->dividerNode_->id_;
+                error->attId_ = att->id_;
+                error->lng_ = att->dividerNode_->coord_.lng_;
+                error->lat_ = att->dividerNode_->coord_.lat_;
+                error->z_ = att->dividerNode_->coord_.z_;
+            }else{
+                error->nodeId_ = "";
+                error->attId_ = "";
+                error->lng_ = 0.0;
+                error->lat_ = 0.0;
+                error->z_ = 0.0;
+            }
+
+            return error;
+        }
+
+        shared_ptr<DCLaneCheckError>
+        DCLaneCheckError::createByNode(string checkModel, shared_ptr<DCLane> lane, shared_ptr<DCDividerNode> node){
+            shared_ptr<DCLaneCheckError> error = make_shared<DCLaneCheckError>(checkModel);
+            if(lane == nullptr)
+                return error;
+
+            error->laneId_ = lane->id_;
+            if(lane->leftDivider_)
+                error->leftDividerId_ = lane->leftDivider_->id_;
+            else
+                error->leftDividerId_ = "";
+
+            if(lane->rightDivider_)
+                error->rightDividerId_ = lane->rightDivider_->id_;
+            else
+                error->rightDividerId_ = "";
+
+            if( node != nullptr){
+                error->nodeId_ = node->id_;
+                error->attId_ = "";
+                error->lng_ = node->coord_.lng_;
+                error->lat_ = node->coord_.lat_;
+                error->z_ = node->coord_.z_;
+            }else{
+                error->nodeId_ = "";
+                error->attId_ = "";
+                error->lng_ = 0.0;
+                error->lat_ = 0.0;
+                error->z_ = 0.0;
+            }
+
+            return error;
+        }
     }
 }
 

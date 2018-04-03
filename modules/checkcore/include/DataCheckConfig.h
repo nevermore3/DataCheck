@@ -18,6 +18,13 @@ namespace kd {
             const static string DIVIDER_NODE_SPACE_LEN;
             const static string DIVIDER_HEIGHT_CHANGE_PER_METER;
 
+            const static string LA_SPACE_LEN;
+            const static string LANE_EDGE_MAX_ANGLE;
+            const static string LANE_EDGE_MIN_ANGLE;
+            const static string LANE_WIDTH_MAX;
+            const static string LANE_WIDTH_MIN;
+
+
         public:
             static DataCheckConfig & getInstance() {
                 static DataCheckConfig instance;

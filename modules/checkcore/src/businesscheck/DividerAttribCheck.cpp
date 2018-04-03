@@ -247,7 +247,9 @@ namespace kd {
                 if (!div->valid_)
                     continue;
 
-                if (div->atts_.size() == 0){
+                int daCount = div->atts_.size();
+                //没有DA的情况
+                if ( daCount == 0){
                     //车道线没有属性变化点
                     shared_ptr<DCDividerCheckError> error =
                             DCDividerCheckError::createByAtt("JH_C_11", div, nullptr);
@@ -257,8 +259,12 @@ namespace kd {
                     continue;
                 }
 
-                int nodeIndex = div->getAttNodeIndex( div->atts_[0]->dividerNode_ );
-                if( nodeIndex != 0){
+                //起点没有DA的情况
+                int startNodeIndex = div->getAttNodeIndex( div->atts_[0]->dividerNode_ );
+                if( (div->direction_ == DIV_DIR_FORWARD && startNodeIndex != 0) || //正向起点没有da
+                        (div->direction_ == DIV_DIR_BACKWORD && startNodeIndex != daCount-1) || //反向起点没有da
+                        ((div->direction_ == DIV_DIR_DUAL || div->direction_ == DIV_DIR_FORBIDDEN) && //双向或禁行在端点没有da
+                                startNodeIndex != 0 && startNodeIndex != daCount -1 )){
                     //车道线起点没有属性变化点
                     shared_ptr<DCDividerCheckError> error =
                             DCDividerCheckError::createByAtt("JH_C_11", div, nullptr);
@@ -266,6 +272,21 @@ namespace kd {
 
                     errorOutput->saveError(error);
                     continue;
+                }
+
+                //检查是不是起点和终点都有DA
+                if(daCount > 1){
+                    int endNodeIndex = div->getAttNodeIndex( div->atts_[daCount-1]->dividerNode_ );
+                    if(  (startNodeIndex==0 && endNodeIndex == daCount-1) ||
+                            (startNodeIndex == daCount-1 && endNodeIndex == 0)){
+                        //车道线起点和终点都有属性变化点
+                        shared_ptr<DCDividerCheckError> error =
+                                DCDividerCheckError::createByAtt("JH_C_11", div, nullptr);
+                        error->errorDesc_ = "divider has da on start and end.";
+
+                        errorOutput->saveError(error);
+                        continue;
+                    }
                 }
             }
         }

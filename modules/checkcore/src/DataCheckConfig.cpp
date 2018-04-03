@@ -19,6 +19,12 @@ namespace kd {
         const string DataCheckConfig::DIVIDER_NODE_SPACE_LEN = "divider_node_space_len";
         const string DataCheckConfig::DIVIDER_HEIGHT_CHANGE_PER_METER = "divider_height_change_per_meter";
 
+        const string DataCheckConfig::LA_SPACE_LEN = "la_space_len";
+        const string DataCheckConfig::LANE_EDGE_MAX_ANGLE = "lane_edge_max_angle";
+        const string DataCheckConfig::LANE_EDGE_MIN_ANGLE = "lane_edge_min_angle";
+        const string DataCheckConfig::LANE_WIDTH_MAX = "lane_width_max";
+        const string DataCheckConfig::LANE_WIDTH_MIN = "lane_width_min";
+
 
         void DataCheckConfig::load(string fileName) {
             ifstream in(fileName.c_str());

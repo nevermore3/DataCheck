@@ -26,6 +26,13 @@ namespace kd {
              */
             void saveError(shared_ptr<DCAttCheckError> error);
 
+
+            /**
+             * 保存车道检查相关的业务检查错误
+             * @param error 错误信息
+             */
+            void saveError(shared_ptr<DCLaneCheckError> error);
+
         };
     }
 }

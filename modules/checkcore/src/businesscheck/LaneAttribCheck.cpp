@@ -22,30 +22,65 @@ namespace kd {
             return id;
         }
 
+        void LaneAttribCheck::check_JH_C_16(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput){
+            for (auto recordit : mapDataManager->lanes_) {
+                shared_ptr<DCLane> lane = recordit.second;
+                if (!lane->valid_)
+                    continue;
+
+                if (lane->leftDivider_ == nullptr  || lane->rightDivider_ == nullptr) {
+                    lane->valid_ = false;
+                    cout << "[Error] lane divider info error." << endl;
+                    continue;
+                }
+
+                //检查各个夹角
+                shared_ptr<DCDivider> leftDiv = lane->leftDivider_;
+                shared_ptr<DCDivider> rightDiv = lane->rightDivider_;
+
+                //检查两个车道线的通行方向是否一致
+                if( (leftDiv->direction_ == 2 && rightDiv->direction_ == 3) ||
+                        (leftDiv->direction_ == 3 && rightDiv->direction_ == 2) ||
+                        leftDiv->direction_ == 4 || rightDiv->direction_ == 4){
+
+                    shared_ptr<DCLaneCheckError> error =
+                            DCLaneCheckError::createByAtt("JH_C_16", lane, nullptr);
+                    stringstream ss;
+                    ss << "two divider direction not match. [left direction:" << leftDiv->direction_;
+                    ss << "],[right direction:" << rightDiv->direction_ << "]";
+                    error->errorDesc_ = ss.str();
+
+                    lane->valid_ = false;
+
+                    errorOutput->saveError(error);
+                }
+            }
+        }
+
         //车道右侧车道线起点没有LA
         void LaneAttribCheck::check_JH_C_19(shared_ptr<MapDataManager> mapDataManager,
                                                shared_ptr<CheckErrorOutput> errorOutput) {
-            for (auto recordit : mapDataManager->dividers_) {
-                shared_ptr<DCDivider> div = recordit.second;
-                if (!div->valid_)
+            for (auto recordit : mapDataManager->lanes_) {
+                shared_ptr<DCLane> lane = recordit.second;
+                if (!lane->valid_)
                     continue;
 
-                if (div->atts_.size() == 0){
+                if (lane->atts_.size() == 0){
                     //车道线没有属性变化点
-                    shared_ptr<DCDividerCheckError> error =
-                            DCDividerCheckError::createByAtt("JH_C_11", div, nullptr);
-                    error->errorDesc_ = "divider no da";
+                    shared_ptr<DCLaneCheckError> error =
+                            DCLaneCheckError::createByAtt("JH_C_19", lane, nullptr);
+                    error->errorDesc_ = "lane no la";
 
                     errorOutput->saveError(error);
                     continue;
                 }
 
-                int nodeIndex = div->getAttNodeIndex( div->atts_[0]->dividerNode_ );
+                int nodeIndex = lane->getAttNodeIndex( lane->atts_[0]->dividerNode_ );
                 if( nodeIndex != 0){
                     //车道线起点没有属性变化点
-                    shared_ptr<DCDividerCheckError> error =
-                            DCDividerCheckError::createByAtt("JH_C_11", div, nullptr);
-                    error->errorDesc_ = "divider no da on start point";
+                    shared_ptr<DCLaneCheckError> error =
+                            DCLaneCheckError::createByAtt("JH_C_19", lane, nullptr);
+                    error->errorDesc_ = "lane no la on start point";
 
                     errorOutput->saveError(error);
                     continue;
@@ -56,26 +91,26 @@ namespace kd {
         //同一Divider上相邻两个LA属性完全一样
         void LaneAttribCheck::check_JH_C_21(shared_ptr<MapDataManager> mapDataManager,
                                                shared_ptr<CheckErrorOutput> errorOutput){
-            for (auto recordit : mapDataManager->dividers_) {
-                shared_ptr<DCDivider> div = recordit.second;
-                if (!div->valid_)
+            for (auto recordit : mapDataManager->lanes_) {
+                shared_ptr<DCLane> lane = recordit.second;
+                if (!lane->valid_)
                     continue;
 
-                if(div->atts_.size() <= 1){
+                if(lane->atts_.size() <= 1){
                     continue;
                 }
 
-                for( int i = 1 ; i < div->atts_.size() ; i ++ ){
+                for( int i = 1 ; i < lane->atts_.size() ; i ++ ){
 
-                    shared_ptr<DCDividerAttribute> da1 = div->atts_[i-1];
-                    shared_ptr<DCDividerAttribute> da2 = div->atts_[i];
+                    shared_ptr<DCLaneAttribute> la1 = lane->atts_[i-1];
+                    shared_ptr<DCLaneAttribute> la2 = lane->atts_[i];
 
-                    if(da1 != nullptr && da1->typeSame(da2)){
-                        shared_ptr<DCDividerCheckError> error =
-                                DCDividerCheckError::createByAtt("JH_C_12", div, da1);
+                    if(la1 != nullptr && la1->typeSame(la2)){
+                        shared_ptr<DCLaneCheckError> error =
+                                DCLaneCheckError::createByAtt("JH_C_21", lane, la1);
 
                         stringstream ss;
-                        ss << "da [id:"<< da1->id_ << "] same as da [id:" << da2->id_ << "]";
+                        ss << "la [id:"<< la1->id_ << "] same as la [id:" << la2->id_ << "]";
                         error->errorDesc_ = ss.str();
                         errorOutput->saveError(error);
                     }
@@ -87,36 +122,36 @@ namespace kd {
         void LaneAttribCheck::check_JH_C_20(shared_ptr<MapDataManager> mapDataManager,
                                                shared_ptr<CheckErrorOutput> errorOutput){
 
-            double daSpaceLen = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::DA_SPACE_LEN);
+            double laSpaceLen = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::LA_SPACE_LEN);
 
-            for (auto recordit : mapDataManager->dividers_) {
-                shared_ptr<DCDivider> div = recordit.second;
-                if (!div->valid_)
+            for (auto recordit : mapDataManager->lanes_) {
+                shared_ptr<DCLane> lane = recordit.second;
+                if (!lane->valid_)
                     continue;
 
-                if(div->atts_.size() <= 1){
+                if(lane->atts_.size() <= 1){
                     continue;
                 }
 
-                for( int i = 1 ; i < div->atts_.size() ; i ++ ){
+                for( int i = 1 ; i < lane->atts_.size() ; i ++ ){
 
-                    shared_ptr<DCDividerAttribute> da1 = div->atts_[i-1];
-                    shared_ptr<DCDividerAttribute> da2 = div->atts_[i];
+                    shared_ptr<DCLaneAttribute> la1 = lane->atts_[i-1];
+                    shared_ptr<DCLaneAttribute> la2 = lane->atts_[i];
 
-                    if(da1 == nullptr || da1->dividerNode_ == nullptr || da2 == nullptr || da2->dividerNode_ == nullptr){
+                    if(la1 == nullptr || la1->dividerNode_ == nullptr || la2 == nullptr || la2->dividerNode_ == nullptr){
                         continue;
                     }
 
-                    auto node1 = da1->dividerNode_;
-                    auto node2 = da2->dividerNode_;
+                    auto node1 = la1->dividerNode_;
+                    auto node2 = la2->dividerNode_;
                     double distance = KDGeoUtil::distanceLL(node1->coord_.lng_, node1->coord_.lat_, node2->coord_.lng_, node2->coord_.lat_);
 
-                    if(distance < daSpaceLen){
-                        shared_ptr<DCDividerCheckError> error =
-                                DCDividerCheckError::createByAtt("JH_C_13", div, da1);
+                    if(distance < laSpaceLen){
+                        shared_ptr<DCLaneCheckError> error =
+                                DCLaneCheckError::createByAtt("JH_C_20", lane, la1);
 
                         stringstream ss;
-                        ss << "length from da [id:"<< da1->id_ << "] to da [id:" << da2->id_ << "] is " << distance << " meter";
+                        ss << "length from la [id:"<< la1->id_ << "] to la [id:" << la2->id_ << "] is " << distance << " meter";
                         error->errorDesc_ = ss.str();
                         errorOutput->saveError(error);
                     }
@@ -129,6 +164,8 @@ namespace kd {
                                          shared_ptr<CheckErrorOutput> errorOutput) {
             if (mapDataManager == nullptr)
                 return false;
+
+            check_JH_C_16(mapDataManager, errorOutput);
 
             check_JH_C_19(mapDataManager, errorOutput);
 

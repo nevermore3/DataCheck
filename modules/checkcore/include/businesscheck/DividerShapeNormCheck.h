@@ -11,7 +11,7 @@ namespace kd {
     namespace dc {
 
         /**
-         * 车道线属性检查
+         * 车道线形状规范化检查
          * 对应检查项：JH_C_7,JH_C_8,JH_C_9
          */
         class DividerShapeNormCheck : public IMapProcessor{
@@ -46,12 +46,7 @@ namespace kd {
 
         private:
 
-            const string id = "divider_attrib_check";
-
-            map<long,long> yellowTypes;
-
-            map<long,long> whiteTypes;
-
+            const string id = "divider_shape_norm_check";
         };
     }
 }

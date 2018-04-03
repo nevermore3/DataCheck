@@ -141,6 +141,54 @@ namespace kd {
             //错误描述
             string errorDesc_;
         };
+
+
+        /**
+         * 车道检查错误
+         */
+        class DCLaneCheckError : public DCError {
+        public:
+            DCLaneCheckError(string checkModel);
+
+            static shared_ptr<DCLaneCheckError> createByAtt(string checkModel, shared_ptr<DCLane> lane,
+                                                               shared_ptr<DCLaneAttribute> att);
+
+            static shared_ptr<DCLaneCheckError>
+            createByNode(string checkModel, shared_ptr<DCLane> lane, shared_ptr<DCDividerNode> node);
+
+        public:
+            virtual string getHeader() override ;
+
+            virtual string toString() override ;
+
+        public:
+            //车道id
+            string laneId_;
+
+            //左车道线id
+            string leftDividerId_;
+
+            //右车道线id
+            string rightDividerId_;
+
+            //属性变化点id
+            string attId_;
+
+            //节点id
+            string nodeId_;
+
+            //节点、属性变化点对应的经度
+            double lng_;
+
+            //节点、属性变化点对应的纬度
+            double lat_;
+
+            //节点、属性变化点对应的高度
+            double z_;
+
+            //错误描述
+            string errorDesc_;
+        };
     }
 }
 

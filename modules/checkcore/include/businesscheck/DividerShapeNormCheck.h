@@ -17,7 +17,6 @@ namespace kd {
         class DividerShapeNormCheck : public IMapProcessor{
 
         public:
-            DividerShapeNormCheck();
 
         public:
 

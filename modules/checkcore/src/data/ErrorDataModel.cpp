@@ -136,6 +136,18 @@ namespace kd {
             return error;
         }
 
+        shared_ptr<DCDividerCheckError> DCDividerCheckError::createByNode(string checkModel, string nodeId, double lng, double lat, double z){
+            shared_ptr<DCDividerCheckError> error = make_shared<DCDividerCheckError>(checkModel);
+            error->dividerId_ = "";
+            error->nodeId_ = nodeId;
+            error->attId_ = "";
+            error->lng_ = lng;
+            error->lat_ = lat;
+            error->z_ = z;
+
+            return error;
+        }
+
 
         /////////////////////////////////////////////////////////////////////////////////////////
         // DCLaneCheckError

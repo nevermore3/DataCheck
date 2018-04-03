@@ -52,12 +52,12 @@ namespace kd {
                     double dAngle = fabs(angle1 - angle2);
                     if (dAngle > 180)
                         dAngle = 360 - dAngle;
-                    if (dAngle > edgeAngle) {
+                    if (dAngle > (180-edgeAngle)) {
                         shared_ptr<DCDividerCheckError> error =
                                 DCDividerCheckError::createByNode("JH_C_7", div, node1);
 
                         stringstream ss;
-                        ss << "angle is " << dAngle << ", node id is[" << node1->id_ << "," << node2->id_ << ","
+                        ss << "angle is " << dAngle << ". node id is[" << node1->id_ << ":" << node2->id_ << ":"
                            << node3->id_ << "]";
                         error->errorDesc_ = ss.str();
 
@@ -96,7 +96,7 @@ namespace kd {
                                 DCDividerCheckError::createByNode("JH_C_8", div, node1);
 
                         stringstream ss;
-                        ss << "node distance is " << distance ;
+                        ss << "from node " << node1->id_ << " to node " << node2->id_ << " distance is " << distance;
                         error->errorDesc_ = ss.str();
 
                         errorOutput->saveError(error);
@@ -110,8 +110,8 @@ namespace kd {
                                 DCDividerCheckError::createByNode("JH_C_9", div, node1);
 
                         stringstream ss;
-                        ss << "node " << node1->id_ << " height " << node1->coord_.z_ << ", node " << node2->id_ ;
-                        ss << " height " << node2->coord_.z_ << ", delta z is " << realDeltaZ;
+                        ss << "node " << node1->id_ << " height " << node1->coord_.z_ << ". node " << node2->id_ ;
+                        ss << " height " << node2->coord_.z_ << ". delta z is " << realDeltaZ << " and distance is " << distance;
                         error->errorDesc_ = ss.str();
 
                         errorOutput->saveError(error);

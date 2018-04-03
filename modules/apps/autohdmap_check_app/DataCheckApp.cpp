@@ -14,7 +14,14 @@
 #include "storage/CheckTaskInput.h"
 #include "storage/ModelDataInput.h"
 
+#include "MapProcessManager.h"
 #include "businesscheck/MapDataLoader.h"
+#include "businesscheck/DividerAttribCheck.h"
+#include "businesscheck/DividerShapeNormCheck.h"
+#include "businesscheck/DividerShapeDefectCheck.h"
+#include "businesscheck/DividerTopoCheck.h"
+#include "businesscheck/LaneAttribCheck.h"
+#include "businesscheck/LaneShapeNormCheck.h"
 
 using namespace kd::dc;
 
@@ -56,12 +63,27 @@ int dataCheck(string basePath, string taskFileName){
     //加载配置项
     DataCheckConfig::getInstance().load("config.properties");
 
-    MapDataLoader loader(basePath + "/data");
+    shared_ptr<MapProcessManager> mapProcessManager = make_shared<MapProcessManager>("mapCheck");
+
+    shared_ptr<MapDataLoader> loader = make_shared<MapDataLoader>(basePath + "/data");
+    shared_ptr<DividerAttribCheck> divAttCheck = make_shared<DividerAttribCheck>();
+    shared_ptr<DividerShapeNormCheck> divShpNormCheck = make_shared<DividerShapeNormCheck>();
+    shared_ptr<DividerShapeDefectCheck> divShpDefCheck = make_shared<DividerShapeDefectCheck>();
+    shared_ptr<DividerTopoCheck> divTopoCheck = make_shared<DividerTopoCheck>();
+    shared_ptr<LaneAttribCheck> laneAttCheck = make_shared<LaneAttribCheck>();
+    shared_ptr<LaneShapeNormCheck> laneShpCheck = make_shared<LaneShapeNormCheck>();
+
+    mapProcessManager->registerProcessor(divAttCheck);
+    mapProcessManager->registerProcessor(divShpNormCheck);
+    mapProcessManager->registerProcessor(divShpDefCheck);
+    mapProcessManager->registerProcessor(divTopoCheck);
+    mapProcessManager->registerProcessor(laneAttCheck);
+    mapProcessManager->registerProcessor(laneShpCheck);
+
     shared_ptr<MapDataManager> mapDataManager = make_shared<MapDataManager>();
     shared_ptr<CheckErrorOutput> errorOutput = make_shared<CheckErrorOutput>();
-    loader.execute(mapDataManager, errorOutput);
 
-
+    mapProcessManager->execute(mapDataManager, errorOutput);
 
     return 1;
 }

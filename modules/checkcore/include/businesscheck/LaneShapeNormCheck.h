@@ -17,7 +17,6 @@ namespace kd {
         class LaneShapeNormCheck : public IMapProcessor {
 
         public:
-            LaneShapeNormCheck();
 
         public:
 

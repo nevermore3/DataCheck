@@ -119,7 +119,10 @@ namespace kd {
                     int nodeBeginIndex = div->getAttNodeIndex(divAtt->dividerNode_);
                     int nodeEndIndex;
                     if(i == attSize-1){
-                        nodeEndIndex = div->nodes_.size() - 1;
+                        if(nodeDirection)
+                            nodeEndIndex = div->nodes_.size() - 1;
+                        else
+                            nodeEndIndex = 0;
                     }else{
                         shared_ptr<DCDividerAttribute> divAttEnd = div->atts_[i+1];
                         nodeEndIndex = div->getAttNodeIndex(divAttEnd->dividerNode_);

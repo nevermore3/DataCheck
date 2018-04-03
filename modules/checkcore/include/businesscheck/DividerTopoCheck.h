@@ -11,8 +11,8 @@ namespace kd {
     namespace dc {
 
         /**
-         * 车道线属性检查
-         * 对应检查项：JH_C_6
+         * 车道线拓扑关系检查
+         * 对应检查项：JH_C_6, JH_C_5
          */
         class DividerTopoCheck : public IMapProcessor {
 
@@ -33,6 +33,12 @@ namespace kd {
             execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) override;
 
         private:
+            //车行道边缘线在非停止线/出入口标线的地方断开
+            void check_JH_C_4(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput);
+
+            //存在非构成车道的车道线（非路口虚拟线）
+            void check_JH_C_5(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput);
+
             //共点的车道线通行方向（矢量化方向+车道线方向）冲突
             void check_JH_C_6(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput);
 

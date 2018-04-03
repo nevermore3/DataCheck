@@ -268,9 +268,9 @@ namespace kd {
                 {
                     string startAttNodeId;
                     if(nodeDirection)
-                        startAttNodeId = div->atts_[0]->dividerNode_->id_;
+                        startAttNodeId = div->atts_[0]->dividerNode_->id_; //正向第一个
                     else
-                        startAttNodeId = div->atts_[daCount-1]->dividerNode_->id_;
+                        startAttNodeId = div->atts_[daCount-1]->dividerNode_->id_; //反向第一个
 
                     if(startAttNodeId != div->fromNodeId_){
                         //车道线起点没有属性变化点
@@ -284,6 +284,7 @@ namespace kd {
                 }
 
                 //判断起点和终点都有属性变化点的情形
+                if(daCount > 1)
                 {
                     string startAttNodeId = div->atts_[0]->dividerNode_->id_;
                     string endAttNodeId = div->atts_[daCount-1]->dividerNode_->id_;
@@ -297,7 +298,6 @@ namespace kd {
 
                         errorOutput->saveError(error);
                         continue;
-
                     }
                 }
             }
@@ -348,6 +348,13 @@ namespace kd {
                     continue;
                 }
 
+
+                //判断属性变化点的控制方向
+                bool nodeDirection = true; //默认是正向
+                if(div->nodes_[0]->id_ == div->toNodeId_){
+                    nodeDirection = false;
+                }
+
                 for( int i = 1 ; i < div->atts_.size() ; i ++ ){
 
                     shared_ptr<DCDividerAttribute> da1 = div->atts_[i-1];
@@ -357,9 +364,11 @@ namespace kd {
                         continue;
                     }
 
-                    auto node1 = da1->dividerNode_;
-                    auto node2 = da2->dividerNode_;
-                    double distance = KDGeoUtil::distanceLL(node1->coord_.lng_, node1->coord_.lat_, node2->coord_.lng_, node2->coord_.lat_);
+                    int beginIndex = div->getAttNodeIndex(da1->dividerNode_);
+                    int endIndex = div->getAttNodeIndex(da2->dividerNode_);
+
+                    //1）只计算了平面距离；2）由于存在立交桥的情形，不直接计算两个节点间的直线距离，而是计算所有线段的距离和
+                    double distance = calLength(div, beginIndex, endIndex, nodeDirection);
 
                     if(distance < daSpaceLen){
                         shared_ptr<DCDividerCheckError> error =
@@ -372,6 +381,30 @@ namespace kd {
                     }
                 }
             }
+        }
+
+        double DividerAttribCheck::calLength(shared_ptr<DCDivider> div, int begin, int end, bool direction){
+
+            double distTotal = 0.0;
+            if(direction){
+                for( int i = begin ; i < end ; i ++ ){
+                    auto node1 = div->nodes_[i];
+                    auto node2 = div->nodes_[i+1];
+                    double distTemp = KDGeoUtil::distanceLL(node1->coord_.lng_, node1->coord_.lat_,
+                                                            node2->coord_.lng_, node2->coord_.lat_);
+                    distTotal += distTemp;
+                }
+            }else{
+                for( int i = begin ; i > end ; i -- ){
+                    auto node1 = div->nodes_[i];
+                    auto node2 = div->nodes_[i-1];
+                    double distTemp = KDGeoUtil::distanceLL(node1->coord_.lng_, node1->coord_.lat_,
+                                                            node2->coord_.lng_, node2->coord_.lat_);
+                    distTotal += distTemp;
+                }
+            }
+
+            return distTotal;
         }
 
 

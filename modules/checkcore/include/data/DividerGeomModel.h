@@ -493,10 +493,19 @@ namespace kd {
             //节点id
             string nodeId_;
 
-            //与本拓扑节点共点的所有车道线，key和value都是车道线id
-            map<string, string> startRelateNodes_;
+            //节点经度
+            double lng;
 
-            map<string, string> endRelateNodes_;
+            //节点纬度
+            double lat;
+
+            //节点高程
+            double z;
+
+            //与本拓扑节点共点的所有车道线，key和value都是车道线id
+            map<string, string> startRels_;
+
+            map<string, string> endRels_;
         };
     }
 }

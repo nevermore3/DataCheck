@@ -114,6 +114,8 @@ namespace kd {
             static shared_ptr<DCDividerCheckError>
             createByNode(string checkModel, shared_ptr<DCDivider> div, shared_ptr<DCDividerNode> node);
 
+            static shared_ptr<DCDividerCheckError> createByNode(string checkModel, string nodeId, double lng, double lat, double z);
+
         public:
             virtual string getHeader() override ;
 

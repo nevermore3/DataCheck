@@ -57,6 +57,17 @@ namespace kd {
             //同一个divider上相邻两个DA距离<1米
             void check_JH_C_13(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput);
 
+
+            /**
+             * 计算车道线指定范围索引的弧段的长度
+             * @param div 车道线
+             * @param begin 开始节点索引
+             * @param end 结束节点索引
+             * @param direction 节点索引方向，true代表正向，false代表反向
+             * @return 长度值
+             */
+            double calLength(shared_ptr<DCDivider> div, int begin, int end, bool direction);
+
         private:
 
             const string id = "divider_attrib_check";

@@ -60,6 +60,25 @@ namespace kd {
         void ModelBussCheck::checkLongFieldIdentify(shared_ptr<DCModalData> modelData, string fieldName){
             //TODO
             //multimap
+            for (shared_ptr<DCModelRecord> record : modelData->records) {
+
+                auto valuepair = record->longDatas.find(fieldName);
+                if (valuepair == record->longDatas.end()) {
+                    cout << "[Error] not find field " << fieldName << " value. " << endl;
+                    continue;
+                }
+
+                multimapid.insert(make_pair(valuepair->second,valuepair->first));
+                double recordValue = valuepair->second;
+                auto idpair = multimapid.find(recordValue);
+                if(idpair == multimapid.end()){
+                    continue;
+                }
+                int num = multimapid.count(recordValue);
+                if (num != 1) {
+                    cout << "[Error] checkLongValueIn : ID value not unique. " << recordValue << endl;
+                }
+            }
         }
 
         void ModelBussCheck::checkDoubleFieldIdentify(shared_ptr<DCModalData> modelData, string fieldName){

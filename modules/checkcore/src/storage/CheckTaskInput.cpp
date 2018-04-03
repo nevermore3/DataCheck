@@ -167,6 +167,40 @@ namespace kd {
                     }
                 }
 
+
+                //parse relation
+                {
+                    Poco::JSON::Array::Ptr relArray = rootobj->getArray("relation");
+                    int relCount = relArray->size();
+                    for( int i = 0 ; i < relCount ; i ++){
+                        Dynamic::Var value = relArray->get(i);
+                        Object::Ptr nodeObj = value.extract<Poco::JSON::Object::Ptr>();
+
+                        shared_ptr<DCRelationDefine> reldef = make_shared<DCRelationDefine>();
+                        reldef->member = getJSONString(nodeObj, "member");
+                        reldef->rule = getJSONString(nodeObj, "rule");
+
+                        modelDefine->vecRelation.emplace_back(reldef);
+                    }
+                }
+                //parse table relation
+                {
+                    Poco::JSON::Array::Ptr relArray = rootobj->getArray("relationcheck");
+                    int relCount = relArray->size();
+                    for( int i = 0 ; i < relCount ; i ++){
+                        Dynamic::Var value = relArray->get(i);
+                        Object::Ptr nodeObj = value.extract<Poco::JSON::Object::Ptr>();
+
+                        string model = getJSONString(nodeObj, "table");
+                        string nodetype = getJSONString(nodeObj, "node_type");
+                        string field = getJSONString(nodeObj, "field");
+
+                        map<string,string> mapfiletable;
+                        mapfiletable.insert(make_pair(model,field));
+                        modelDefine->mapRelation.insert(make_pair(stol(nodetype),mapfiletable));
+                    }
+                }
+
             }catch (Exception &e) {
                 cout<<"[Error] " << e.what()<<endl;
                 return false;

@@ -64,6 +64,15 @@ namespace kd {
                 if (dataLoader->execute(modelData, modelDefine, errorOutput)) {
 
                     //加入缓存
+                    string modelname = task->modelName;
+                    vector<string> vecurls;
+                    stringstream rooturlstr(modelname);
+                    string token;
+                    while (std::getline(rooturlstr, token, '/')) {
+                        vecurls.emplace_back(token);
+                    }
+
+                    task->modelName = vecurls[vecurls.size() - 1];
                     dataManager->modelDatas_.insert(pair<string, shared_ptr<DCModalData>>(task->modelName, modelData));
 
                     dataManager->modelDefines_.insert(
@@ -77,8 +86,8 @@ namespace kd {
             }
 
             //关联关系检查
-            //shared_ptr<ModelRelationCheck> relationCheck = make_shared<ModelRelationCheck>();
-            //relationCheck->execute(dataManager, errorOutput);
+            shared_ptr<ModelRelationCheck> relationCheck = make_shared<ModelRelationCheck>();
+            relationCheck->execute(dataManager, errorOutput);
             return true;
         }
     }

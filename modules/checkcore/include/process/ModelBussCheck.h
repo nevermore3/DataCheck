@@ -43,6 +43,7 @@ namespace kd {
 
         private:
             const string id = "model_buss_check";
+            multimap<long,string> multimapid;
 
         };
     }

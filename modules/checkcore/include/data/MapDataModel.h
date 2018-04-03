@@ -13,6 +13,7 @@ namespace kd {
         class DCFieldDefine;
         class DCFieldCheckDefine;
         class DCModelRecord;
+        class DCRelationDefine;
 
         class DCModelDefine{
 
@@ -29,6 +30,9 @@ namespace kd {
             vector<shared_ptr<DCFieldCheckDefine>> vecFieldChecks;
 
             //关联关系信息
+            vector<shared_ptr<DCRelationDefine>> vecRelation;
+
+            map<long,map<string,string>> mapRelation;
 
         };
 
@@ -107,6 +111,14 @@ namespace kd {
             map<string,double> doubleDatas;
 
             map<string,long> longDatas;
+        };
+
+        class DCRelationDefine{
+        public:
+
+            string member;
+
+            string rule;
         };
 
     }

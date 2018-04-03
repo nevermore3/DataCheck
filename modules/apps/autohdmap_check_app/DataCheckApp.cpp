@@ -73,6 +73,7 @@ int dataCheck(string basePath, string taskFileName){
     shared_ptr<LaneAttribCheck> laneAttCheck = make_shared<LaneAttribCheck>();
     shared_ptr<LaneShapeNormCheck> laneShpCheck = make_shared<LaneShapeNormCheck>();
 
+    mapProcessManager->registerProcessor(loader);
     mapProcessManager->registerProcessor(divAttCheck);
     mapProcessManager->registerProcessor(divShpNormCheck);
     mapProcessManager->registerProcessor(divShpDefCheck);

@@ -24,6 +24,7 @@ namespace kd {
         const string DataCheckConfig::LANE_EDGE_MIN_ANGLE = "lane_edge_min_angle";
         const string DataCheckConfig::LANE_WIDTH_MAX = "lane_width_max";
         const string DataCheckConfig::LANE_WIDTH_MIN = "lane_width_min";
+        const string DataCheckConfig::LANE_OVERLAP_AREA = "lane_overlap_area";
 
         const string DataCheckConfig::OBJECT_PL_BUFFER = "object_pl_buffer";
 

@@ -36,6 +36,9 @@ namespace kd {
 
 
         private:
+            //车道面和其他车道面相交
+            void check_JH_C_14(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput);
+
             //车道面的4个夹角<45°或者>135°
             void check_JH_C_15(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput);
 

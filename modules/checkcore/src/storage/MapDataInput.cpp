@@ -207,5 +207,67 @@ namespace kd {
             return true;
         }
 
+
+        bool MapDataInput::loadLaneGroup(string basePath, const map<string, shared_ptr<DCLane>> & lanes, map<string,
+                shared_ptr<DCLaneGroup>> & laneGroups, shared_ptr<CheckErrorOutput> errorOutput){
+
+            //读取车道线属性信息
+            string lgFileName = basePath + "/HD_LANE_GROUP";
+            DbfData lgDbfData(lgFileName);
+            if (lgDbfData.isInit()) {
+                int record_nums = lgDbfData.getRecords();
+                for (int i = 0; i < record_nums; i++) {
+
+                    shared_ptr<DCLaneGroup> laneGroup = make_shared<DCLaneGroup>();
+                    laneGroup->id_ = to_string(lgDbfData.readIntField(i, "ID"));
+                    string roadId = lgDbfData.readStringField(i, "ROAD_ID");
+
+                    if(roadId == "-1"){
+                        cout << "[Errro] lane group " << laneGroup->id_ << " relate road id is -1 " << endl;
+                        laneGroup->valid_ = false;
+                    }
+
+                    laneGroups.insert(make_pair(laneGroup->id_, laneGroup));
+                }
+            }else{
+                cout << "[Error] open lane group file error. fileName " << lgFileName << endl;
+                return false;
+            }
+
+            //建立车道分组和车道之间的关系
+            string rlgFileName = basePath + "/HD_R_LANE_GROUP";
+            DbfData rlgDbfData(rlgFileName);
+            if (rlgDbfData.isInit()) {
+                int record_nums = rlgDbfData.getRecords();
+                for (int i = 0; i < record_nums; i++) {
+
+                    shared_ptr<DCLaneGroup> divAtt = make_shared<DCLaneGroup>();
+                    divAtt->id_ = to_string(rlgDbfData.readIntField(i, "ID"));
+                    string lgId = to_string(rlgDbfData.readIntField(i, "LANE_GROUP"));
+                    string laneId = to_string(rlgDbfData.readIntField(i, "LANE_ID"));
+
+                    auto lgit = laneGroups.find(lgId);
+                    if(lgit == laneGroups.end()){
+                        cout << "[Error] HD_R_LANE_GROUP has not exist lanegroup " << lgId << endl;
+                        continue;
+                    }
+
+                    auto laneit = lanes.find(laneId);
+                    if(laneit == lanes.end()){
+                        cout << "[Error] HD_R_LANE_GROUP not find lane " << laneId << endl;
+                        continue;
+                    }
+
+                    lgit->second->lanes_.emplace_back(laneit->second);
+                }
+            }else{
+                cout << "[Error] open lane group ralation file error. fileName " << lgFileName << endl;
+                return false;
+            }
+
+
+            return true;
+        }
+
     }
 }

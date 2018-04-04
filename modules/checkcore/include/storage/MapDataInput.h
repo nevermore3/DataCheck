@@ -38,6 +38,16 @@ namespace kd {
             bool loadLane(string basePath, map<string, shared_ptr<DCLane>> & lanes, shared_ptr<CheckErrorOutput> errorOutput);
 
 
+            /**
+             * 加载车道组信息
+             * @param basePath 数据路径
+             * @param lanes 参考的车道信息
+             * @param laneGroups_ 车道组信息
+             * @return 加载是否成功
+             */
+            bool loadLaneGroup(string basePath, const map<string, shared_ptr<DCLane>> & lanes, map<string, shared_ptr<DCLaneGroup>> & laneGroups, shared_ptr<CheckErrorOutput> errorOutput);
+
+
         private:
             bool setDividerNode(shared_ptr<DCDivider> div, string nodeId, map<string, shared_ptr<DCDividerNode>> & commonNodeInfos);
 

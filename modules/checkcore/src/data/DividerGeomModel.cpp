@@ -250,7 +250,7 @@ namespace kd {
 
 
         /////////////////////////////////////////////////////////////////////////////////////////
-        //  KDLaneAttribute
+        //  DCLaneAttribute
         /////////////////////////////////////////////////////////////////////////////////////////
         bool DCLaneAttribute::typeSame(shared_ptr<DCLaneAttribute> laneAtt) {
             if (laneAtt == nullptr)
@@ -268,5 +268,39 @@ namespace kd {
         }
 
 
+        /////////////////////////////////////////////////////////////////////////////////////////
+        //  DCLaneGroup
+        /////////////////////////////////////////////////////////////////////////////////////////
+        void DCLaneGroup::sortLanes(){
+            if (lanes_.size() <= 1)
+                return;
+
+            //获取原有顺序
+            vector<pair<long, long>> laneNumIndex;
+            for (int i = 0; i < lanes_.size(); i++) {
+                shared_ptr<DCLane> & lane = lanes_[i];
+
+                long laneNum = lane->laneNo_;
+
+                laneNumIndex.emplace_back(pair<int, int>(i, laneNum));
+            }
+
+            //排序
+            sort(laneNumIndex.begin(), laneNumIndex.end(), [](const pair<int, int> &v1, const pair<int, int> &v2) {
+                if (v1.second < v2.second) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+            //根据排序后的顺序重制列表
+            std::vector<shared_ptr<DCLane>> lanesTemp;
+            for (pair<long, long> & laneIndex : laneNumIndex) {
+                lanesTemp.emplace_back(lanes_[laneIndex.first]);
+            }
+
+            lanes_.swap(lanesTemp);
+        }
     }
 }

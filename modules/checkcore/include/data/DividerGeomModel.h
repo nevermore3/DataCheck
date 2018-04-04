@@ -473,6 +473,11 @@ namespace kd {
         public:
             DCLaneGroup(): road_(nullptr){}
 
+            /**
+             * 根据车道编号对车道进行排序
+             */
+            void sortLanes();
+
         public:
             //道路
             shared_ptr<DCRoad> road_;

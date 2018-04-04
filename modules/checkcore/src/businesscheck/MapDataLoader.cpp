@@ -22,6 +22,7 @@ namespace kd {
                 return false;
 
             MapDataInput mapDataInput;
+            //加载车道线数据
             if(mapDataInput.loadDivider(basePath_, mapDataManager->dividers_, errorOutput)){
 
                 for(auto recordit : mapDataManager->dividers_){
@@ -37,10 +38,29 @@ namespace kd {
                     //构造空间几何属性
                     div->buildGeometryInfo();
                 }
-                return true;
             }
 
-            return false;
+            //加载车道
+
+
+            //加载车道分组
+            if(mapDataInput.loadLaneGroup(basePath_, mapDataManager->lanes_, mapDataManager->laneGroups_, errorOutput)){
+                for( auto recordit : mapDataManager->laneGroups_ ){
+
+                    string lgid = recordit.first;
+                    shared_ptr<DCLaneGroup> laneGroup = recordit.second;
+
+                    if(!laneGroup->valid_)
+                        continue;
+
+                    //根据车道编号重排车道顺序
+                    laneGroup->sortLanes();
+                }
+            }
+
+
+
+            return true;
         }
     }
 }

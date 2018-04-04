@@ -91,7 +91,7 @@ namespace kd {
 
                     //间距判断
                     double distance = KDGeoUtil::distanceLL(node1->coord_.lng_, node1->coord_.lat_, node2->coord_.lng_, node2->coord_.lat_);
-                    if(distance > nodespace){
+                    if(distance < nodespace){
                         shared_ptr<DCDividerCheckError> error =
                                 DCDividerCheckError::createByNode("JH_C_8", div, node1);
 

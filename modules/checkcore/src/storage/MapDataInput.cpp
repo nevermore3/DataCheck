@@ -31,6 +31,8 @@ namespace kd {
                     divider->direction_ = shpData.readIntField(i, "DIRECTION");
                     divider->rLine_ = shpData.readIntField(i, "R_LINE");
                     divider->tollFlag_ = shpData.readIntField(i, "TOLLFLAG");
+                    divider->fromNodeId_ = shpData.readStringField(i, "FDNODE");
+                    divider->toNodeId_ = shpData.readStringField(i, "TDNODE");
 
                     //读取空间信息
                     int nVertices = shpObject->nVertices;
@@ -49,6 +51,8 @@ namespace kd {
             }
 
             //读取节点信息
+            map<string, shared_ptr<DCDividerNode>> commonNodeInfos; //所有共用的节点
+
             string dividerNodeFile = basePath + "/HD_DIVIDER_NODE";
             ShpData shpNodeData(dividerNodeFile);
             if (shpNodeData.isInit()) {
@@ -64,28 +68,63 @@ namespace kd {
                     long spIdx = shpNodeData.readIntField(i, "SPIDX");
                     long dashType = shpNodeData.readIntField(i, "DASHTYPE");
 
-                    auto divit = dividers.find(to_string(dividerId));
-                    if(divit == dividers.end()){
-                        cout << "[Error] divider node not find ref divider.[dividerId:" << dividerId << "][nodeIdx:" << spIdx << "]" << endl;
-                        continue;
-                    }
+                    if(dividerId == -1 && spIdx == -1){
+                        shared_ptr<DCDividerNode> divNode = make_shared<DCDividerNode>();
+                        //确定属性信息
+                        divNode->id_ = to_string(id);
+                        divNode->dashType_ = dashType;
 
-                    shared_ptr<DCDivider> div = divit->second;
-                    if(spIdx < 0 || spIdx >= div->nodes_.size()){
-                        cout << "[Error] divider node idx invalid. [dividerId:" << dividerId << "][nodeIdx:" << spIdx << "]" << endl;
-                        div->valid_ = false;
-                        continue;
+                        //读取坐标信息
+                        int nVertices = shpObject->nVertices;
+                        if(nVertices == 1){
+                            divNode->coord_.lng_ = shpObject->padfX[0];
+                            divNode->coord_.lat_ = shpObject->padfY[0];
+                            divNode->coord_.z_   = shpObject->padfZ[0];
+                            commonNodeInfos.insert(make_pair(divNode->id_, divNode));
+                        }
                     }
+                    else{
+                        auto divit = dividers.find(to_string(dividerId));
+                        if(divit == dividers.end()){
+                            cout << "[Error] divider node not find ref divider.[dividerId:" << dividerId << "][nodeIdx:" << spIdx << "]" << endl;
+                            continue;
+                        }
 
-                    //关联属性
-                    div->nodes_[spIdx]->id_ = to_string(id);
-                    div->nodes_[spIdx]->dashType_ = dashType;
+                        shared_ptr<DCDivider> div = divit->second;
+                        if(spIdx < 0 || spIdx >= div->nodes_.size()){
+                            cout << "[Error] divider node idx invalid. [dividerId:" << dividerId << "][nodeIdx:" << spIdx << "]" << endl;
+                            div->valid_ = false;
+                            continue;
+                        }
+
+                        //关联属性
+                        div->nodes_[spIdx]->id_ = to_string(id);
+                        div->nodes_[spIdx]->dashType_ = dashType;
+                    }
                 }
             }else{
                 cout << "[Error] open divider node file error. fileName " << dividerNodeFile << endl;
                 return false;
             }
 
+            //补充divider首末点的node信息
+            for( auto divit : dividers ){
+                shared_ptr<DCDivider> div = divit.second;
+                if(!div->valid_)
+                    continue;
+
+                if(!setDividerNode(div, div->fromNodeId_, commonNodeInfos)){
+                    cout << "[Error] div" << div->id_ << " not find fromNode " << div->fromNodeId_ << " info." << endl;
+                    div->valid_ = false;
+                    continue;
+                }
+
+                if(!setDividerNode(div, div->toNodeId_, commonNodeInfos)){
+                    cout << "[Error] div" << div->id_ << " not find toNode " << div->toNodeId_ << " info." << endl;
+                    div->valid_ = false;
+                    continue;
+                }
+            }
 
             //读取车道线属性信息
             string dividerAttFile = basePath + "/HD_DIVIDER_ATTRIBUTE";
@@ -131,7 +170,39 @@ namespace kd {
             return true;
         }
 
+        bool MapDataInput::setDividerNode(shared_ptr<DCDivider> div, string nodeId, map<string, shared_ptr<DCDividerNode>> & commonNodeInfos){
+
+            auto nodeit = commonNodeInfos.find(nodeId);
+            if(nodeit != commonNodeInfos.end()){
+                auto nodeObj = nodeit->second;
+
+                //判断是否与第一个节点坐标相同
+                shared_ptr<DCDividerNode> firstNode = div->nodes_[0];
+                if(firstNode->coord_.lng_ == nodeObj->coord_.lng_ &&
+                        firstNode->coord_.lat_ == nodeObj->coord_.lat_ &&
+                        firstNode->coord_.z_ == nodeObj->coord_.z_){
+                    firstNode->id_ = nodeObj->id_;
+                    firstNode->dashType_ = nodeObj->dashType_;
+                    return true;
+                }
+
+                //判断是否与最后一个节点坐标相同
+                shared_ptr<DCDividerNode> lastNode = div->nodes_[div->nodes_.size()-1];
+                if(lastNode->coord_.lng_ == nodeObj->coord_.lng_ &&
+                        lastNode->coord_.lat_ == nodeObj->coord_.lat_ &&
+                        lastNode->coord_.z_ == nodeObj->coord_.z_){
+                    lastNode->id_ = nodeObj->id_;
+                    lastNode->dashType_ = nodeObj->dashType_;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         bool MapDataInput::loadLane(string basePath, map<string, shared_ptr<DCLane>> & lanes, shared_ptr<CheckErrorOutput> errorOutput){
+
+
             //TODO:
             return true;
         }

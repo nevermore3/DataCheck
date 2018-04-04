@@ -28,6 +28,9 @@ namespace kd {
                     string divid = recordit.first;
                     shared_ptr<DCDivider> div = recordit.second;
 
+                    if(!div->valid_)
+                        continue;
+
                     //属性重排
                     div->sortAtts();
 

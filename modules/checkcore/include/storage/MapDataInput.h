@@ -37,6 +37,10 @@ namespace kd {
              */
             bool loadLane(string basePath, map<string, shared_ptr<DCLane>> & lanes, shared_ptr<CheckErrorOutput> errorOutput);
 
+
+        private:
+            bool setDividerNode(shared_ptr<DCDivider> div, string nodeId, map<string, shared_ptr<DCDividerNode>> & commonNodeInfos);
+
         };
     }
 }

@@ -298,7 +298,7 @@ namespace kd {
                     //赋予Divider节点对象
                     shared_ptr<DCDivider> rDivider = lane->rightDivider_;
                     if (spIdx < 0 || spIdx >= rDivider->nodes_.size()){
-                        cout << "[Error] divider att ref node idx invalid. [dividerId:" << 0 << "][nodeIdx:" << spIdx << "]" << endl;
+                        cout << "[Error] divider att ref node idx invalid. [dividerId:" << rDivider->id_ << "][nodeIdx:" << spIdx << "]" << endl;
                         continue;
                     }else{
                         laneAtt->dividerNode_ = rDivider->nodes_[spIdx];

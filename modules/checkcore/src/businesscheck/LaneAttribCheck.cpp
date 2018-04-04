@@ -2,6 +2,10 @@
 // Created by gaoyanhong on 2018/4/1.
 //
 
+//core
+#include "geom/geo_util.h"
+
+using namespace geo;
 
 #include "businesscheck/LaneAttribCheck.h"
 
@@ -34,9 +38,33 @@ namespace kd {
                     continue;
                 }
 
-                //检查各个夹角
+                //检查矢量化方向是否相同，两条车道分割线的首尾连线夹角是否为锐角
+                const double IntersectAngleLimit = 90;
                 shared_ptr<DCDivider> leftDiv = lane->leftDivider_;
                 shared_ptr<DCDivider> rightDiv = lane->rightDivider_;
+                double leftAngle = 0.0, rightAngle = 0.0;
+                if (leftDiv->nodes_.size() >= 2){
+                    leftAngle = geo_util::calcAngle(leftDiv->nodes_[0]->coord_.lng_, leftDiv->nodes_[0]->coord_.lat_,
+                                                    leftDiv->nodes_[leftDiv->nodes_.size()-1]->coord_.lng_,
+                                                    leftDiv->nodes_[leftDiv->nodes_.size()-1]->coord_.lat_);
+                }
+
+                if (rightDiv->nodes_.size() >= 2){
+                    rightAngle = geo_util::calcAngle(rightDiv->nodes_[0]->coord_.lng_, rightDiv->nodes_[0]->coord_.lat_,
+                                                     rightDiv->nodes_[rightDiv->nodes_.size()-1]->coord_.lng_,
+                                                     rightDiv->nodes_[rightDiv->nodes_.size()-1]->coord_.lat_);
+                }
+
+                double fAngle = fabs(leftAngle - rightAngle);
+                if (fAngle > IntersectAngleLimit){
+                    shared_ptr<DCLaneCheckError> error =
+                            DCLaneCheckError::createByAtt("JH_C_16", lane, nullptr);
+                    stringstream ss;
+                    ss << "two divider vector direction not match. [left divider:" << leftDiv->id_;
+                    ss << "],[right divider:" << rightDiv->id_ << "],[intersect angle:" << fAngle << "]";
+                    errorOutput->saveError(error);
+                    lane->valid_ = false;
+                }
 
                 //检查两个车道线的通行方向是否一致
                 if( (leftDiv->direction_ == 2 && rightDiv->direction_ == 3) ||

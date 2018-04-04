@@ -200,10 +200,117 @@ namespace kd {
             return false;
         }
 
-        bool MapDataInput::loadLane(string basePath, map<string, shared_ptr<DCLane>> & lanes, shared_ptr<CheckErrorOutput> errorOutput){
+        bool MapDataInput::loadLane(string basePath, const map<string, shared_ptr<DCDivider>> &dividers, map<string, shared_ptr<DCLane>> & lanes, shared_ptr<CheckErrorOutput> errorOutput){
+            //读取车道数据
+            string laneFile = basePath + "/HD_LANE";
+            ShpData shpData(laneFile);
+            if (shpData.isInit()) {
+                int record_nums = shpData.getRecords();
+                for (int i = 0; i < record_nums; i++) {
+                    SHPObject *shpObject = shpData.readShpObject(i);
+                    if (!shpObject || shpObject->nSHPType != SHPT_ARCZ)
+                        continue;
 
+                    //读取基本属性
+                    shared_ptr<DCLane> dcLane = make_shared<DCLane>();
+                    dcLane->id_ = to_string(shpData.readIntField(i, "ID"));
+                    //int iRoadId = shpData.readIntField(i, "ROAD_ID");
+                    int iLeftDivider = shpData.readIntField(i, "DIVIDER_L");
+                    int iRightDivider = shpData.readIntField(i, "DIVIDER_R");
+                    dcLane->laneNo_ = shpData.readIntField(i, "LANE_NO");
 
-            //TODO:
+                    //获取道路对象
+                    //dcLane->road_ = nullptr;//iRoadId
+
+                    //获取车道左分割线
+                    auto itLeftDivider = dividers.find(to_string(iLeftDivider));
+                    if (itLeftDivider != dividers.end()){
+                        shared_ptr<DCDivider> leftDiv =itLeftDivider->second;
+                        if (nullptr != leftDiv) {
+                            dcLane->leftDivider_ = leftDiv;
+                        }else{
+                            cout << "[Error] lane's left divider is null.[laneId:" << dcLane->id_ << "][dividerId:" << iLeftDivider << "]" << endl;
+                        }
+                    }else{
+                        cout << "[Error] lane not find ref left divider.[laneId:" << dcLane->id_ << "][dividerId:" << iLeftDivider << "]" << endl;
+                    }
+
+                    //获取车道右分割线
+                    auto itRightDivider = dividers.find(to_string(iRightDivider));
+                    if (itRightDivider != dividers.end()){
+                        shared_ptr<DCDivider> rightDiv =itRightDivider->second;
+                        if (nullptr != rightDiv) {
+                            dcLane->rightDivider_ = rightDiv;
+                        }else{
+                            cout << "[Error] lane's right divider is null.[laneId:" << dcLane->id_ << "][dividerId:" << iRightDivider << "]" << endl;
+                        }
+                    }else{
+                        cout << "[Error] lane not find ref right divider.[laneId:" << dcLane->id_ << "][dividerId:" << iRightDivider << "]" << endl;
+                    }
+
+                    //读取空间信息
+                    int nVertices = shpObject->nVertices;
+                    for( int i = 0 ; i < nVertices ; i ++ ){
+                        shared_ptr<DCCoord> coord = make_shared<DCCoord>();
+                        coord->lat_ = shpObject->padfX[i];
+                        coord->lat_ = shpObject->padfY[i];
+                        coord->z_ = shpObject->padfZ[i];
+                        dcLane->coords_.emplace_back(coord);
+                    }
+                    lanes.insert(make_pair(dcLane->id_, dcLane));
+                }
+            }else{
+                cout << "[Error] open lane file error. fileName " << laneFile << endl;
+                return false;
+            }
+
+            //读取车道属性信息
+            string laneAttFile = basePath + "/HD_LANE_ATTRIBUTE";
+            DbfData attDbfData(laneAttFile);
+            if (attDbfData.isInit()) {
+                int record_nums = attDbfData.getRecords();
+                for (int i = 0; i < record_nums; i++) {
+                    shared_ptr<DCLaneAttribute> laneAtt = make_shared<DCLaneAttribute>();
+                    laneAtt->id_ = to_string(attDbfData.readIntField(i, "ID"));
+                    int laneId = attDbfData.readIntField(i, "LANE_ID");
+                    int spIdx = attDbfData.readIntField(i, "SPIDX");
+                    laneAtt->laneType_ = attDbfData.readIntField(i, "LANETYPE");
+                    laneAtt->subType_ = attDbfData.readIntField(i, "SUBTYPE");
+                    laneAtt->direction_ = attDbfData.readIntField(i, "DIRECTION");
+                    laneAtt->width_ = attDbfData.readDoubleField(i, "WIDTH");
+                    laneAtt->maxSpeed_ = attDbfData.readIntField(i, "MAX_SPEED");
+                    laneAtt->minSpeed_ = attDbfData.readIntField(i, "MIN_SPEED");
+                    laneAtt->smType_ = attDbfData.readIntField(i, "SMTYPE");
+                    laneAtt->status_ = attDbfData.readIntField(i, "STATUS");
+
+                    auto itLane = lanes.find(to_string(laneId));
+                    if(itLane == lanes.end()){
+                        cout << "[Error] lane att not find lane.[laneId:" << laneId << "]" << endl;
+                        continue;
+                    }
+
+                    shared_ptr<DCLane> lane = itLane->second;
+                    if (lane == nullptr){
+                        cout << "[Error] lane is null when get lane attr.[laneId:" << laneId << "]" << endl;
+                        continue;
+                    }
+
+                    //赋予Divider节点对象
+                    shared_ptr<DCDivider> rDivider = lane->rightDivider_;
+                    if (spIdx < 0 || spIdx >= rDivider->nodes_.size()){
+                        cout << "[Error] divider att ref node idx invalid. [dividerId:" << 0 << "][nodeIdx:" << spIdx << "]" << endl;
+                        continue;
+                    }else{
+                        laneAtt->dividerNode_ = rDivider->nodes_[spIdx];
+                    }
+
+                    lane->atts_.emplace_back(laneAtt);
+                }
+            }else{
+                cout << "[Error] open lane att file error. fileName " << laneAttFile << endl;
+                return false;
+            }
+
             return true;
         }
 

@@ -37,7 +37,20 @@ namespace kd {
                     //构造空间几何属性
                     div->buildGeometryInfo();
                 }
-                return true;
+                //return true;
+            }
+
+            if (mapDataInput.loadLane(basePath_, mapDataManager->dividers_, mapDataManager->lanes_, errorOutput)){
+                for(auto recordit : mapDataManager->lanes_){
+                    string laneid = recordit.first;
+                    shared_ptr<DCLane> lane = recordit.second;
+
+                    if(!lane->valid_)
+                        continue;
+
+                    //属性重排
+                    lane->sortAtts();
+                }
             }
 
             return false;

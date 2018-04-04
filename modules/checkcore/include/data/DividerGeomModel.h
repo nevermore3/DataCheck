@@ -319,6 +319,8 @@ namespace kd {
             //车道属性变化点
             vector<shared_ptr<DCLaneAttribute>> atts_;
 
+            //线坐标对象
+            vector<shared_ptr<DCCoord>> coords_;
         };
 
         class DCLaneAttribute : public DCModel {

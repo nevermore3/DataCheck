@@ -31,11 +31,12 @@ namespace kd {
             /**
              * 加载车道信息
              * @param basePath 数据路径
+             * @param dividers 道路分割线信息
              * @param lanes 车道信息
              * @param errorOutput 错误信息输出
              * @return 加载是否成功
              */
-            bool loadLane(string basePath, map<string, shared_ptr<DCLane>> & lanes, shared_ptr<CheckErrorOutput> errorOutput);
+            bool loadLane(string basePath, const map<string, shared_ptr<DCDivider>> &dividers, map<string, shared_ptr<DCLane>> & lanes, shared_ptr<CheckErrorOutput> errorOutput);
 
 
             /**

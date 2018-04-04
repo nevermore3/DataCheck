@@ -34,13 +34,18 @@ namespace kd {
 
         private:
             //车行道边缘线在非停止线/出入口标线的地方断开
-            void check_JH_C_4(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput);
+            void check_JH_C_4(shared_ptr<MapDataManager> mapDataManager, const map<string, shared_ptr<DCDividerTopoNode>> & topoNodes,  shared_ptr<CheckErrorOutput> errorOutput);
 
             //存在非构成车道的车道线（非路口虚拟线）
             void check_JH_C_5(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput);
 
             //共点的车道线通行方向（矢量化方向+车道线方向）冲突
-            void check_JH_C_6(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput);
+            void check_JH_C_6(shared_ptr<MapDataManager> mapDataManager, const map<string, shared_ptr<DCDividerTopoNode>> & topoNodes, shared_ptr<CheckErrorOutput> errorOutput);
+
+
+            void buildTopoNodes(shared_ptr<MapDataManager> mapDataManager, map<string, shared_ptr<DCDividerTopoNode>> & topoNodes);
+
+            bool isEdgeLine(shared_ptr<DCDivider> div);
 
         private:
 

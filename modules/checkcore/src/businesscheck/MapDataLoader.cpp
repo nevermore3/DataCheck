@@ -41,7 +41,18 @@ namespace kd {
             }
 
             //加载车道
+            if (mapDataInput.loadLane(basePath_, mapDataManager->dividers_, mapDataManager->lanes_, errorOutput)){
+                for(auto recordit : mapDataManager->lanes_){
+                    string laneid = recordit.first;
+                    shared_ptr<DCLane> lane = recordit.second;
 
+                    if(!lane->valid_)
+                        continue;
+
+                    //属性重排
+                    lane->sortAtts();
+                }
+            }
 
             //加载车道分组
             if(mapDataInput.loadLaneGroup(basePath_, mapDataManager->lanes_, mapDataManager->laneGroups_, errorOutput)){
@@ -57,8 +68,6 @@ namespace kd {
                     laneGroup->sortLanes();
                 }
             }
-
-
 
             return true;
         }

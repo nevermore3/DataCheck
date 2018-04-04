@@ -65,6 +65,9 @@ namespace kd {
            //车道组
            map<string, shared_ptr<DCLaneGroup>> laneGroups_;
 
+           //所有线对象
+           map<string, shared_ptr<DCObjectPL>> objectPLs_;
+
        };
 
     }

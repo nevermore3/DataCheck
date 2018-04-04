@@ -24,6 +24,10 @@ namespace kd {
             const static string LANE_WIDTH_MAX;
             const static string LANE_WIDTH_MIN;
 
+            const static string OBJECT_PL_BUFFER;
+
+
+
 
         public:
             static DataCheckConfig & getInstance() {

@@ -49,6 +49,15 @@ namespace kd {
             bool loadLaneGroup(string basePath, const map<string, shared_ptr<DCLane>> & lanes, map<string, shared_ptr<DCLaneGroup>> & laneGroups, shared_ptr<CheckErrorOutput> errorOutput);
 
 
+            /**
+             * 加载所有线对象
+             * @param basePath 数据路径
+             * @param objectPLs 线对象
+             * @return 加载是否成功
+             */
+            bool loadObjectLine(string basePath, map<string, shared_ptr<DCObjectPL>> & objectPLs, shared_ptr<CheckErrorOutput> errorOutput);
+
+
         private:
             bool setDividerNode(shared_ptr<DCDivider> div, string nodeId, map<string, shared_ptr<DCDividerNode>> & commonNodeInfos);
 

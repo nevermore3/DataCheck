@@ -2,7 +2,14 @@
 // Created by gaoyanhong on 2018/3/30.
 //
 
+
 #include "businesscheck/DividerTopoCheck.h"
+
+//thirdparty
+#include <geos/geom/GeometryFactory.h>
+#include <geos/geom/Point.h>
+#include <DataCheckConfig.h>
+
 
 namespace kd {
     namespace dc {
@@ -11,10 +18,160 @@ namespace kd {
             return id;
         }
 
+
+
+        bool DividerTopoCheck::findStopLine(shared_ptr<DCDividerTopoNode> topoNode, double bufferLen,
+                          const shared_ptr<geos::index::quadtree::Quadtree> & quadtree){
+
+            const GeometryFactory *gf = GeometryFactory::getDefaultInstance();
+            geos::geom::Coordinate coord(topoNode->lng_, topoNode->lat_, topoNode->z_);
+            shared_ptr<geos::geom::Point> point(gf->createPoint(coord));
+            shared_ptr<geos::geom::Geometry> buffer(point->buffer(bufferLen));
+
+            vector<void*> intersect_objs;
+            quadtree->query(buffer->getEnvelopeInternal(),intersect_objs);
+
+            for(auto & intersect_ptr : intersect_objs) {
+                DCObjectPL * inter_obj = (DCObjectPL *) intersect_ptr;
+
+                //判断相交
+                if(buffer->intersects(inter_obj->line_.get())){
+
+                    //TODO 高度判断
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
+        void DividerTopoCheck::check(shared_ptr<DCDivider> div,
+                   const shared_ptr<geos::index::quadtree::Quadtree> & quadtree,
+                   set<string> & divIds,
+                   const map<string, shared_ptr<DCDividerTopoNode>> & topoNodes, shared_ptr<MapDataManager> mapDataManager){
+
+            if(div == nullptr)
+                return;
+
+            //检查对象是否已经处理过了
+            if(divIds.find(div->id_) != divIds.end()){
+                //对象已经处理过了
+                return;
+            }
+
+            divIds.insert(div->id_);
+
+            //检查对象是否是边界线类型
+            if(!isEdgeLine(div)){
+                cout << "[Error] divider not edge. divider id " << div->id_ << endl;
+                return;
+            }
+
+            double checkbufLen = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::OBJECT_PL_BUFFER);
+
+            //判断起点的连接情况
+            {
+                string fromNodeId = div->fromNodeId_;
+                auto fromNodeit = topoNodes.find(fromNodeId);
+                if(fromNodeit == topoNodes.end()){
+                    cout << "[Error] node " << fromNodeId << " not find topo info " << endl;
+                    return;
+                }
+
+                shared_ptr<DCDividerTopoNode> topoNode = fromNodeit->second;
+                bool findEdge = false;
+                for( auto endRelIt : topoNode->endRels_ ){
+                    string divId = endRelIt.first;
+
+                    auto divit = mapDataManager->dividers_.find(divId);
+                    if(divit != mapDataManager->dividers_.end()){
+                        shared_ptr<DCDivider> div = divit->second;
+                        if(isEdgeLine(div)){
+                            findEdge = true;
+                            break;
+                        }
+                    }
+                }
+
+                if(!findEdge){
+                    if(!findStopLine(topoNode, checkbufLen, mapDataManager)){
+
+                    }
+                }
+            }
+
+            //判断终点的连接情况
+            {
+
+            }
+
+
+
+
+
+
+
+
+
+        }
+
         //车行道边缘线在非停止线/出入口标线的地方断开
         void DividerTopoCheck::check_JH_C_4(shared_ptr<MapDataManager> mapDataManager, const map<string, shared_ptr<DCDividerTopoNode>> & topoNodes, shared_ptr<CheckErrorOutput> errorOutput){
 
+            //空间索引保存所有停止线，以便后期在车道线停止时判断其是否有相交的情形
+            shared_ptr<geos::index::quadtree::Quadtree> quadtree = make_shared<geos::index::quadtree::Quadtree>();
+            for( auto plit : mapDataManager->objectPLs_ ){
+
+                shared_ptr<DCObjectPL> pl = plit.second;
+                if(!pl->valid_)
+                    continue;
+
+                if(pl->type_ == 2){ //停车让行线和减速让行线
+                    quadtree->insert(pl->line_->getEnvelopeInternal(), pl.get());
+                }
+            }
+
+            //检查所有的车道组
             set<string> divIds;
+            for( auto lgit : mapDataManager->laneGroups_ ){
+
+                shared_ptr<DCLaneGroup> lg = lgit.second;
+                if(!lg->valid_)
+                    continue;
+
+                if(lg->lanes_.size() == 0){
+                    cout << "[Error] lane group has no lane. lanegroup id " << lg->id_ << endl;
+                    continue;
+                }
+
+                //检查左边缘线
+                shared_ptr<DCDivider> leftDivider = lg->lanes_[0]->leftDivider_;
+                if(divIds.find(leftDivider->id_) == divIds.end()){ //未处理过
+                    if(!isEdgeLine(leftDivider)){
+                        cout << "[Error] divider not edge. divider id " << leftDivider->id_ << endl;
+                    }else{
+
+
+
+                    }
+
+
+
+
+                }
+
+
+
+
+
+                //检查右边缘线
+
+            }
+
+
+
+
 
             //检查所有车道线
             for( auto divit : mapDataManager->dividers_) {
@@ -23,6 +180,8 @@ namespace kd {
                 shared_ptr<DCDivider> div = divit.second;
                 if (!div->valid_)
                     continue;
+
+
 
 
 
@@ -98,7 +257,7 @@ namespace kd {
                 //排除了只有一个关联车道线的情况后，如果某个方向的关联信息为0，则说明有问题
                 if(topoNode->startRels_.size() == 0){
                     shared_ptr<DCDividerCheckError> error =
-                            DCDividerCheckError::createByNode("JH_C_6", topoNode->nodeId_, topoNode->lng, topoNode->lat, topoNode->z);
+                            DCDividerCheckError::createByNode("JH_C_6", topoNode->nodeId_, topoNode->lng_, topoNode->lat_, topoNode->z_);
 
                     stringstream ss;
                     ss << "divider node " << topoNode->nodeId_ << " has no FDNODE relation.";
@@ -109,7 +268,7 @@ namespace kd {
 
                 if(topoNode->endRels_.size() == 0){
                     shared_ptr<DCDividerCheckError> error =
-                            DCDividerCheckError::createByNode("JH_C_6", topoNode->nodeId_, topoNode->lng, topoNode->lat, topoNode->z);
+                            DCDividerCheckError::createByNode("JH_C_6", topoNode->nodeId_, topoNode->lng_, topoNode->lat_, topoNode->z_);
 
                     stringstream ss;
                     ss << "divider node " << topoNode->nodeId_ << " has no TDNODE relation.";
@@ -139,14 +298,14 @@ namespace kd {
                         shared_ptr<DCDividerTopoNode> topoNode = make_shared<DCDividerTopoNode>();
                         topoNode->nodeId_ = fromNodeId;
                         if(fromNodeId == div->nodes_[0]->id_){
-                            topoNode->lng = div->nodes_[0]->coord_.lng_;
-                            topoNode->lat = div->nodes_[0]->coord_.lat_;
-                            topoNode->z = div->nodes_[0]->coord_.z_;
+                            topoNode->lng_ = div->nodes_[0]->coord_.lng_;
+                            topoNode->lat_ = div->nodes_[0]->coord_.lat_;
+                            topoNode->z_ = div->nodes_[0]->coord_.z_;
 
                         }else{
-                            topoNode->lng = div->nodes_[div->nodes_.size()-1]->coord_.lng_;
-                            topoNode->lat = div->nodes_[div->nodes_.size()-1]->coord_.lat_;
-                            topoNode->z = div->nodes_[div->nodes_.size()-1]->coord_.z_;
+                            topoNode->lng_ = div->nodes_[div->nodes_.size()-1]->coord_.lng_;
+                            topoNode->lat_ = div->nodes_[div->nodes_.size()-1]->coord_.lat_;
+                            topoNode->z_ = div->nodes_[div->nodes_.size()-1]->coord_.z_;
                         }
                         topoNode->startRels_.insert(pair<string,string>(div->id_, div->id_));
                         topoNodes.insert(pair<string, shared_ptr<DCDividerTopoNode>>(fromNodeId, topoNode));
@@ -165,14 +324,14 @@ namespace kd {
                         topoNode->nodeId_ = toNodeId;
 
                         if(toNodeId == div->nodes_[0]->id_){
-                            topoNode->lng = div->nodes_[0]->coord_.lng_;
-                            topoNode->lat = div->nodes_[0]->coord_.lat_;
-                            topoNode->z = div->nodes_[0]->coord_.z_;
+                            topoNode->lng_ = div->nodes_[0]->coord_.lng_;
+                            topoNode->lat_ = div->nodes_[0]->coord_.lat_;
+                            topoNode->z_ = div->nodes_[0]->coord_.z_;
 
                         }else{
-                            topoNode->lng = div->nodes_[div->nodes_.size()-1]->coord_.lng_;
-                            topoNode->lat = div->nodes_[div->nodes_.size()-1]->coord_.lat_;
-                            topoNode->z = div->nodes_[div->nodes_.size()-1]->coord_.z_;
+                            topoNode->lng_ = div->nodes_[div->nodes_.size()-1]->coord_.lng_;
+                            topoNode->lat_ = div->nodes_[div->nodes_.size()-1]->coord_.lat_;
+                            topoNode->z_ = div->nodes_[div->nodes_.size()-1]->coord_.z_;
                         }
 
                         topoNode->endRels_.insert(pair<string,string>(div->id_, div->id_));
@@ -194,12 +353,11 @@ namespace kd {
                 if(divAtt->virtual_ == 1) //路口虚拟分隔线可以认为是边线的一种
                     continue;
 
-//                if(divAtt->virtual_ == 0){
-//                    if(divAtt->type_ == DA_TYPE_ROAD_EDGE || divAtt->type_ == )
-//                }
-//
-//                || ()
-//                if(divAtt->)
+                if(divAtt->type_ == 1 || divAtt->type_ == 4){
+                    continue;
+                }
+
+                return false;
             }
 
             return true;

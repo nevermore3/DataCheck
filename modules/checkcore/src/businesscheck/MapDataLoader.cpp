@@ -69,6 +69,21 @@ namespace kd {
                 }
             }
 
+            //加载线对象
+            if(mapDataInput.loadObjectLine(basePath_, mapDataManager->objectPLs_, errorOutput)){
+                for( auto recordit : mapDataManager->objectPLs_ ){
+
+                    string plid = recordit.first;
+                    shared_ptr<DCObjectPL> objPL = recordit.second;
+
+                    if(!objPL->valid_)
+                        continue;
+
+                    //建立空间信息
+                    objPL->buildGeometryInfo();
+                }
+            }
+
             return true;
         }
     }

@@ -138,7 +138,7 @@ namespace kd {
                     divAtt->virtual_ = attDbfData.readIntField(i, "VIRTUAL");
                     divAtt->color_ = attDbfData.readIntField(i, "COLOR");
                     divAtt->type_ = attDbfData.readIntField(i, "TYPE");
-                    divAtt->driveRule_ = attDbfData.readIntField(i, "DRIVERULE");
+                    divAtt->driveRule_ = attDbfData.readIntField(i, "DRIVE_RULE");
                     divAtt->material_ = attDbfData.readIntField(i, "MATERIAL");
                     divAtt->width_ = attDbfData.readDoubleField(i, "WIDTH");
 
@@ -373,6 +373,44 @@ namespace kd {
             }
 
 
+            return true;
+        }
+
+
+        bool MapDataInput::loadObjectLine(string basePath, map<string, shared_ptr<DCObjectPL>> & objectPLs, shared_ptr<CheckErrorOutput> errorOutput){
+            //读取线对象信息
+            string objLineFileName = basePath + "/HD_OBJECT_PL";
+            ShpData objLineData(objLineFileName);
+            if (objLineData.isInit()) {
+                int record_nums = objLineData.getRecords();
+                for (int i = 0; i < record_nums; i++) {
+                    SHPObject *shpObject = objLineData.readShpObject(i);
+                    if (!shpObject || shpObject->nSHPType != SHPT_ARCZ)
+                        continue;
+
+                    //读取基本属性
+                    shared_ptr<DCObjectPL> objPL = make_shared<DCObjectPL>();
+                    objPL->id_ = to_string(objLineData.readIntField(i, "ID"));
+                    objPL->type_ = objLineData.readIntField(i, "DIVIDER_NO");
+                    objPL->subType_ = objLineData.readIntField(i, "DIRECTION");
+                    objPL->material_ = objLineData.readIntField(i, "R_LINE");
+                    objPL->color_ = objLineData.readIntField(i, "TOLLFLAG");
+
+                    //读取空间信息
+                    int nVertices = shpObject->nVertices;
+                    for( int i = 0 ; i < nVertices ; i ++ ){
+                        shared_ptr<DCCoord> coord = make_shared<DCCoord>();
+                        coord->lng_ = shpObject->padfX[i];
+                        coord->lat_ = shpObject->padfY[i];
+                        coord->z_   = shpObject->padfZ[i];
+                        objPL->coords_.emplace_back(coord);
+                    }
+                    objectPLs.insert(make_pair(objPL->id_, objPL));
+                }
+            }else{
+                cout << "[Error] open object line file error. fileName " << objLineFileName << endl;
+                return false;
+            }
             return true;
         }
 

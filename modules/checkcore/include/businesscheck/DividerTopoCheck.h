@@ -7,6 +7,10 @@
 
 #include "IMapProcessor.h"
 
+//third party
+#include "geos/indexQuadtree.h"
+using namespace geos::index::quadtree;
+
 namespace kd {
     namespace dc {
 
@@ -46,6 +50,20 @@ namespace kd {
             void buildTopoNodes(shared_ptr<MapDataManager> mapDataManager, map<string, shared_ptr<DCDividerTopoNode>> & topoNodes);
 
             bool isEdgeLine(shared_ptr<DCDivider> div);
+
+            void check(shared_ptr<DCDivider> div, const shared_ptr<geos::index::quadtree::Quadtree> & quadtree,
+                                         set<string> & divIds, const map<string, shared_ptr<DCDividerTopoNode>> & topoNodes, shared_ptr<MapDataManager> mapDataManager);
+
+
+            /**
+             * 查找节点旁边是否有停止线
+             * @param topoNode 节点
+             * @param bufferLen 缓冲区大小
+             * @param quadtree 空间索引
+             * @return true代表找到停止线， false代表未找到停止线
+             */
+            bool findStopLine(shared_ptr<DCDividerTopoNode> topoNode, double bufferLen,
+                              const shared_ptr<geos::index::quadtree::Quadtree> & quadtree);
 
         private:
 

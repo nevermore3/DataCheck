@@ -302,5 +302,38 @@ namespace kd {
 
             lanes_.swap(lanesTemp);
         }
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////
+        //  DCObjectPL
+        /////////////////////////////////////////////////////////////////////////////////////////
+        bool DCObjectPL::buildGeometryInfo(){
+            //创建linestring
+            CoordinateSequence *cl = new CoordinateArraySequence();
+            for (shared_ptr<DCCoord> coord : coords_) {
+                double X0, Y0;
+                char zone0[8] = {0};
+
+                Coordinates::ll2utm(coord->lat_, coord->lng_, X0, Y0, zone0);
+
+                cl->add(geos::geom::Coordinate(X0, Y0, coord->z_));
+            }
+
+            if (cl->size() < 2) {
+                this->valid_ = false;
+                return false;
+            }
+
+            const GeometryFactory *gf = GeometryFactory::getDefaultInstance();
+            geos::geom::LineString *lineString = gf->createLineString(cl);
+            if (lineString) {
+                line_.reset(lineString);
+                return true;
+            } else {
+                delete cl;
+                this->valid_ = false;
+                return false;
+            }
+        }
     }
 }

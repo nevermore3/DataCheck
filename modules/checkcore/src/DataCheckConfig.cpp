@@ -25,6 +25,9 @@ namespace kd {
         const string DataCheckConfig::LANE_WIDTH_MAX = "lane_width_max";
         const string DataCheckConfig::LANE_WIDTH_MIN = "lane_width_min";
 
+        const string DataCheckConfig::OBJECT_PL_BUFFER = "object_pl_buffer";
+
+
 
         void DataCheckConfig::load(string fileName) {
             ifstream in(fileName.c_str());

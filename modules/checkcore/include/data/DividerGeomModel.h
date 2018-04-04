@@ -489,6 +489,39 @@ namespace kd {
         };
 
 
+        /**
+         * 线对象信息
+         */
+        class DCObjectPL : public DCModel{
+
+        public:
+            /**
+             * 创建几何对象，用于后期的空间判断
+             * @return 创建是否成功
+             */
+            bool buildGeometryInfo();
+
+        public:
+            //类型
+            long type_;
+
+            //子类型
+            long subType_;
+
+            //材质
+            long material_;
+
+            //颜色
+            long color_;
+
+            //所有坐标信息
+            vector<shared_ptr<DCCoord>> coords_;
+
+            //geos线对象，用于空间运算判断
+            shared_ptr<geos::geom::LineString> line_;
+        };
+
+
         //////////////////////////////////
         // 辅助信息，为了提高检查速度
         //////////////////////////////////
@@ -501,17 +534,18 @@ namespace kd {
             string nodeId_;
 
             //节点经度
-            double lng;
+            double lng_;
 
             //节点纬度
-            double lat;
+            double lat_;
 
             //节点高程
-            double z;
+            double z_;
 
-            //与本拓扑节点共点的所有车道线，key和value都是车道线id
+            //所有fromnode指向本节点的车道线，key和value都是车道线id
             map<string, string> startRels_;
 
+            //所有tonode指向本节点的车道线，key和value都是车道线id
             map<string, string> endRels_;
         };
     }

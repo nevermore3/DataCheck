@@ -22,6 +22,7 @@
 #include "businesscheck/DividerTopoCheck.h"
 #include "businesscheck/LaneAttribCheck.h"
 #include "businesscheck/LaneShapeNormCheck.h"
+#include "businesscheck/LaneTopoCheck.h"
 
 using namespace kd::dc;
 
@@ -57,9 +58,12 @@ void loadTaskInfo(string fileName, string & taskName, string & baseUrl,
 
 int dataCheck(string basePath, string taskFileName){
 
-    //shared_ptr<DataAttCheck> attCheck = make_shared<DataAttCheck>(basePath, taskFileName);
-    //attCheck->execute();
+    //交换格式基本属性检查
+    shared_ptr<DataAttCheck> attCheck = make_shared<DataAttCheck>(basePath, taskFileName);
+    attCheck->execute();
 
+
+    //交换格式逻辑检查
     //加载配置项
     DataCheckConfig::getInstance().load("config.properties");
 
@@ -72,6 +76,7 @@ int dataCheck(string basePath, string taskFileName){
     shared_ptr<DividerTopoCheck> divTopoCheck = make_shared<DividerTopoCheck>();
     shared_ptr<LaneAttribCheck> laneAttCheck = make_shared<LaneAttribCheck>();
     shared_ptr<LaneShapeNormCheck> laneShpCheck = make_shared<LaneShapeNormCheck>();
+    shared_ptr<LaneTopoCheck> laneTopoCheck = make_shared<LaneTopoCheck>();
 
     mapProcessManager->registerProcessor(loader);
     mapProcessManager->registerProcessor(divAttCheck);
@@ -80,6 +85,7 @@ int dataCheck(string basePath, string taskFileName){
     mapProcessManager->registerProcessor(divTopoCheck);
     mapProcessManager->registerProcessor(laneAttCheck);
     mapProcessManager->registerProcessor(laneShpCheck);
+    mapProcessManager->registerProcessor(laneTopoCheck);
 
     shared_ptr<MapDataManager> mapDataManager = make_shared<MapDataManager>();
     shared_ptr<CheckErrorOutput> errorOutput = make_shared<CheckErrorOutput>();

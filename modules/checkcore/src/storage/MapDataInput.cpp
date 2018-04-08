@@ -376,6 +376,33 @@ namespace kd {
             return true;
         }
 
+        bool MapDataInput::loadLaneConnectivity(string basePath,
+                                                map<string, shared_ptr<DCLaneConnectivity>> & laneConnectivitys,
+                                                shared_ptr<CheckErrorOutput> errorOutput){
+            //读取拓扑信息
+            string dbfFileName = basePath + "/HD_LANE_CONNECTIVITY";
+            DbfData dbfData(dbfFileName);
+            if (dbfData.isInit()) {
+                int record_nums = dbfData.getRecords();
+                for (int i = 0; i < record_nums; i++) {
+
+                    //读取基本属性
+                    shared_ptr<DCLaneConnectivity> laneConn = make_shared<DCLaneConnectivity>();
+                    laneConn->id_ = to_string(dbfData.readIntField(i, "ID"));
+                    laneConn->nodeType_ = dbfData.readIntField(i, "NODE_TYPE");
+                    laneConn->nodeId_ = dbfData.readIntField(i, "NODE_ID");
+                    laneConn->fLaneId_ = dbfData.readIntField(i, "FLANE_ID");
+                    laneConn->tLaneId_ = dbfData.readIntField(i, "TLANE_ID");
+
+                    laneConnectivitys.insert(make_pair(laneConn->id_, laneConn));
+                }
+            }else{
+                cout << "[Error] open lane connectivity file error. fileName " << dbfFileName << endl;
+                return false;
+            }
+            return true;
+        }
+
 
         bool MapDataInput::loadObjectLine(string basePath, map<string, shared_ptr<DCObjectPL>> & objectPLs, shared_ptr<CheckErrorOutput> errorOutput){
             //读取线对象信息

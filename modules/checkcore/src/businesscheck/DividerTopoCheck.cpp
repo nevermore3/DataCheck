@@ -46,74 +46,97 @@ namespace kd {
         }
 
 
-        void DividerTopoCheck::check(shared_ptr<DCDivider> div,
-                   const shared_ptr<geos::index::quadtree::Quadtree> & quadtree,
-                   set<string> & divIds,
-                   const map<string, shared_ptr<DCDividerTopoNode>> & topoNodes, shared_ptr<MapDataManager> mapDataManager){
-
-            if(div == nullptr)
-                return;
-
-            //检查对象是否已经处理过了
-            if(divIds.find(div->id_) != divIds.end()){
-                //对象已经处理过了
-                return;
+        bool DividerTopoCheck::findConnectEdge(string nodeId, bool start,
+                             const map<string, shared_ptr<DCDividerTopoNode>> & topoNodes,
+                                               const shared_ptr<geos::index::quadtree::Quadtree> & quadtree,
+                             shared_ptr<MapDataManager> mapDataManager){
+            //查找node所对应的toponode信息
+            auto topoNodeit = topoNodes.find(nodeId);
+            if(topoNodeit == topoNodes.end()){
+                cout << "[Error] node " << nodeId << " not find topo info " << endl;
+                return false;
             }
 
-            divIds.insert(div->id_);
+            shared_ptr<DCDividerTopoNode> topoNode = topoNodeit->second;
 
-            //检查对象是否是边界线类型
-            if(!isEdgeLine(div)){
-                cout << "[Error] divider not edge. divider id " << div->id_ << endl;
-                return;
-            }
+            bool findEdge = false;
 
-            double checkbufLen = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::OBJECT_PL_BUFFER);
-
-            //判断起点的连接情况
-            {
-                string fromNodeId = div->fromNodeId_;
-                auto fromNodeit = topoNodes.find(fromNodeId);
-                if(fromNodeit == topoNodes.end()){
-                    cout << "[Error] node " << fromNodeId << " not find topo info " << endl;
-                    return;
-                }
-
-                shared_ptr<DCDividerTopoNode> topoNode = fromNodeit->second;
-                bool findEdge = false;
+            if(start){
                 for( auto endRelIt : topoNode->endRels_ ){
                     string divId = endRelIt.first;
 
                     auto divit = mapDataManager->dividers_.find(divId);
                     if(divit != mapDataManager->dividers_.end()){
                         shared_ptr<DCDivider> div = divit->second;
-                        if(isEdgeLine(div)){
+                        if(isEdgeLineCompatible(div)){
                             findEdge = true;
                             break;
                         }
                     }
                 }
+            }else{
+                for( auto endRelIt : topoNode->startRels_ ){
+                    string divId = endRelIt.first;
 
-                if(!findEdge){
-                    if(!findStopLine(topoNode, checkbufLen, mapDataManager)){
-
+                    auto divit = mapDataManager->dividers_.find(divId);
+                    if(divit != mapDataManager->dividers_.end()){
+                        shared_ptr<DCDivider> div = divit->second;
+                        if(isEdgeLineCompatible(div)){
+                            findEdge = true;
+                            break;
+                        }
                     }
                 }
             }
 
-            //判断终点的连接情况
-            {
+            if(findEdge)
+                return true;
 
+
+            double checkbufLen = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::OBJECT_PL_BUFFER);
+            if(!findStopLine(topoNode, checkbufLen, quadtree)){
+                return false;
             }
 
+            return true;
+        }
 
 
+        void DividerTopoCheck::checkEdgeConnectInfo(shared_ptr<DCDivider> div,
+                                                    const shared_ptr<geos::index::quadtree::Quadtree> &quadtree,
+                                                    const map<string, shared_ptr<DCDividerTopoNode>> &topoNodes,
+                                                    shared_ptr<MapDataManager> mapDataManager,
+                                                    shared_ptr<CheckErrorOutput> errorOutput){
 
+            if(div == nullptr)
+                return;
 
+            //检查对象是否是边界线类型，有时如果数据制作不全，最边界的车道线未必是边缘线
+            if(!isEdgeLine(div)){
+                return;
+            }
 
+            //判断起点的连接情况
+            string fromNodeId = div->fromNodeId_;
+            if(!findConnectEdge(fromNodeId, true, topoNodes, quadtree, mapDataManager)){
+                shared_ptr<DCDividerCheckError> error =
+                        DCDividerCheckError::createByNode("JH_C_4", div, nullptr);
+                stringstream ss;
+                ss << "divider fromnode " << fromNodeId << " not connected with edge divider.";
+                error->errorDesc_ = ss.str();
+                errorOutput->saveError(error);
+            }
 
-
-
+            //判断终点的连接情况
+            string toNodeId = div->toNodeId_;
+            if(!findConnectEdge(toNodeId, false, topoNodes, quadtree, mapDataManager)){
+                shared_ptr<DCDividerCheckError> error =
+                        DCDividerCheckError::createByNode("JH_C_4", div, nullptr);
+                stringstream ss;
+                ss << "divider tonode " << toNodeId << " not connected with edge divider.";
+                error->errorDesc_ = ss.str();
+                errorOutput->saveError(error);
+            }
         }
 
         //车行道边缘线在非停止线/出入口标线的地方断开
@@ -147,46 +170,12 @@ namespace kd {
 
                 //检查左边缘线
                 shared_ptr<DCDivider> leftDivider = lg->lanes_[0]->leftDivider_;
-                if(divIds.find(leftDivider->id_) == divIds.end()){ //未处理过
-                    if(!isEdgeLine(leftDivider)){
-                        cout << "[Error] divider not edge. divider id " << leftDivider->id_ << endl;
-                    }else{
-
-
-
-                    }
-
-
-
-
-                }
-
-
-
-
+                checkEdgeConnectInfo(leftDivider, quadtree, topoNodes, mapDataManager, errorOutput);
 
                 //检查右边缘线
-
-            }
-
-
-
-
-
-            //检查所有车道线
-            for( auto divit : mapDataManager->dividers_) {
-
-                string divid = divit.first;
-                shared_ptr<DCDivider> div = divit.second;
-                if (!div->valid_)
-                    continue;
-
-
-
-
-
-
-
+                int laneCount = lg->lanes_.size();
+                shared_ptr<DCDivider> rightDivider = lg->lanes_[laneCount-1]->rightDivider_;
+                checkEdgeConnectInfo(rightDivider, quadtree, topoNodes, mapDataManager, errorOutput);
             }
         }
 
@@ -347,6 +336,36 @@ namespace kd {
         }
 
         bool DividerTopoCheck::isEdgeLine(shared_ptr<DCDivider> div){
+            bool edgeLine = true;
+            for( int i = 0 ; i < div->atts_.size() ; i ++ ){
+                shared_ptr<DCDividerAttribute> divAtt = div->atts_[i];
+                if(divAtt->type_ == 1){
+                    continue;
+                }
+
+                return false;
+            }
+
+            return true;
+        }
+//        bool DividerTopoCheck::isEdgeLine(shared_ptr<DCDivider> div){
+//            bool edgeLine = true;
+//            for( int i = 0 ; i < div->atts_.size() ; i ++ ){
+//                shared_ptr<DCDividerAttribute> divAtt = div->atts_[i];
+//                if(divAtt->virtual_ == 1) //路口虚拟分隔线可以认为是边线的一种
+//                    continue;
+//
+//                if(divAtt->type_ == 1 || divAtt->type_ == 4){
+//                    continue;
+//                }
+//
+//                return false;
+//            }
+//
+//            return true;
+//        }
+
+        bool DividerTopoCheck::isEdgeLineCompatible(shared_ptr<DCDivider> div){
             bool edgeLine = true;
             for( int i = 0 ; i < div->atts_.size() ; i ++ ){
                 shared_ptr<DCDividerAttribute> divAtt = div->atts_[i];

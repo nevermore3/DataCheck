@@ -69,6 +69,9 @@ namespace kd {
                 }
             }
 
+            //加载车道关联关系
+            mapDataInput.loadLaneConnectivity(basePath_, mapDataManager->laneConnectivitys_, errorOutput);
+
             //加载线对象
             if(mapDataInput.loadObjectLine(basePath_, mapDataManager->objectPLs_, errorOutput)){
                 for( auto recordit : mapDataManager->objectPLs_ ){

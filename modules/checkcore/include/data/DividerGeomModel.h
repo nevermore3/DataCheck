@@ -521,6 +521,26 @@ namespace kd {
             shared_ptr<geos::geom::LineString> line_;
         };
 
+        /**
+         * 车道拓扑关系
+         */
+        class DCLaneConnectivity : public DCModel{
+
+        public:
+            //节点类型"0：路口, 1：道路分歧, 3：车道分歧"
+            long nodeType_;
+
+            //关联节点
+            long nodeId_;
+
+            //关联进入车道
+            long fLaneId_;
+
+            //关联退出车道
+            long tLaneId_;
+
+        };
+
 
         //////////////////////////////////
         // 辅助信息，为了提高检查速度

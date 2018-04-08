@@ -50,6 +50,16 @@ namespace kd {
 
 
             /**
+             * 加载车道拓扑关系
+             * @param basePath 数据路径
+             * @param laneConnectivitys 车道拓扑关系
+             * @param errorOutput 错误信息输出
+             * @return 加载是否成功
+             */
+            bool loadLaneConnectivity(string basePath, map<string, shared_ptr<DCLaneConnectivity>> & laneConnectivitys, shared_ptr<CheckErrorOutput> errorOutput);
+
+
+            /**
              * 加载所有线对象
              * @param basePath 数据路径
              * @param objectPLs 线对象

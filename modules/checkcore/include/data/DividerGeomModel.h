@@ -288,7 +288,9 @@ namespace kd {
          */
         class DCLane : public DCModel {
         public:
-            DCLane():road_(nullptr), leftDivider_(nullptr), rightDivider_(nullptr){}
+            DCLane():road_(nullptr), leftDivider_(nullptr), rightDivider_(nullptr),
+                     leftDivSNode_(nullptr), leftDivENode_(nullptr),
+                     rightDivSNode_(nullptr), rightDivENode_(nullptr){}
 
 
             /**
@@ -302,6 +304,14 @@ namespace kd {
               * @return -1代表未找到，大于等于零的数代表节点在线中的索引
               */
             int getAttNodeIndex(shared_ptr<DCDividerNode> node);
+
+            /**
+              * 获得通行方向的首尾节点
+              * @param left 左侧车道标识
+              * @param start 首节点标识
+              * @return nullptr代表无法获取到节点，
+              */
+            shared_ptr<DCDividerNode> getPassDividerNode(bool left, bool start);
 
         public:
             //车道编号
@@ -321,6 +331,12 @@ namespace kd {
 
             //线坐标对象
             vector<shared_ptr<DCCoord>> coords_;
+
+        private:
+            shared_ptr<DCDividerNode> leftDivSNode_;
+            shared_ptr<DCDividerNode> leftDivENode_;
+            shared_ptr<DCDividerNode> rightDivSNode_;
+            shared_ptr<DCDividerNode> rightDivENode_;
         };
 
         class DCLaneAttribute : public DCModel {

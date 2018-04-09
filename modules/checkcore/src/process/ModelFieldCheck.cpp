@@ -22,21 +22,24 @@ namespace kd {
                 if (fieldDef->valueLimit.length() == 0)
                     continue;
 
+                stringstream ss;
                 string fieldName = fieldDef->name;
                 switch (fieldDef->type) {
                     case DC_FIELD_TYPE_LONG:
-                        checkLongValueIn(fieldDef->valueLimit, modelData, fieldName);
+                        checkLongValueIn(fieldDef->valueLimit, modelData, fieldName, errorOutput);
                         break;
                     case DC_FIELD_TYPE_DOUBLE:
-                        checkDoubleValueIn(fieldDef->valueLimit, modelData, fieldName);
+                        checkDoubleValueIn(fieldDef->valueLimit, modelData, fieldName, errorOutput);
                         break;
                     case DC_FIELD_TYPE_VARCHAR:
                     case DC_FIELD_TYPE_TEXT:
                         //TODO
-                        cout << "[TODO] not support field type limit check ." << endl;
+                        ss << "[TODO] not support field type limit check .\n";
+                        errorOutput->writeInfo(ss.str());
                         break;
                     default:
-                        cout << "[Error] not support field type limit check ." << endl;
+                        ss << "[Error] not support field type limit check .\n";
+                        errorOutput->writeInfo(ss.str());
                         break;
                 }
             }
@@ -45,7 +48,7 @@ namespace kd {
         }
 
 
-        void ModelFieldCheck::checkDoubleValueIn(string valueLimit, shared_ptr<DCModalData> modelData, string fieldName) {
+        void ModelFieldCheck::checkDoubleValueIn(string valueLimit, shared_ptr<DCModalData> modelData, string fieldName, shared_ptr<CheckErrorOutput> errorOutput) {
             Poco::StringTokenizer st(valueLimit, ",");
             map<double, double> mapValueLimits;
             long limitCount = st.count();
@@ -58,7 +61,9 @@ namespace kd {
 
                 auto valuepair = record->doubleDatas.find(fieldName);
                 if (valuepair == record->doubleDatas.end()) {
-                    cout << "[Error] not find field " << fieldName << " value. " << endl;
+                    stringstream ss;
+                    ss << "[Error] not find field " << fieldName << " value. \n";
+                    errorOutput->writeInfo(ss.str());
                     continue;
                 }
 
@@ -66,12 +71,14 @@ namespace kd {
 
                 auto limitpair = mapValueLimits.find(recordValue);
                 if (limitpair == mapValueLimits.end()) {
-                    cout << "[Error] checkLongValueIn : record value not permitted. " << recordValue << endl;
+                    stringstream ss;
+                    ss << "[Error] checkLongValueIn : record value not permitted. " << recordValue << ". \n";
+                    errorOutput->writeInfo(ss.str());
                 }
             }
         }
 
-        void ModelFieldCheck::checkLongValueIn(string valueLimit, shared_ptr<DCModalData> modelData, string fieldName) {
+        void ModelFieldCheck::checkLongValueIn(string valueLimit, shared_ptr<DCModalData> modelData, string fieldName, shared_ptr<CheckErrorOutput> errorOutput) {
 
             Poco::StringTokenizer st(valueLimit, ",");
             map<long, long> mapValueLimits;
@@ -85,7 +92,9 @@ namespace kd {
 
                 auto valuepair = record->longDatas.find(fieldName);
                 if (valuepair == record->longDatas.end()) {
-                    cout << "[Error] not find field " << fieldName << " value. " << endl;
+                    stringstream ss;
+                    ss << "[Error] not find field " << fieldName << " value. \n";
+                    errorOutput->writeInfo(ss.str());
                     continue;
                 }
 
@@ -93,7 +102,9 @@ namespace kd {
 
                 auto limitpair = mapValueLimits.find(recordValue);
                 if (limitpair == mapValueLimits.end()) {
-                    cout << "[Error] checkLongValueIn : record value not permitted. " << recordValue << endl;
+                    stringstream ss;
+                    ss << "[Error] checkLongValueIn : record value not permitted. " << recordValue << ". \n";
+                    errorOutput->writeInfo(ss.str());
                 }
             }
         }

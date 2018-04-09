@@ -27,7 +27,7 @@ namespace kd {
             int record_nums = shpData.getRecords();
             for (int i = 0; i < record_nums; i++) {
                 SHPObject *shpObject = shpData.readShpObject(i);
-                if (!shpObject || shpObject->nSHPType != SHPT_POINT) {
+                if (!shpObject || !(shpObject->nSHPType == SHPT_POINT || shpObject->nSHPType == SHPT_POINTZ)) {
                     cout << "Error] object type error " << shpObject->nSHPType << endl;
                     continue;
                 }
@@ -86,7 +86,7 @@ namespace kd {
             int record_nums = shpData.getRecords();
             for (int i = 0; i < record_nums; i++) {
                 SHPObject *shpObject = shpData.readShpObject(i);
-                if (!shpObject || shpObject->nSHPType != SHPT_ARCZ) {
+                if (!shpObject || !(shpObject->nSHPType == SHPT_ARCZ || shpObject->nSHPType == SHPT_ARC)) {
                     cout << "Error] object type error " << shpObject->nSHPType << endl;
                     continue;
                 }

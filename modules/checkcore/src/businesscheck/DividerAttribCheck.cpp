@@ -182,7 +182,7 @@ namespace kd {
                         if(att->type_ != 0 || att->color_ != 0 || att->driveRule_ != 0){
                             //车道线没有属性变化点
                             shared_ptr<DCDividerCheckError> error =
-                                    DCDividerCheckError::createByAtt("JH_C_11", div, att);
+                                    DCDividerCheckError::createByAtt("JH_C_10", div, att);
                             stringstream ss;
                             ss << "virtual divider att error. [type:" << att->type_ << "][color:";
                             ss << att->color_ << "][dirveRule:" << att->driveRule_ << "]";
@@ -201,7 +201,7 @@ namespace kd {
                         if(typeit == dividerTypes.end()){
                             //颜色和车道线线型不匹配
                             shared_ptr<DCDividerCheckError> error =
-                                    DCDividerCheckError::createByAtt("JH_C_11", div, att);
+                                    DCDividerCheckError::createByAtt("JH_C_10", div, att);
                             stringstream ss;
                             ss << "divider color & type not match. [color:" << att->color_ << "][type:";
                             ss << att->type_ << "]";
@@ -223,7 +223,7 @@ namespace kd {
                         if(typeit == dividerTypes.end()){
                             //通行类型和车道线线型不匹配
                             shared_ptr<DCDividerCheckError> error =
-                                    DCDividerCheckError::createByAtt("JH_C_11", div, att);
+                                    DCDividerCheckError::createByAtt("JH_C_10", div, att);
                             stringstream ss;
                             ss << "divider driverule & type not match. [driveRule:" << att->driveRule_ << "][type:";
                             ss << att->type_ << "]";
@@ -241,6 +241,7 @@ namespace kd {
         //起点没有有DA
         void DividerAttribCheck::check_JH_C_11(shared_ptr<MapDataManager> mapDataManager,
                                                shared_ptr<CheckErrorOutput> errorOutput) {
+
             for (auto recordit : mapDataManager->dividers_) {
                 shared_ptr<DCDivider> div = recordit.second;
                 if (!div->valid_)
@@ -257,7 +258,10 @@ namespace kd {
                     errorOutput->saveError(error);
                     continue;
                 }
-
+if(div->id_ == "1008503")
+{
+    div->id_ = div->id_;
+}
                 //判断属性变化点的控制方向
                 bool nodeDirection = true; //默认是正向
                 if(div->nodes_[0]->id_ == div->toNodeId_){
@@ -412,6 +416,8 @@ namespace kd {
                                          shared_ptr<CheckErrorOutput> errorOutput) {
             if (mapDataManager == nullptr)
                 return false;
+
+            errorOutput->writeInfo("<DividerAttribCheck>\n" + make_shared<DCDividerCheckError>("")->getHeader());
 
             check_JH_C_3(mapDataManager, errorOutput);
 

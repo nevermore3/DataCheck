@@ -10,15 +10,35 @@ namespace kd {
 
         void CheckErrorOutput::saveError(shared_ptr<DCDividerCheckError> error) {
 
-            cout << error->toString() << endl;
+            if (outputFile_){
+                ss_<< error->toString() << "\n";
+            }else{
+                cout << error->toString() << endl;
+            }
         }
 
         void CheckErrorOutput::saveError(shared_ptr<DCAttCheckError> error){
-            cout << error->toString() << endl;
+            if (outputFile_){
+                ss_<< error->toString() << "\n";
+            }else{
+                cout << error->toString() << endl;
+            }
         }
 
         void CheckErrorOutput::saveError(shared_ptr<DCLaneCheckError> error){
-            cout << error->toString() << endl;
+            if (outputFile_){
+                ss_<< error->toString() << "\n";
+            }else{
+                cout << error->toString() << endl;
+            }
+        }
+
+        void CheckErrorOutput::writeInfo(string info) {
+            if (outputFile_){
+                ss_<< info.c_str() << "\n";
+            }else{
+                cout << info.c_str() << endl;
+            }
         }
     }
 }

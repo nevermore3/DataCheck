@@ -57,11 +57,15 @@ void loadTaskInfo(string fileName, string & taskName, string & baseUrl,
 }
 
 int dataCheck(string basePath, string taskFileName){
+    shared_ptr<CheckErrorOutput> errorOutput = make_shared<CheckErrorOutput>();
+    string outputFile = basePath + "/check_result.csv";
+    errorOutput->setFile(outputFile);
+    errorOutput->setOutputFile(true);
 
     //交换格式基本属性检查
     shared_ptr<DataAttCheck> attCheck = make_shared<DataAttCheck>(basePath, taskFileName);
+    attCheck->setCheckErrorOutput(errorOutput);
     attCheck->execute();
-
 
     //交换格式逻辑检查
     //加载配置项
@@ -88,8 +92,6 @@ int dataCheck(string basePath, string taskFileName){
     mapProcessManager->registerProcessor(laneTopoCheck);
 
     shared_ptr<MapDataManager> mapDataManager = make_shared<MapDataManager>();
-    shared_ptr<CheckErrorOutput> errorOutput = make_shared<CheckErrorOutput>();
-
     mapProcessManager->execute(mapDataManager, errorOutput);
 
     return 1;

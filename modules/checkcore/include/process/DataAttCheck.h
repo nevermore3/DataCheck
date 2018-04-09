@@ -6,6 +6,7 @@
 #define AUTOHDMAP_DATACHECK_DATAATTCHECK_H
 
 #include <data/MapDataModel.h>
+#include "storage/CheckErrorOutput.h"
 #include "IProcessor.h"
 
 namespace kd {
@@ -32,6 +33,14 @@ namespace kd {
              */
             virtual bool execute() override;
 
+            /**
+             * 设置错误输出
+             * @param errorOutput
+             */
+            void setCheckErrorOutput(const shared_ptr<CheckErrorOutput> errorOutput){
+                errorOutput_ = errorOutput;
+            };
+
         private:
             const string id = "data_att_check_process";
 
@@ -40,6 +49,9 @@ namespace kd {
 
             //任务名称
             string taskName_;
+
+            //错误输出
+            shared_ptr<CheckErrorOutput> errorOutput_;
         };
     }
 }

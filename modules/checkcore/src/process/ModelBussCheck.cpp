@@ -19,18 +19,20 @@ namespace kd {
 
                 shared_ptr<DCFieldDefine> fieldDefine = modelDefine->getFieldDefine(check->fieldName);
                 if (fieldDefine == nullptr) {
-                    cout << "[Error] field check oper not find field " << check->fieldName << " define " << endl;
+                    stringstream ss;
+                    ss << "[Error] field check oper not find field " << check->fieldName << " define \n";
+                    errorOutput->writeInfo(ss.str());
                     continue;
                 }
 
                 switch (check->func) {
                     case DC_FIELD_VALUE_FUNC_ID:
-                        checkFieldIdentify(modelData, fieldDefine);
+                        checkFieldIdentify(modelData, fieldDefine, errorOutput);
                         break;
                     case DC_FIELD_VALUE_FUNC_GE:
                         break;
                     default:
-                        cout << "[TODO] function need to implement." << endl;
+                        errorOutput->writeInfo("[TODO] function need to implement.\n");
                         break;
                 }
             }
@@ -38,33 +40,37 @@ namespace kd {
             return false;
         }
 
-        void ModelBussCheck::checkFieldIdentify(shared_ptr<DCModalData> modelData, shared_ptr<DCFieldDefine> fieldDef) {
+        void ModelBussCheck::checkFieldIdentify(shared_ptr<DCModalData> modelData, shared_ptr<DCFieldDefine> fieldDef, shared_ptr<CheckErrorOutput> errorOutput) {
             switch (fieldDef->type) {
                 case DC_FIELD_TYPE_LONG:
-                    checkLongFieldIdentify(modelData, fieldDef->name);
+                    checkLongFieldIdentify(modelData, fieldDef->name, errorOutput);
                     break;
                 case DC_FIELD_TYPE_DOUBLE:
-                    checkDoubleFieldIdentify(modelData, fieldDef->name);
+                    checkDoubleFieldIdentify(modelData, fieldDef->name, errorOutput);
                     break;
                 case DC_FIELD_TYPE_VARCHAR:
                 case DC_FIELD_TYPE_TEXT:
-                    checkStringFieldIdentify(modelData, fieldDef->name);
+                    checkStringFieldIdentify(modelData, fieldDef->name, errorOutput);
                     break;
                 default:
-                    cout << "[Error] checkFieldIdentify not support field type :" << fieldDef->type << endl;
+                    stringstream ss;
+                    ss << "[Error] checkFieldIdentify not support field type :" << fieldDef->type << "\n";
+                    errorOutput->writeInfo(ss.str());
                     break;
             }
         }
 
 
-        void ModelBussCheck::checkLongFieldIdentify(shared_ptr<DCModalData> modelData, string fieldName){
+        void ModelBussCheck::checkLongFieldIdentify(shared_ptr<DCModalData> modelData, string fieldName, shared_ptr<CheckErrorOutput> errorOutput){
             //TODO
             //multimap
             for (shared_ptr<DCModelRecord> record : modelData->records) {
 
                 auto valuepair = record->longDatas.find(fieldName);
                 if (valuepair == record->longDatas.end()) {
-                    cout << "[Error] not find field " << fieldName << " value. " << endl;
+                    stringstream ss;
+                    ss << "[Error] not find field " << fieldName << " value. \n";
+                    errorOutput->writeInfo(ss.str());
                     continue;
                 }
 
@@ -76,16 +82,18 @@ namespace kd {
                 }
                 int num = multimapid.count(recordValue);
                 if (num != 1) {
-                    cout << "[Error] checkLongValueIn : ID value not unique. " << recordValue << endl;
+                    stringstream ss;
+                    ss << "[Error] checkLongValueIn : ID value not unique. " << recordValue << ". \n";
+                    errorOutput->writeInfo(ss.str());
                 }
             }
         }
 
-        void ModelBussCheck::checkDoubleFieldIdentify(shared_ptr<DCModalData> modelData, string fieldName){
+        void ModelBussCheck::checkDoubleFieldIdentify(shared_ptr<DCModalData> modelData, string fieldName, shared_ptr<CheckErrorOutput> errorOutput){
             //TODO
         }
 
-        void ModelBussCheck::checkStringFieldIdentify(shared_ptr<DCModalData> modelData, string fieldName){
+        void ModelBussCheck::checkStringFieldIdentify(shared_ptr<DCModalData> modelData, string fieldName, shared_ptr<CheckErrorOutput> errorOutput){
             //TODO
         }
 

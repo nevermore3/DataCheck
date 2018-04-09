@@ -385,6 +385,8 @@ namespace kd {
 
         bool DividerTopoCheck::execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput){
 
+            errorOutput->writeInfo("<DividerTopoCheck>\n" + make_shared<DCDividerCheckError>("")->getHeader());
+
             //建立节点拓扑关系，记录所有车道线共点信息， map的key为节点id
             map<string, shared_ptr<DCDividerTopoNode>> topoNodes;
             buildTopoNodes(mapDataManager, topoNodes);

@@ -62,7 +62,7 @@ namespace kd {
                 string taskName, dataPath, modelPath;
 
                 //获得基本信息
-                taskName = getJSONString(rootobj, "taskNmae");
+                taskName = getJSONString(rootobj, "taskName");
                 dataPath = getJSONString(rootobj, "dataPath");
                 modelPath = getJSONString(rootobj, "modelPath");
 
@@ -202,7 +202,7 @@ namespace kd {
                 }
 
             }catch (Exception &e) {
-                cout<<"[Error] " << e.what()<<endl;
+                cout<<"[Error] " << fileName.c_str() << ", info:" << e.what()<<endl;
                 return false;
             }
             return true;

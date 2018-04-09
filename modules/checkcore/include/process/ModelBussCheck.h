@@ -33,13 +33,13 @@ namespace kd {
 
         private:
 
-            void checkFieldIdentify(shared_ptr<DCModalData> modelData, shared_ptr<DCFieldDefine> fieldDef);
+            void checkFieldIdentify(shared_ptr<DCModalData> modelData, shared_ptr<DCFieldDefine> fieldDef, shared_ptr<CheckErrorOutput> errorOutput);
 
-            void checkLongFieldIdentify(shared_ptr<DCModalData> modelData, string fieldName);
+            void checkLongFieldIdentify(shared_ptr<DCModalData> modelData, string fieldName, shared_ptr<CheckErrorOutput> errorOutput);
 
-            void checkDoubleFieldIdentify(shared_ptr<DCModalData> modelData, string fieldName);
+            void checkDoubleFieldIdentify(shared_ptr<DCModalData> modelData, string fieldName, shared_ptr<CheckErrorOutput> errorOutput);
 
-            void checkStringFieldIdentify(shared_ptr<DCModalData> modelData, string fieldName);
+            void checkStringFieldIdentify(shared_ptr<DCModalData> modelData, string fieldName, shared_ptr<CheckErrorOutput> errorOutput);
 
         private:
             const string id = "model_buss_check";

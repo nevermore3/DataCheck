@@ -248,6 +248,95 @@ namespace kd {
             return -1;
         }
 
+        shared_ptr<DCDividerNode> DCLane::getPassDividerNode(bool left, bool start) {
+            if (leftDivSNode_ == nullptr && leftDivENode_ == nullptr
+                && rightDivSNode_ == nullptr && rightDivENode_ == nullptr){
+
+                //left divider
+                bool bLeftNoIsuueDir = false;
+                shared_ptr<DCDividerNode> lsNode = nullptr, leNode = nullptr;
+                if (leftDivider_->direction_ == 2){
+                    lsNode = leftDivider_->nodes_[0];
+                    leNode = leftDivider_->nodes_[leftDivider_->nodes_.size()-1];
+                }else if(leftDivider_->direction_ == 3){
+                    lsNode = leftDivider_->nodes_[leftDivider_->nodes_.size()-1];
+                    leNode = leftDivider_->nodes_[0];
+                }else {
+                    bLeftNoIsuueDir = true;
+                    string sId = leftDivider_->fromNodeId_.c_str();
+                    string eId = leftDivider_->toNodeId_.c_str();
+                    shared_ptr<DCDividerNode> tmpNode = leftDivider_->nodes_[0];
+                    if (tmpNode->id_ == sId){
+                        lsNode = leftDivider_->nodes_[0];
+                        leNode = leftDivider_->nodes_[leftDivider_->nodes_.size()-1];
+                    }else if(tmpNode->id_ == eId){
+                        lsNode = leftDivider_->nodes_[leftDivider_->nodes_.size()-1];
+                        leNode = leftDivider_->nodes_[0];
+                    }
+                }
+                //right divider
+                bool bRightNoIsuueDir = false;
+                shared_ptr<DCDividerNode> rsNode = nullptr, reNode = nullptr;
+                if (rightDivider_->direction_ == 2){
+                    rsNode = rightDivider_->nodes_[0];
+                    reNode = rightDivider_->nodes_[rightDivider_->nodes_.size()-1];
+                }else if(rightDivider_->direction_ == 3){
+                    rsNode = rightDivider_->nodes_[rightDivider_->nodes_.size()-1];
+                    reNode = rightDivider_->nodes_[0];
+                }else {
+                    bRightNoIsuueDir = true;
+                    string sId = rightDivider_->fromNodeId_.c_str();
+                    string eId = rightDivider_->toNodeId_.c_str();
+                    shared_ptr<DCDividerNode> tmpNode = rightDivider_->nodes_[0];
+                    if (tmpNode->id_ == sId){
+                        rsNode = rightDivider_->nodes_[0];
+                        reNode = rightDivider_->nodes_[rightDivider_->nodes_.size()-1];
+                    }else if(tmpNode->id_ == eId){
+                        rsNode = rightDivider_->nodes_[rightDivider_->nodes_.size()-1];
+                        reNode = rightDivider_->nodes_[0];
+                    }
+                }
+                //根据方向判定通行方向的起始终止点
+                if (bLeftNoIsuueDir || bRightNoIsuueDir){
+                    double LineA[] = {lsNode->coord_.lng_, lsNode->coord_.lat_, rsNode->coord_.lng_, rsNode->coord_.lat_};
+                    double LineB[] = {leNode->coord_.lng_, leNode->coord_.lat_, reNode->coord_.lng_, reNode->coord_.lat_};
+                    bool bCross = geo::geo_util::isLineSegmentCross(LineA, LineB);
+                    if (bCross){
+                        if (!bLeftNoIsuueDir && bRightNoIsuueDir){
+                            shared_ptr<DCDividerNode> tmpNode = rsNode;
+                            rsNode = reNode;
+                            reNode = tmpNode;
+                        } else if (bLeftNoIsuueDir && !bRightNoIsuueDir) {
+                            shared_ptr<DCDividerNode> tmpNode = lsNode;
+                            lsNode = leNode;
+                            leNode = tmpNode;
+                        } else{
+                            //无法确定通行方向时,按中国右侧通行原则右侧一定为外侧分割线,左侧分割线双向几率较大，直接调转左分割线
+                            shared_ptr<DCDividerNode> tmpNode = lsNode;
+                            lsNode = leNode;
+                            leNode = tmpNode;
+                        }
+                    }
+                }
+
+                leftDivSNode_ = lsNode;
+                leftDivENode_ = leNode;
+                rightDivSNode_ = rsNode;
+                rightDivENode_ = reNode;
+            }
+            if (left && start){
+                return leftDivSNode_;
+            }else if(left && !start){
+                return leftDivENode_;
+            }else if(!left && start){
+                return rightDivSNode_;
+            }else if(!left && !start){
+                return rightDivENode_;
+            }else{
+                return nullptr;
+            }
+        }
+
 
         /////////////////////////////////////////////////////////////////////////////////////////
         //  DCLaneAttribute

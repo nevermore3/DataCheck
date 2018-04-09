@@ -31,9 +31,9 @@ namespace kd {
 
 
         private:
-            void checkDoubleValueIn(string valueLimit, shared_ptr<DCModalData> modelData, string fieldName);
+            void checkDoubleValueIn(string valueLimit, shared_ptr<DCModalData> modelData, string fieldName, shared_ptr<CheckErrorOutput> errorOutput);
 
-            void checkLongValueIn(string valueLimit, shared_ptr<DCModalData> modelData, string fieldName);
+            void checkLongValueIn(string valueLimit, shared_ptr<DCModalData> modelData, string fieldName, shared_ptr<CheckErrorOutput> errorOutput);
 
 
         private:

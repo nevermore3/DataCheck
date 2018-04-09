@@ -24,6 +24,7 @@ namespace kd {
             const static string LANE_WIDTH_MAX;
             const static string LANE_WIDTH_MIN;
             const static string LANE_OVERLAP_AREA;
+            const static string LANE_DIVIDER_DIRANGLE;
 
             const static string OBJECT_PL_BUFFER;
 

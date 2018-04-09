@@ -285,13 +285,13 @@ namespace kd {
 
                     auto itLane = lanes.find(to_string(laneId));
                     if(itLane == lanes.end()){
-                        cout << "[Error] lane att not find lane.[laneId:" << laneId << "]" << endl;
+                        cout << "[Error] lane att not find lane.[lane attrId:" << laneAtt->id_ << "],[laneId:" << laneId << "]" << endl;
                         continue;
                     }
 
                     shared_ptr<DCLane> lane = itLane->second;
                     if (lane == nullptr){
-                        cout << "[Error] lane is null when get lane attr.[laneId:" << laneId << "]" << endl;
+                        cout << "[Error] lane is null when get lane attr.[lane attrId:" << laneAtt->id_ << "],[laneId:" << laneId << "]" << endl;
                         continue;
                     }
 

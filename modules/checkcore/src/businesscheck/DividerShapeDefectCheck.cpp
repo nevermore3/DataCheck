@@ -137,9 +137,8 @@ namespace kd {
             if(mapDataManager == nullptr)
                 return false;
 
+            errorOutput->writeInfo("<DividerShapeDefectCheck>\n" + make_shared<DCDividerCheckError>("")->getHeader());
             check_JH_C_1_AND_JH_C_2(mapDataManager, errorOutput);
-
-
 
             return true;
         }

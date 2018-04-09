@@ -47,8 +47,6 @@ namespace kd {
             shared_ptr<ModelFieldCheck> fieldCheck = make_shared<ModelFieldCheck>();
             shared_ptr<ModelBussCheck> bussCheck = make_shared<ModelBussCheck>();
 
-            shared_ptr<CheckErrorOutput> errorOutput = make_shared<CheckErrorOutput>();
-
             for (shared_ptr<DCTask> task : tasks) {
 
                 string modelPath = basePath_ + "/" + task->modelName + ".json";
@@ -61,7 +59,7 @@ namespace kd {
                 shared_ptr<DCModelDefine> modelDefine = make_shared<DCModelDefine>();
 
                 //加载数据
-                if (dataLoader->execute(modelData, modelDefine, errorOutput)) {
+                if (dataLoader->execute(modelData, modelDefine, errorOutput_)) {
 
                     //加入缓存
                     string modelname = task->modelName;
@@ -79,15 +77,15 @@ namespace kd {
                             pair<string, shared_ptr<DCModelDefine>>(task->modelName, modelDefine));
 
                     //属性检查
-                    fieldCheck->execute(modelData, modelDefine, errorOutput);
+                    fieldCheck->execute(modelData, modelDefine, errorOutput_);
 
-                    bussCheck->execute(modelData, modelDefine, errorOutput);
+                    bussCheck->execute(modelData, modelDefine, errorOutput_);
                 }
             }
 
             //关联关系检查
-            shared_ptr<ModelRelationCheck> relationCheck = make_shared<ModelRelationCheck>();
-            relationCheck->execute(dataManager, errorOutput);
+//            shared_ptr<ModelRelationCheck> relationCheck = make_shared<ModelRelationCheck>();
+//            relationCheck->execute(dataManager, errorOutput_);
             return true;
         }
     }

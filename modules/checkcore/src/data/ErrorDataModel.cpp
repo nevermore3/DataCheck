@@ -35,7 +35,7 @@ namespace kd {
 
         string DCAttCheckError::toString() {
             stringstream ss;
-            ss << checkModel_ << "," << modelName_ << "," << fieldName_ << "," << recordId_ << "," << errorDesc_;
+            ss << "\"" << checkModel_ << ":" << checkDesc_ << "\"," << modelName_ << "," << fieldName_ << "," << recordId_ << "," << errorDesc_;
             return ss.str();
         }
 
@@ -61,7 +61,7 @@ namespace kd {
 
         string DCRelationCheckError::toString() {
             stringstream ss;
-            ss << checkModel_ << "," << modelName_ << "," << fieldName_ << "," << refModelName_;
+            ss << "\"" << checkModel_ << ":" << checkDesc_ << "\"," << modelName_ << "," << fieldName_ << "," << refModelName_;
             ss << "," << refFieldName_ << "," << recordValue_ << "," << errorDesc_;
             return ss.str();
         }
@@ -80,7 +80,7 @@ namespace kd {
 
         string DCDividerCheckError::toString() {
             stringstream ss;
-            ss << checkModel_<< "," << dividerId_ << "," << attId_ << "," << nodeId_;
+            ss <<"\"" << checkModel_ << ":" << checkDesc_ << "\"," << dividerId_ << "," << attId_ << "," << nodeId_;
             ss << "," << setprecision(12) << lng_ << "," << lat_ << "," << z_ << "," << errorDesc_;
             return ss.str();
         }
@@ -162,15 +162,14 @@ namespace kd {
 
         string DCLaneCheckError::toString() {
             stringstream ss;
-            ss << checkModel_<< "," << laneId_ << "," << leftDividerId_ << "," << rightDividerId_;
+            ss << "\"" << checkModel_ << ":" << checkDesc_ << "\"," << laneId_ << "," << leftDividerId_ << "," << rightDividerId_;
             ss << "," << attId_ << "," << nodeId_;
             ss << "," << setprecision(12) << lng_ << "," << lat_ << "," << z_ << "," << errorDesc_;
             return ss.str();
         }
 
         shared_ptr<DCLaneCheckError>
-        DCLaneCheckError::createByAtt(string checkModel, shared_ptr<DCLane> lane,
-                                         shared_ptr<DCLaneAttribute> att) {
+        DCLaneCheckError::createByAtt(string checkModel, shared_ptr<DCLane> lane, shared_ptr<DCLaneAttribute> att) {
 
             shared_ptr<DCLaneCheckError> error = make_shared<DCLaneCheckError>(checkModel);
             if(lane == nullptr)

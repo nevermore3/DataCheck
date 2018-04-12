@@ -124,6 +124,7 @@ namespace kd {
                                 //找到非同类属性数据
                                 shared_ptr<DCDividerCheckError> error =
                                         DCDividerCheckError::createByAtt("JH_C_3", div, div->atts_[j]);
+                                error->checkDesc_ = "车道分割线黄白线变化不一致";
                                 stringstream ss;
                                 ss << "[first att index " << (j - 1) << "][type: " << div->atts_[j - 1]->type_;
                                 ss << "][secondd att index " << j << "][type: " << div->atts_[j]->type_ << "]";
@@ -142,6 +143,7 @@ namespace kd {
                                     //找到非同类属性数据
                                     shared_ptr<DCDividerCheckError> error =
                                             DCDividerCheckError::createByAtt("JH_C_3", div, div->atts_[j]);
+                                    error->checkDesc_ = "车道分割线黄白线变化不一致";
                                     stringstream ss;
                                     ss << "[first att index " << (j - 1) << "][type: " << div->atts_[j - 1]->type_;
                                     ss << "][secondd att index " << j << "][type: " << div->atts_[j]->type_ << "]";
@@ -157,7 +159,7 @@ namespace kd {
         }
 
 
-        //字段匹配关系：
+        //字段匹配关系：车道分隔线颜色、类型、通行类型属性冲突
         // 虚拟分隔线（1、2、3）时，分隔线类型为0，颜色类型为0，通行类型为0；
         // 颜色为2时，分隔线类型为4、8、9、10、12、13、15、17、11；
         // 颜色为1时，分割线类型为1、2、3、4、5、6、7、11、14、16、18；
@@ -167,7 +169,6 @@ namespace kd {
         // 通行类型为4，分隔线类型为16、17；
         void DividerAttribCheck::check_JH_C_10(shared_ptr<MapDataManager> mapDataManager,
                                                shared_ptr<CheckErrorOutput> errorOutput){
-
             for (auto recordit : mapDataManager->dividers_) {
                 shared_ptr<DCDivider> div = recordit.second;
                 if (!div->valid_)
@@ -183,6 +184,7 @@ namespace kd {
                             //车道线没有属性变化点
                             shared_ptr<DCDividerCheckError> error =
                                     DCDividerCheckError::createByAtt("JH_C_10", div, att);
+                            error->checkDesc_ = "车道线没有属性变化点";
                             stringstream ss;
                             ss << "virtual divider att error. [type:" << att->type_ << "][color:";
                             ss << att->color_ << "][dirveRule:" << att->driveRule_ << "]";
@@ -202,6 +204,7 @@ namespace kd {
                             //颜色和车道线线型不匹配
                             shared_ptr<DCDividerCheckError> error =
                                     DCDividerCheckError::createByAtt("JH_C_10", div, att);
+                            error->checkDesc_ = "颜色和车道线线型不匹配";
                             stringstream ss;
                             ss << "divider color & type not match. [color:" << att->color_ << "][type:";
                             ss << att->type_ << "]";
@@ -224,6 +227,7 @@ namespace kd {
                             //通行类型和车道线线型不匹配
                             shared_ptr<DCDividerCheckError> error =
                                     DCDividerCheckError::createByAtt("JH_C_10", div, att);
+                            error->checkDesc_ = "通行类型和车道线线型不匹配";
                             stringstream ss;
                             ss << "divider driverule & type not match. [driveRule:" << att->driveRule_ << "][type:";
                             ss << att->type_ << "]";
@@ -254,14 +258,11 @@ namespace kd {
                     shared_ptr<DCDividerCheckError> error =
                             DCDividerCheckError::createByAtt("JH_C_11", div, nullptr);
                     error->errorDesc_ = "divider no da";
-
+                    error->checkDesc_ = "车道线没有属性变化点";
                     errorOutput->saveError(error);
                     continue;
                 }
-if(div->id_ == "1008503")
-{
-    div->id_ = div->id_;
-}
+
                 //判断属性变化点的控制方向
                 bool nodeDirection = true; //默认是正向
                 if(div->nodes_[0]->id_ == div->toNodeId_){
@@ -281,7 +282,7 @@ if(div->id_ == "1008503")
                         shared_ptr<DCDividerCheckError> error =
                                 DCDividerCheckError::createByAtt("JH_C_11", div, nullptr);
                         error->errorDesc_ = "divider no da on start point";
-
+                        error->checkDesc_ = "车道线起点没有属性变化点";
                         errorOutput->saveError(error);
                         continue;
                     }
@@ -299,7 +300,7 @@ if(div->id_ == "1008503")
                         shared_ptr<DCDividerCheckError> error =
                                 DCDividerCheckError::createByAtt("JH_C_11", div, nullptr);
                         error->errorDesc_ = "divider has da on start and end.";
-
+                        error->checkDesc_ = "车道线起点和终点都有属性变化点";
                         errorOutput->saveError(error);
                         continue;
                     }
@@ -327,7 +328,7 @@ if(div->id_ == "1008503")
                     if(da1 != nullptr && da1->typeSame(da2)){
                         shared_ptr<DCDividerCheckError> error =
                                 DCDividerCheckError::createByAtt("JH_C_12", div, da1);
-
+                        error->checkDesc_ = "同一个divider上相邻两个DA属性完全相同";
                         stringstream ss;
                         ss << "da [id:"<< da1->id_ << "] same as da [id:" << da2->id_ << "]";
                         error->errorDesc_ = ss.str();
@@ -377,9 +378,11 @@ if(div->id_ == "1008503")
                     if(distance < daSpaceLen){
                         shared_ptr<DCDividerCheckError> error =
                                 DCDividerCheckError::createByAtt("JH_C_13", div, da1);
-
+                        error->checkDesc_ = "同一个divider上相邻两个DA距离<1米";
                         stringstream ss;
-                        ss << "length from da [id:"<< da1->id_ << "] to da [id:" << da2->id_ << "] is " << distance << " meter";
+                        ss << "length from [divId:" << da1->dividerNode_->id_ << " daId:"<< da1->id_
+                           << "] to da [divId:" << da2->dividerNode_->id_ << " daId:" << da2->id_
+                           << "] is " << distance << " meter";
                         error->errorDesc_ = ss.str();
                         errorOutput->saveError(error);
                     }
@@ -417,7 +420,7 @@ if(div->id_ == "1008503")
             if (mapDataManager == nullptr)
                 return false;
 
-            errorOutput->writeInfo("<DividerAttribCheck>\n" + make_shared<DCDividerCheckError>("")->getHeader());
+            errorOutput->writeInfo("[DividerAttribCheck]\n" + make_shared<DCDividerCheckError>("")->getHeader(), false);
 
             check_JH_C_3(mapDataManager, errorOutput);
 

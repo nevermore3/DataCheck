@@ -5,6 +5,7 @@
 #ifndef AUTOHDMAP_DATACHECK_MODELDATALOADER_H
 #define AUTOHDMAP_DATACHECK_MODELDATALOADER_H
 
+#include <data/DataManager.h>
 #include "IModelProcessor.h"
 
 namespace kd {
@@ -12,7 +13,7 @@ namespace kd {
 
         class ModelDataLoader : public IModelProcessor {
         public:
-            ModelDataLoader(string modelFile, string dataFile, string fileType);
+            ModelDataLoader(string basePath, string taskFile);
 
         public:
             /**
@@ -27,16 +28,16 @@ namespace kd {
              * @param modelDefine 模型定义
              * @return 操作是否成功
              */
-            virtual bool execute(shared_ptr<DCModalData> modelData, shared_ptr<DCModelDefine> modelDefine, shared_ptr<CheckErrorOutput> errorOutput) override ;
+            virtual bool execute(shared_ptr<ModelDataManager> modelDataManager, shared_ptr<CheckErrorOutput> errorOutput) override ;
 
         private:
             const string id = "model_data_loader";
 
-            string modelFile_;
+            //基础数据路径
+            string basePath_;
 
-            string dataFile_;
-
-            string fileType_;
+            //任务名称
+            string taskFile_;
 
         };
     }

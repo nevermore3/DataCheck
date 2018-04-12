@@ -6,6 +6,7 @@
 #define AUTOHDMAP_DATACHECK_MODELBUSSCHECK_H
 
 
+#include <data/DataManager.h>
 #include "IModelProcessor.h"
 
 namespace kd {
@@ -28,7 +29,7 @@ namespace kd {
              * @param modelDefine 模型定义
              * @return 操作是否成功
              */
-            virtual bool execute(shared_ptr<DCModalData> modelData, shared_ptr<DCModelDefine> modelDefine, shared_ptr<CheckErrorOutput> errorOutput) override ;
+            virtual bool execute(shared_ptr<ModelDataManager> modelDataManager, shared_ptr<CheckErrorOutput> errorOutput) override ;
 
 
         private:
@@ -43,8 +44,6 @@ namespace kd {
 
         private:
             const string id = "model_buss_check";
-            multimap<long,string> multimapid;
-
         };
     }
 }

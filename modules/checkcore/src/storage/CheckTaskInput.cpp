@@ -41,7 +41,7 @@ namespace kd {
             return value;
         }
 
-        bool CheckTaskInput::loadTaskInfo(string fileName, vector <shared_ptr<DCTask>> &tasks) {
+        bool CheckTaskInput::loadTaskInfo(string fileName, map<string,shared_ptr<DCTask>> &tasks) {
 
             try {
                 std::filebuf in;
@@ -50,24 +50,23 @@ namespace kd {
                     return false;
                 }
 
-                std::istream iss(&in);
-
                 Poco::JSON::Parser parser;
-
+                std::istream iss(&in);
                 Poco::Dynamic::Var result = parser.parse(iss);
                 Poco::JSON::Object::Ptr rootobj;
                 if (result.type() == typeid (Poco::JSON::Object::Ptr))
                     rootobj = result.extract<Poco::JSON::Object::Ptr>();
 
-                string taskName, dataPath, modelPath;
-
                 //获得基本信息
-                taskName = getJSONString(rootobj, "taskName");
-                dataPath = getJSONString(rootobj, "dataPath");
-                modelPath = getJSONString(rootobj, "modelPath");
+                string taskName = getJSONString(rootobj, "taskName");
+                string dataPath = getJSONString(rootobj, "dataPath");
+                string modelPath = getJSONString(rootobj, "modelPath");
+
+                dataPath = (dataPath.length()>0)?(dataPath + "/"):string("");
+                modelPath = (modelPath.length()==0)?(DIR_CONFIG + string("model/")):modelPath;
 
                 //获得任务信息
-                if(!rootobj->has("tasks"))
+                if (!rootobj->has("tasks"))
                     return false;
 
                 Poco::JSON::Array::Ptr taskArray = rootobj->getArray("tasks");
@@ -81,13 +80,12 @@ namespace kd {
                     string modelName = getJSONString(nodeObj, "modelName");
 
                     shared_ptr<DCTask> dctask = make_shared<DCTask>();
-                    dctask->fileName = dataPath + "/" + fileName;
+                    dctask->name = modelName;
+                    dctask->fileName = dataPath + fileName;
                     dctask->fileType = fileType;
-                    dctask->modelName = modelPath + "/" + modelName;
-
-                    tasks.emplace_back(dctask);
+                    dctask->modelName = modelPath + modelName;
+                    tasks.insert(make_pair(modelName, dctask));
                 }
-
             }catch (Exception &e) {
                 cout<<"[Error] " << e.what()<<endl;
                 return false;
@@ -104,9 +102,7 @@ namespace kd {
                 }
 
                 std::istream iss(&in);
-
                 Poco::JSON::Parser parser;
-
                 Poco::Dynamic::Var result = parser.parse(iss);
                 Poco::JSON::Object::Ptr rootobj;
                 if (result.type() == typeid (Poco::JSON::Object::Ptr))
@@ -127,7 +123,6 @@ namespace kd {
                     for( int i = 0 ; i < totalCount ; i ++){
                         Dynamic::Var value = taskArray->get(i);
                         Object::Ptr nodeObj = value.extract<Poco::JSON::Object::Ptr>();
-
                         shared_ptr<DCFieldDefine> fieldDefine = make_shared<DCFieldDefine>();
                         fieldDefine->name = getJSONString(nodeObj, "name");
                         fieldDefine->type = (DCFieldType)getJSONLong(nodeObj, "type");
@@ -136,7 +131,6 @@ namespace kd {
                         fieldDefine->defValue = getJSONString(nodeObj, "defaultValue");
                         fieldDefine->inputLimit = getJSONLong(nodeObj, "inputLimit");
                         fieldDefine->valueLimit = getJSONString(nodeObj, "valueLimit");
-
                         modelDefine->vecFieldDefines.emplace_back(fieldDefine);
                     }
                 }
@@ -162,11 +156,9 @@ namespace kd {
                         }
 
                         fieldCheck->refValue = getJSONString(nodeObj, "refValue");
-
                         modelDefine->vecFieldChecks.emplace_back(fieldCheck);
                     }
                 }
-
 
                 //parse relation
                 {
@@ -200,7 +192,6 @@ namespace kd {
                         modelDefine->mapRelation.insert(make_pair(stol(nodetype),mapfiletable));
                     }
                 }
-
             }catch (Exception &e) {
                 cout<<"[Error] " << fileName.c_str() << ", info:" << e.what()<<endl;
                 return false;

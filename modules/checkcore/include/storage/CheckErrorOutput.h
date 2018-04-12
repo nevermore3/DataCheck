@@ -13,8 +13,14 @@ namespace kd {
         class CheckErrorOutput{
 
         public:
-            CheckErrorOutput() : outputFile_(false) {
-
+            CheckErrorOutput(string file){
+                if (ss_.is_open()){
+                    ss_.close();
+                }
+                setlocale(LC_ALL,"");
+                if (file.length() > 0){
+                    ss_.open(file.c_str(), ios::ate);
+                }
             }
 
             ~CheckErrorOutput(){
@@ -46,31 +52,9 @@ namespace kd {
              * 输出自定义文本信息
              * @param info 文本信息
              */
-            void writeInfo(string info);
-
-
-            /**
-             * 设置输出结果文件
-             * @param strFile
-             */
-            void setFile(string strFile){
-                if (ss_.is_open()){
-                    ss_.close();
-                }
-                ss_.open(strFile.c_str(), ios::app);
-            }
-
-
-            /**
-             * 设置是否输出到文件还是控制台
-             * @param bOutputFile
-             */
-            void setOutputFile(bool bOutputFile = false){
-                outputFile_ = bOutputFile;
-            }
+            void writeInfo(string info, bool bLongString = true);
 
         protected:
-            bool outputFile_;
             ofstream ss_;
         };
     }

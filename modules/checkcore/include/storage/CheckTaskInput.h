@@ -8,13 +8,15 @@
 #include "data/TaskDataModel.h"
 #include "data/MapDataModel.h"
 
+#define DIR_CONFIG  "./config/"
+
 namespace kd {
     namespace dc {
 
         class CheckTaskInput{
 
         public:
-            bool loadTaskInfo(string fileName, vector<shared_ptr<DCTask>> & tasks);
+            bool loadTaskInfo(string fileName,  map<string,shared_ptr<DCTask>> & tasks);
 
             bool loadTaskModel(string fileName, shared_ptr<DCModelDefine> modelDefine);
 

@@ -15,10 +15,16 @@ namespace kd {
          */
         class DCTask{
         public:
+            //task名称
+            string name;
+
+            //数据路径
             string fileName;
 
+            //数据类型
             string fileType;
 
+            //模型配置文件
             string modelName;
         };
 

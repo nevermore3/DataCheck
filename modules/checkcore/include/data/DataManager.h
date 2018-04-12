@@ -9,6 +9,7 @@
 
 #include "MapDataModel.h"
 #include "DividerGeomModel.h"
+#include "TaskDataModel.h"
 
 namespace kd {
    namespace dc {
@@ -43,6 +44,8 @@ namespace kd {
             //所有模型定义， map的key是模型名，如"HD_DIVIDER_NODE"
             map<string, shared_ptr<DCModelDefine>> modelDefines_;
 
+            //检查任务
+            map<string, shared_ptr<DCTask>> tasks_;
         };
 
        /**

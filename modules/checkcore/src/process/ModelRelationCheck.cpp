@@ -29,8 +29,10 @@ namespace kd {
                         long value = iter->second;
                         if (value < 0)
                         {
-                            cout << "[Error] Relation Check model is :" << modeldataiter->first << " th " << i
-                                 << " records SPIDX is error" << endl;
+                            stringstream ss;
+                            ss << "[Error] Relation Check model is :" << modeldataiter->first << " th " << i
+                               << " records SPIDX is error";
+                            errorOutput->writeInfo(ss.str());
                         }
                     }
                 }
@@ -43,7 +45,6 @@ namespace kd {
                 string modelname = iter->first;
                 shared_ptr<DCModelDefine> model = iter->second;
                 int relnum = model->vecRelation.size();
-                int tablerelnum = model->mapRelation.size();
                 if (relnum > 0)
                 {
                     for (int i = 0; i < relnum; i++)
@@ -54,8 +55,10 @@ namespace kd {
                         shared_ptr<DCFieldDefine> field = model->getFieldDefine(rule);
                         DCFieldType type = field->type;
                         shared_ptr<DCModalData> modeldata = modelDataManager->getModelData(modelname);
-                        if(modeldata == nullptr){
-                            cout << "[Error] Relation Check model name :" << modelname <<  "  is not exist" << endl;
+                        if (modeldata == nullptr){
+                            stringstream ss;
+                            ss << "[Error] Relation Check model name :" << modelname <<  "  is not exist";
+                            errorOutput->writeInfo(ss.str());
                             break;
                         }
 
@@ -70,7 +73,9 @@ namespace kd {
                                 long value = reliter->second;
                                 shared_ptr<DCModalData> relmodeldata = modelDataManager->getModelData(member);
                                 if(relmodeldata == nullptr){
-                                    cout << "[Error] Relation Check model name :" << member <<  "  is not exist" << endl;
+                                    stringstream ss;
+                                    ss << "[Error] Relation Check model name :" << member <<  "  is not exist";
+                                    errorOutput->writeInfo(ss.str());
                                     break;
                                 }
                                 for (int k = 0; k < relmodeldata->records.size(); k++)
@@ -85,24 +90,29 @@ namespace kd {
                                 }
                                 if (!ischeck)
                                 {
-                                    cout << "[Error] Relation Check model is :" << modelname << "field is :"<< field << " th " << j
-                                         << " records is not exist" << endl;
+                                    stringstream ss;
+                                    ss << "[Error] Relation Check model is :" << modelname
+                                       << " field is :"<< field->name << " th " << j
+                                       << " records is not exist";
+                                    errorOutput->writeInfo(ss.str());
                                 }
                             }
                             else
                             {
-                                cout << "field type is error !" << endl;
+                                errorOutput->writeInfo("field type is error !");
                             }
                         }
-
                     }
                 }
 
+                int tablerelnum = model->mapRelation.size();
                 if (tablerelnum > 0)
                 {
                     shared_ptr<DCModalData> modeldata = modelDataManager->getModelData(modelname);
-                    if(modeldata == nullptr){
-                        cout << "[Error] Relation Check model name :" << modelname <<  "  is not exist" << endl;
+                    if (modeldata == nullptr){
+                        stringstream ss;
+                        ss << "[Error] Relation Check model name :" << modelname <<  "  is not exist";
+                        errorOutput->writeInfo(ss.str());
                         break;
                     }
 
@@ -120,7 +130,9 @@ namespace kd {
                             long fieldvalue = (modelrec->longDatas.find(field))->second;
                             shared_ptr<DCModalData> relmodeldata = modelDataManager->getModelData(relmodelname);
                             if(relmodeldata == nullptr){
-                                cout << "[Error] Relation Check model name :" << relmodelname <<  "  is not exist" << endl;
+                                stringstream ss;
+                                ss << "[Error] Relation Check model name :" << relmodelname <<  "  is not exist";
+                                errorOutput->writeInfo(ss.str());
                                 break;
                             }
                             for (int k = 0; k < relmodeldata->records.size(); k++)
@@ -136,8 +148,11 @@ namespace kd {
                             }
                             if (!ischeck)
                             {
-                                cout << "[Error] Relation Check model is :" << modelname <<"field is :"<< field << " th " << j
-                                     << " records is not exist" << endl;
+                                stringstream ss;
+                                ss << "[Error] Relation Check model is :" << modelname
+                                   <<"field is :"<< field << " th " << j
+                                   << " records is not exist";
+                                errorOutput->writeInfo(ss.str());
                             }
 
                         }

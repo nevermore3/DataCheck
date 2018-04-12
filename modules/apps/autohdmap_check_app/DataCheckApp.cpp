@@ -1,18 +1,20 @@
 
 //third party
 #include <Poco/StringTokenizer.h>
-#include <process/DataAttCheck.h>
-#include <DataCheckConfig.h>
-
 
 
 //module
 #include "data/DataManager.h"
-
-#include "ProcessManager.h"
-
 #include "storage/CheckTaskInput.h"
 #include "storage/ModelDataInput.h"
+#include "ProcessManager.h"
+
+#include "DataCheckConfig.h"
+#include "ModelProcessManager.h"
+#include "process/ModelDataLoader.h"
+#include "process/ModelFieldCheck.h"
+#include "process/ModelBussCheck.h"
+#include "process/ModelRelationCheck.h"
 
 #include "MapProcessManager.h"
 #include "businesscheck/MapDataLoader.h"
@@ -57,42 +59,77 @@ void loadTaskInfo(string fileName, string & taskName, string & baseUrl,
 }
 
 int dataCheck(string basePath, string taskFileName){
-    shared_ptr<CheckErrorOutput> errorOutput = make_shared<CheckErrorOutput>();
-    string outputFile = basePath + "/check_result.csv";
-    errorOutput->setFile(outputFile);
-    errorOutput->setOutputFile(true);
+
+    //输出错误文件
+    string outputFile = "check_result.csv";
+    shared_ptr<CheckErrorOutput> errorOutput = make_shared<CheckErrorOutput>(outputFile);
 
     //交换格式基本属性检查
-    shared_ptr<DataAttCheck> attCheck = make_shared<DataAttCheck>(basePath, taskFileName);
-    attCheck->setCheckErrorOutput(errorOutput);
-    attCheck->execute();
+    {
+        shared_ptr<ModelProcessManager> modelProcessManager = make_shared<ModelProcessManager>("modelCheck");
+
+        //加载数据
+        shared_ptr<ModelDataLoader> modelLoader = make_shared<ModelDataLoader>(basePath, taskFileName);
+        modelProcessManager->registerProcessor(modelLoader);
+
+        //属性字段检查
+        shared_ptr<ModelFieldCheck> modelFiledCheck = make_shared<ModelFieldCheck>();
+        modelProcessManager->registerProcessor(modelFiledCheck);
+
+        //属性业务检查
+        shared_ptr<ModelBussCheck> modelBussCheck = make_shared<ModelBussCheck>();
+        modelProcessManager->registerProcessor(modelBussCheck);
+
+        //属性关系检查
+        shared_ptr<ModelRelationCheck> modelRelationCheck = make_shared<ModelRelationCheck>();
+        modelProcessManager->registerProcessor(modelRelationCheck);
+
+        //执行已注册检查项
+        shared_ptr<ModelDataManager> modelDataManager = make_shared<ModelDataManager>();
+        modelProcessManager->execute(modelDataManager, errorOutput);
+    }
 
     //交换格式逻辑检查
-    //加载配置项
-    DataCheckConfig::getInstance().load("config.properties");
+    {
+        DataCheckConfig::getInstance().load("config.properties");
+        shared_ptr<MapProcessManager> mapProcessManager = make_shared<MapProcessManager>("mapCheck");
 
-    shared_ptr<MapProcessManager> mapProcessManager = make_shared<MapProcessManager>("mapCheck");
+        //加载数据
+        shared_ptr<MapDataLoader> loader = make_shared<MapDataLoader>(basePath);
+        mapProcessManager->registerProcessor(loader);
 
-    shared_ptr<MapDataLoader> loader = make_shared<MapDataLoader>(basePath + "/data");
-    shared_ptr<DividerAttribCheck> divAttCheck = make_shared<DividerAttribCheck>();
-    shared_ptr<DividerShapeNormCheck> divShpNormCheck = make_shared<DividerShapeNormCheck>();
-    shared_ptr<DividerShapeDefectCheck> divShpDefCheck = make_shared<DividerShapeDefectCheck>();
-    shared_ptr<DividerTopoCheck> divTopoCheck = make_shared<DividerTopoCheck>();
-    shared_ptr<LaneAttribCheck> laneAttCheck = make_shared<LaneAttribCheck>();
-    shared_ptr<LaneShapeNormCheck> laneShpCheck = make_shared<LaneShapeNormCheck>();
-    shared_ptr<LaneTopoCheck> laneTopoCheck = make_shared<LaneTopoCheck>();
+        //车道线属性检查
+        shared_ptr<DividerAttribCheck> divAttCheck = make_shared<DividerAttribCheck>();
+        mapProcessManager->registerProcessor(divAttCheck);
 
-    mapProcessManager->registerProcessor(loader);
-    mapProcessManager->registerProcessor(divAttCheck);
-    mapProcessManager->registerProcessor(divShpNormCheck);
-    mapProcessManager->registerProcessor(divShpDefCheck);
-    mapProcessManager->registerProcessor(divTopoCheck);
-    mapProcessManager->registerProcessor(laneAttCheck);
-    mapProcessManager->registerProcessor(laneShpCheck);
-    mapProcessManager->registerProcessor(laneTopoCheck);
+        //车道线几何形态检查
+        shared_ptr<DividerShapeNormCheck> divShpNormCheck = make_shared<DividerShapeNormCheck>();
+        mapProcessManager->registerProcessor(divShpNormCheck);
 
-    shared_ptr<MapDataManager> mapDataManager = make_shared<MapDataManager>();
-    mapProcessManager->execute(mapDataManager, errorOutput);
+        //车道线形状缺陷检查
+        shared_ptr<DividerShapeDefectCheck> divShpDefCheck = make_shared<DividerShapeDefectCheck>();
+        mapProcessManager->registerProcessor(divShpDefCheck);
+
+        //车道线拓扑检查
+        shared_ptr<DividerTopoCheck> divTopoCheck = make_shared<DividerTopoCheck>();
+        mapProcessManager->registerProcessor(divTopoCheck);
+
+        //车道属性检查
+        shared_ptr<LaneAttribCheck> laneAttCheck = make_shared<LaneAttribCheck>();
+        mapProcessManager->registerProcessor(laneAttCheck);
+
+        //车道几何形状检查
+        shared_ptr<LaneShapeNormCheck> laneShpCheck = make_shared<LaneShapeNormCheck>();
+        mapProcessManager->registerProcessor(laneShpCheck);
+
+        //车道拓扑检查
+        shared_ptr<LaneTopoCheck> laneTopoCheck = make_shared<LaneTopoCheck>();
+        mapProcessManager->registerProcessor(laneTopoCheck);
+
+        //执行已注册检查项
+        shared_ptr<MapDataManager> mapDataManager = make_shared<MapDataManager>();
+        mapProcessManager->execute(mapDataManager, errorOutput);
+    }
 
     return 1;
 }

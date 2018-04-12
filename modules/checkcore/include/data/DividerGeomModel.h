@@ -100,6 +100,26 @@ namespace kd {
             double lng_;
             double lat_;
             double z_;
+
+            bool operator==(const DCCoord b) const{
+                return (lng_==b.lng_ && lat_==b.lat_ && z_==b.z_);
+            }
+
+            bool operator<(const DCCoord b) const{
+                if (lng_ < b.lng_)
+                    return true;
+                else if (lng_ > b.lng_)
+                    return false;
+                else if (lat_ < b.lat_)
+                    return true;
+                else if (lat_ > b.lat_)
+                    return false;
+                else if (z_ < b.z_)
+                    return true;
+                else if (z_ > b.z_)
+                    return false;
+                return false;
+            }
         };
 
         class DCDividerNode;

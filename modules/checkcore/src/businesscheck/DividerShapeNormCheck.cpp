@@ -55,7 +55,7 @@ namespace kd {
                     if (dAngle > (180-edgeAngle)) {
                         shared_ptr<DCDividerCheckError> error =
                                 DCDividerCheckError::createByNode("JH_C_7", div, node1);
-
+                        error->checkDesc_ = "车道线不平滑夹角<135";
                         stringstream ss;
                         ss << "angle is " << dAngle << ". node id is[" << node1->id_ << ":" << node2->id_ << ":"
                            << node3->id_ << "]";
@@ -94,7 +94,7 @@ namespace kd {
                     if(distance < nodespace){
                         shared_ptr<DCDividerCheckError> error =
                                 DCDividerCheckError::createByNode("JH_C_8", div, node1);
-
+                        error->checkDesc_ = "车道线两个节点长度<0.2米";
                         stringstream ss;
                         ss << "from node " << node1->id_ << " to node " << node2->id_ << " distance is " << distance;
                         error->errorDesc_ = ss.str();
@@ -108,7 +108,7 @@ namespace kd {
                     if(fabs(realDeltaZ) > slopLimit ){
                         shared_ptr<DCDividerCheckError> error =
                                 DCDividerCheckError::createByNode("JH_C_9", div, node1);
-
+                        error->checkDesc_ = "车道线高程突变>±10厘米";
                         stringstream ss;
                         ss << "node " << node1->id_ << " height " << node1->coord_.z_ << ". node " << node2->id_ ;
                         ss << " height " << node2->coord_.z_ << ". delta z is " << realDeltaZ << " and distance is " << distance;
@@ -125,7 +125,7 @@ namespace kd {
             if (mapDataManager == nullptr)
                 return false;
 
-            errorOutput->writeInfo("<DividerShapeNormCheck>\n" + make_shared<DCDividerCheckError>("")->getHeader());
+            errorOutput->writeInfo("[DividerShapeNormCheck]\n" + make_shared<DCDividerCheckError>("")->getHeader(), false);
 
             check_JH_C_7(mapDataManager, errorOutput);
 

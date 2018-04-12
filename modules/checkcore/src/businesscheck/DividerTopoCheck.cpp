@@ -48,7 +48,7 @@ namespace kd {
 
         bool DividerTopoCheck::findConnectEdge(string nodeId, bool start,
                              const map<string, shared_ptr<DCDividerTopoNode>> & topoNodes,
-                                               const shared_ptr<geos::index::quadtree::Quadtree> & quadtree,
+                             const shared_ptr<geos::index::quadtree::Quadtree> & quadtree,
                              shared_ptr<MapDataManager> mapDataManager){
             //查找node所对应的toponode信息
             auto topoNodeit = topoNodes.find(nodeId);
@@ -121,6 +121,7 @@ namespace kd {
             if(!findConnectEdge(fromNodeId, true, topoNodes, quadtree, mapDataManager)){
                 shared_ptr<DCDividerCheckError> error =
                         DCDividerCheckError::createByNode("JH_C_4", div, nullptr);
+                error->checkDesc_ = "车行道边缘线在非停止线/出入口标线的地方断开";
                 stringstream ss;
                 ss << "divider fromnode " << fromNodeId << " not connected with edge divider.";
                 error->errorDesc_ = ss.str();
@@ -132,6 +133,7 @@ namespace kd {
             if(!findConnectEdge(toNodeId, false, topoNodes, quadtree, mapDataManager)){
                 shared_ptr<DCDividerCheckError> error =
                         DCDividerCheckError::createByNode("JH_C_4", div, nullptr);
+                error->checkDesc_ = "车行道边缘线在非停止线/出入口标线的地方断开";
                 stringstream ss;
                 ss << "divider tonode " << toNodeId << " not connected with edge divider.";
                 error->errorDesc_ = ss.str();
@@ -140,7 +142,9 @@ namespace kd {
         }
 
         //车行道边缘线在非停止线/出入口标线的地方断开
-        void DividerTopoCheck::check_JH_C_4(shared_ptr<MapDataManager> mapDataManager, const map<string, shared_ptr<DCDividerTopoNode>> & topoNodes, shared_ptr<CheckErrorOutput> errorOutput){
+        void DividerTopoCheck::check_JH_C_4(shared_ptr<MapDataManager> mapDataManager,
+                                            const map<string, shared_ptr<DCDividerTopoNode>> & topoNodes,
+                                            shared_ptr<CheckErrorOutput> errorOutput){
 
             //空间索引保存所有停止线，以便后期在车道线停止时判断其是否有相交的情形
             shared_ptr<geos::index::quadtree::Quadtree> quadtree = make_shared<geos::index::quadtree::Quadtree>();
@@ -164,7 +168,9 @@ namespace kd {
                     continue;
 
                 if(lg->lanes_.size() == 0){
-                    cout << "[Error] lane group has no lane. lanegroup id " << lg->id_ << endl;
+                    stringstream ss;
+                    ss << "[Error] lane group has no lane. lanegroup id " << lg->id_;
+                    errorOutput->writeInfo(ss.str());
                     continue;
                 }
 
@@ -220,7 +226,7 @@ namespace kd {
                 if(divRelIds.find(divid) == divRelIds.end()){
                     shared_ptr<DCDividerCheckError> error =
                             DCDividerCheckError::createByNode("JH_C_5", div, nullptr);
-
+                    error->checkDesc_ = "非路口虚拟线的车道线未构成车道";
                     error->errorDesc_ = "divider not used by lane.";
                     errorOutput->saveError(error);
                 }
@@ -229,7 +235,9 @@ namespace kd {
 
 
         //共点的车道线通行方向（矢量化方向+车道线方向）冲突
-        void DividerTopoCheck::check_JH_C_6(shared_ptr<MapDataManager> mapDataManager, const map<string, shared_ptr<DCDividerTopoNode>> & topoNodes, shared_ptr<CheckErrorOutput> errorOutput){
+        void DividerTopoCheck::check_JH_C_6(shared_ptr<MapDataManager> mapDataManager,
+                                            const map<string, shared_ptr<DCDividerTopoNode>> & topoNodes,
+                                            shared_ptr<CheckErrorOutput> errorOutput){
             //判断关系
             for( auto nodeit : topoNodes) {
                 shared_ptr<DCDividerTopoNode> topoNode = nodeit.second;
@@ -247,7 +255,7 @@ namespace kd {
                 if(topoNode->startRels_.size() == 0){
                     shared_ptr<DCDividerCheckError> error =
                             DCDividerCheckError::createByNode("JH_C_6", topoNode->nodeId_, topoNode->lng_, topoNode->lat_, topoNode->z_);
-
+                    error->checkDesc_ = "共点的车道线通行方向冲突";
                     stringstream ss;
                     ss << "divider node " << topoNode->nodeId_ << " has no FDNODE relation.";
                     error->errorDesc_ = ss.str();
@@ -258,7 +266,7 @@ namespace kd {
                 if(topoNode->endRels_.size() == 0){
                     shared_ptr<DCDividerCheckError> error =
                             DCDividerCheckError::createByNode("JH_C_6", topoNode->nodeId_, topoNode->lng_, topoNode->lat_, topoNode->z_);
-
+                    error->checkDesc_ = "共点的车道线通行方向冲突";
                     stringstream ss;
                     ss << "divider node " << topoNode->nodeId_ << " has no TDNODE relation.";
                     error->errorDesc_ = ss.str();
@@ -385,7 +393,7 @@ namespace kd {
 
         bool DividerTopoCheck::execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput){
 
-            errorOutput->writeInfo("<DividerTopoCheck>\n" + make_shared<DCDividerCheckError>("")->getHeader());
+            errorOutput->writeInfo("[DividerTopoCheck]\n" + make_shared<DCDividerCheckError>("")->getHeader(), false);
 
             //建立节点拓扑关系，记录所有车道线共点信息， map的key为节点id
             map<string, shared_ptr<DCDividerTopoNode>> topoNodes;

@@ -36,6 +36,9 @@ namespace kd {
             //检测模型
             string checkModel_;
 
+        public:
+            //设置检查模型描述信息
+            string checkDesc_;
         };
 
         /**

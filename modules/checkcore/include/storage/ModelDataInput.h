@@ -20,6 +20,8 @@ namespace kd {
 
             bool loadArcFile(const string & fileName, const vector<shared_ptr<DCFieldDefine>> & vecFieldDefines, shared_ptr<DCModalData> modelData, shared_ptr<CheckErrorOutput> errorOutput);
 
+            bool loadPolygonFile(const string & fileName, const vector<shared_ptr<DCFieldDefine>> & vecFieldDefines, shared_ptr<DCModalData> modelData, shared_ptr<CheckErrorOutput> errorOutput);
+
             bool loadDBFFile(const string & fileName, const vector<shared_ptr<DCFieldDefine>> & vecFieldDefines, shared_ptr<DCModalData> modelData, shared_ptr<CheckErrorOutput> errorOutput);
         };
 

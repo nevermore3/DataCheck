@@ -14,7 +14,7 @@ namespace kd {
         bool LaneTopoCheck::execute(shared_ptr<MapDataManager> mapDataManager,
                                     shared_ptr<CheckErrorOutput> errorOutput) {
 
-            errorOutput->writeInfo("<LaneTopoCheck>\n" + make_shared<DCLaneCheckError>("")->getHeader());
+            errorOutput->writeInfo("[LaneTopoCheck]\n" + make_shared<DCLaneCheckError>("")->getHeader(), false);
             check_JH_C_22(mapDataManager, errorOutput);
 
             return true;
@@ -52,21 +52,21 @@ namespace kd {
                     shared_ptr<DCLaneCheckError> error =
                             DCLaneCheckError::createByNode("JH_C_22", lane, nullptr);
                     error->errorDesc_ = "lane no connected lane.";
-
+                    error->checkDesc_ = "存在没有进入车道和退出车道的车道";
                     errorOutput->saveError(error);
 
                 }else if(fromLaneCount == 0 && toLaneCount > 0){
                     shared_ptr<DCLaneCheckError> error =
                             DCLaneCheckError::createByNode("JH_C_22", lane, nullptr);
                     error->errorDesc_ = "lane no exit.";
-
+                    error->checkDesc_ = "存在没有进入车道和退出车道的车道";
                     errorOutput->saveError(error);
 
                 }else if(fromLaneCount > 0 && toLaneCount == 0){
                     shared_ptr<DCLaneCheckError> error =
                             DCLaneCheckError::createByNode("JH_C_22", lane, nullptr);
                     error->errorDesc_ = "lane no enter.";
-
+                    error->checkDesc_ = "存在没有进入车道和退出车道的车道";
                     errorOutput->saveError(error);
                 }
             }

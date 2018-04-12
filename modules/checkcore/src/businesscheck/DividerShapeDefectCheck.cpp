@@ -67,7 +67,7 @@ namespace kd {
                 if(distance > distLimit){
                     shared_ptr<DCDividerCheckError> error =
                             DCDividerCheckError::createByNode(checkModel, div, node1);
-
+                    error->checkDesc_ = "检查车道线节点间距判定是否中间有虚线丢失";
                     stringstream ss;
                     ss << "from node " << node1->id_ << " to node " << node2->id_ << " distance is " << distance << " meter.";
                     error->errorDesc_ = ss.str();
@@ -137,7 +137,7 @@ namespace kd {
             if(mapDataManager == nullptr)
                 return false;
 
-            errorOutput->writeInfo("<DividerShapeDefectCheck>\n" + make_shared<DCDividerCheckError>("")->getHeader());
+            errorOutput->writeInfo("[DividerShapeDefectCheck]\n" + make_shared<DCDividerCheckError>("")->getHeader(), false);
             check_JH_C_1_AND_JH_C_2(mapDataManager, errorOutput);
 
             return true;

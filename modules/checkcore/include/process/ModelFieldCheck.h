@@ -27,13 +27,15 @@ namespace kd {
              * @param modelDefine 模型定义
              * @return 操作是否成功
              */
-            virtual bool execute(shared_ptr<DCModalData> modelData, shared_ptr<DCModelDefine> modelDefine, shared_ptr<CheckErrorOutput> errorOutput) override ;
+            virtual bool execute(shared_ptr<ModelDataManager> modelDataManager, shared_ptr<CheckErrorOutput> errorOutput) override ;
 
 
         private:
-            void checkDoubleValueIn(string valueLimit, shared_ptr<DCModalData> modelData, string fieldName, shared_ptr<CheckErrorOutput> errorOutput);
+            void checkDoubleValueIn(const shared_ptr<DCFieldDefine> fieldDef, const shared_ptr<DCModalData> modelData, const string& fieldName, const shared_ptr<CheckErrorOutput> errorOutput);
 
-            void checkLongValueIn(string valueLimit, shared_ptr<DCModalData> modelData, string fieldName, shared_ptr<CheckErrorOutput> errorOutput);
+            void checkLongValueIn(const shared_ptr<DCFieldDefine> fieldDef, const shared_ptr<DCModalData> modelData, const string& fieldName, const shared_ptr<CheckErrorOutput> errorOutput);
+
+            void checkStringValueIn(const shared_ptr<DCFieldDefine> fieldDef, const shared_ptr<DCModalData> modelData, const string& fieldName, const shared_ptr<CheckErrorOutput> errorOutput);
 
 
         private:

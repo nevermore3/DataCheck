@@ -12,7 +12,7 @@
 namespace kd {
     namespace dc {
 
-        class ModelRelationCheck {
+        class ModelRelationCheck : public IModelProcessor {
         public:
 
 
@@ -24,12 +24,12 @@ namespace kd {
             virtual string getId();
 
             /**
-             * 进行任务处理 // ? 是不是要全部的数据
+             * 进行任务处理
              * @param modelData 模型数据
              * @param modelDefine 模型定义
              * @return 操作是否成功
              */
-            virtual bool execute(shared_ptr<ModelDataManager> modelDataManager, shared_ptr<CheckErrorOutput> errorOutput);
+            virtual bool execute(shared_ptr<ModelDataManager> modelDataManager, shared_ptr<CheckErrorOutput> errorOutput) override ;
 
         private:
             const string id = "model_relation_check";

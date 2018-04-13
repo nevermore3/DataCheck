@@ -1,0 +1,62 @@
+{
+  "model" : "HD_DIVIDER_NODE",
+  "checks" : [
+    {
+       "name":"ID",
+       "func":"ID",
+       "refValue":""
+    }
+  ],
+  "fields" : [
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "DASHTYPE",
+      "type" : "1",
+      "valueLimit" : "0,1,2,3"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "CURVATURE",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "HEADING",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "SLOPE",
+      "type" : "1",
+      "valueLimit" : ""
+    }
+  ],
+  
+   "relation" : [
+  ],
+   "relationcheck" : [
+  ]
+}

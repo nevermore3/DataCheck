@@ -1,0 +1,66 @@
+{
+  "model" : "HD_TOLLBOOTH",
+  "checks" : [
+    {
+       "name":"ID",
+       "func":"ID",
+       "refValue":""
+    }
+  ],
+  "fields" : [
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ROAD_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "32",
+      "name" : "NAME",
+      "type" : "0",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "32",
+      "name" : "NAME_PY",
+      "type" : "0",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "HEIGHT",
+      "type" : "1",
+      "valueLimit" : ""
+    }
+  ],
+
+  "relation" : [
+    {
+      "member" : "HD_ROAD",
+      "rule" : "ROAD_ID"
+    }
+  ],
+   "relationcheck" : [
+  ]
+}

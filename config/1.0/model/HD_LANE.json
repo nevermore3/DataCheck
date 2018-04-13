@@ -1,0 +1,61 @@
+{
+"model" : "HD_LANE",
+  "checks" : [
+    {
+       "name":"ID",
+       "func":"ID",
+       "refValue":""
+    }
+  ],
+  "fields" : [
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "DIVIDER_L",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "DIVIDER_R",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "LANE_NO",
+      "type" : "1",
+      "valueLimit" : ""
+    }
+  ],
+  
+   "relation" : [
+    {
+      "member" : "HD_DIVIDER",
+      "rule" : "DIVIDER_L"
+    },
+    {
+      "member" : "HD_DIVIDER",
+      "rule" : "DIVIDER_R"
+    }
+  ],
+   "relationcheck" : [
+  ]
+}

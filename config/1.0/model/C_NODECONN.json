@@ -1,0 +1,75 @@
+{
+"model" : "C_NODECONN",
+  "checks" : [
+    {
+       "name":"ID",
+       "func":"ID",
+       "refValue":""
+    }
+
+  ],
+  "fields" : [
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "FROAD_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "C_NODE_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "TROAD_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ACCESSABLE",
+      "type" : "1",
+      "valueLimit" : "0,1"
+    }
+  ],
+  
+  "relation" : [
+    {
+      "member" : "ROAD",
+      "rule" : "FROAD_ID"
+    },
+    {
+      "member" : "C_NODE",
+      "rule" : "C_NODE_ID"
+    },
+    {
+      "member" : "ROAD",
+      "rule" : "TROAD_ID"
+    }
+  ],
+   "relationcheck" : [
+  ]
+}

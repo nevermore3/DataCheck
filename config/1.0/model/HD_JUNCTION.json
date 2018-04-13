@@ -1,0 +1,53 @@
+{
+  "model" : "HD_JUNCTION",
+  "checks" : [
+    {
+       "name":"ID",
+       "func":"ID",
+       "refValue":""
+    }
+  ],
+  "fields" : [
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "X",
+      "type" : "2",
+      "valueLimit" : "[-180~180]"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "Y",
+      "type" : "2",
+      "valueLimit" : "[-90~90]"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "Z",
+      "type" : "2",
+      "valueLimit" : ""
+    }
+  ],
+  
+  "relation" : [
+  ], 
+  "relationcheck" : [
+  ]
+}

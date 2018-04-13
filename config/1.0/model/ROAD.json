@@ -1,0 +1,304 @@
+{
+"model" : "ROAD",
+  "checks" : [
+    {
+       "name":"ID",
+       "func":"ID",
+       "refValue":""
+    }
+  ],
+  "fields" : [
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "DIRECTION",
+      "type" : "1",
+      "valueLimit" : "0,1,2,3,4"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "FNODE_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "TNODE_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "64",
+      "name" : "NAME_CHN",
+      "type" : "0",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "128",
+      "name" : "NAME_PY",
+      "type" : "0",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "128",
+      "name" : "NAME_ENG",
+      "type" : "0",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "64",
+      "name" : "ALIAS_CHN",
+      "type" : "0",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "128",
+      "name" : "ALIAS_PY",
+      "type" : "0",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "128",
+      "name" : "ALIAS_ENG",
+      "type" : "0",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "64",
+      "name" : "ROUTE_NO",
+      "type" : "0",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ROAD_CLASS",
+      "type" : "1",
+      "valueLimit" : "10000,11000,12000,13000,14000,15000,16000,17000,18000,19000"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "FC",
+      "type" : "1",
+      "valueLimit" : "1,2,3,4,5,6"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "FORM_WAY",
+      "type" : "1",
+      "valueLimit" : "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "LINK_TYPE",
+      "type" : "1",
+      "valueLimit" : "0,1,2,3,4"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "S_LANES",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "WIDTH",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "LENGTH",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "TOLL_FLAG",
+      "type" : "1",
+      "valueLimit" : "1,2"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "STATUS",
+      "type" : "1",
+      "valueLimit" : "0,1,2"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "OWNER_SHIP",
+      "type" : "1",
+      "valueLimit" : "0,1,2,3,4"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "OVER_HEAD",
+      "type" : "1",
+      "valueLimit" : "0,1"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "6",
+      "name" : "AD_CODE",
+      "type" : "0",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "URBAN",
+      "type" : "1",
+      "valueLimit" : "0,1,2"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "U_LINE",
+      "type" : "1",
+      "valueLimit" : "0,1"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "SRC_FLAG",
+      "type" : "1",
+      "valueLimit" : "1"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "PAVER",
+      "type" : "1",
+      "valueLimit" : "0,1,2,3"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "T_TRLAYER",
+      "type" : "1",
+      "valueLimit" : "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ROAD_PARK",
+      "type" : "1",
+      "valueLimit" : "0,1,2,3,4"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "SIDEROAD",
+      "type" : "1",
+      "valueLimit" : "0,1"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "RAMP",
+      "type" : "1",
+      "valueLimit" : "0,1,2"
+    }
+  ],
+  
+  "relation" : [
+    {
+      "member" : "ROAD_NODE",
+      "rule" : "FNODE_ID"
+    },
+    {
+      "member" : "ROAD_NODE",
+      "rule" : "TNODE_ID"
+    }
+  ],
+   "relationcheck" : [
+  ]
+}

@@ -1,0 +1,88 @@
+{
+"model" : "TRAFFICRULE",
+  "checks" : [
+    {
+       "name":"ID",
+       "func":"ID",
+       "refValue":""
+    }
+  ],
+  "fields" : [
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "NODE_TYPE",
+      "type" : "1",
+      "valueLimit" : "0,1"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "NODECONN_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "TYPE",
+      "type" : "1",
+      "valueLimit" : "0,1,2"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "LICPLATE",
+      "type" : "1",
+      "valueLimit" : "0,1,2"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "8",
+      "name" : "VEHICLE",
+      "type" : "0",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "256",
+      "name" : "TIME",
+      "type" : "0",
+      "valueLimit" : "0123456789Mywdflthmsz{}[]()*+-"
+    }
+  ],
+  
+  "relation" : [
+    {
+      "member" : "NODECONN",
+      "rule" : "NODECONN_ID"
+    },
+    {
+      "member" : "C_NODECONN",
+      "rule" : "NODECONN_ID"
+    }
+  ],
+   "relationcheck" : [
+  ]
+}

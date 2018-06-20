@@ -56,10 +56,6 @@
   ],
   
    "relation" : [
-    {
-      "member" : "HD_DIVIDER",
-      "rule" : "DIVIDER_ID"
-    }
   ],
    "relationcheck" : [
   ]

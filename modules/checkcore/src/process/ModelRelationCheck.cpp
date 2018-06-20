@@ -78,6 +78,12 @@ namespace kd {
                             {
                                 bool ischeck = false;
                                 auto reliter = modelrec->longDatas.find(rule);
+                                if(reliter == modelrec->longDatas.end()){
+                                    stringstream ss;
+                                    ss << "[Error] Relation Check model name :" << member <<  ", rule: " << rule << "  is not exist";
+                                    errorOutput->writeInfo(ss.str());
+                                    continue;
+                                }
                                 string fieldname = reliter->first;
                                 long value = reliter->second;
                                 shared_ptr<DCModalData> relmodeldata = modelDataManager->getModelData(member);

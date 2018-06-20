@@ -31,7 +31,7 @@
       "inputLimit" : "1",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "ROAD_NODE_ID",
+      "name" : "NODE_ID",
       "type" : "1",
       "valueLimit" : ""
     },
@@ -62,7 +62,7 @@
     },
     {
       "member" : "ROAD_NODE",
-      "rule" : "ROAD_NODE_ID"
+      "rule" : "NODE_ID"
     },
     {
       "member" : "ROAD",

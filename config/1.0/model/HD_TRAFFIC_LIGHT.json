@@ -40,7 +40,7 @@
       "inputLimit" : "1",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "TRAFFIC_LIGHT_GROUP_ID",
+      "name" : "TLG_ID",
       "type" : "1",
       "valueLimit" : ""
     }
@@ -49,7 +49,7 @@
    "relation" : [
     {
       "member" : "HD_TRAFFIC_LIGHT_GROUP",
-      "rule" : "TRAFFIC_LIGHT_GROUP_ID"
+      "rule" : "TLG_ID"
     }
   ],
    "relationcheck" : [

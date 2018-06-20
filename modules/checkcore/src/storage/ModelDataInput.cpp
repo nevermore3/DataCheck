@@ -11,6 +11,95 @@
 namespace kd {
     namespace dc {
 
+        struct DCField{
+            string Name;
+            int Type;
+            int Width;
+            int Decimal;
+
+            DCField(){
+                Name = "";
+                Type = FTInteger;
+                Width = 0;
+                Decimal = 0;
+            }
+            DCField(string name, int type, int width, int decimal){
+                Name = name;
+                Type = type;
+                Width = width;
+                Decimal = decimal;
+            }
+
+            bool operator ==(const DCField& dcf) const {
+                return (dcf.Name == Name && dcf.Type == Type && dcf.Width == Width && dcf.Decimal == Decimal);
+            }
+        };
+
+        DBFFieldType GetDBFFieldType(DCFieldType tp){
+            if (tp == DCFieldType::DC_FIELD_TYPE_LONG){
+                return DBFFieldType::FTInteger;
+            } else if (tp == DCFieldType::DC_FIELD_TYPE_DOUBLE){
+                return DBFFieldType::FTDouble;
+            } else if (tp == DCFieldType::DC_FIELD_TYPE_TEXT || tp == DCFieldType::DC_FIELD_TYPE_VARCHAR){
+                return DBFFieldType::FTString;
+            } else {
+                return DBFFieldType::FTInteger;
+            }
+        }
+
+        bool VerifyFields(const string &fileName, const vector<shared_ptr<DCFieldDefine>> &vecFieldDefines, const DBFHandle pDBF,
+                          shared_ptr<CheckErrorOutput> errorOutput, vector<string>& dbfFieldNames){
+            map<string, DCField> defFields;
+            for (auto itFld : vecFieldDefines){
+                string fldName = itFld->name;
+                if (defFields.find(fldName) == defFields.end()){
+                    defFields.insert(make_pair(fldName, DCField(fldName, GetDBFFieldType(itFld->type), itFld->len, 0)));
+                } else {
+                    stringstream ss;
+                    ss << "[ERROR]: the Config field name '" << fldName << "' is repeat. file:" << fileName.c_str();
+                    errorOutput->writeInfo(ss.str());
+                }
+            }
+
+            map<string, DCField> dbfFields;
+            for (int iFld = 0; iFld < pDBF->nFields; ++iFld) {
+                char szfldName[64] = "";
+                int fldWidth = 0, fldDecimal = 0;
+                DBFFieldType fldType = DBFGetFieldInfo(pDBF, iFld, szfldName, &fldWidth, &fldDecimal);
+                string fldName = string(szfldName);
+                if (dbfFields.find(fldName) == dbfFields.end()){
+                    dbfFields.insert(make_pair(fldName, DCField(fldName, fldType, fldWidth, fldDecimal)));
+                } else {
+                    stringstream ss;
+                    ss << "[ERROR]: the DBF field name '" << fldName << "' is repeat. file:" << fileName.c_str();
+                    errorOutput->writeInfo(ss.str());
+                }
+
+                if (defFields.find(fldName) == defFields.end()){
+                    stringstream ss;
+
+                    ss << "[ERROR]: the DBF field '" << fldName << "' is not in Config Fields. file:" << fileName.c_str();
+                    errorOutput->writeInfo(ss.str());
+                } else {
+                    if(!(defFields[fldName] == defFields[fldName])){
+                        stringstream ss;
+                        ss << "[ERROR]: the DBF and Config fields '" << fldName << "' is not equal. file:" << fileName.c_str();
+                        errorOutput->writeInfo(ss.str());
+                    }
+                }
+            }
+
+            for (auto itDefFld : defFields) {
+                if (dbfFields.find(itDefFld.first) == dbfFields.end()){
+                    stringstream ss;
+
+                    ss << "[ERROR]: the Config field '" << itDefFld.first << "' is not in DBF Fields. file:" << fileName.c_str();
+                    errorOutput->writeInfo(ss.str());
+                } else {
+                    dbfFieldNames.push_back(itDefFld.first);
+                }
+            }
+        }
 
         bool ModelDataInput::loadPointFile(const string &fileName,
                                            const vector<shared_ptr<DCFieldDefine>> &vecFieldDefines,
@@ -24,6 +113,9 @@ namespace kd {
                 errorOutput->writeInfo(ss.str());
                 return false;
             }
+
+            vector<string> dbfFieldNames;
+            VerifyFields(fileName, vecFieldDefines, shpData.pDBF, errorOutput, dbfFieldNames);
 
             //读取数据
             int record_nums = shpData.getRecords();
@@ -41,6 +133,8 @@ namespace kd {
                 for (shared_ptr<DCFieldDefine> field : vecFieldDefines) {
 
                     string fieldName = field->name;
+                    if (std::find(dbfFieldNames.begin(),dbfFieldNames.end(), fieldName)==dbfFieldNames.end())
+                        continue;
 
                     switch (field->type) {
                         case DC_FIELD_TYPE_VARCHAR: {
@@ -88,6 +182,9 @@ namespace kd {
                 return false;
             }
 
+            vector<string> dbfFieldNames;
+            VerifyFields(fileName, vecFieldDefines, shpData.pDBF, errorOutput, dbfFieldNames);
+
             //读取数据
             int record_nums = shpData.getRecords();
             for (int i = 0; i < record_nums; i++) {
@@ -105,6 +202,8 @@ namespace kd {
                 for (shared_ptr<DCFieldDefine> field : vecFieldDefines) {
 
                     string fieldName = field->name;
+                    if (std::find(dbfFieldNames.begin(),dbfFieldNames.end(), fieldName)==dbfFieldNames.end())
+                        continue;
 
                     switch (field->type) {
                         case DC_FIELD_TYPE_VARCHAR: {
@@ -152,6 +251,9 @@ namespace kd {
                 return false;
             }
 
+            vector<string> dbfFieldNames;
+            VerifyFields(fileName, vecFieldDefines, dbfData.pDBF, errorOutput, dbfFieldNames);
+
             //读取数据
             int record_nums = dbfData.getRecords();
             for (int i = 0; i < record_nums; i++) {
@@ -160,6 +262,8 @@ namespace kd {
                 for (shared_ptr<DCFieldDefine> field : vecFieldDefines) {
 
                     string fieldName = field->name;
+                    if (std::find(dbfFieldNames.begin(),dbfFieldNames.end(), fieldName)==dbfFieldNames.end())
+                        continue;
 
                     switch (field->type) {
                         case DC_FIELD_TYPE_VARCHAR: {
@@ -207,6 +311,9 @@ namespace kd {
                 return false;
             }
 
+            vector<string> dbfFieldNames;
+            VerifyFields(fileName, vecFieldDefines, shpData.pDBF, errorOutput, dbfFieldNames);
+
             //读取数据
             int record_nums = shpData.getRecords();
             for (int i = 0; i < record_nums; i++) {
@@ -224,6 +331,8 @@ namespace kd {
                 for (shared_ptr<DCFieldDefine> field : vecFieldDefines) {
 
                     string fieldName = field->name;
+                    if (std::find(dbfFieldNames.begin(),dbfFieldNames.end(), fieldName)==dbfFieldNames.end())
+                        continue;
 
                     switch (field->type) {
                         case DC_FIELD_TYPE_VARCHAR: {

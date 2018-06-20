@@ -22,7 +22,7 @@
       "inputLimit" : "1",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "LANE_ATTRIBUTE_ID",
+      "name" : "LA_ID",
       "type" : "1",
       "valueLimit" : ""
     },
@@ -51,7 +51,7 @@
       "lenLimit" : "64",
       "name" : "VEHICLE",
       "type" : "0",
-      "valueLimit" : ""
+      "valueLimit" : "0,1,2,3,4,5,6"
     },
     {
       "defaultValue" : "",
@@ -60,14 +60,14 @@
       "lenLimit" : "64",
       "name" : "WEATHER",
       "type" : "0",
-      "valueLimit" : ""
+      "valueLimit" : "1,2,3,4,5,6"
     }
   ],
   
   "relation" : [
     {
       "member" : "HD_LANE_ATTRIBUTE",
-      "rule" : "LANE_ATTRIBUTE_ID"
+      "rule" : "LA_ID"
     }
   ],
    "relationcheck" : [

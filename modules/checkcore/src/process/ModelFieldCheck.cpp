@@ -3,10 +3,9 @@
 //
 
 #include <data/DataManager.h>
+#include "process/ModelCheckFunc.h"
 #include "process/ModelFieldCheck.h"
 
-//thirdparty
-#include "Poco/StringTokenizer.h"
 
 namespace kd {
     namespace dc {
@@ -67,93 +66,8 @@ namespace kd {
             return true;
         }
 
-        template <typename T>
-        T getValue(const string& val, bool bopen = false, bool bleft = true){
-            T valAccuracy, valT;
-            if (typeid(T) == typeid(int)){
-                valT = stoi(val.c_str());
-                valAccuracy = bleft ? 1 : -1;
-            } else if (typeid(T) == typeid(long)){
-                valT = stol(val.c_str());
-                valAccuracy = bleft ? 1 : -1;
-            } else if (typeid(T) == typeid(float)){
-                valT = stof(val.c_str());
-                valAccuracy = bleft ? 0.0000001 : -0.0000001;
-            } else if (typeid(T) == typeid(double)){
-                valT = stod(val.c_str());
-                valAccuracy = bleft ? 0.0000001 : -0.0000001;
-            } else {
-                return T();
-            }
-
-            if (bopen){
-                valT += valAccuracy;
-            }
-            return valT;
-        }
-
-        template <typename T>
-        bool getLimitRules(const string& strLimit, vector<T>& uniqueValues, map<T, T>& rangeValues){
-            Poco::StringTokenizer st(strLimit, ",", Poco::StringTokenizer::Options::TOK_IGNORE_EMPTY|Poco::StringTokenizer::Options::TOK_IGNORE_EMPTY);
-            for (auto val : st) {
-                if (string::npos != val.find("~")){ //范围值
-                    Poco::StringTokenizer rng(val, "~", Poco::StringTokenizer::Options::TOK_IGNORE_EMPTY|Poco::StringTokenizer::Options::TOK_IGNORE_EMPTY);
-                    if (rng.count() != 2 || rng[0].length() < 2 || rng[1].length() < 2)
-                        continue;
-
-                    T valLeft = getValue<T>(rng[0].substr(1), (rng[0][0] == '(')?true:false, true);
-                    T valRight = getValue<T>(rng[1].substr(0, rng[1].length()-1), (rng[1][rng[1].length()-1] == ')')?true:false, false);
-                    rangeValues.insert(pair<T, T>(valLeft, valRight));
-                } else { //唯一值
-                    uniqueValues.emplace_back(getValue<T>(val));
-                }
-            }
-            return true;
-        }
-
-        template <typename T>
-        bool isInLimit(const T& value, const vector<T>& uniqueValues, const map<T, T>& rangeValues){
-            if (typeid(T) == typeid(string)){
-                return true;
-                //TODO:
-                if (uniqueValues.size() == 1){
-                    T unqVal = uniqueValues[0];
-                    stringstream ssunq;
-                    ssunq << unqVal;
-                    string strUnq = ssunq.str();
-
-                    stringstream ss;
-                    ss << value;
-                    string strValue = ss.str();
-
-                    for (auto ch : strValue){
-                        if (strUnq.find(ch) == string::npos){
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            }
-
-            //判断值是否在取值列表内
-            if (std::find(uniqueValues.begin(), uniqueValues.end(), value) != uniqueValues.end())
-                return true;
-
-            //判断值是否在取值范围内
-            for (auto rngit : rangeValues){
-                if (value >= rngit.first && value <= rngit.second){
-                    return true;
-                }
-            }
-            return false;
-        }
-
         void ModelFieldCheck::checkDoubleValueIn(const shared_ptr<DCFieldDefine> fieldDef, const shared_ptr<DCModalData> modelData,
                                const string& fieldName, const shared_ptr<CheckErrorOutput> errorOutput) {
-            vector<double> uniqueValues;
-            map<double, double> rangeValues;
-            string valueLimit = fieldDef->valueLimit;
-            getLimitRules<double>(valueLimit, uniqueValues, rangeValues);
 
             for (shared_ptr<DCModelRecord> record : modelData->records) {
 
@@ -166,9 +80,9 @@ namespace kd {
                 }
 
                 double recordValue = valuepair->second;
-                if (!isInLimit<double>(recordValue, uniqueValues, rangeValues)){
+                if (!IsValid<double>(fieldDef->valueLimit, recordValue)){
                     stringstream ss;
-                    ss << "[Error] checkDoubleValueIn : " << fieldName << "=" << recordValue << " not in '"<< valueLimit <<"'";
+                    ss << "[Error] checkDoubleValueIn : " << fieldName << "=" << recordValue << " not in '"<< fieldDef->valueLimit <<"'";
                     errorOutput->writeInfo(ss.str());
                 }
             }
@@ -176,10 +90,6 @@ namespace kd {
 
         void ModelFieldCheck::checkLongValueIn(const shared_ptr<DCFieldDefine> fieldDef, const shared_ptr<DCModalData> modelData,
                                                const string& fieldName, const shared_ptr<CheckErrorOutput> errorOutput) {
-            vector<long> uniqueValues;
-            map<long, long> rangeValues;
-            string valueLimit = fieldDef->valueLimit;
-            getLimitRules<long>(valueLimit, uniqueValues, rangeValues);
 
             for (shared_ptr<DCModelRecord> record : modelData->records) {
 
@@ -192,9 +102,9 @@ namespace kd {
                 }
 
                 long recordValue = valuepair->second;
-                if (!isInLimit<long>(recordValue, uniqueValues, rangeValues)){
+                if (!IsValid<long>(fieldDef->valueLimit, recordValue)){
                     stringstream ss;
-                    ss << "[Error] checkLongValueIn : " << fieldName << "=" << recordValue << " not in '"<< valueLimit <<"'";
+                    ss << "[Error] checkLongValueIn : " << fieldName << "=" << recordValue << " not in '"<< fieldDef->valueLimit <<"'";
                     errorOutput->writeInfo(ss.str());
                 }
             }
@@ -202,12 +112,6 @@ namespace kd {
 
         void ModelFieldCheck::checkStringValueIn(const shared_ptr<DCFieldDefine> fieldDef, const shared_ptr<DCModalData> modelData,
                                                const string& fieldName, const shared_ptr<CheckErrorOutput> errorOutput) {
-            vector<string> uniqueValues;
-            map<string, string> rangeValues;
-            string valueLimit = fieldDef->valueLimit;
-            if (valueLimit.length() > 0){
-                getLimitRules<string>(valueLimit, uniqueValues, rangeValues);
-            }
 
             for (shared_ptr<DCModelRecord> record : modelData->records) {
 
@@ -236,9 +140,9 @@ namespace kd {
                 }
 
                 //判断值是否超限
-                if (len > 0 && !isInLimit<string>(recordValue, uniqueValues, rangeValues)){
+                if (len > 0 && !IsValid<string>(fieldDef->valueLimit, recordValue)){
                     stringstream ss;
-                    ss << "[Error] checkStringValueIn : " << fieldName << "=" << recordValue << " not in '"<< valueLimit <<"'";
+                    ss << "[Error] checkStringValueIn : " << fieldName << "=" << recordValue << " not in '"<< fieldDef->valueLimit <<"'";
                     errorOutput->writeInfo(ss.str());
                 }
             }

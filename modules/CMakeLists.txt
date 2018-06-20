@@ -1,3 +1,2 @@
-#
 add_subdirectory(checkcore)
 add_subdirectory(apps)

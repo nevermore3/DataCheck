@@ -2,6 +2,7 @@
 // Created by gaoyanhong on 2018/3/29.
 //
 
+#include <process/ModelCheckFunc.h>
 #include "process/ModelRelationCheck.h"
 
 namespace kd {
@@ -11,6 +12,7 @@ namespace kd {
         string ModelRelationCheck::getId() {
             return id;
         }
+
 
         bool ModelRelationCheck::execute(shared_ptr<ModelDataManager> modelDataManager, shared_ptr<CheckErrorOutput> errorOutput) {
 
@@ -53,6 +55,13 @@ namespace kd {
                         string member = relation->member;
                         string rule = relation->rule;
                         shared_ptr<DCFieldDefine> field = model->getFieldDefine(rule);
+                        if(nullptr == field) {
+                            stringstream ss;
+                            ss << "[Error] Relation Check model [" << modelname << "], rule :" << rule <<  "  is not exist";
+                            errorOutput->writeInfo(ss.str());
+                            continue;
+                        }
+
                         DCFieldType type = field->type;
                         shared_ptr<DCModalData> modeldata = modelDataManager->getModelData(modelname);
                         if (modeldata == nullptr){
@@ -118,43 +127,93 @@ namespace kd {
 
                     for (int j = 0; j < modeldata->records.size(); j++)
                     {
-
                         shared_ptr<DCModelRecord> modelrec = modeldata->records[j];
-                        long nodetype = (modelrec->longDatas.find("NODE_TYPE"))->second;
-                        auto tablereliter = model->mapRelation.find(nodetype);
-                        if (tablereliter != model->mapRelation.end())
-                        {
-                            bool ischeck = false;
-                            string relmodelname = tablereliter->second.begin()->first;
-                            string field = tablereliter->second.begin()->second;
-                            long fieldvalue = (modelrec->longDatas.find(field))->second;
-                            shared_ptr<DCModalData> relmodeldata = modelDataManager->getModelData(relmodelname);
-                            if(relmodeldata == nullptr){
-                                stringstream ss;
-                                ss << "[Error] Relation Check model name :" << relmodelname <<  "  is not exist";
-                                errorOutput->writeInfo(ss.str());
-                                break;
-                            }
-                            for (int k = 0; k < relmodeldata->records.size(); k++)
-                            {
-                                shared_ptr<DCModelRecord> relmodelrec = relmodeldata->records[k];
-                                auto reliter = relmodelrec->longDatas.find("ID");
-                                long id =reliter->second;
-                                if (fieldvalue == reliter->second)
-                                {
-                                    ischeck = true;
-                                    break;
+
+                        for (int idxRel = 0; idxRel < tablerelnum; ++idxRel) {
+                            stringstream ss;
+                            pair<vector<DCRelField>, vector<DCRelField>>& prSrcDst = model->mapRelation[idxRel];
+
+                            bool bSrcValid = true;
+                            vector<DCRelField>& srcRelFlds = prSrcDst.first;
+                            for (auto itrl : srcRelFlds){
+                                DCRelField& rf = itrl;
+                                rf.Table = (rf.Table.length()==0)?modelname:rf.Table;
+
+                                int idxRecord = j;
+                                if (rf.Table != modelname){
+                                    idxRecord = -1;//getRecordIndex
+                                }
+
+                                shared_ptr<DCModelDefine> pModelDefine = modelDataManager->getModelDefine(rf.Table);
+                                shared_ptr<DCModalData> pModelData = modelDataManager->getModelData(rf.Table);
+                                if (pModelDefine == nullptr && pModelData == nullptr)
+                                    continue;
+
+                                shared_ptr<DCFieldDefine> pFieldDefine = pModelDefine->getFieldDefine(rf.Field);
+                                if (pFieldDefine == nullptr)
+                                    continue;
+
+                                ss << "srclimit: " << rf.Field << " in '" << rf.Value << "', fieldvalue=";
+
+                                if (pFieldDefine->type == DCFieldType::DC_FIELD_TYPE_LONG){
+                                    auto val = pModelData->records[idxRecord]->longDatas[rf.Field];
+                                    bSrcValid &= IsValid<long>(rf.Value, val);
+                                    ss << val;
+                                } else if (pFieldDefine->type == DCFieldType::DC_FIELD_TYPE_DOUBLE){
+                                    auto val = pModelData->records[idxRecord]->doubleDatas[rf.Field];
+                                    bSrcValid &= IsValid<double>(rf.Value, val);
+                                    ss << val;
+                                } else if (pFieldDefine->type == DCFieldType::DC_FIELD_TYPE_DOUBLE){
+                                    auto val = pModelData->records[idxRecord]->textDatas[rf.Field];
+                                    bSrcValid &= IsValid<string>(rf.Value, val);
+                                    ss << val;
                                 }
                             }
-                            if (!ischeck)
-                            {
-                                stringstream ss;
-                                ss << "[Error] Relation Check model is :" << modelname
-                                   <<"field is :"<< field << " th " << j
-                                   << " records is not exist";
-                                errorOutput->writeInfo(ss.str());
+
+                            if (!bSrcValid)
+                                continue;
+
+                            bool bDstValid = true;
+                            vector<DCRelField>& dstRelFlds = prSrcDst.second;
+                            for (auto itrl : dstRelFlds){
+                                DCRelField& rf = itrl;
+                                rf.Table = (rf.Table.length()==0)?modelname:rf.Table;
+
+                                int idxRecord = j;
+                                if (rf.Table != modelname){
+                                    idxRecord = -1;//getRecordIndex
+                                }
+
+                                shared_ptr<DCModelDefine> pModelDefine = modelDataManager->getModelDefine(rf.Table);
+                                shared_ptr<DCModalData> pModelData = modelDataManager->getModelData(rf.Table);
+                                if (pModelDefine == nullptr && pModelData == nullptr)
+                                    continue;
+
+                                shared_ptr<DCFieldDefine> pFieldDefine = pModelDefine->getFieldDefine(rf.Field);
+                                if (pFieldDefine == nullptr)
+                                    continue;
+
+                                ss << "; dstlimit: " << rf.Field << " in '" << rf.Value << "', fieldvalue=";
+                                if (pFieldDefine->type == DCFieldType::DC_FIELD_TYPE_LONG){
+                                    auto val = pModelData->records[idxRecord]->longDatas[rf.Field];
+                                    bDstValid &= IsValid<long>(rf.Value, val);
+                                    ss << val;
+                                } else if (pFieldDefine->type == DCFieldType::DC_FIELD_TYPE_DOUBLE){
+                                    auto val = pModelData->records[idxRecord]->doubleDatas[rf.Field];
+                                    bDstValid &= IsValid<double>(rf.Value, val);
+                                    ss << val;
+                                } else if (pFieldDefine->type == DCFieldType::DC_FIELD_TYPE_DOUBLE){
+                                    auto val = pModelData->records[idxRecord]->textDatas[rf.Field];
+                                    bDstValid &= IsValid<string>(rf.Value, val);
+                                    ss << val;
+                                }
                             }
 
+                            if (!bDstValid){
+                                stringstream sss;
+                                sss << "[Error] model relation is error:" << ss.str();
+                                errorOutput->writeInfo(sss.str());
+                            }
                         }
                     }
                 }

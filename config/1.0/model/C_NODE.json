@@ -49,7 +49,7 @@
       "inputLimit" : "1",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "SIGNLIGHT",
+      "name" : "TLIGHT",
       "type" : "1",
       "valueLimit" : "0,1"
     },
@@ -58,9 +58,9 @@
       "inputLimit" : "1",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "RAILWAY",
+      "name" : "RCROSSING",
       "type" : "1",
-      "valueLimit" : "0,1,2,3"
+      "valueLimit" : "0,1"
     }
   ],
   "relation" : [

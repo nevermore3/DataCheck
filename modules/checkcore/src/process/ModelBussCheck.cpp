@@ -14,7 +14,7 @@ namespace kd {
 
         //记录字段值
         template <typename T>
-        void insertValue(const T& data, map<T, int>& values){
+        void insertValue(T& data, map<T, int>& values){
             auto itVal = values.find(data);
             if (itVal == values.end()){
                 values.insert(make_pair(data, 1));
@@ -23,7 +23,7 @@ namespace kd {
             }
         }
 
-        /*
+
         //获取字段值
         template <typename T>
         bool getFieldValues(const shared_ptr<DCModalData> modelData, const string& fieldName, map<T, int>& values){
@@ -45,7 +45,7 @@ namespace kd {
                     if (texpair == record->textDatas.end()) {
                         return false;
                     }
-                    insertValue<string>(texpair->second, values);
+                    insertValue<T>(texpair->second, values);
                 } else {
                     return false;
                 }
@@ -71,7 +71,7 @@ namespace kd {
                     errorOutput->writeInfo(ss.str());
                 }
             }
-        }*/
+        }
 
         bool ModelBussCheck::execute(shared_ptr<ModelDataManager> dataManager, shared_ptr<CheckErrorOutput> errorOutput) {
 

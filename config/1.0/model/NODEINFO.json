@@ -33,7 +33,7 @@
       "lenLimit" : "0",
       "name" : "NODE_TYPE",
       "type" : "1",
-      "valueLimit" : "0,1"
+      "valueLimit" : "1,2"
     },
     {
       "defaultValue" : "",
@@ -51,43 +51,43 @@
       "lenLimit" : "64",
       "name" : "LANEINFO",
       "type" : "0",
-      "valueLimit" : ""
+      "valueLimit" : "1,2,3,4,5,6"
     },
     {
       "defaultValue" : "",
-      "inputLimit" : "1",
+      "inputLimit" : "0",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "LT_TURN_L",
+      "name" : "L_TURN",
       "type" : "1",
-      "valueLimit" : "0,1,2"
+      "valueLimit" : "0,1"
     },
     {
       "defaultValue" : "",
-      "inputLimit" : "1",
+      "inputLimit" : "0",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "LT_TURN_R",
+      "name" : "R_TURN",
       "type" : "1",
-      "valueLimit" : "0,1,2"
+      "valueLimit" : "0,1"
     },
     {
       "defaultValue" : "",
-      "inputLimit" : "1",
+      "inputLimit" : "0",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "LT_UTRUN_L",
+      "name" : "UTURN",
       "type" : "1",
-      "valueLimit" : "0,1,2"
+      "valueLimit" : "0,1"
     },
     {
       "defaultValue" : "",
-      "inputLimit" : "1",
+      "inputLimit" : "0",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "WAIT_L",
+      "name" : "WAIT",
       "type" : "1",
-      "valueLimit" : "0,1,2"
+      "valueLimit" : "0,1"
     }
   ],
   

@@ -22,7 +22,7 @@
       "inputLimit" : "1",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "LANE_GROUP_ID",
+      "name" : "LG_ID",
       "type" : "1",
       "valueLimit" : ""
     }
@@ -31,7 +31,7 @@
   "relation" : [
     {
       "member" : "HD_LANE_GROUP",
-      "rule" : "LANE_GROUP_ID"
+      "rule" : "LG_ID"
     }
   ],
    "relationcheck" : [

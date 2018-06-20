@@ -23,7 +23,7 @@
       "inputLimit" : "1",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "FROAD_ID",
+      "name" : "EROAD_ID",
       "type" : "1",
       "valueLimit" : ""
     },
@@ -41,7 +41,7 @@
       "inputLimit" : "1",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "TROAD_ID",
+      "name" : "QROAD_ID",
       "type" : "1",
       "valueLimit" : ""
     },
@@ -50,7 +50,7 @@
       "inputLimit" : "1",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "ACCESSABLE",
+      "name" : "FLAG",
       "type" : "1",
       "valueLimit" : "0,1"
     }
@@ -59,7 +59,7 @@
   "relation" : [
     {
       "member" : "ROAD",
-      "rule" : "FROAD_ID"
+      "rule" : "EROAD_ID"
     },
     {
       "member" : "C_NODE",
@@ -67,7 +67,7 @@
     },
     {
       "member" : "ROAD",
-      "rule" : "TROAD_ID"
+      "rule" : "QROAD_ID"
     }
   ],
    "relationcheck" : [

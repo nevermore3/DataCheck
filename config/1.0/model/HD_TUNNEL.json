@@ -69,13 +69,13 @@
       "lenLimit" : "0",
       "name" : "TYPE",
       "type" : "1",
-      "valueLimit" : "0,1,2"
+      "valueLimit" : "0,1,2,99"
     }
   ],
   
   "relation" : [
     {
-      "member" : "HD_ROAD",
+      "member" : "ROAD",
       "rule" : "ROAD_ID"
     }
   ],

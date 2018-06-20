@@ -102,19 +102,19 @@
       },
 
       {
-        "fileName": "HD_OBJECT_PG",
+        "fileName": "HD_POLYGON",
         "fileType": "polygon",
-        "modelName": "HD_OBJECT_PG"
+        "modelName": "HD_POLYGON"
       },
       {
-        "fileName": "HD_OBJECT_PL",
+        "fileName": "HD_POLYLINE",
         "fileType": "arc",
-        "modelName": "HD_OBJECT_PL"
+        "modelName": "HD_POLYLINE"
       },
       {
-        "fileName": "HD_OBJECT_PT",
+        "fileName": "HD_POINT",
         "fileType": "point",
-        "modelName": "HD_OBJECT_PT"
+        "modelName": "HD_POINT"
       },
 
       {

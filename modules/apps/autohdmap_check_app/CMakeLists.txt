@@ -8,8 +8,9 @@ add_executable(autohdmap_check_app ${check_app_files_cpp})
 #
 target_link_libraries(autohdmap_check_app autohdmap_checkcore)
 target_link_libraries(autohdmap_check_app general autohdmap_core autohdmap_api)
-target_link_libraries(autohdmap_check_app general PocoFoundation PocoJSON PocoNet PocoUtil PocoXML pthread)
+target_link_libraries(autohdmap_check_app general PocoJSON PocoFoundation PocoNet PocoUtil pthread)
 target_link_libraries(autohdmap_check_app general geos)
+
 #target_link_libraries(autohdmap_check_app general PocoFoundation opencv_core opencv_imgproc opencv_imgcodecs)
 #target_link_libraries(autohdmap_check_app general opencv_features2d opencv_xfeatures2d)
 #include self include

@@ -10,6 +10,12 @@
 namespace kd {
     namespace dc {
 
+        struct DCRelField{
+            string Table;
+            string Field;
+            string Value;
+        };
+
         class DCFieldDefine;
         class DCFieldCheckDefine;
         class DCModelRecord;
@@ -32,7 +38,9 @@ namespace kd {
             //关联关系信息
             vector<shared_ptr<DCRelationDefine>> vecRelation;
 
-            map<long,map<string,string>> mapRelation;
+            //map<long,map<string,string>> mapRelation;
+
+            vector<pair<vector<DCRelField>, vector<DCRelField>>> mapRelation;
 
         };
 

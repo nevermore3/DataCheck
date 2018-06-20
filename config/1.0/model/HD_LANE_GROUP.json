@@ -30,7 +30,7 @@
 
   "relation" : [
     {
-      "member" : "HD_ROAD",
+      "member" : "ROAD",
       "rule" : "ROAD_ID"
     }
   ],

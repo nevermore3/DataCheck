@@ -113,6 +113,7 @@ namespace kd {
                 cout << "[Debug] load model : " << modelDefine->modelName << endl;
 
                 //获得任务信息
+
                 if(!rootobj->has("fields") || !rootobj->has("checks"))
                     return false;
 
@@ -183,13 +184,46 @@ namespace kd {
                         Dynamic::Var value = relArray->get(i);
                         Object::Ptr nodeObj = value.extract<Poco::JSON::Object::Ptr>();
 
-                        string model = getJSONString(nodeObj, "table");
-                        string nodetype = getJSONString(nodeObj, "node_type");
-                        string field = getJSONString(nodeObj, "field");
+                        if (nodeObj->has("src") && nodeObj->has("dst")) {
 
-                        map<string,string> mapfiletable;
-                        mapfiletable.insert(make_pair(model,field));
-                        modelDefine->mapRelation.insert(make_pair(stol(nodetype),mapfiletable));
+                            vector<DCRelField> srcFields;
+                            string strSrcTbl = "", strSrcFld = "", strSrcVal = "";
+                            Poco::JSON::Array::Ptr srcArray = nodeObj->getArray("src");
+                            int srcSize = srcArray->size();
+                            for (int idxsrc = 0; idxsrc < srcSize; ++idxsrc) {
+                                Dynamic::Var value = srcArray->get(idxsrc);
+                                Object::Ptr srcObj = value.extract<Poco::JSON::Object::Ptr>();
+                                DCRelField dcf;
+                                dcf.Table = getJSONString(srcObj, "table");
+                                dcf.Field = getJSONString(srcObj, "field");
+                                dcf.Value = getJSONString(srcObj, "value");
+                                srcFields.emplace_back(dcf);
+                            }
+
+                            vector<DCRelField> dstFields;
+                            string strDstTbl = "", strDstFld = "", strDstVal = "";
+                            Poco::JSON::Array::Ptr dstArray = nodeObj->getArray("dst");
+                            int dstSize = dstArray->size();
+                            for (int idxdst = 0; idxdst < dstSize; ++idxdst) {
+                                Dynamic::Var value = dstArray->get(idxdst);
+                                Object::Ptr srcObj = value.extract<Poco::JSON::Object::Ptr>();
+                                DCRelField dcf;
+                                dcf.Table = getJSONString(srcObj, "table");
+                                dcf.Field = getJSONString(srcObj, "field");
+                                dcf.Value = getJSONString(srcObj, "value");
+                                dstFields.emplace_back(dcf);
+                            }
+
+                            modelDefine->mapRelation.emplace_back(make_pair(srcFields, dstFields));
+                        }
+
+//                        string model = getJSONString(nodeObj, "table");
+//                        string nodetype = getJSONString(nodeObj, "node_type");
+//                        string field = getJSONString(nodeObj, "field");
+//
+//                        map<string,string> mapfiletable;
+//                        mapfiletable.insert(make_pair(model,field));
+//                        modelDefine->mapRelation.insert(make_pair(stol(nodetype),mapfiletable));
                     }
                 }
             }catch (Exception &e) {

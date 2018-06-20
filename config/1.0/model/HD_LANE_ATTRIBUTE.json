@@ -116,5 +116,101 @@
     }
   ],
    "relationcheck" : [
+     {
+       "src" : [
+         {
+           "table" : "",
+           "field" : "LANETYPE",
+           "value" : "11"
+         }
+       ],
+       "dst" : [
+         {
+           "table" : "",
+           "field" : "SUBTYPE",
+           "value" : "0,1"
+         }
+       ]
+     },
+     {
+       "src" : [
+         {
+           "table" : "",
+           "field" : "LANETYPE",
+           "value" : "9"
+         }
+       ],
+       "dst" : [
+         {
+           "table" : "",
+           "field" : "SUBTYPE",
+           "value" : "0,1"
+         }
+       ]
+     },
+     {
+       "src" : [
+         {
+           "table" : "",
+           "field" : "LANETYPE",
+           "value" : "3"
+         }
+       ],
+       "dst" : [
+         {
+           "table" : "",
+           "field" : "SUBTYPE",
+           "value" : "0"
+         }
+       ]
+     },
+     {
+       "src" : [
+         {
+           "table" : "",
+           "field" : "LANETYPE",
+           "value" : "4"
+         }
+       ],
+       "dst" : [
+         {
+           "table" : "",
+           "field" : "SUBTYPE",
+           "value" : "0"
+         }
+       ]
+     },
+     {
+       "src" : [
+         {
+           "table" : "",
+           "field" : "LANETYPE",
+           "value" : "5"
+         }
+       ],
+       "dst" : [
+         {
+           "table" : "",
+           "field" : "SUBTYPE",
+           "value" : "0"
+         }
+       ]
+     },
+     {
+       "src" : [
+         {
+           "table" : "",
+           "field" : "LANETYPE",
+           "value" : "6"
+         }
+       ],
+       "dst" : [
+         {
+           "table" : "",
+           "field" : "SUBTYPE",
+           "value" : "0,1"
+         }
+       ]
+     }
   ]
 }

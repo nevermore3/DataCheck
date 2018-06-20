@@ -24,7 +24,7 @@
       "lenLimit" : "0",
       "name" : "NODE_TYPE",
       "type" : "1",
-      "valueLimit" : "0,1"
+      "valueLimit" : "1,2"
     },
     {
       "defaultValue" : "",
@@ -42,25 +42,16 @@
       "lenLimit" : "0",
       "name" : "TYPE",
       "type" : "1",
-      "valueLimit" : "0,1,2"
-    },
-    {
-      "defaultValue" : "",
-      "inputLimit" : "1",
-      "inputType" : "",
-      "lenLimit" : "0",
-      "name" : "LICPLATE",
-      "type" : "1",
-      "valueLimit" : "0,1,2"
+      "valueLimit" : "1,2,3"
     },
     {
       "defaultValue" : "",
       "inputLimit" : "0",
       "inputType" : "",
-      "lenLimit" : "8",
+      "lenLimit" : "128",
       "name" : "VEHICLE",
       "type" : "0",
-      "valueLimit" : ""
+      "valueLimit" : "0,1,2,3,4,5,6"
     },
     {
       "defaultValue" : "",

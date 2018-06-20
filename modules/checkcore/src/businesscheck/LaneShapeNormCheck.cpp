@@ -86,7 +86,7 @@ namespace kd {
 
         //缓冲范围内查找车道
         bool findPloygons(const shared_ptr<geos::geom::Polygon> poly, double bufferLen,
-                          const shared_ptr<geos::index::quadtree::Quadtree> & quadtree, vector<DCLane*>& rtnLanes){
+                          const shared_ptr<geos::index::quadtree::Quadtree> & quadtree, vector<shared_ptr<DCLane>>& rtnLanes){
 
             const GeometryFactory *gf = GeometryFactory::getDefaultInstance();
             const geos::geom::Envelope* envelope = poly->getEnvelopeInternal();
@@ -95,7 +95,7 @@ namespace kd {
             vector<void*> lanes;
             quadtree->query(geoEnvBuffer->getEnvelopeInternal(), lanes);
             for (auto lane : lanes) {
-                rtnLanes.push_back(((DCLane*)lane));
+                rtnLanes.push_back(make_shared<DCLane>(*((DCLane*)lane)));
             }
             return (rtnLanes.size()>0)?true:false;
         }
@@ -105,7 +105,7 @@ namespace kd {
                                                shared_ptr<CheckErrorOutput> errorOutput) {
             double bufferLen = 1;
             double overlapArea = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::LANE_OVERLAP_AREA);
-            map<DCLane*, shared_ptr<geos::geom::Polygon>> mLanePoly;
+            map<shared_ptr<DCLane>, shared_ptr<geos::geom::Polygon>> mLanePoly;
 
             //构建车道多边形
             for (auto recordit : mapDataManager->lanes_) {
@@ -123,24 +123,24 @@ namespace kd {
                 }
 
                 shared_ptr<geos::geom::Polygon> poly = createPolygon(lane->leftDivider_->line_, lane->rightDivider_->line_);
-                mLanePoly.emplace(make_pair(lane.get(), poly));
+                mLanePoly.emplace(make_pair(lane, poly));
             }
 
             //构建空间索引存储车道面信息
             shared_ptr<geos::index::quadtree::Quadtree> quadtree = make_shared<geos::index::quadtree::Quadtree>();
             for (auto itPoly : mLanePoly){
-                quadtree->insert(itPoly.second->getEnvelopeInternal(), itPoly.first);
+                quadtree->insert(itPoly.second->getEnvelopeInternal(), itPoly.first.get());
             }
 
             //判断每个车道面关联车道面空间关系
             for (auto itPoly : mLanePoly) {
-                DCLane* curLane = itPoly.first;
+                shared_ptr<DCLane> curLane = itPoly.first;
                 shared_ptr<geos::geom::Polygon> curPoly = itPoly.second;
 
-                vector<DCLane*> vlanes;
+                vector<shared_ptr<DCLane>> vlanes;
                 if (findPloygons(curPoly, bufferLen, quadtree, vlanes)){
                     for (auto itLane : vlanes){
-                        DCLane* nxtLane = itLane;
+                        shared_ptr<DCLane> nxtLane = itLane;
                         auto itNxtLane = mLanePoly.find(nxtLane);
                         if (nxtLane == curLane || itNxtLane == mLanePoly.end())
                             continue;
@@ -163,7 +163,7 @@ namespace kd {
                         //判断重叠面积是否超过限制
                         double area = geo->getArea();
                         if (area > overlapArea){
-                            shared_ptr<DCLaneCheckError> error = DCLaneCheckError::createByAtt("JH_C_14", shared_ptr<DCLane>(curLane), nullptr);
+                            shared_ptr<DCLaneCheckError> error = DCLaneCheckError::createByAtt("JH_C_14", curLane, nullptr);
                             error->checkDesc_ = "车道面和其他车道面相交";
                             stringstream ss;
                             ss << "tow lane faces overlap. [onverlap lane id:" << nxtLane->id_ << "]";

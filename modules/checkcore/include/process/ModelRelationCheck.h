@@ -21,7 +21,7 @@ namespace kd {
              * 获得对象唯一标识
              * @return 对象标识
              */
-            virtual string getId();
+            virtual string getId() override ;
 
             /**
              * 进行任务处理

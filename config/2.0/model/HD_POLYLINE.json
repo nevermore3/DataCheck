@@ -1,0 +1,35 @@
+{
+"model" : "HD_POLYLINE",
+  "checks" : [
+    {
+       "name":"ID",
+       "func":"ID",
+       "refValue":""
+    }
+  ],
+  "fields" : [
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "TYPE",
+      "type" : "1",
+      "valueLimit" : "0,1,2,3,99"
+    }
+  ],
+  
+  "relation" : [
+  ],
+   "relationcheck" : [
+  ]
+}

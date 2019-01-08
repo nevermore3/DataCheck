@@ -1,0 +1,57 @@
+{
+ "model" : "HD_TRAFFIC_LIGHT",
+  "checks" : [
+    {
+       "name":"ID",
+       "func":"ID",
+       "refValue":""
+    }
+  ],
+  "fields" : [
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "TYPE",
+      "type" : "1",
+      "valueLimit" : "0,1,2,3"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "COLOR",
+      "type" : "1",
+      "valueLimit" : "0,1,2,3"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "TLG_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    }
+  ],
+  
+   "relation" : [
+    {
+      "member" : "HD_TRAFFIC_LIGHT_GROUP",
+      "rule" : "TLG_ID"
+    }
+  ],
+   "relationcheck" : [
+  ]
+}

@@ -1,0 +1,82 @@
+{
+ "model" : "HD_LANE_CONNECTIVITY",
+  "checks" : [
+    {
+       "name":"ID",
+       "func":"ID",
+       "refValue":""
+    }
+  ],
+  "fields" : [
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "NODE_TYPE",
+      "type" : "1",
+      "valueLimit" : "0,1,2,3"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "NODE_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "FLANE_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "TLANE_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    }
+  ],
+ 
+   "relation" : [
+    {
+      "member" : "HD_LANE",
+      "rule" : "FLANE_ID"
+    },
+    {
+      "member" : "HD_LANE",
+      "rule" : "TLANE_ID"
+    },
+    {
+      "member" : "HD_ROAD_ATTRIBUTE",
+      "rule" : "NODE_ID"
+    },
+    {
+      "member" : "HD_LANE_ATTRIBUTE",
+      "rule" : "NODE_ID"
+    },
+    {
+      "member" : "HD_JUNCTION",
+      "rule" : "NODE_ID"
+    }
+  ],
+   "relationcheck" : [
+  ]
+}

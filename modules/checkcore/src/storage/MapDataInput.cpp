@@ -418,7 +418,7 @@ namespace kd {
 
                     shared_ptr<DCLaneGroup> divAtt = make_shared<DCLaneGroup>();
                     divAtt->id_ = to_string(rlgDbfData.readIntField(i, "ID"));
-                    string lgId = to_string(rlgDbfData.readIntField(i, "LANE_GROUP"));
+                    string lgId = to_string(rlgDbfData.readIntField(i, "LG_ID"));
                     string laneId = to_string(rlgDbfData.readIntField(i, "LANE_ID"));
 
                     auto lgit = laneGroups.find(lgId);

@@ -76,6 +76,7 @@ namespace kd {
         bool ModelBussCheck::execute(shared_ptr<ModelDataManager> dataManager, shared_ptr<CheckErrorOutput> errorOutput) {
 
             for (auto taskit : dataManager->tasks_) {
+                model_name = taskit.first;
                 string strTaskName = taskit.first;
 
                 //获取模型数据
@@ -191,7 +192,8 @@ namespace kd {
             for (auto itVal : mValues){
                 if (itVal.second > 1){
                     stringstream ss;
-                    ss << "[Error] checkValueIn: field value not unique. " << fieldName << "=" << itVal.first;
+                    ss << "[Error] checkValueIn: field value not unique. " << model_name << " "
+                       << fieldName << "=" << itVal.first;
                     errorOutput->writeInfo(ss.str());
                 }
             }
@@ -209,7 +211,8 @@ namespace kd {
             for (auto itVal : mValues){
                 if (itVal.second > 1){
                     stringstream ss;
-                    ss << "[Error] checkValueIn: field value not unique. " << fieldName << "=" << itVal.first;
+                    ss << "[Error] checkValueIn: field value not unique. " << model_name << " "
+                       << fieldName << "=" << itVal.first;
                     errorOutput->writeInfo(ss.str());
                 }
             }
@@ -227,7 +230,8 @@ namespace kd {
             for (auto itVal : mValues){
                 if (itVal.second > 1){
                     stringstream ss;
-                    ss << "[Error] checkValueIn: field value not unique. " << fieldName << "=" << itVal.first;
+                    ss << "[Error] checkValueIn: field value not unique. " << model_name << " "
+                       << fieldName << "=" << itVal.first;
                     errorOutput->writeInfo(ss.str());
                 }
             }

@@ -1,0 +1,110 @@
+{
+"model" : "NODEINFO",
+  "checks" : [
+    {
+       "name":"ID",
+       "func":"ID",
+       "refValue":""
+    }
+  ],
+  "fields" : [
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ROAD_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "NODE_TYPE",
+      "type" : "1",
+      "valueLimit" : "1,2"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "NODE_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "64",
+      "name" : "LANEINFO",
+      "type" : "0",
+      "valueLimit" : "1,2,3,4,5,6"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "L_TURN",
+      "type" : "1",
+      "valueLimit" : "0,1"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "R_TURN",
+      "type" : "1",
+      "valueLimit" : "0,1"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "UTRUN",
+      "type" : "1",
+      "valueLimit" : "0,1"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "WAIT",
+      "type" : "1",
+      "valueLimit" : "0,1"
+    }
+  ],
+  
+  "relation" : [
+    {
+      "member" : "ROAD",
+      "rule" : "ROAD_ID"
+    },
+    {
+      "member" : "ROAD_NODE",
+      "rule" : "NODE_ID"
+    },
+    {
+      "member" : "C_NODE",
+      "rule" : "NODE_ID"
+    }
+  ],
+   "relationcheck" : [
+  ]
+}

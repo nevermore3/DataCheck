@@ -44,6 +44,9 @@ namespace kd {
 
         private:
             const string id = "model_buss_check";
+
+        private:
+            string model_name;
         };
     }
 }

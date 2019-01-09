@@ -8,7 +8,7 @@
 #include "data/TaskDataModel.h"
 #include "data/MapDataModel.h"
 
-#define DIR_CONFIG  "./config/"
+#define DIR_CONFIG  "./config/2.0/"
 
 namespace kd {
     namespace dc {

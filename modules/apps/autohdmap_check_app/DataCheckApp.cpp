@@ -1,7 +1,8 @@
 
 //third party
 #include <Poco/StringTokenizer.h>
-
+#include <glog/logging.h>
+#include <glog/log_severity.h>
 
 //module
 #include "data/DataManager.h"
@@ -131,9 +132,17 @@ int dataCheck(string basePath, string taskFileName){
         mapProcessManager->execute(mapDataManager, errorOutput);
     }
 
-    return 1;
+    return 0;
 }
 
+void InitGlog()
+{
+    google::InitGoogleLogging("./");
+    google::LogToStderr();
+
+    google::SetLogDestination(0, "data_check");
+    google::SetLogFilenameExtension(".log");
+}
 
 /**
  * 数据下载示例
@@ -142,6 +151,7 @@ int dataCheck(string basePath, string taskFileName){
  * @return
  */
 int main(int argc, const char *argv[]) {
+    InitGlog();
 
     string base_path;
     string task_file_name;
@@ -149,10 +159,9 @@ int main(int argc, const char *argv[]) {
     if (argc >= 3) {
         base_path = argv[1];
         task_file_name = argv[2];
-
     } else {
-        cout << "usage:" << argv[0] << " <base_path> <task_file_name>" << endl;
-        return -1;
+        LOG(ERROR) << "usage:" << argv[0] << " <base_path> <task_file_name>";
+        return 1;
     }
 
     //数据质量检查

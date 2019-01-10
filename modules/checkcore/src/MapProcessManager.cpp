@@ -2,6 +2,7 @@
 // Created by gaoyanhong on 2018/4/3.
 //
 
+#include <util/Timer.hpp>
 #include "MapProcessManager.h"
 
 namespace kd {
@@ -15,6 +16,8 @@ namespace kd {
 
             cout << "[Debug] task [" << processName_ << "] start. " << endl;
             for( auto processor : processors){
+                Timer compilerTimer;
+
                 if(processor != nullptr){
                     cout << "[Debug] processor [" << processor->getId() << "] start." << endl;
 
@@ -29,6 +32,8 @@ namespace kd {
                     cout << "[Error] find one invalid processor!" << endl;
                     return false;
                 }
+                string strCompiler = "[Debug] " + processor->getId() + " costs : ";
+                compilerTimer.elapsed_message(strCompiler);
             }
 
             cout << "[Debug] task [" << processName_ << "] end successfully " << endl;

@@ -191,8 +191,12 @@ namespace kd {
                     //赋予节点关联: spidx是相对于FNode->TNode而言,而非矢量化
                     if (div->nodes_[0]->id_ == div->fromNodeId_){
                         divAtt->dividerNode_ = div->nodes_[spIdx];
-                    }else if (div->nodes_[0]->id_ == div->toNodeId_){
-                        divAtt->dividerNode_ = div->nodes_[div->nodes_.size()-1-spIdx];
+                    } else {
+                        divAtt->dividerNode_ = div->nodes_[spIdx];
+                        stringstream ss;
+                        ss << "[Error] divider from node is not the first node. [dividerId:"
+                           << dividerId << "]";
+                        errorOutput->writeInfo(ss.str());
                     }
 
                     div->atts_.emplace_back(divAtt);

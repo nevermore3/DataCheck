@@ -53,7 +53,7 @@ namespace kd {
             //查找node所对应的toponode信息
             auto topoNodeit = topoNodes.find(nodeId);
             if(topoNodeit == topoNodes.end()){
-                cout << "[Error] node " << nodeId << " not find topo info " << endl;
+                LOG(ERROR) << "node " << nodeId << " not find topo info ";
                 return false;
             }
 

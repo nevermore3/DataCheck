@@ -15,6 +15,8 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <glog/logging.h>
+#include <glog/log_severity.h>
 using namespace std;
 
 //thirdparty -- Eigen

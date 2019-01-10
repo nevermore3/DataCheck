@@ -2,6 +2,7 @@
 // Created by yuanjinfa on 2018/4/12.
 //
 
+#include <util/TimerUtil.h>
 #include "ModelProcessManager.h"
 
 namespace kd {
@@ -13,25 +14,29 @@ namespace kd {
 
         bool ModelProcessManager::execute(shared_ptr<ModelDataManager> modelDataManager, shared_ptr<CheckErrorOutput> errorOutput) {
 
-            cout << "[Debug] task [" << processName_ << "] start. " << endl;
+            LOG(INFO) << "task [" << processName_ << "] start. ";
             for( auto processor : processors){
+                TimerUtil compilerTimer;
+
                 if(processor != nullptr){
-                    cout << "[Debug] processor [" << processor->getId() << "] start." << endl;
+                    LOG(INFO) << "processor [" << processor->getId() << "] start.";
 
                     bool result = processor->execute(modelDataManager, errorOutput);
 
                     if(result){
-                        cout << "[Debug] processor [" << processor->getId() << "] end." << endl;
+                        LOG(INFO) << "processor [" << processor->getId() << "] end.";
                     }else{
-                        cout << "[Debug] processor [" << processor->getId() << "] error." << endl;
+                        LOG(ERROR) << "processor [" << processor->getId() << "] error.";
                     }
                 }else{
-                    cout << "[Error] find one invalid processor!" << endl;
+                    LOG(ERROR) << "find one invalid processor!";
                     return false;
                 }
+
+                LOG(INFO) << processor->getId() <<  " costs : " << compilerTimer.elapsed_message();
             }
 
-            cout << "[Debug] task [" << processName_ << "] end successfully " << endl;
+            LOG(INFO) << "task [" << processName_ << "] end successfully ";
 
             return true;
         }

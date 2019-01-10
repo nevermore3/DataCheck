@@ -12,17 +12,17 @@
 using namespace std;
 using namespace std::chrono;
 
-class Timer
+class TimerUtil
 {
 public:
-    Timer() : m_begin(high_resolution_clock::now()) {}
+    TimerUtil() : m_begin(high_resolution_clock::now()) {}
     void reset() { m_begin = high_resolution_clock::now(); }
     /**
      * 输出耗时信息
      * @message 耗时信息前缀
      *
      */
-    void elapsed_message(const string &message){
+    string elapsed_message(){
         int64_t e=elapsed_milli();
         int64_t S = e / 1000;
         e = e % 1000;
@@ -31,7 +31,7 @@ public:
         int64_t H = M / 60;
         M = M % 60;
         //
-        std::cout<<message<<H<<" hours,"<<M<<" minutes,"<<S<<" seconds,"<<e<<" ms."<<std::endl;
+        return to_string(H) + "h," + to_string(M) + "m," + to_string(S) + "s," + to_string(e) + "ms.";
     }
     //默认输出毫秒
     int64_t elapsed_milli() const

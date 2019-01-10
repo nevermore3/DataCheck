@@ -46,7 +46,7 @@ namespace kd {
             try {
                 std::filebuf in;
                 if (!in.open(fileName, std::ios::in)) {
-                    std::cout << "[Error] fail to open task file : " << fileName << std::endl;
+                    LOG(ERROR) << "fail to open task file : " << fileName;
                     return false;
                 }
 
@@ -87,7 +87,7 @@ namespace kd {
                     tasks.insert(make_pair(modelName, dctask));
                 }
             }catch (Exception &e) {
-                cout<<"[Error] " << e.what()<<endl;
+                LOG(ERROR) << e.what();
                 return false;
             }
             return true;
@@ -97,7 +97,7 @@ namespace kd {
             try {
                 std::filebuf in;
                 if (!in.open(fileName, std::ios::in)) {
-                    cout << "[Error] fail to open model file : " << fileName << endl;
+                    LOG(ERROR) << "fail to open model file : " << fileName;
                     return false;
                 }
 
@@ -110,7 +110,7 @@ namespace kd {
 
                 //获得基本信息
                 modelDefine->modelName = getJSONString(rootobj, "model");
-                cout << "[Debug] load model : " << modelDefine->modelName << endl;
+                LOG(INFO) << "load model : " << modelDefine->modelName;
 
                 //获得任务信息
 
@@ -152,7 +152,7 @@ namespace kd {
                         }else if(func == "GE"){
                             fieldCheck->func = DC_FIELD_VALUE_FUNC_GE;
                         }else{
-                            cout << "[Error] not support operation " << func << endl;
+                            LOG(ERROR) << "not support operation " << func;
                             continue;
                         }
 
@@ -227,7 +227,7 @@ namespace kd {
                     }
                 }
             }catch (Exception &e) {
-                cout<<"[Error] " << fileName.c_str() << ", info:" << e.what()<<endl;
+                LOG(ERROR) << fileName.c_str() << ", info:" << e.what();
                 return false;
             }
             return true;

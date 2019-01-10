@@ -3,6 +3,7 @@
 #include <Poco/StringTokenizer.h>
 #include <glog/logging.h>
 #include <glog/log_severity.h>
+#include <util/TimerUtil.h>
 
 //module
 #include "data/DataManager.h"
@@ -153,6 +154,8 @@ void InitGlog()
 int main(int argc, const char *argv[]) {
     InitGlog();
 
+    TimerUtil compilerTimer;
+
     string base_path;
     string task_file_name;
 
@@ -165,5 +168,9 @@ int main(int argc, const char *argv[]) {
     }
 
     //数据质量检查
-    return dataCheck(base_path, task_file_name);
+    int ret = dataCheck(base_path, task_file_name);
+
+    LOG(INFO) << "total task costs: " << compilerTimer.elapsed_message();
+
+    return ret;
 }

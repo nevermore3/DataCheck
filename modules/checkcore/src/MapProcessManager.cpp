@@ -2,7 +2,7 @@
 // Created by gaoyanhong on 2018/4/3.
 //
 
-#include <util/Timer.hpp>
+#include <util/TimerUtil.h>
 #include "MapProcessManager.h"
 
 namespace kd {
@@ -14,29 +14,28 @@ namespace kd {
 
         bool MapProcessManager::execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) {
 
-            cout << "[Debug] task [" << processName_ << "] start. " << endl;
+            LOG(INFO) << "task [" << processName_ << "] start. ";
             for( auto processor : processors){
-                Timer compilerTimer;
+                TimerUtil compilerTimer;
 
                 if(processor != nullptr){
-                    cout << "[Debug] processor [" << processor->getId() << "] start." << endl;
+                    LOG(INFO) << "processor [" << processor->getId() << "] start.";
 
                     bool result = processor->execute(mapDataManager, errorOutput);
 
                     if(result){
-                        cout << "[Debug] processor [" << processor->getId() << "] end." << endl;
+                        LOG(INFO) << "processor [" << processor->getId() << "] end.";
                     }else{
-                        cout << "[Debug] processor [" << processor->getId() << "] error." << endl;
+                        LOG(ERROR) << "processor [" << processor->getId() << "] error.";
                     }
                 }else{
-                    cout << "[Error] find one invalid processor!" << endl;
+                    LOG(ERROR) << "find one invalid processor!";
                     return false;
                 }
-                string strCompiler = "[Debug] " + processor->getId() + " costs : ";
-                compilerTimer.elapsed_message(strCompiler);
+                LOG(INFO) << processor->getId() <<  " costs : " << compilerTimer.elapsed_message();
             }
 
-            cout << "[Debug] task [" << processName_ << "] end successfully " << endl;
+            LOG(INFO) << "task [" << processName_ << "] end successfully ";
 
             return true;
         }

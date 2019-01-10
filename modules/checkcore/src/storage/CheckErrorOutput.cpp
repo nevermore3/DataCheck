@@ -13,7 +13,7 @@ namespace kd {
             if (ss_.is_open()){
                 ss_<< error->toString() << "\n";
             }else{
-                cout << error->toString() << endl;
+                LOG(ERROR) << error->toString();
             }
         }
 
@@ -21,7 +21,7 @@ namespace kd {
             if (ss_.is_open()){
                 ss_<< error->toString() << "\n";
             }else{
-                cout << error->toString() << endl;
+                LOG(ERROR) << error->toString();
             }
         }
 
@@ -29,7 +29,7 @@ namespace kd {
             if (ss_.is_open()){
                 ss_<< error->toString() << "\n";
             }else{
-                cout << error->toString() << endl;
+                LOG(ERROR) << error->toString();
             }
         }
 
@@ -40,7 +40,7 @@ namespace kd {
                 else
                     ss_<< info.c_str() << "\n";
             }else{
-                cout << info.c_str() << endl;
+                LOG(ERROR) << info.c_str();
             }
         }
     }

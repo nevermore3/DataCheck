@@ -4,6 +4,7 @@
 #include <glog/logging.h>
 #include <glog/log_severity.h>
 #include <util/TimerUtil.h>
+#include <Poco/File.h>
 
 //module
 #include "data/DataManager.h"
@@ -60,10 +61,10 @@ void loadTaskInfo(string fileName, string & taskName, string & baseUrl,
     }
 }
 
-int dataCheck(string basePath, string taskFileName){
+int dataCheck(string basePath, string taskFileName, string ur_path){
 
     //输出错误文件
-    string outputFile = "check_result.csv";
+    string outputFile = ur_path + "/check_result.csv";
     shared_ptr<CheckErrorOutput> errorOutput = make_shared<CheckErrorOutput>(outputFile);
 
     //交换格式基本属性检查
@@ -136,12 +137,12 @@ int dataCheck(string basePath, string taskFileName){
     return 0;
 }
 
-void InitGlog()
+void InitGlog(string ur_path)
 {
     google::InitGoogleLogging("./");
     google::LogToStderr();
-
-    google::SetLogDestination(0, "data_check");
+    string log_path = ur_path + "/data_check";
+    google::SetLogDestination(0, log_path.c_str());
     google::SetLogFilenameExtension(".log");
 }
 
@@ -152,23 +153,28 @@ void InitGlog()
  * @return
  */
 int main(int argc, const char *argv[]) {
-    InitGlog();
 
     TimerUtil compilerTimer;
 
     string base_path;
     string task_file_name;
+    string ur_path;
 
-    if (argc >= 3) {
+    if (argc >= 4) {
         base_path = argv[1];
         task_file_name = argv[2];
+        ur_path = argv[3];
     } else {
-        LOG(ERROR) << "usage:" << argv[0] << " <base_path> <task_file_name>";
+        LOG(ERROR) << "usage:" << argv[0] << " <base_path> <task_file_name> <ur>";
         return 1;
     }
+    InitGlog(ur_path);
+
+    Poco::File outDir(ur_path);
+    outDir.createDirectories();
 
     //数据质量检查
-    int ret = dataCheck(base_path, task_file_name);
+    int ret = dataCheck(base_path, task_file_name, ur_path);
 
     LOG(INFO) << "total task costs: " << compilerTimer.elapsed_message();
 

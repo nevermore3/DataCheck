@@ -11,11 +11,6 @@ namespace kd {
         }
 
         bool ModelSqlCheck::execute(shared_ptr<CheckErrorOutput> errorOutput) {
-            std::string strFile = "output_checkresults.xls";
-
-            if (access(strFile.c_str(), 0) == 0)
-                remove(strFile.c_str());
-
             // check data
             if (LoadConfig() && !m_checkitems.empty()) {
                 for (auto cItem : m_checkitems) {
@@ -86,12 +81,11 @@ namespace kd {
                                             vector<string> &details) {
 
             bool bRet = false;
-            if (id > 30001) {
-                id = id;
-            }
 
-            if (m_pdb == nullptr || strSql.empty())
-                return false;
+            if (m_pdb == nullptr || strSql.empty()) {
+                LOG(ERROR) << "get check result failed! ";
+                return bRet;
+            }
 
             std::vector<std::string> vecSqls;
             StringUtil::Token_IgnoreQuotes(strSql.c_str(), ";", vecSqls);

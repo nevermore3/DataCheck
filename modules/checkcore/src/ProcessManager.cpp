@@ -3,6 +3,7 @@
 //
 
 #include "ProcessManager.h"
+#include <util/TimerUtil.h>
 
 namespace kd {
     namespace dc {
@@ -11,28 +12,30 @@ namespace kd {
             processName_ = name;
         }
 
-        bool ProcessManager::execute() {
+        bool ProcessManager::execute(shared_ptr<CheckErrorOutput> errorOutput) {
 
-            cout << "[Debug] task [" << processName_ << "] start. " << endl;
+            LOG(INFO) << "task [" << processName_ << "] start. ";
             for( auto processor : processors){
+                TimerUtil compilerTimer;
                 if(processor != nullptr){
-                    cout << "[Debug] processor [" << processor->getId() << "] start." << endl;
+                    LOG(INFO) << "processor [" << processor->getId() << "] start.";
 
-                    bool result = processor->execute();
+                    bool result = processor->execute(errorOutput);
 
                     if(result){
-                        cout << "[Debug] processor [" << processor->getId() << "] end." << endl;
+                        LOG(INFO) << "processor [" << processor->getId() << "] end.";
                     }else{
-                        cout << "[Debug] processor [" << processor->getId() << "] error." << endl;
+                        LOG(ERROR) << "processor [" << processor->getId() << "] error.";
                         return false;
                     }
                 }else{
-                    cout << "[Error] find one invalid processor!" << endl;
+                    LOG(ERROR) << "find one invalid processor!";
                     return false;
                 }
+                LOG(INFO) << processor->getId() <<  " costs : " << compilerTimer.elapsed_message();
             }
 
-            cout << "[Debug] task [" << processName_ << "] end successfully " << endl;
+            LOG(INFO) << "task [" << processName_ << "] end successfully " << endl;
 
             return true;
         }

@@ -237,6 +237,30 @@ namespace kd {
 
             return error;
         }
+
+        /////////////////////////////////////////////////////////////////////////////////////////
+        // DCLaneCheckError
+        /////////////////////////////////////////////////////////////////////////////////////////
+        DCSqlCheckError::DCSqlCheckError(string checkModel): DCError(checkModel){
+
+        }
+
+        DCSqlCheckError::DCSqlCheckError(string checkModel, string modelName, string fieldName, string recordId):
+                DCError(checkModel){
+            modelName_ = modelName;
+            fieldName_ = fieldName;
+            recordId_  = recordId;
+        }
+
+        string DCSqlCheckError::getHeader(){
+            return "checkModel,modelName,fieldName,recordId,errorDesc";
+        }
+
+        string DCSqlCheckError::toString() {
+            stringstream ss;
+            ss << detail;
+            return ss.str();
+        }
     }
 }
 

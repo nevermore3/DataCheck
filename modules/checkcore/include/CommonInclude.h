@@ -17,6 +17,15 @@
 #include <fstream>
 #include <glog/logging.h>
 #include <glog/log_severity.h>
+
+#include <Poco/StringTokenizer.h>
+#include <Poco/File.h>
+
+#include "cppsqlite3/Database.h"
+#include "cppsqlite3/Statement.h"
+#include "cppsqlite3/Query.h"
+
+#include "tinyxml.h"
 using namespace std;
 
 //thirdparty -- Eigen

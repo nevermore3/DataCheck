@@ -48,7 +48,7 @@ namespace kd {
              * @param listener 操作监听项
              * @return 操作是否成功
              */
-            virtual bool execute();
+            virtual bool execute(shared_ptr<CheckErrorOutput> errorOutput);
 
 
         private:

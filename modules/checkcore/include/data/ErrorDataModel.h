@@ -32,7 +32,7 @@ namespace kd {
             virtual string toString() = 0;
 
 
-        protected:
+        public:
             //检测模型
             string checkModel_;
 
@@ -193,6 +193,37 @@ namespace kd {
 
             //错误描述
             string errorDesc_;
+        };
+
+        /**
+         * 数据字段约束检查
+         */
+        class DCSqlCheckError : public DCError {
+
+        public:
+            DCSqlCheckError(string checkModel);
+
+            DCSqlCheckError(string checkModel, string modelName, string fieldName, string recordId);
+
+            virtual string getHeader() override ;
+
+            virtual string toString() override ;
+
+        public:
+            //模型名称，或表名
+            string modelName_;
+
+            //字段名称
+            string fieldName_;
+
+            //记录id
+            string recordId_;
+
+            //错误描述
+            string errorDesc_;
+
+            //错误详细信息描述
+            string detail;
         };
     }
 }

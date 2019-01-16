@@ -6,6 +6,7 @@
 #define AUTOHDMAP_ROADFUSION_IPROCESSOR_H
 
 #include "CommonInclude.h"
+#include "storage/CheckErrorOutput.h"
 
 namespace kd {
    namespace dc {
@@ -27,7 +28,7 @@ namespace kd {
              * @param listener 状态监听器
              * @return 操作是否成功
              */
-            virtual bool execute() = 0;
+            virtual bool execute(shared_ptr<CheckErrorOutput> errorOutput) = 0;
 
         };
 

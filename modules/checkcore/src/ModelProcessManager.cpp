@@ -12,7 +12,8 @@ namespace kd {
             processName_ = name;
         }
 
-        bool ModelProcessManager::execute(shared_ptr<ModelDataManager> modelDataManager, shared_ptr<CheckErrorOutput> errorOutput) {
+        bool ModelProcessManager::execute(shared_ptr<ModelDataManager> modelDataManager,
+                                          shared_ptr<CheckErrorOutput> errorOutput) {
 
             LOG(INFO) << "task [" << processName_ << "] start. ";
             for( auto processor : processors){
@@ -23,17 +24,17 @@ namespace kd {
 
                     bool result = processor->execute(modelDataManager, errorOutput);
 
-                    if(result){
-                        LOG(INFO) << "processor [" << processor->getId() << "] end.";
-                    }else{
-                        LOG(ERROR) << "processor [" << processor->getId() << "] error.";
+                    if (result) {
+                        LOG(INFO) << "processor [" << processor->getId() << "] end."
+                                  << " costs : " << compilerTimer.elapsed_message();
+                    } else {
+                        LOG(ERROR) << "processor [" << processor->getId() << "] error."
+                                   << " costs : " << compilerTimer.elapsed_message();
                     }
                 }else{
                     LOG(ERROR) << "find one invalid processor!";
                     return false;
                 }
-
-                LOG(INFO) << processor->getId() <<  " costs : " << compilerTimer.elapsed_message();
             }
 
             LOG(INFO) << "task [" << processName_ << "] end successfully ";

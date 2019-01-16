@@ -12,27 +12,29 @@ namespace kd {
             processName_ = name;
         }
 
-        bool MapProcessManager::execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) {
+        bool MapProcessManager::execute(shared_ptr<MapDataManager> mapDataManager,
+                                        shared_ptr<CheckErrorOutput> errorOutput) {
 
             LOG(INFO) << "task [" << processName_ << "] start. ";
-            for( auto processor : processors){
+            for (auto processor : processors) {
                 TimerUtil compilerTimer;
 
-                if(processor != nullptr){
+                if (processor != nullptr) {
                     LOG(INFO) << "processor [" << processor->getId() << "] start.";
 
                     bool result = processor->execute(mapDataManager, errorOutput);
 
-                    if(result){
-                        LOG(INFO) << "processor [" << processor->getId() << "] end.";
-                    }else{
-                        LOG(ERROR) << "processor [" << processor->getId() << "] error.";
+                    if (result) {
+                        LOG(INFO) << "processor [" << processor->getId() << "] end."
+                                  << " costs : " << compilerTimer.elapsed_message();
+                    } else {
+                        LOG(ERROR) << "processor [" << processor->getId() << "] error."
+                                   << " costs : " << compilerTimer.elapsed_message();
                     }
-                }else{
+                } else {
                     LOG(ERROR) << "find one invalid processor!";
                     return false;
                 }
-                LOG(INFO) << processor->getId() <<  " costs : " << compilerTimer.elapsed_message();
             }
 
             LOG(INFO) << "task [" << processName_ << "] end successfully ";

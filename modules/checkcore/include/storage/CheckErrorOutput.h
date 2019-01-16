@@ -9,43 +9,39 @@
 
 namespace kd {
     namespace dc {
+        struct ErrorOutPut{
+            string checkModel_;// 检测模型
+            string checkDesc_;//检查模型描述信息
+            string detail;//错误详细信息
+        };
 
         class CheckErrorOutput{
 
         public:
-            CheckErrorOutput(string file){
-                if (ss_.is_open()){
-                    ss_.close();
-                }
-                setlocale(LC_ALL,"");
-                if (file.length() > 0){
-                    ss_.open(file.c_str(), ios::ate);
-                }
+            CheckErrorOutput(CppSQLite3::Database *pdb){
+                m_pdb = pdb;
             }
 
             ~CheckErrorOutput(){
-                if (ss_.is_open()){
-                    ss_.close();
-                }
             }
-            /**
-             * 保存车道线检查相关的业务检查错误
-             * @param error 错误信息
-             */
-            void saveError(shared_ptr<DCDividerCheckError> error);
-
-            /**
-             * 保存各字段属性值检查错误信息
-             * @param error 错误信息
-             */
-            void saveError(shared_ptr<DCAttCheckError> error);
-
-
-            /**
-             * 保存车道检查相关的业务检查错误
-             * @param error 错误信息
-             */
-            void saveError(shared_ptr<DCLaneCheckError> error);
+//            /**
+//             * 保存车道线检查相关的业务检查错误
+//             * @param error 错误信息
+//             */
+//            void saveError(shared_ptr<DCDividerCheckError> error);
+//
+//            /**
+//             * 保存各字段属性值检查错误信息
+//             * @param error 错误信息
+//             */
+//            void saveError(shared_ptr<DCAttCheckError> error);
+//
+//
+//            /**
+//             * 保存车道检查相关的业务检查错误
+//             * @param error 错误信息
+//             */
+//            void saveError(shared_ptr<DCLaneCheckError> error);
 
 
             /**
@@ -54,8 +50,16 @@ namespace kd {
              */
             void writeInfo(string info, bool bLongString = true);
 
+            /**
+             * 输出检查信息到sql中
+             */
+            void saveError();
+
+            void saveError(shared_ptr<DCError> error);
+
         protected:
-            ofstream ss_;
+            CppSQLite3::Database *m_pdb;
+            map<string, vector<ErrorOutPut>> check_model_2_output_maps_;
         };
     }
 }

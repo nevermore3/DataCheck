@@ -2,6 +2,9 @@
 // Created by zhangxingang on 19-1-14.
 //
 
+#include <process/ModelSqlCheck.h>
+#include <DataCheckConfig.h>
+
 #include "process/ModelSqlCheck.h"
 
 namespace kd {
@@ -220,6 +223,11 @@ namespace kd {
             delete pXmlDoc;
             pXmlDoc = NULL;
             return true;
+        }
+
+        std::string ModelSqlCheck::GetConfigFile() {
+            return DataCheckConfig::getInstance().getProperty(DataCheckConfig::CONFIG_FILE_PATH) +
+                   DataCheckConfig::getInstance().getProperty(DataCheckConfig::SQL_TASK_FILE);
         }
     }
 }

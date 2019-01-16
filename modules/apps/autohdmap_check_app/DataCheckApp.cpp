@@ -27,46 +27,15 @@
 #include "businesscheck/LaneShapeNormCheck.h"
 #include "businesscheck/LaneTopoCheck.h"
 
-
 using namespace kd::dc;
 
-void loadTaskInfo(string fileName, string &taskName, string &baseUrl,
-                  vector<string> &taskIds, vector<string> &batchs, vector<string> &trackIds) {
-    ifstream in(fileName);
-    if (in.is_open()) {
-        string tempvalue;
-
-        if (!in.eof()) {
-            getline(in, tempvalue);
-
-            taskName = tempvalue;
-
-            getline(in, tempvalue);
-            baseUrl = tempvalue;
-
-            getline(in, tempvalue);
-            int taskCount = stoi(tempvalue);
-            for (int i = 0; i < taskCount; i++) {
-                getline(in, tempvalue);
-
-                Poco::StringTokenizer st(tempvalue, ",");
-                if (st.count() == 3) {
-                    taskIds.emplace_back(st[0]);
-                    batchs.emplace_back(st[1]);
-                    trackIds.emplace_back(st[2]);
-                }
-            }
-        }
-    }
-}
-
-int dataCheck(string basePath, string taskFileName, shared_ptr<CheckErrorOutput> errorOutput) {
+int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) {
     //交换格式基本属性检查
     {
         shared_ptr<ModelProcessManager> modelProcessManager = make_shared<ModelProcessManager>("modelCheck");
 
         //加载数据
-        shared_ptr<ModelDataLoader> modelLoader = make_shared<ModelDataLoader>(basePath, taskFileName);
+        shared_ptr<ModelDataLoader> modelLoader = make_shared<ModelDataLoader>(basePath);
         modelProcessManager->registerProcessor(modelLoader);
 
         //属性字段检查
@@ -88,7 +57,6 @@ int dataCheck(string basePath, string taskFileName, shared_ptr<CheckErrorOutput>
 
     //交换格式逻辑检查
     {
-        DataCheckConfig::getInstance().load("config.properties");
         shared_ptr<MapProcessManager> mapProcessManager = make_shared<MapProcessManager>("mapCheck");
 
         //加载数据
@@ -131,7 +99,7 @@ int dataCheck(string basePath, string taskFileName, shared_ptr<CheckErrorOutput>
     return 0;
 }
 
-int sql_data_check(CppSQLite3::Database *p_db, shared_ptr<CheckErrorOutput> errorOutput) {
+int sql_data_check(CppSQLite3::Database *p_db, const shared_ptr<CheckErrorOutput> &errorOutput) {
     shared_ptr<ProcessManager> process_manager = make_shared<ProcessManager>("sql_data_check");
     //加载数据
     shared_ptr<ModelSqlCheck> model_sql_check = make_shared<ModelSqlCheck>(p_db);
@@ -140,7 +108,7 @@ int sql_data_check(CppSQLite3::Database *p_db, shared_ptr<CheckErrorOutput> erro
     process_manager->execute(errorOutput);
 }
 
-void InitGlog(string exe_path, string ur_path) {
+void InitGlog(const string &exe_path, const string &ur_path) {
     google::InitGoogleLogging(exe_path.c_str());
     google::LogToStderr();
     string log_path = ur_path + "/data_check";
@@ -163,22 +131,21 @@ int main(int argc, const char *argv[]) {
     string exe_path;
     string base_path;
     string ur_path;
-    string task_file_name;
     string db_file_name;
     try {
         exe_path = argv[0];
-        if (argc >= 5) {
-            task_file_name = argv[1];
-            ur_path = argv[2];
-            base_path = argv[3];
-            db_file_name = argv[4];
+        if (argc >= 4) {
+            ur_path = argv[1];
+            base_path = argv[2];
+            db_file_name = argv[3];
         } else {
-            LOG(ERROR) << "usage:" << argv[0] << " <task_file_name> <ur> <base_path> <dump_db_file>";
+            LOG(ERROR) << "usage:" << argv[0] << " <ur> <base_path> <dump_db_file>";
             return 1;
         }
 
-        auto *p_db = new CppSQLite3::Database();
-        auto *p_db_out = new CppSQLite3::Database();
+        // 创建UR路径
+        Poco::File outDir(ur_path);
+        outDir.createDirectories();
 
         string output_file = ur_path + "/data_check.db";
         Poco::File output(output_file);
@@ -188,16 +155,24 @@ int main(int argc, const char *argv[]) {
 
         InitGlog(exe_path, ur_path);
 
+        // 加载配置
+        ret = DataCheckConfig::getInstance().load("config.properties");
+        if (ret != 0) {
+            LOG(ERROR) << "读取配置文件config.properties失败,程序退出!";
+            return ret;
+        }
+
+        // 创建数据库
+        auto *p_db = new CppSQLite3::Database();
+        auto *p_db_out = new CppSQLite3::Database();
+
         p_db->open(db_file_name);
         p_db_out->open(output_file);
-
-        Poco::File outDir(ur_path);
-        outDir.createDirectories();
 
         shared_ptr<CheckErrorOutput> errorOutput = make_shared<CheckErrorOutput>(p_db_out);
 
         //数据质量检查
-        ret = dataCheck(base_path, task_file_name, errorOutput);
+        ret = dataCheck(base_path, errorOutput);
 
         ret |= sql_data_check(p_db, errorOutput);
 

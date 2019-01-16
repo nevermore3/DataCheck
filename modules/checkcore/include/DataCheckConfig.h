@@ -28,6 +28,10 @@ namespace kd {
 
             const static string OBJECT_PL_BUFFER;
 
+            const static string CONFIG_FILE_PATH;
+            const static string MODEL_FILE_PATH;
+            const static string TASK_FILE;
+            const static string SQL_TASK_FILE;
 
 
 
@@ -41,7 +45,7 @@ namespace kd {
              * 加载配置文件
              * @param fileName 配置文件
              */
-            void load(string fileName);
+            int load(string fileName);
 
             /**
              * 获取配置属性

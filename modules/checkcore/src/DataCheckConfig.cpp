@@ -6,6 +6,7 @@
 
 //thirdparty
 #include <Poco/StringTokenizer.h>
+#include <DataCheckConfig.h>
 
 
 namespace kd {
@@ -33,6 +34,7 @@ namespace kd {
         const string DataCheckConfig::MODEL_FILE_PATH = "model_file_path";
         const string DataCheckConfig::TASK_FILE = "task_file";
         const string DataCheckConfig::SQL_TASK_FILE = "sql_task_file";
+        const string DataCheckConfig::UPDATE_REGION = "update_region";
 
 
 
@@ -103,6 +105,10 @@ namespace kd {
             }else{
                 return ::stoi(value);
             }
+        }
+
+        void DataCheckConfig::addProperty(string key, string value) {
+            m_properties.insert(make_pair(key, value));
         }
 
     }

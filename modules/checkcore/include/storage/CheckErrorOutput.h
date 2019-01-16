@@ -5,11 +5,16 @@
 #ifndef AUTOHDMAP_DATACHECK_CHECKERROROUTPUT_H
 #define AUTOHDMAP_DATACHECK_CHECKERROROUTPUT_H
 
+#include <DataCheckConfig.h>
 #include "data/ErrorDataModel.h"
 
 namespace kd {
     namespace dc {
         struct ErrorOutPut{
+            ErrorOutPut() {
+                update_region_id = DataCheckConfig::getInstance().getProperty(DataCheckConfig::UPDATE_REGION);
+            }
+            string update_region_id;
             string checkModel_;// 检测模型
             string checkDesc_;//检查模型描述信息
             string detail;//错误详细信息
@@ -18,31 +23,11 @@ namespace kd {
         class CheckErrorOutput{
 
         public:
-            CheckErrorOutput(CppSQLite3::Database *pdb){
+            explicit CheckErrorOutput(CppSQLite3::Database *pdb){
                 m_pdb = pdb;
             }
 
-            ~CheckErrorOutput(){
-            }
-//            /**
-//             * 保存车道线检查相关的业务检查错误
-//             * @param error 错误信息
-//             */
-//            void saveError(shared_ptr<DCDividerCheckError> error);
-//
-//            /**
-//             * 保存各字段属性值检查错误信息
-//             * @param error 错误信息
-//             */
-//            void saveError(shared_ptr<DCAttCheckError> error);
-//
-//
-//            /**
-//             * 保存车道检查相关的业务检查错误
-//             * @param error 错误信息
-//             */
-//            void saveError(shared_ptr<DCLaneCheckError> error);
-
+            ~CheckErrorOutput() = default;
 
             /**
              * 输出自定义文本信息

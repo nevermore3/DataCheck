@@ -32,6 +32,7 @@ namespace kd {
             const static string MODEL_FILE_PATH;
             const static string TASK_FILE;
             const static string SQL_TASK_FILE;
+            const static string UPDATE_REGION;
 
 
 
@@ -67,6 +68,8 @@ namespace kd {
              * @return 配置属性值
              */
             int getPropertyI(string key);
+
+            void addProperty(string key, string value);
 
 
         private:

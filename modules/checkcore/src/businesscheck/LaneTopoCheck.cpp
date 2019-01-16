@@ -13,10 +13,7 @@ namespace kd {
 
         bool LaneTopoCheck::execute(shared_ptr<MapDataManager> mapDataManager,
                                     shared_ptr<CheckErrorOutput> errorOutput) {
-
-            errorOutput->writeInfo("[LaneTopoCheck]\n" + make_shared<DCLaneCheckError>("")->getHeader(), false);
             check_JH_C_22(mapDataManager, errorOutput);
-
             return true;
         }
 

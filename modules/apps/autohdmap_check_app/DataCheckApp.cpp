@@ -117,6 +117,18 @@ void InitGlog(const string &exe_path, const string &ur_path) {
 }
 
 /**
+ * UR6位截取
+ * @param ur_path
+ * @return
+ */
+string getUpdateRegion(string ur_path) {
+    if (ur_path.length() > 4) {
+        return ur_path.substr(0, 4);
+    }
+    return ur_path;
+}
+
+/**
  * 数据下载示例
  * @param argc
  * @param argv
@@ -132,6 +144,10 @@ int main(int argc, const char *argv[]) {
     string base_path;
     string ur_path;
     string db_file_name;
+
+    CppSQLite3::Database *p_db = nullptr;
+    CppSQLite3::Database *p_db_out = nullptr;
+
     try {
         exe_path = argv[0];
         if (argc >= 4) {
@@ -162,9 +178,12 @@ int main(int argc, const char *argv[]) {
             return ret;
         }
 
+        // 添加UR
+        DataCheckConfig::getInstance().addProperty(DataCheckConfig::UPDATE_REGION, getUpdateRegion(ur_path));
+
         // 创建数据库
-        auto *p_db = new CppSQLite3::Database();
-        auto *p_db_out = new CppSQLite3::Database();
+        p_db = new CppSQLite3::Database();
+        p_db_out = new CppSQLite3::Database();
 
         p_db->open(db_file_name);
         p_db_out->open(output_file);
@@ -179,19 +198,24 @@ int main(int argc, const char *argv[]) {
         errorOutput->saveError();
 
         LOG(INFO) << "total task costs: " << compilerTimer.elapsed_message();
-
-        p_db->close();
-        delete p_db;
-        p_db = nullptr;
-        p_db_out->close();
-        delete p_db_out;
-        p_db_out = nullptr;
     } catch (CppSQLite3::Exception &e) {
         LOG(ERROR) << "An exception occurred: " << e.errorMessage().c_str();
         ret = 1;
     } catch (std::exception &e) {
         LOG(ERROR) << "An exception occurred: " << e.what();
         ret = 1;
+    }
+
+    if (p_db) {
+        p_db->close();
+        delete p_db;
+        p_db = nullptr;
+    }
+
+    if (p_db_out) {
+        p_db_out->close();
+        delete p_db_out;
+        p_db_out = nullptr;
     }
 
     google::ShutdownGoogleLogging();

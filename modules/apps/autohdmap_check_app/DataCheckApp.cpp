@@ -166,9 +166,6 @@ int main(int argc, const char *argv[]) {
     string task_file_name;
     string db_file_name;
     try {
-        CppSQLite3::Database *p_db = new CppSQLite3::Database();
-        CppSQLite3::Database *p_db_out = new CppSQLite3::Database();
-
         exe_path = argv[0];
         if (argc >= 5) {
             task_file_name = argv[1];
@@ -179,7 +176,11 @@ int main(int argc, const char *argv[]) {
             LOG(ERROR) << "usage:" << argv[0] << " <task_file_name> <ur> <base_path> <dump_db_file>";
             return 1;
         }
-        string output_file = ur_path + "/check_result.midf";
+
+        auto *p_db = new CppSQLite3::Database();
+        auto *p_db_out = new CppSQLite3::Database();
+
+        string output_file = ur_path + "/data_check.db";
         Poco::File output(output_file);
         if (output.exists()) {
             output.remove();
@@ -207,6 +208,9 @@ int main(int argc, const char *argv[]) {
         p_db->close();
         delete p_db;
         p_db = nullptr;
+        p_db_out->close();
+        delete p_db_out;
+        p_db_out = nullptr;
     } catch (CppSQLite3::Exception &e) {
         LOG(ERROR) << "An exception occurred: " << e.errorMessage().c_str();
         ret = 1;

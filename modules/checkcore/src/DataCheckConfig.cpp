@@ -6,6 +6,7 @@
 
 //thirdparty
 #include <Poco/StringTokenizer.h>
+#include <DataCheckConfig.h>
 
 
 namespace kd {
@@ -29,35 +30,52 @@ namespace kd {
 
         const string DataCheckConfig::OBJECT_PL_BUFFER = "object_pl_buffer";
 
+        const string DataCheckConfig::CONFIG_FILE_PATH = "config_file_path";
+        const string DataCheckConfig::MODEL_FILE_PATH = "model_file_path";
+        const string DataCheckConfig::TASK_FILE = "task_file";
+        const string DataCheckConfig::SQL_TASK_FILE = "sql_task_file";
+        const string DataCheckConfig::UPDATE_REGION = "update_region";
 
 
-        void DataCheckConfig::load(string fileName) {
-            ifstream in(fileName.c_str());
-            if (in.is_open()) {
-                char buffer[256];
-                while (!in.eof()) {
-                    in.getline(buffer, 256);
 
-                    //去掉空行或注释行
-                    if (strlen(buffer) == 0 || buffer[0] == '#')
-                        continue;
+        int DataCheckConfig::load(string fileName) {
+            int ret = 0;
+            try {
+                ifstream in(fileName.c_str());
+                if (in.is_open()) {
+                    char buffer[256];
+                    while (!in.eof()) {
+                        in.getline(buffer, 256);
 
-                    //解析数据
-                    Poco::StringTokenizer st(buffer, ":");
-                    if (st.count() >= 2) {
-                        string key = st[0];
-                        stringstream ss;
-                        for(int i = 1; i < st.count() ; i ++){
-                            ss << st[i];
-                            if( i < st.count() - 1){
-                                ss << ":";
+                        //去掉空行或注释行
+                        if (strlen(buffer) == 0 || buffer[0] == '#')
+                            continue;
+
+                        //解析数据
+                        Poco::StringTokenizer st(buffer, ":");
+                        if (st.count() >= 2) {
+                            string key = st[0];
+                            stringstream ss;
+                            for(int i = 1; i < st.count() ; i ++){
+                                ss << st[i];
+                                if( i < st.count() - 1){
+                                    ss << ":";
+                                }
                             }
-                        }
 
-                        m_properties.insert(pair<string, string>(key, ss.str()));
+                            m_properties.insert(pair<string, string>(key, ss.str()));
+                        }
                     }
+                } else {
+                    LOG(ERROR) << "读取配置文件错误,查看当前路径下" << fileName << "是否有效";
+                    ret = 1;
                 }
+            } catch (const exception& e) {
+                LOG(ERROR) << e.what();
+                ret = 1;
             }
+
+            return ret;
         }
 
         string DataCheckConfig::getProperty(string key) {
@@ -87,6 +105,10 @@ namespace kd {
             }else{
                 return ::stoi(value);
             }
+        }
+
+        void DataCheckConfig::addProperty(string key, string value) {
+            m_properties.insert(make_pair(key, value));
         }
 
     }

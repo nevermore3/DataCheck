@@ -13,7 +13,7 @@ namespace kd {
 
         class ModelDataLoader : public IModelProcessor {
         public:
-            ModelDataLoader(string basePath, string taskFile);
+            ModelDataLoader(const string& basePath);
 
         public:
             /**
@@ -31,10 +31,21 @@ namespace kd {
             virtual bool execute(shared_ptr<ModelDataManager> modelDataManager, shared_ptr<CheckErrorOutput> errorOutput) override ;
 
         private:
+            //加载任务列表
+            bool loadTasks(map<string, shared_ptr<DCTask>>& tasks);
+
+            //加载配置文件及地图数据
+            bool loadData(const string& taskName, const map<string, shared_ptr<DCTask>>& tasks,
+                          shared_ptr<ModelDataManager> dataManager, shared_ptr<CheckErrorOutput> errorOutput);
+
+        private:
             const string id = "model_data_loader";
 
             //基础数据路径
             string basePath_;
+
+            //基础配置文件路径
+            string configPath_;
 
             //任务名称
             string taskFile_;

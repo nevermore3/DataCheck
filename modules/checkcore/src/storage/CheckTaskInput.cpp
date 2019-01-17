@@ -2,6 +2,7 @@
 // Created by gaoyanhong on 2018/3/28.
 //
 
+#include <DataCheckConfig.h>
 #include "storage/CheckTaskInput.h"
 
 #include "Poco/JSON/Parser.h"
@@ -63,7 +64,9 @@ namespace kd {
                 string modelPath = getJSONString(rootobj, "modelPath");
 
                 dataPath = (dataPath.length()>0)?(dataPath + "/"):string("");
-                modelPath = (modelPath.length()==0)?(DIR_CONFIG + string("model/")):modelPath;
+                if (modelPath.empty()) {
+                    modelPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::MODEL_FILE_PATH);
+                }
 
                 //获得任务信息
                 if (!rootobj->has("tasks"))

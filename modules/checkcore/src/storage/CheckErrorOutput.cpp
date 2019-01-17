@@ -8,39 +8,8 @@
 namespace kd {
     namespace dc {
 
-//        void CheckErrorOutput::saveError(shared_ptr<DCDividerCheckError> error) {
-////            if (ss_.is_open()){
-////                ss_<< error->toString() << "\n";
-////            }else{
-////                LOG(ERROR) << error->toString();
-////            }
-//        }
-//
-//        void CheckErrorOutput::saveError(shared_ptr<DCAttCheckError> error){
-////            if (ss_.is_open()){
-////                ss_<< error->toString() << "\n";
-////            }else{
-////                LOG(ERROR) << error->toString();
-////            }
-//        }
-//
-//        void CheckErrorOutput::saveError(shared_ptr<DCLaneCheckError> error){
-////            if (ss_.is_open()){
-////                ss_<< error->toString() << "\n";
-////            }else{
-////                LOG(ERROR) << error->toString();
-////            }
-//        }
-
         void CheckErrorOutput::writeInfo(string info, bool bLongString) {
-//            if (ss_.is_open()){
-//                if (bLongString)
-//                    ss_<< "\"" << info.c_str() << "\"\n";
-//                else
-//                    ss_<< info.c_str() << "\n";
-//            }else{
-//                LOG(ERROR) << info.c_str();
-//            }
+            LOG(ERROR) << info;
         }
 
         void CheckErrorOutput::saveError() {
@@ -71,7 +40,7 @@ namespace kd {
                         statement.bindNull(count++);
                         statement.bindNull(count++);
                         statement.bindNull(count++);
-                        statement.bindNull(count++);
+                        statement.bindString(count++, item.update_region_id);
                         statement.bindNull(count++);
                         statement.bindNull(count++);
                         statement.bindNull(count++);

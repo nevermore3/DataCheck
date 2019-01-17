@@ -100,7 +100,7 @@ namespace kd {
 
         protected:
 
-            std::string GetConfigFile() { return "datachecks.xml"; };
+            std::string GetConfigFile();
 
 
         private:

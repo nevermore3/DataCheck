@@ -580,11 +580,11 @@ namespace kd {
 
                     //读取空间信息
                     int nVertices = shp_object->nVertices;
-                    for( int i = 0 ; i < nVertices ; i ++ ){
+                    for (int i = 0; i < nVertices; i++) {
                         shared_ptr<DCCoord> coord = make_shared<DCCoord>();
                         coord->lng_ = shp_object->padfX[i];
                         coord->lat_ = shp_object->padfY[i];
-                        coord->z_   = shp_object->padfZ[i];
+                        coord->z_ = shp_object->padfZ[i];
                         ptr_road->nodes_.emplace_back(coord);
                     }
 

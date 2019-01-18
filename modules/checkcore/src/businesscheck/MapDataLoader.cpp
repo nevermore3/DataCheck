@@ -22,6 +22,9 @@ namespace kd {
                 return false;
 
             MapDataInput mapDataInput;
+
+            mapDataInput.loadRoad(basePath_, mapDataManager);
+
             //加载车道线数据
             if(mapDataInput.loadDivider(basePath_, mapDataManager->dividers_, errorOutput)){
 
@@ -88,8 +91,6 @@ namespace kd {
 //            }
 
             mapDataInput.loadLaneGroupLogicInfo(basePath_, mapDataManager);
-
-            mapDataInput.loadRoad(basePath_, mapDataManager);
 
             return true;
         }

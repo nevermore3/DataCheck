@@ -29,7 +29,7 @@ namespace kd {
                         std::vector<string> details;
                         if (GetCheckResults(dcItem.ID, dcItem.Sql, mFieldNameIndex, mCheckResults, details)) {
                             for (const auto& detail : details) {
-                                shared_ptr<DCSqlCheckError> sql_check_error = make_shared<DCSqlCheckError>(dcItem.Name);
+                                shared_ptr<DCSqlCheckError> sql_check_error = make_shared<DCSqlCheckError>(dcItem.ID);
                                 sql_check_error->checkDesc_ = dcItem.Info;
                                 sql_check_error->detail = detail;
                                 errorOutput->saveError(sql_check_error);
@@ -78,7 +78,7 @@ namespace kd {
         }
 
 
-        bool ModelSqlCheck::GetCheckResults(int id, const std::string &strSql,
+        bool ModelSqlCheck::GetCheckResults(const std::string &id, const std::string &strSql,
                                             std::map<int, std::string> &mFieldNameIndex,
                                             std::vector<std::vector<std::string>> &mCheckResults,
                                             vector<string> &details) {
@@ -213,7 +213,7 @@ namespace kd {
                     std::string strInfo = (NULL == szInfo) ? std::string("") : szInfo;
                     std::string strSQL = (NULL == szSQL) ? std::string("") : szSQL;
                     m_checkitems[dataCheckType].push_back(
-                            DataCheckItem_t(strName, strSQL, strInfo, atoi(strId.c_str()), atoi(strLevel.c_str()),
+                            DataCheckItem_t(strName, strSQL, strInfo, strId, atoi(strLevel.c_str()),
                                             atoi(strKind.c_str())));
                 }
 

@@ -87,6 +87,10 @@ namespace kd {
 //                }
 //            }
 
+            mapDataInput.loadLaneGroupLogicInfo(basePath_, mapDataManager);
+
+            mapDataInput.loadRoad(basePath_, mapDataManager);
+
             return true;
         }
     }

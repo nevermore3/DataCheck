@@ -67,6 +67,21 @@ namespace kd {
              */
             bool loadObjectLine(string basePath, map<string, shared_ptr<DCObjectPL>> & objectPLs, shared_ptr<CheckErrorOutput> errorOutput);
 
+            /**
+             * 加载道路
+             * @param basePath
+             * @param mapDataManager
+             * @return
+             */
+            bool loadRoad(string basePath, shared_ptr<MapDataManager> mapDataManager);
+
+            /**
+             * 加载lanegroup相关逻辑关系表
+             * @param basePath
+             * @param mapDataManager
+             * @return
+             */
+            bool loadLaneGroupLogicInfo(string basePath, shared_ptr<MapDataManager> mapDataManager);
 
         private:
             bool setDividerNode(shared_ptr<DCDivider> div, string nodeId, map<string, shared_ptr<DCDividerNode>> & commonNodeInfos);

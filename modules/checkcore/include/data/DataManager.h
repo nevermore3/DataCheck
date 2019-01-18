@@ -56,6 +56,8 @@ namespace kd {
        public:
 
        public:
+           map<string, shared_ptr<DCRoad>> roads_;
+
            //所有的车道线对象，map的key为车道线的id
            map<string, shared_ptr<DCDivider>> dividers_;
 
@@ -64,6 +66,9 @@ namespace kd {
 
            //车道组
            map<string, shared_ptr<DCLaneGroup>> laneGroups_;
+
+           //车道组与道路的关联索引集合
+           unordered_map<string, unordered_map<string, std::pair<long, long>>> road2LaneGroup2NodeIdxs_;
 
            //车道关联关系
            map<string, shared_ptr<DCLaneConnectivity>> laneConnectivitys_;

@@ -7,6 +7,8 @@
 //thirdparty
 #include <shp/shapefil.h>
 #include <shp/ShpData.hpp>
+#include <storage/MapDataInput.h>
+
 
 namespace kd {
     namespace dc {
@@ -396,6 +398,8 @@ namespace kd {
                     shared_ptr<DCLaneGroup> laneGroup = make_shared<DCLaneGroup>();
                     laneGroup->id_ = to_string(lgDbfData.readIntField(i, "ID"));
                     string roadId = lgDbfData.readStringField(i, "ROAD_ID");
+                    laneGroup->direction_ = lgDbfData.readIntField(i, "DIRECTION");
+                    laneGroup->is_virtual_ = lgDbfData.readIntField(i, "IS_VIR");
 
                     if(roadId == "-1"){
                         stringstream ss;
@@ -449,7 +453,6 @@ namespace kd {
                 errorOutput->writeInfo(ss.str());
                 return false;
             }
-
 
             return true;
         }
@@ -522,6 +525,77 @@ namespace kd {
                 return false;
             }
             return true;
+        }
+
+        bool MapDataInput::loadLaneGroupLogicInfo(string basePath, shared_ptr<MapDataManager> mapDataManager) {
+            bool bRet = true;
+            // 读取车道组与道路的关联索引点
+            string lg_road_index_file = basePath + "/LG_ROADNODE_INDEX";
+            DbfData lg_road_index_data(lg_road_index_file);
+            if (lg_road_index_data.isInit()) {
+                auto& road2LaneGroup2NodeIdxs = mapDataManager->road2LaneGroup2NodeIdxs_;
+
+                int record_nums = lg_road_index_data.getRecords();
+                for (int i = 0; i < record_nums; i++) {
+
+                    string lane_group_id = lg_road_index_data.readStringField(i, "LG_ID");
+                    string road_id = lg_road_index_data.readStringField(i, "ROADID");
+                    int f_index = lg_road_index_data.readIntField(i, "F_INDEX");
+                    int t_index = lg_road_index_data.readIntField(i, "T_INDEX");
+
+                    auto iter = road2LaneGroup2NodeIdxs.find(road_id);
+                    if (iter != road2LaneGroup2NodeIdxs.end()) {
+                        iter->second.insert(make_pair(lane_group_id, make_pair(f_index, t_index)));
+                    } else {
+                        unordered_map<string, std::pair<long,long>> lanegroup2_node_index_map;
+                        lanegroup2_node_index_map[lane_group_id] = std::make_pair(f_index, t_index);
+                        road2LaneGroup2NodeIdxs.insert(make_pair(road_id, lanegroup2_node_index_map));
+                    }
+                }
+            } else {
+                LOG(ERROR) << "open LG_ROADNODE_INDEX failed! ";
+                bRet = false;
+            }
+            return bRet;
+        }
+
+        bool MapDataInput::loadRoad(string basePath, shared_ptr<MapDataManager> mapDataManager) {
+            bool bRet = true;
+            // 读取车道组与道路的关联索引点
+            string lg_road__file = basePath + "/ROAD";
+            ShpData lg_road_data(lg_road__file);
+            if (lg_road_data.isInit()) {
+                auto& roads = mapDataManager->roads_;
+
+                int record_nums = lg_road_data.getRecords();
+                for (int i = 0; i < record_nums; i++) {
+                    SHPObject *shp_object = lg_road_data.readShpObject(i);
+
+                    shared_ptr<DCRoad> ptr_road = make_shared<DCRoad>();
+                    ptr_road->id_ = lg_road_data.readStringField(i, "ID");
+                    ptr_road->direction_ = lg_road_data.readIntField(i, "DIRECTION");
+                    ptr_road->sLanes_ = lg_road_data.readIntField(i, "S_LANES");
+                    ptr_road->fNode_ = nullptr;
+                    ptr_road->tNode_ = nullptr;
+
+                    //读取空间信息
+                    int nVertices = shp_object->nVertices;
+                    for( int i = 0 ; i < nVertices ; i ++ ){
+                        shared_ptr<DCCoord> coord = make_shared<DCCoord>();
+                        coord->lng_ = shp_object->padfX[i];
+                        coord->lat_ = shp_object->padfY[i];
+                        coord->z_   = shp_object->padfZ[i];
+                        ptr_road->nodes_.emplace_back(coord);
+                    }
+
+                    roads.insert(make_pair(ptr_road->id_, ptr_road));
+                    SHPDestroyObject(shp_object);
+                }
+            } else {
+                LOG(ERROR) << "open LG_ROADNODE_INDEX failed! ";
+                bRet = false;
+            }
+            return bRet;
         }
 
     }

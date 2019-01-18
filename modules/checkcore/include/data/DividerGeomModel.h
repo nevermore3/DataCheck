@@ -446,6 +446,8 @@ namespace kd {
             //车道数
             long sLanes_;
 
+            //节点
+            vector<shared_ptr<DCCoord>> nodes_;
 
         };
 
@@ -519,6 +521,9 @@ namespace kd {
         public:
             //道路
             shared_ptr<DCRoad> road_;
+
+            int is_virtual_;
+            int direction_;
 
             //组成车道组的所有车道，经过排序
             vector<shared_ptr<DCLane>> lanes_;

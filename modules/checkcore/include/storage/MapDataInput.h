@@ -46,7 +46,7 @@ namespace kd {
              * @param laneGroups_ 车道组信息
              * @return 加载是否成功
              */
-            bool loadLaneGroup(string basePath, const map<string, shared_ptr<DCLane>> & lanes, map<string, shared_ptr<DCLaneGroup>> & laneGroups, shared_ptr<CheckErrorOutput> errorOutput);
+            bool loadLaneGroup(string basePath, shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput);
 
 
             /**
@@ -85,7 +85,6 @@ namespace kd {
 
         private:
             bool setDividerNode(shared_ptr<DCDivider> div, string nodeId, map<string, shared_ptr<DCDividerNode>> & commonNodeInfos);
-
         };
     }
 }

@@ -26,6 +26,8 @@
 #include "businesscheck/LaneAttribCheck.h"
 #include "businesscheck/LaneShapeNormCheck.h"
 #include "businesscheck/LaneTopoCheck.h"
+#include "businesscheck/LaneGroupCheck.h"
+
 
 using namespace kd::dc;
 
@@ -91,6 +93,9 @@ int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) 
         shared_ptr<LaneTopoCheck> laneTopoCheck = make_shared<LaneTopoCheck>();
         mapProcessManager->registerProcessor(laneTopoCheck);
 
+        shared_ptr<LaneGroupCheck> lanegroup_check = make_shared<LaneGroupCheck>();
+        mapProcessManager->registerProcessor(lanegroup_check);
+
         //执行已注册检查项
         shared_ptr<MapDataManager> mapDataManager = make_shared<MapDataManager>();
         mapProcessManager->execute(mapDataManager, errorOutput);
@@ -154,6 +159,7 @@ int main(int argc, const char *argv[]) {
             ur_path = argv[1];
             base_path = argv[2];
             db_file_name = argv[3];
+            base_path = base_path + "/" + ur_path;
         } else {
             LOG(ERROR) << "usage:" << argv[0] << " <ur> <base_path> <dump_db_file>";
             return 1;
@@ -191,9 +197,8 @@ int main(int argc, const char *argv[]) {
         shared_ptr<CheckErrorOutput> errorOutput = make_shared<CheckErrorOutput>(p_db_out);
 
         //数据质量检查
-        ret = dataCheck(base_path, errorOutput);
-
         ret |= sql_data_check(p_db, errorOutput);
+        ret |= dataCheck(base_path, errorOutput);
 
         errorOutput->saveError();
 

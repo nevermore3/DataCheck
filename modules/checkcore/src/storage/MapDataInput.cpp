@@ -385,9 +385,10 @@ namespace kd {
         }
 
 
-        bool MapDataInput::loadLaneGroup(string basePath, const map<string, shared_ptr<DCLane>> & lanes, map<string,
-                shared_ptr<DCLaneGroup>> & laneGroups, shared_ptr<CheckErrorOutput> errorOutput){
-
+        bool MapDataInput::loadLaneGroup(string basePath, shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput){
+            const auto &lanes = mapDataManager->lanes_;
+            const auto &roads = mapDataManager->roads_;
+            auto &laneGroups = mapDataManager->laneGroups_;
             //读取车道线属性信息
             string lgFileName = basePath + "/HD_LANE_GROUP";
             DbfData lgDbfData(lgFileName);
@@ -397,20 +398,20 @@ namespace kd {
 
                     shared_ptr<DCLaneGroup> laneGroup = make_shared<DCLaneGroup>();
                     laneGroup->id_ = to_string(lgDbfData.readIntField(i, "ID"));
-                    string roadId = lgDbfData.readStringField(i, "ROAD_ID");
+                    string road_id = lgDbfData.readStringField(i, "ROAD_ID");
                     laneGroup->direction_ = lgDbfData.readIntField(i, "DIRECTION");
                     laneGroup->is_virtual_ = lgDbfData.readIntField(i, "IS_VIR");
 
-                    if(roadId == "-1"){
-                        stringstream ss;
-                        ss << "[Warning] lane group " << laneGroup->id_ << " relate road id is -1";
-                        errorOutput->writeInfo(ss.str());
-                        laneGroup->valid_ = false;
+                    auto road_iter = roads.find(road_id);
+                    if (road_iter != roads.end()) {
+                        laneGroup->road_ = road_iter->second;
+                    } else {
+                        LOG(ERROR) << "find road failed! road : " << road_id << " lane group : " << laneGroup->id_;
                     }
 
                     laneGroups.insert(make_pair(laneGroup->id_, laneGroup));
                 }
-            }else{
+            } else {
                 stringstream ss;
                 ss << "[Error] open lane group file error. fileName " << lgFileName;
                 errorOutput->writeInfo(ss.str());
@@ -431,18 +432,23 @@ namespace kd {
 
                     auto lgit = laneGroups.find(lgId);
                     if(lgit == laneGroups.end()){
-                        stringstream ss;
-                        ss << "[Error] HD_R_LANE_GROUP has not exist lanegroup " << lgId;
-                        errorOutput->writeInfo(ss.str());
+                        LOG(ERROR) << "HD_R_LANE_GROUP has not exist lanegroup " << lgId;
                         continue;
                     }
 
                     auto laneit = lanes.find(laneId);
                     if(laneit == lanes.end()){
-                        stringstream ss;
-                        ss << "[Error] HD_R_LANE_GROUP not find lane " << laneId;
-                        errorOutput->writeInfo(ss.str());
+                        LOG(ERROR) << "HD_R_LANE_GROUP not find lane " << laneId;
                         continue;
+                    }
+
+                    auto ptr_lane = laneit->second;
+                    // 最内侧lane
+                    if (ptr_lane->laneNo_ == 1) {
+                        mapDataManager->insert_divider2_lane_groups(ptr_lane->leftDivider_->id_, lgId);
+                        mapDataManager->insert_divider2_lane_groups(ptr_lane->rightDivider_->id_, lgId);
+                    } else {
+                        mapDataManager->insert_divider2_lane_groups(ptr_lane->rightDivider_->id_, lgId);
                     }
 
                     lgit->second->lanes_.emplace_back(laneit->second);
@@ -509,11 +515,11 @@ namespace kd {
 
                     //读取空间信息
                     int nVertices = shpObject->nVertices;
-                    for( int i = 0 ; i < nVertices ; i ++ ){
+                    for( int idx = 0 ; idx < nVertices ; idx ++ ){
                         shared_ptr<DCCoord> coord = make_shared<DCCoord>();
-                        coord->lng_ = shpObject->padfX[i];
-                        coord->lat_ = shpObject->padfY[i];
-                        coord->z_   = shpObject->padfZ[i];
+                        coord->lng_ = shpObject->padfX[idx];
+                        coord->lat_ = shpObject->padfY[idx];
+                        coord->z_   = shpObject->padfZ[idx];
                         objPL->coords_.emplace_back(coord);
                     }
                     objectPLs.insert(make_pair(objPL->id_, objPL));

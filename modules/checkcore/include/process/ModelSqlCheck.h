@@ -42,7 +42,7 @@ namespace kd {
         };
 
         struct DataCheckItem_t {
-            int ID;
+            std::string ID;
             std::string Name;
             int Level;
             std::string Sql;
@@ -50,7 +50,7 @@ namespace kd {
             e_DataCheckKind Kind;
 
             DataCheckItem_t() {
-                ID = -1;
+                ID = "";
                 Name = "";
                 Level = 0;
                 Sql = "";
@@ -58,7 +58,7 @@ namespace kd {
                 Kind = e_DataCheckKind::DCK_NONE;
             }
 
-            DataCheckItem_t(std::string name, std::string sql, std::string info = "", int id = 0, int level = 0,
+            DataCheckItem_t(std::string name, std::string sql, std::string info = "", string id = "", int level = 0,
                             int kind = 0) {
                 ID = id;
                 Name = name;
@@ -91,7 +91,7 @@ namespace kd {
                 return m_checkitems.size();
             };
 
-            bool GetCheckResults(int id, const std::string &strSql, std::map<int, std::string> &mFieldNameIndex,
+            bool GetCheckResults(const std::string &id, const std::string &strSql, std::map<int, std::string> &mFieldNameIndex,
                                  std::vector<std::vector<std::string>> &mCheckResults, vector<string> &details);
 
             bool LoadConfig();

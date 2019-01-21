@@ -225,6 +225,35 @@ namespace kd {
             //错误详细信息描述
             string detail;
         };
+
+        /**
+         * 车道组检查错误
+         */
+        class DCLaneGroupCheckError : public DCError {
+        public:
+            explicit DCLaneGroupCheckError(const string &checkModel);
+
+        public:
+            string getHeader() override;
+
+            string toString() override;
+        public:
+            static shared_ptr<DCLaneGroupCheckError> createByKXS_03_005(string road_id, long s_index, long e_index,
+                                                                        bool is_positive = true);
+
+            static shared_ptr<DCLaneGroupCheckError> createByKXS_03_005(string road_id, long index,
+                                                                        bool is_positive = true);
+
+            static shared_ptr<DCLaneGroupCheckError> createByKXS_03_006(string road_id, string lg1,
+                                                                        long s_index1, long e_index1,
+                                                                        string lg2, long s_index2,
+                                                                        long e_index2, bool is_positive = true);
+
+        public:
+
+            //错误详细信息描述
+            string detail;
+        };
     }
 }
 

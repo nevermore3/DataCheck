@@ -2,6 +2,8 @@
 // Created by gaoyanhong on 2018/3/29.
 //
 
+#include <data/ErrorDataModel.h>
+
 #include "data/ErrorDataModel.h"
 
 namespace kd {
@@ -260,6 +262,57 @@ namespace kd {
             stringstream ss;
             ss << detail;
             return ss.str();
+        }
+        /////////////////////////////////////////////////////////////////////////////////////////
+        // DCLaneGroupCheckError
+        /////////////////////////////////////////////////////////////////////////////////////////
+        DCLaneGroupCheckError::DCLaneGroupCheckError(const string &checkModel) : DCError(checkModel) {
+
+        }
+
+        string DCLaneGroupCheckError::getHeader(){
+            return "";
+        }
+
+        string DCLaneGroupCheckError::toString() {
+            stringstream ss;
+            ss << detail;
+            return ss.str();
+        }
+
+        shared_ptr<DCLaneGroupCheckError>
+        DCLaneGroupCheckError::createByKXS_03_005(string road_id, long s_index, long e_index, bool is_positive) {
+            shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>("KXS_03_005");
+            error->checkDesc_ = "自动生成二维路网时，车道组要对道路全覆盖";
+            error->detail = "roadid:" + road_id + "未全被车道组覆盖.未覆盖的范围是" +
+                    to_string(s_index) + "," + to_string(e_index) + "," +
+                    "lane group direction " + to_string(is_positive);
+
+            return error;
+        }
+
+        shared_ptr<DCLaneGroupCheckError>
+        DCLaneGroupCheckError::createByKXS_03_005(string road_id, long index, bool is_positive) {
+            shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>("KXS_03_005");
+            error->checkDesc_ = "自动生成二维路网时，车道组要对道路全覆盖";
+            error->detail = "roadid:" + road_id + "未全被车道组覆盖.未覆盖的节点" +
+                            to_string(index) + "," + "lane group direction " + to_string(is_positive);
+
+            return error;
+        }
+
+        shared_ptr<DCLaneGroupCheckError> DCLaneGroupCheckError::createByKXS_03_006(string road_id, string lg1,
+                                                                                    long s_index1, long e_index1,
+                                                                                    string lg2, long s_index2,
+                                                                                    long e_index2, bool is_positive) {
+            shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>("KXS_03_006");
+            error->checkDesc_ = "ValidityRange之间不重叠或交叉";
+            error->detail = "roadid:" + road_id + "上的车道组关联关系有交叉." +
+                            lg1 + ":" + to_string(s_index1) + "," + to_string(e_index1) + "," +
+                            lg2 + ":" + to_string(s_index2) + "," + to_string(e_index2) + "," +
+                            "lane group direction " + to_string(is_positive);
+
+            return error;
         }
     }
 }

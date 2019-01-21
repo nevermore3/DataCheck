@@ -91,11 +91,11 @@ namespace kd {
                     min_index = lg_node_index_vec.front().f_idx;
                     max_index = lg_node_index_vec.back().t_idx;
                     if (min_index != 0) {
-                        ptr_error = DCLaneGroupCheckError::createByKXS_03_005(ptr_road->id_, 0, min_index, is_positive);
+                        ptr_error = DCLaneGroupCheckError::createByKXS_03_005(ptr_road->id_, 0, is_positive);
                         errorOutput->saveError(ptr_error);
                     }
                     if (max_index != ptr_road->nodes_.size() - 1) {
-                        ptr_error = DCLaneGroupCheckError::createByKXS_03_005(ptr_road->id_, max_index,
+                        ptr_error = DCLaneGroupCheckError::createByKXS_03_005(ptr_road->id_,
                                                                               ptr_road->nodes_.size() - 1, is_positive);
                         errorOutput->saveError(ptr_error);
                     }
@@ -103,12 +103,13 @@ namespace kd {
                     min_index = lg_node_index_vec.back().t_idx;
                     max_index = lg_node_index_vec.front().f_idx;
                     if (min_index != 0) {
-                        ptr_error = DCLaneGroupCheckError::createByKXS_03_005(ptr_road->id_, min_index, 0, is_positive);
+                        ptr_error = DCLaneGroupCheckError::createByKXS_03_005(ptr_road->id_, 0, is_positive);
                         errorOutput->saveError(ptr_error);
                     }
                     if (max_index != ptr_road->nodes_.size() - 1) {
-                        ptr_error = DCLaneGroupCheckError::createByKXS_03_005(ptr_road->id_, max_index,
-                                                                              ptr_road->nodes_.size() - 1, is_positive);
+                        ptr_error = DCLaneGroupCheckError::createByKXS_03_005(ptr_road->id_,
+                                                                              ptr_road->nodes_.size() - 1,
+                                                                              is_positive);
                         errorOutput->saveError(ptr_error);
                     }
                 }

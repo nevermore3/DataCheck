@@ -241,6 +241,9 @@ namespace kd {
             static shared_ptr<DCLaneGroupCheckError> createByKXS_03_005(string road_id, long s_index, long e_index,
                                                                         bool is_positive = true);
 
+            static shared_ptr<DCLaneGroupCheckError> createByKXS_03_005(string road_id, long index,
+                                                                        bool is_positive = true);
+
             static shared_ptr<DCLaneGroupCheckError> createByKXS_03_006(string road_id, string lg1,
                                                                         long s_index1, long e_index1,
                                                                         string lg2, long s_index2,

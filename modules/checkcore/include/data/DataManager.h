@@ -56,6 +56,7 @@ namespace kd {
        public:
 
        public:
+           // 所有的道路
            map<string, shared_ptr<DCRoad>> roads_;
 
            //所有的车道线对象，map的key为车道线的id

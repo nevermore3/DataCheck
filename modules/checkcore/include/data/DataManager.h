@@ -54,6 +54,8 @@ namespace kd {
        class MapDataManager{
 
        public:
+
+           // divider2_lane_groups_插入
            void insert_divider2_lane_groups(string divider, string lane_group_id);
 
 

@@ -19,7 +19,8 @@ namespace kd {
             check_lanegroup_road(mapDataManager, errorOutput);
 
             check_lanegroup_divider(mapDataManager, errorOutput);
-            return false;
+
+            return true;
         }
 
         void LaneGroupCheck::check_lanegroup_road(shared_ptr<MapDataManager> mapDataManager,

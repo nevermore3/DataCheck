@@ -107,9 +107,8 @@ namespace kd {
                         errorOutput->saveError(ptr_error);
                     }
                     if (max_index != ptr_road->nodes_.size() - 1) {
-                        ptr_error = DCLaneGroupCheckError::createByKXS_03_005(ptr_road->id_,
-                                                                              ptr_road->nodes_.size() - 1,
-                                                                              max_index, is_positive);
+                        ptr_error = DCLaneGroupCheckError::createByKXS_03_005(ptr_road->id_, max_index,
+                                                                              ptr_road->nodes_.size() - 1, is_positive);
                         errorOutput->saveError(ptr_error);
                     }
                 }

@@ -62,17 +62,21 @@ namespace kd {
         }
 
         void CheckErrorOutput::saveError(shared_ptr<DCError> error) {
-            ErrorOutPut error_output;
-            error_output.checkModel_ = error->checkModel_;
-            error_output.checkDesc_ = error->checkDesc_;
-            error_output.detail = error->toString();
-            auto check_model_iter = check_model_2_output_maps_.find(error->checkModel_);
-            if (check_model_iter != check_model_2_output_maps_.end()) {
-                check_model_iter->second.emplace_back(error_output);
+            if (error) {
+                ErrorOutPut error_output;
+                error_output.checkModel_ = error->checkModel_;
+                error_output.checkDesc_ = error->checkDesc_;
+                error_output.detail = error->toString();
+                auto check_model_iter = check_model_2_output_maps_.find(error->checkModel_);
+                if (check_model_iter != check_model_2_output_maps_.end()) {
+                    check_model_iter->second.emplace_back(error_output);
+                } else {
+                    vector<ErrorOutPut> error_output_vec;
+                    error_output_vec.emplace_back(error_output);
+                    check_model_2_output_maps_.insert(make_pair(error->checkModel_, error_output_vec));
+                }
             } else {
-                vector<ErrorOutPut> error_output_vec;
-                error_output_vec.emplace_back(error_output);
-                check_model_2_output_maps_.insert(make_pair(error->checkModel_, error_output_vec));
+                LOG(ERROR) << "saveError error is null!";
             }
         }
     }

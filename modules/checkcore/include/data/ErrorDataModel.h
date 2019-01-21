@@ -249,6 +249,8 @@ namespace kd {
                                                                         string lg2, long s_index2,
                                                                         long e_index2, bool is_positive = true);
 
+            static shared_ptr<DCLaneGroupCheckError> createByKXS_03_004(string divider_id, set<string> lane_groups);
+
         public:
 
             //错误详细信息描述

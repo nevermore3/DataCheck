@@ -30,5 +30,24 @@ namespace kd {
 
             return ptr_lane_group;
         }
+
+        shared_ptr<DCDivider> CommonUtil::get_divider(shared_ptr<MapDataManager> mapDataManager, string divider) {
+            const auto &dividers = mapDataManager->dividers_;
+            shared_ptr<DCDivider> ptr_divider = nullptr;
+            auto divider_iter = dividers.find(divider);
+            if (divider_iter != dividers.end()) {
+                ptr_divider = divider_iter->second;
+            }
+
+            return ptr_divider;
+        }
+
+        shared_ptr<DCRoad> CommonUtil::get_road_by_lg(shared_ptr<MapDataManager> mapDataManager, string lane_group_id) {
+            auto ptr_lane_group = get_lane_group(mapDataManager, lane_group_id);
+            if (ptr_lane_group) {
+                return ptr_lane_group->road_;
+            }
+            return nullptr;
+        }
     }
 }

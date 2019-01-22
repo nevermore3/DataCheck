@@ -9,7 +9,7 @@
 namespace kd {
     namespace dc {
         struct LGNodeIndex{
-            LGNodeIndex() = default;;
+            LGNodeIndex() = default;
             LGNodeIndex(const string &lg_id, const string &road_id, long f_index, long t_index) {
                 this->lanegroup_id = lg_id;
                 this->f_idx = f_index;

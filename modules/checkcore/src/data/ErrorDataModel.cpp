@@ -329,6 +329,36 @@ namespace kd {
 
             return error;
         }
+
+        /////////////////////////////////////////////////////////////////////////////////////////
+        // DCLaneGroupTopoCheckError
+        /////////////////////////////////////////////////////////////////////////////////////////
+        DCLaneGroupTopoCheckError::DCLaneGroupTopoCheckError(const string &checkModel) : DCError(checkModel) {
+
+        }
+
+        string DCLaneGroupTopoCheckError::getHeader(){
+            return "";
+        }
+
+        string DCLaneGroupTopoCheckError::toString() {
+            stringstream ss;
+            ss << detail;
+            return ss.str();
+        }
+
+        shared_ptr<DCLaneGroupTopoCheckError> DCLaneGroupTopoCheckError::createByKXS_04_001(string lg_id1,
+                                                                                            string lg_id2) {
+            shared_ptr<DCLaneGroupTopoCheckError> error = make_shared<DCLaneGroupTopoCheckError>("KXS_04_001");
+            error->checkDesc_ = "若车道组之间连通，则其内部的道路必然连通。";
+            error->detail += "lane group id:";
+            error->detail += lg_id1;
+            error->detail += ",lane group id:";
+            error->detail += lg_id2;
+            error->detail += "道路不连通";
+
+            return error;
+        }
     }
 }
 

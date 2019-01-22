@@ -26,7 +26,7 @@ namespace kd {
              * @param errorOutput 错误信息输出
              * @return 加载是否成功
              */
-            bool loadDivider(string basePath, map<string, shared_ptr<DCDivider>> & dividers, shared_ptr<CheckErrorOutput> errorOutput);
+            bool loadDivider(string basePath, shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput);
 
             /**
              * 加载车道信息

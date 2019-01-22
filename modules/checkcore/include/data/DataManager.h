@@ -58,6 +58,14 @@ namespace kd {
            // divider2_lane_groups_插入
            void insert_divider2_lane_groups(string divider, string lane_group_id);
 
+           // fnode_id2_dividers_maps_插入
+           void insert_fnode_id2_dividers(string fnode_id, shared_ptr<DCDivider> ptr_divider);
+
+           // tnode_id2_dividers_maps_插入
+           void insert_tnode_id2_dividers(string tnode_id, shared_ptr<DCDivider> ptr_divider);
+
+           // lane_group2_roads_maps_插入
+           void insert_lane_group2_roads(string lane_group_id, string road_id);
 
        public:
            // 所有的道路
@@ -83,6 +91,15 @@ namespace kd {
 
            // key为divider id,value为关联的lane group id集合
            map<string, set<string>> divider2_lane_groups_;
+
+           // fnode与连接的DIVIDER映射
+           map<string, vector<shared_ptr<DCDivider>>> fnode_id2_dividers_maps_;
+
+           // tnode与连接的DIVIDER映射
+           map<string, vector<shared_ptr<DCDivider>>> tnode_id2_dividers_maps_;
+
+           // key为lane group id，value为road id
+           map<string, vector<string>> lane_group2_roads_maps_;
        };
 
     }

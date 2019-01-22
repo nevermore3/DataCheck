@@ -32,6 +32,7 @@
 using namespace kd::dc;
 
 int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) {
+    int ret = 0;
     //交换格式基本属性检查
     {
         shared_ptr<ModelProcessManager> modelProcessManager = make_shared<ModelProcessManager>("modelCheck");
@@ -54,7 +55,7 @@ int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) 
 
         //执行已注册检查项
         shared_ptr<ModelDataManager> modelDataManager = make_shared<ModelDataManager>();
-        modelProcessManager->execute(modelDataManager, errorOutput);
+        ret |= modelProcessManager->execute(modelDataManager, errorOutput);
     }
 
     //交换格式逻辑检查
@@ -98,19 +99,21 @@ int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) 
 
         //执行已注册检查项
         shared_ptr<MapDataManager> mapDataManager = make_shared<MapDataManager>();
-        mapProcessManager->execute(mapDataManager, errorOutput);
+        ret |= mapProcessManager->execute(mapDataManager, errorOutput);
     }
 
-    return 0;
+    return ret;
 }
 
 int sql_data_check(CppSQLite3::Database *p_db, const shared_ptr<CheckErrorOutput> &errorOutput) {
+    int ret = 0;
     shared_ptr<ProcessManager> process_manager = make_shared<ProcessManager>("sql_data_check");
     //加载数据
     shared_ptr<ModelSqlCheck> model_sql_check = make_shared<ModelSqlCheck>(p_db);
     process_manager->registerProcessor(model_sql_check);
 
-    process_manager->execute(errorOutput);
+    ret |= process_manager->execute(errorOutput);
+    return ret;
 }
 
 void InitGlog(const string &exe_path, const string &ur_path) {

@@ -49,6 +49,14 @@ namespace kd {
             void check_lanegroup_road(shared_ptr<MapDataManager> mapDataManager,
                                   shared_ptr<CheckErrorOutput> errorOutput);
 
+            /**
+             * 车道组与DIVIDER关系检查
+             * @param mapDataManager
+             * @param errorOutput
+             */
+            void check_lanegroup_divider(shared_ptr<MapDataManager> mapDataManager,
+                                         shared_ptr<CheckErrorOutput> errorOutput);
+
         private:
             /**
              * 车道组关联道路索引点详细检查逻辑

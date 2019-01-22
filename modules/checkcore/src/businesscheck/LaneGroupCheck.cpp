@@ -17,7 +17,10 @@ namespace kd {
         bool LaneGroupCheck::execute(shared_ptr<MapDataManager> mapDataManager,
                                      shared_ptr<CheckErrorOutput> errorOutput) {
             check_lanegroup_road(mapDataManager, errorOutput);
-            return false;
+
+            check_lanegroup_divider(mapDataManager, errorOutput);
+
+            return true;
         }
 
         void LaneGroupCheck::check_lanegroup_road(shared_ptr<MapDataManager> mapDataManager,
@@ -150,6 +153,48 @@ namespace kd {
                 }
                 pre_iter = lat_iter;
                 lat_iter++;
+            }
+        }
+
+        void LaneGroupCheck::check_lanegroup_divider(shared_ptr<MapDataManager> mapDataManager,
+                                                     shared_ptr<CheckErrorOutput> errorOutput) {
+            const auto &divider2w_lane_groups = mapDataManager->divider2_lane_groups_;
+            shared_ptr<DCError> ptr_error = nullptr;
+            for (auto div2_lg : divider2w_lane_groups) {
+                bool check = false;
+                if (div2_lg.second.size() == 2) {
+                    // divider关联多个车道组
+                    auto ptr_divider = CommonUtil::get_divider(mapDataManager, div2_lg.first);
+                    if (ptr_divider) {
+                        // 如果是参考线
+                        if (ptr_divider->dividerNo_ == 0) {
+                            for (const auto &lg : div2_lg.second) {
+                                auto ptr_road = CommonUtil::get_road_by_lg(mapDataManager, lg);
+                                if (ptr_road) {
+                                    // 不是双向的
+                                    if (ptr_road->direction_ != 1) {
+                                        check = true;
+                                        break;
+                                    }
+                                } else {
+                                    LOG(ERROR) << "get_road_by_lg failed! lane group:" << lg;
+                                }
+                            }
+                        } else {
+                            check = true;
+                        }
+                    } else {
+                        LOG(ERROR) << "get_divider failed! divider:" << div2_lg.first;
+                    }
+                } else {
+                    check = div2_lg.second.size() != 1;
+                }
+
+                // 错误
+                if (check) {
+                    ptr_error = DCLaneGroupCheckError::createByKXS_03_004(div2_lg.first, div2_lg.second);
+                    errorOutput->saveError(ptr_error);
+                }
             }
         }
     }

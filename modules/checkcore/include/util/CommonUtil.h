@@ -22,12 +22,28 @@ namespace kd {
             static shared_ptr<DCRoad> get_road(shared_ptr<MapDataManager> mapDataManager, string road_id);
 
             /**
+             * 获取lane group关联的道路
+             * @param mapDataManager
+             * @param lane_group
+             * @return 不存在返回null
+             */
+            static shared_ptr<DCRoad> get_road_by_lg(shared_ptr<MapDataManager> mapDataManager, string lane_group_id);
+
+            /**
              * 获取lane group
              * @param mapDataManager
              * @param lane_group_id
              * @return 不存在返回null
              */
             static shared_ptr<DCLaneGroup> get_lane_group(shared_ptr<MapDataManager> mapDataManager, string lane_group_id);
+
+            /**
+             * 获取divider
+             * @param mapDataManager
+             * @param divider
+             * @return 不存在返回null
+             */
+            static shared_ptr<DCDivider> get_divider(shared_ptr<MapDataManager> mapDataManager, string divider);
         };
     }
 }

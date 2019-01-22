@@ -55,6 +55,10 @@ namespace kd {
 
        public:
 
+           // divider2_lane_groups_插入
+           void insert_divider2_lane_groups(string divider, string lane_group_id);
+
+
        public:
            // 所有的道路
            map<string, shared_ptr<DCRoad>> roads_;
@@ -77,6 +81,8 @@ namespace kd {
            //所有线对象
            map<string, shared_ptr<DCObjectPL>> objectPLs_;
 
+           // key为divider id,value为关联的lane group id集合
+           map<string, set<string>> divider2_lane_groups_;
        };
 
     }

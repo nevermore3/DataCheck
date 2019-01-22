@@ -58,7 +58,7 @@ namespace kd {
             }
 
             //加载车道分组
-            if(mapDataInput.loadLaneGroup(basePath_, mapDataManager->lanes_, mapDataManager->laneGroups_, errorOutput)){
+            if(mapDataInput.loadLaneGroup(basePath_, mapDataManager, errorOutput)){
                 for( auto recordit : mapDataManager->laneGroups_ ){
 
                     string lgid = recordit.first;

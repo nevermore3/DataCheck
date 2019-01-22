@@ -26,10 +26,13 @@
 #include "businesscheck/LaneAttribCheck.h"
 #include "businesscheck/LaneShapeNormCheck.h"
 #include "businesscheck/LaneTopoCheck.h"
+#include "businesscheck/LaneGroupCheck.h"
+
 
 using namespace kd::dc;
 
 int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) {
+    int ret = 0;
     //交换格式基本属性检查
     {
         shared_ptr<ModelProcessManager> modelProcessManager = make_shared<ModelProcessManager>("modelCheck");
@@ -52,7 +55,7 @@ int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) 
 
         //执行已注册检查项
         shared_ptr<ModelDataManager> modelDataManager = make_shared<ModelDataManager>();
-        modelProcessManager->execute(modelDataManager, errorOutput);
+        ret |= modelProcessManager->execute(modelDataManager, errorOutput);
     }
 
     //交换格式逻辑检查
@@ -91,21 +94,26 @@ int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) 
         shared_ptr<LaneTopoCheck> laneTopoCheck = make_shared<LaneTopoCheck>();
         mapProcessManager->registerProcessor(laneTopoCheck);
 
+        shared_ptr<LaneGroupCheck> lanegroup_check = make_shared<LaneGroupCheck>();
+        mapProcessManager->registerProcessor(lanegroup_check);
+
         //执行已注册检查项
         shared_ptr<MapDataManager> mapDataManager = make_shared<MapDataManager>();
-        mapProcessManager->execute(mapDataManager, errorOutput);
+        ret |= mapProcessManager->execute(mapDataManager, errorOutput);
     }
 
-    return 0;
+    return ret;
 }
 
 int sql_data_check(CppSQLite3::Database *p_db, const shared_ptr<CheckErrorOutput> &errorOutput) {
+    int ret = 0;
     shared_ptr<ProcessManager> process_manager = make_shared<ProcessManager>("sql_data_check");
     //加载数据
     shared_ptr<ModelSqlCheck> model_sql_check = make_shared<ModelSqlCheck>(p_db);
     process_manager->registerProcessor(model_sql_check);
 
-    process_manager->execute(errorOutput);
+    ret |= process_manager->execute(errorOutput);
+    return ret;
 }
 
 void InitGlog(const string &exe_path, const string &ur_path) {
@@ -154,6 +162,7 @@ int main(int argc, const char *argv[]) {
             ur_path = argv[1];
             base_path = argv[2];
             db_file_name = argv[3];
+            base_path = base_path + "/" + ur_path;
         } else {
             LOG(ERROR) << "usage:" << argv[0] << " <ur> <base_path> <dump_db_file>";
             return 1;
@@ -191,9 +200,8 @@ int main(int argc, const char *argv[]) {
         shared_ptr<CheckErrorOutput> errorOutput = make_shared<CheckErrorOutput>(p_db_out);
 
         //数据质量检查
-        ret = dataCheck(base_path, errorOutput);
-
         ret |= sql_data_check(p_db, errorOutput);
+        ret |= dataCheck(base_path, errorOutput);
 
         errorOutput->saveError();
 

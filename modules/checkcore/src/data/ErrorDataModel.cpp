@@ -314,6 +314,21 @@ namespace kd {
 
             return error;
         }
+
+        shared_ptr<DCLaneGroupCheckError> DCLaneGroupCheckError::createByKXS_03_004(string divider_id,
+                                                                                    set<string> lane_groups) {
+            shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>("KXS_03_004");
+            error->checkDesc_ = "一条普通车道线存在于多个车道组中。两个车道组共用的双向车道线除外";
+            error->detail += "divider_id:";
+            error->detail += divider_id;
+            error->detail += "存在于分组";
+            for (const auto &lg : lane_groups) {
+                error->detail += lg;
+                error->detail += " ";
+            }
+
+            return error;
+        }
     }
 }
 

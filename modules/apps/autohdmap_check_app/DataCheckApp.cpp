@@ -152,6 +152,7 @@ int main(int argc, const char *argv[]) {
     string base_path;
     string ur_path;
     string db_file_name;
+    string output_path;
 
     CppSQLite3::Database *p_db = nullptr;
     CppSQLite3::Database *p_db_out = nullptr;
@@ -162,23 +163,30 @@ int main(int argc, const char *argv[]) {
             ur_path = argv[1];
             base_path = argv[2];
             db_file_name = argv[3];
+            output_path = argc >= 5 ? argv[4] : ".";
+            output_path = output_path + "/" + ur_path;
             base_path = base_path + "/" + ur_path;
         } else {
-            LOG(ERROR) << "usage:" << argv[0] << " <ur> <base_path> <dump_db_file>";
+            LOG(ERROR) << "usage:" << argv[0] << " <ur> <base_path> <dump_db_file> [<output_path>]";
             return 1;
         }
 
         // 创建UR路径
-        Poco::File outDir(ur_path);
-        outDir.createDirectories();
+        Poco::File outDir(output_path);
+        if (!outDir.exists()) {
+            if (!outDir.createDirectory()) {
+                LOG(ERROR) << "create ur directory failed!";
+                return 1;
+            }
+        }
 
-        string output_file = ur_path + "/data_check.db";
+        string output_file = output_path + "/data_check.db";
         Poco::File output(output_file);
         if (output.exists()) {
             output.remove();
         }
 
-        InitGlog(exe_path, ur_path);
+        InitGlog(exe_path, output_path);
 
         // 加载配置
         ret = DataCheckConfig::getInstance().load("config.properties");

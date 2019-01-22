@@ -27,7 +27,7 @@
 #include "businesscheck/LaneShapeNormCheck.h"
 #include "businesscheck/LaneTopoCheck.h"
 #include "businesscheck/LaneGroupCheck.h"
-
+#include "businesscheck/LaneGroupTopoCheck.h"
 
 using namespace kd::dc;
 
@@ -99,6 +99,9 @@ int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) 
 
         shared_ptr<LaneGroupCheck> lanegroup_check = make_shared<LaneGroupCheck>();
         mapProcessManager->registerProcessor(lanegroup_check);
+
+        shared_ptr<LaneGroupTopoCheck> lanegroup_topo_check = make_shared<LaneGroupTopoCheck>();
+        mapProcessManager->registerProcessor(lanegroup_topo_check);
 
         //执行已注册检查项
         shared_ptr<MapDataManager> mapDataManager = make_shared<MapDataManager>();

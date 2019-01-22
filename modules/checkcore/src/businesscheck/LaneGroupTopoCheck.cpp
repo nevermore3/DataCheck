@@ -23,6 +23,7 @@ namespace kd {
                 ret = false;
             }
 
+            release(mapDataManager);
             return ret;
         }
 
@@ -167,6 +168,12 @@ namespace kd {
                 LOG(ERROR) << "get lane group failed! lane group id : " << lane_group_id;
             }
             return ret;
+        }
+
+        void LaneGroupTopoCheck::release(shared_ptr<MapDataManager> mapDataManager) {
+            mapDataManager->fnode_id2_dividers_maps_.clear();
+            mapDataManager->tnode_id2_dividers_maps_.clear();
+            mapDataManager->divider2_lane_groups_.clear();
         }
     }
 }

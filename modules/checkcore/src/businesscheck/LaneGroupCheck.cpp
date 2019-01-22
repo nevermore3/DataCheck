@@ -20,6 +20,8 @@ namespace kd {
 
             check_lanegroup_divider(mapDataManager, errorOutput);
 
+            release(mapDataManager);
+
             return true;
         }
 
@@ -196,6 +198,10 @@ namespace kd {
                     errorOutput->saveError(ptr_error);
                 }
             }
+        }
+
+        void LaneGroupCheck::release(shared_ptr<MapDataManager> mapDataManager) {
+            mapDataManager->road2LaneGroup2NodeIdxs_.clear();
         }
     }
 }

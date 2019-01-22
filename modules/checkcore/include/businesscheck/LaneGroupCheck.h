@@ -43,6 +43,12 @@ namespace kd {
 
         private:
             /**
+             * 释放资源
+             * @param mapDataManager
+             */
+            void release(shared_ptr<MapDataManager> mapDataManager);
+
+            /**
              * 车道组关联道路范围检查
              * @return
              */

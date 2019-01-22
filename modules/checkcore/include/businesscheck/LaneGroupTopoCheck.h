@@ -15,8 +15,25 @@ namespace kd {
             string getId() override;
 
             bool execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) override;
+
         private:
+            /**
+             * 释放资源
+             * @param mapDataManager
+             */
+            void release(shared_ptr<MapDataManager> mapDataManager);
+
+            /**
+             * 检查道路的拓扑连通
+             * @param mapDataManager
+             * @param errorOutput
+             */
             void check_road_topo(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput);
+
+            /**
+             * 预处理divider连接关系，lane group连接关系
+             * @param mapDataManager
+             */
             void pre_divider_topo(shared_ptr<MapDataManager> mapDataManager);
         private:
             /**

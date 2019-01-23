@@ -74,6 +74,61 @@ namespace kd {
              */
             static set<string> get_conn_divider(const shared_ptr<MapDataManager> &mapDataManager,
                                                const shared_ptr<DCDivider> &ptr_divider, bool is_front);
+
+            /**
+             * 获取连接的divider,主要是为了双向参考线方向不确定使用
+             * @param mapDataManager
+             * @param lg
+             * @param divider
+             * @param is_front 是否是当前首点连接
+             * @return
+             */
+            static set<string> get_ref_conn_divider(const shared_ptr<MapDataManager> &mapDataManager, const string &lg,
+                                                const shared_ptr<DCDivider> &ptr_divider, bool is_front);
+
+            /**
+             * 获取lane group组内lane集合，已排序
+             * @param mapDataManager
+             * @param lane_group_id
+             * @return
+             */
+            static vector<shared_ptr<DCLane>> get_lanes_by_lg(const shared_ptr<MapDataManager> &mapDataManager,
+                                                              const string &lane_group_id);
+
+            /**
+             * 获取lane group组内divider集合，已排序
+             * @param mapDataManager
+             * @param lane_group_id
+             * @return
+             */
+            static vector<shared_ptr<DCDivider>> get_dividers_by_lg(const shared_ptr<MapDataManager> &mapDataManager,
+                                                                    const string &lane_group_id);
+
+            /**
+             * 获取左右divider之间的车道集合，左右divider需要在同一个组
+             * @param mapDataManager
+             * @param left_divider
+             * @param right_divider
+             * @return
+             */
+            static vector<shared_ptr<DCLane>>
+            get_lanes_between_dividers(const shared_ptr<MapDataManager> &mapDataManager,
+                                       const shared_ptr<DCDivider> &left_divider,
+                                       const shared_ptr<DCDivider> &right_divider);
+
+        private:
+
+            /**
+             * 左右divider是否是相同组
+             * @param mapDataManager
+             * @param left_divider
+             * @param right_divider
+             * @param lane_group
+             * @return
+             */
+            static bool is_same_lane_group(const shared_ptr<MapDataManager> &mapDataManager,
+                                           const shared_ptr<DCDivider> &left_divider,
+                                           const shared_ptr<DCDivider> &right_divider, string &lane_group);
         };
     }
 }

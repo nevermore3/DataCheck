@@ -147,6 +147,7 @@ namespace kd {
 
                 // 构建fnode与divider关系
                 mapDataManager->insert_fnode_id2_dividers(div->fromNodeId_, div);
+                mapDataManager->insert_node_id2_dividers(div->fromNodeId_, div);
 
                 if(!setDividerNode(div, div->toNodeId_, commonNodeInfos)){
                     stringstream ss;
@@ -158,6 +159,7 @@ namespace kd {
 
                 // 构建tnode与divider关系
                 mapDataManager->insert_tnode_id2_dividers(div->toNodeId_, div);
+                mapDataManager->insert_node_id2_dividers(div->toNodeId_, div);
             }
 
             //读取车道线属性信息

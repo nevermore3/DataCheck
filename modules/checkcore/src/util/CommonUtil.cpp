@@ -67,6 +67,28 @@ namespace kd {
             return ret_divider_ids;
         }
 
+
+        set<string> CommonUtil::get_ref_conn_divider(const shared_ptr<MapDataManager> &mapDataManager, const string &lg,
+                                                     const shared_ptr<DCDivider> &ptr_divider, bool is_front) {
+            set<string> ret_divider_ids;
+            const auto &node_id2_dividers_maps_ = mapDataManager->node_id2_dividers_maps_;
+            string node_id = is_front ? ptr_divider->nodes_.front()->id_ : ptr_divider->nodes_.back()->id_;
+            auto node_iter = node_id2_dividers_maps_.find(node_id);
+            if (node_iter != node_id2_dividers_maps_.end()) {
+                for (const auto &ptr_div : node_iter->second) {
+                    if (ptr_div->id_ != ptr_divider->id_) {
+                        // 过滤一个组内的
+                        auto lane_groups = get_lane_groups_by_divider(mapDataManager, ptr_div->id_);
+                        if (lane_groups.size() == 1 && *lane_groups.begin() == lg) {
+                            continue;
+                        }
+                        ret_divider_ids.insert(ptr_div->id_);
+                    }
+                }
+            }
+            return ret_divider_ids;
+        }
+
         set<string> CommonUtil::get_lane_groups_by_divider(shared_ptr<MapDataManager> mapDataManager,
                                                            string divider_id) {
             set<string> ret_lane_groups;
@@ -88,6 +110,82 @@ namespace kd {
                 ret_road_set.insert(lane_group_iter->second.begin(), lane_group_iter->second.end());
             }
             return ret_road_set;
+        }
+
+        vector<shared_ptr<DCLane>>
+        CommonUtil::get_lanes_by_lg(const shared_ptr<MapDataManager> &mapDataManager, const string &lane_group_id) {
+            const auto &lane_groups = mapDataManager->laneGroups_;
+            auto lane_group_iter = lane_groups.find(lane_group_id);
+            if (lane_group_iter != lane_groups.end()) {
+                return lane_group_iter->second->lanes_;
+            } else {
+                LOG(ERROR) << "get lane group failed! lane group id : " << lane_group_id;
+            }
+            return vector<shared_ptr<DCLane>>();
+        }
+
+        vector<shared_ptr<DCDivider>>
+        CommonUtil::get_dividers_by_lg(const shared_ptr<MapDataManager> &mapDataManager, const string &lane_group_id) {
+            vector<shared_ptr<DCDivider>> ret_ptr_dividers;
+            const auto &ptr_lanes = get_lanes_by_lg(mapDataManager, lane_group_id);
+            bool is_first = true;
+            for (const auto &lane : ptr_lanes) {
+                if (is_first) {
+                    ret_ptr_dividers.emplace_back(lane->leftDivider_);
+                    ret_ptr_dividers.emplace_back(lane->rightDivider_);
+                    is_first = false;
+                } else {
+                    ret_ptr_dividers.emplace_back(lane->rightDivider_);
+                }
+            }
+            return ret_ptr_dividers;
+        }
+
+        vector<shared_ptr<DCLane>>
+        CommonUtil::get_lanes_between_dividers(const shared_ptr<MapDataManager> &mapDataManager,
+                                               const shared_ptr<DCDivider> &left_divider,
+                                               const shared_ptr<DCDivider> &right_divider) {
+            vector<shared_ptr<DCLane>> ret_ptr_lanes;
+            if (left_divider->id_ != right_divider->id_ && left_divider->dividerNo_ < right_divider->dividerNo_) {
+                string lane_group;
+                if (is_same_lane_group(mapDataManager, left_divider, right_divider, lane_group)) {
+                    const auto &ptr_lanes = get_lanes_by_lg(mapDataManager, lane_group);
+                    for (const auto &lane : ptr_lanes) {
+                        auto lane_left_divider = lane->leftDivider_;
+                        auto lane_right_divider = lane->rightDivider_;
+
+                        if (left_divider->dividerNo_ <= lane_left_divider->dividerNo_ &&
+                            lane_right_divider->dividerNo_ <= right_divider->dividerNo_) {
+                            ret_ptr_lanes.emplace_back(lane);
+                        }
+                    }
+
+                }
+            }
+
+            return ret_ptr_lanes;
+        }
+
+        bool CommonUtil::is_same_lane_group(const shared_ptr<MapDataManager> &mapDataManager,
+                                            const shared_ptr<DCDivider> &left_divider,
+                                            const shared_ptr<DCDivider> &right_divider, string &lane_group) {
+            bool ret = false;
+            auto left_lane_groups = get_lane_groups_by_divider(mapDataManager, left_divider->id_);
+            auto right_lane_groups = get_lane_groups_by_divider(mapDataManager, right_divider->id_);
+            if (left_lane_groups.size() == 1 && right_lane_groups.size() == 1) {
+                if (*left_lane_groups.begin() == *right_lane_groups.begin()) {
+                    lane_group = *left_lane_groups.begin();
+                    ret = true;
+                }
+            } else if (left_lane_groups.size() == 2 && right_lane_groups.size() == 1) {
+                for (const auto &lg : left_lane_groups) {
+                    if (lg == *right_lane_groups.begin()) {
+                        lane_group = *right_lane_groups.begin();
+                        ret = true;
+                    }
+                }
+            }
+            return ret;
         }
     }
 }

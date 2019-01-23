@@ -56,6 +56,17 @@ namespace kd {
            }
        }
 
+       void MapDataManager::insert_node_id2_dividers(string tnode_id, shared_ptr<DCDivider> ptr_divider) {
+           auto node_iter = node_id2_dividers_maps_.find(tnode_id);
+           if (node_iter != node_id2_dividers_maps_.end()) {
+               node_iter->second.emplace_back(ptr_divider);
+           } else {
+               vector<shared_ptr<DCDivider>> vec_dc_dividers;
+               vec_dc_dividers.emplace_back(ptr_divider);
+               node_id2_dividers_maps_.insert(make_pair(tnode_id, vec_dc_dividers));
+           }
+       }
+
        void MapDataManager::insert_lane_group2_roads(string lane_group_id, string road_id) {
             auto lane_group_iter = lane_group2_roads_maps_.find(lane_group_id);
             if (lane_group_iter != lane_group2_roads_maps_.end()) {

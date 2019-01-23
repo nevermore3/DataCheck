@@ -55,7 +55,10 @@ int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) 
 
         //执行已注册检查项
         shared_ptr<ModelDataManager> modelDataManager = make_shared<ModelDataManager>();
-        ret |= modelProcessManager->execute(modelDataManager, errorOutput);
+        if (!modelProcessManager->execute(modelDataManager, errorOutput)) {
+            LOG(ERROR) << "modelDataManager execute error!";
+            ret = 1;
+        }
     }
 
     //交换格式逻辑检查
@@ -99,7 +102,10 @@ int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) 
 
         //执行已注册检查项
         shared_ptr<MapDataManager> mapDataManager = make_shared<MapDataManager>();
-        ret |= mapProcessManager->execute(mapDataManager, errorOutput);
+        if (!mapProcessManager->execute(mapDataManager, errorOutput)){
+            LOG(ERROR) << "mapProcessManager execute error!";
+            ret = 1;
+        }
     }
 
     return ret;
@@ -112,7 +118,10 @@ int sql_data_check(CppSQLite3::Database *p_db, const shared_ptr<CheckErrorOutput
     shared_ptr<ModelSqlCheck> model_sql_check = make_shared<ModelSqlCheck>(p_db);
     process_manager->registerProcessor(model_sql_check);
 
-    ret |= process_manager->execute(errorOutput);
+    if (!process_manager->execute(errorOutput)){
+        LOG(ERROR) << "ProcessManager execute error!";
+        ret = 1;
+    }
     return ret;
 }
 

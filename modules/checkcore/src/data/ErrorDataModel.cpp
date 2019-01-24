@@ -330,6 +330,16 @@ namespace kd {
             return error;
         }
 
+        shared_ptr<DCLaneGroupCheckError> DCLaneGroupCheckError::createByKXS_03_002(string lane_group_id) {
+            shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>("KXS_03_002");
+            error->checkDesc_ = "分组中车道编号从零开始，从内向外递增。编号连续，不缺失，不重复。";
+            error->detail += "lane_group_id:";
+            error->detail += lane_group_id;
+            error->detail += "车道编号异常";
+
+            return error;
+        }
+
         /////////////////////////////////////////////////////////////////////////////////////////
         // DCLaneGroupTopoCheckError
         /////////////////////////////////////////////////////////////////////////////////////////

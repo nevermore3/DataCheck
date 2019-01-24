@@ -85,7 +85,8 @@ namespace kd {
                                                                 bool &is_normal);
 
             vector<shared_ptr<DCDivider>> get_conn_ptr_dividers(const shared_ptr<MapDataManager> &mapDataManager,
-                                                                const shared_ptr<DCDivider> &ptr_divider);
+                                                                const vector<shared_ptr<DCDivider>> &left_ptr_dividers,
+                                                                const vector<shared_ptr<DCDivider>> &right_ptr_dividers);
 
             bool is_lane_conn(const shared_ptr<MapDataManager> &mapDataManager,
                               const vector<shared_ptr<DCLane>> &pre_ptr_lanes,

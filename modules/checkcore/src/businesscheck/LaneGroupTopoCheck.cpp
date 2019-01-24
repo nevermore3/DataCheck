@@ -295,9 +295,6 @@ namespace kd {
                                                  shared_ptr<CheckErrorOutput> errorOutput) {
             set<string> tag_f_lanes;
             for (const auto& conn_lg : lane_group2_conn_lg_) {
-                if (conn_lg.first == "47412541") {
-                    int k = 0;
-                }
                 // 过lane group 获取全部通divider
                 auto ptr_dividers = CommonUtil::get_dividers_by_lg(mapDataManager, conn_lg.first);
                 bool is_conn = true;
@@ -322,35 +319,42 @@ namespace kd {
                                 is_depart = true;
                             }
                         }
-//                        auto left_conn_dividers = get_conn_dividers(mapDataManager,
-//                                                                    ptr_dividers[left_divider_idx]->id_);
-//
-//                        while (left_conn_dividers.empty()) {
-//                            left_divider_idx++;
-//                            right_divider_idx = left_divider_idx + 1;
-//                            if (right_divider_idx < ptr_dividers.size()) {
-//                                left_conn_dividers = get_conn_dividers(mapDataManager,
-//                                                                       ptr_dividers[left_divider_idx]->id_);
-//                            } else {
-//                                break;
-//                            }
-//                        }
-//                        auto right_conn_dividers = get_conn_dividers(mapDataManager,
-//                                                                     ptr_dividers[right_divider_idx]->id_);
-//                        while (right_conn_dividers.empty()) {
-//                            right_divider_idx++;
-//                            if (right_divider_idx < ptr_dividers.size()) {
-//                                right_conn_dividers = get_conn_dividers(mapDataManager,
-//                                                                       ptr_dividers[right_divider_idx]->id_);
-//                            } else {
-//                                break;
-//                            }
-//                        }
+                        auto left_conn_dividers = get_conn_dividers(mapDataManager,
+                                                                    ptr_dividers[left_divider_idx]->id_);
+
+                        while (left_conn_dividers.empty()) {
+                            left_divider_idx++;
+                            right_divider_idx = left_divider_idx + 1;
+                            if (right_divider_idx < ptr_dividers.size()) {
+                                left_conn_dividers = get_conn_dividers(mapDataManager,
+                                                                       ptr_dividers[left_divider_idx]->id_);
+                            } else {
+                                break;
+                            }
+                        }
+                        auto right_conn_dividers = get_conn_dividers(mapDataManager,
+                                                                     ptr_dividers[right_divider_idx]->id_);
+                        while (right_conn_dividers.empty()) {
+                            right_divider_idx++;
+                            if (right_divider_idx < ptr_dividers.size()) {
+                                right_conn_dividers = get_conn_dividers(mapDataManager,
+                                                                       ptr_dividers[right_divider_idx]->id_);
+                            } else {
+                                break;
+                            }
+                        }
+
+                        if (left_conn_dividers.empty() || right_conn_dividers.empty()) {
+                            break;
+                        }
 
                         auto divider_no2_ptr_divider = get_conn_ptr_dividers(mapDataManager,
-                                                                             ptr_dividers[left_divider_idx],
-                                                                             ptr_dividers[right_divider_idx],
-                                                                             is_normal);
+                                                                             left_conn_dividers,
+                                                                             right_conn_dividers);
+//                        auto divider_no2_ptr_divider = get_conn_ptr_dividers(mapDataManager,
+//                                                                             ptr_dividers[left_divider_idx],
+//                                                                             ptr_dividers[right_divider_idx],
+//                                                                             is_normal);
 
                         if (!divider_no2_ptr_divider.empty()) {
                             auto pre_ptr_lanes = CommonUtil::get_lanes_between_dividers(mapDataManager,
@@ -363,7 +367,7 @@ namespace kd {
                                                                                         lat_left_ptr_divider,
                                                                                         lat_right_ptr_divider);
 
-                            if (is_normal && !is_depart) {
+                            if (left_conn_dividers.size() == 1 && right_conn_dividers.size() == 1 && !is_depart) {
                                 if (!is_lane_conn(mapDataManager, pre_ptr_lanes, lat_ptr_lanes)) {
                                     is_conn = false;
                                 }
@@ -504,11 +508,21 @@ namespace kd {
 
         vector<shared_ptr<DCDivider>>
         LaneGroupTopoCheck::get_conn_ptr_dividers(const shared_ptr<MapDataManager> &mapDataManager,
-                                                  const shared_ptr<DCDivider> &ptr_divider) {
-            map<long, shared_ptr<DCDivider>> divider_no2_ptr_divider;
+                                                  const vector<shared_ptr<DCDivider>> &left_ptr_dividers,
+                                                  const vector<shared_ptr<DCDivider>> &right_ptr_dividers) {
+            vector<shared_ptr<DCDivider>> ret_ptr_dividers;
 
-            auto conn_dividers = get_conn_dividers(mapDataManager, ptr_divider->id_);
-            return conn_dividers;
+            map<long, shared_ptr<DCDivider>> divider_no2_ptr_divider;
+            for (const auto &div : left_ptr_dividers) {
+                divider_no2_ptr_divider.insert(make_pair(div->dividerNo_, div));
+            }
+            for (const auto &div : right_ptr_dividers) {
+                divider_no2_ptr_divider.insert(make_pair(div->dividerNo_, div));
+            }
+            for (const auto &div_no_iter : divider_no2_ptr_divider) {
+                ret_ptr_dividers.emplace_back(div_no_iter.second);
+            }
+            return ret_ptr_dividers;
         }
 
         bool LaneGroupTopoCheck::is_lane_conn(const shared_ptr<MapDataManager> &mapDataManager,

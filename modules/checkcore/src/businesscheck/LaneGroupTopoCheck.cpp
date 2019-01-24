@@ -44,136 +44,6 @@ namespace kd {
                     }
                 }
             }
-            return;
-            for (const auto &div : dividers) {
-                auto lane_groups = CommonUtil::get_lane_groups_by_divider(mapDataManager, div.first);
-                bool is_virtual = false;
-                for (const auto &lg : lane_groups) {
-                    if (is_virtual_lane_group(mapDataManager, lg)) {
-                        is_virtual = true;
-                        break;
-                    }
-                }
-
-                // 过滤虚拟路口
-                if (is_virtual) {
-                    continue;
-                }
-
-                auto f_conn_dividers = CommonUtil::get_conn_divider(mapDataManager, div.second, true);
-                if (lane_groups.size() == 1) {
-                    string lane_group = *lane_groups.begin();
-                    auto ptr_lane_group = CommonUtil::get_lane_group(mapDataManager, lane_group);
-
-                    set<string> f_conn_lane_groups;
-                    for (const auto &conn_div : f_conn_dividers) {
-                        f_conn_lane_groups = CommonUtil::get_lane_groups_by_divider(mapDataManager, conn_div);
-                        for (const auto &conn_lg : f_conn_lane_groups) {
-                            if (is_virtual_lane_group(mapDataManager, conn_lg)) {
-                                is_virtual = true;
-                                break;
-                            }
-
-                            if (lane_group2_conn_lg_.find(make_pair(lane_group, conn_lg)) ==
-                                lane_group2_conn_lg_.end()) {
-                                lane_group2_conn_lg_.insert(make_pair(lane_group, conn_lg));
-                            }
-                        }
-                        // 过滤虚拟路口
-                        if (is_virtual) {
-                            break;
-                        }
-                        divider2_conn_divider_.insert(make_pair(div.first, conn_div));
-                    }
-
-                } else {
-                    for (const auto &conn_div : f_conn_dividers) {
-                        divider2_conn_divider_.insert(make_pair(div.first, conn_div));
-                    }
-                }
-            }
-
-//            for (auto conn_lg : lane_group2_conn_lg_) {
-//                auto iter = lane_group2_conn_lg_1.find(make_pair(conn_lg.first, conn_lg.second));
-//                if (iter == lane_group2_conn_lg_1.end()) {
-//                    string first = iter->first;
-//                    string second = iter->first;
-//                }
-//            }
-//            int k;
-//            k = 0;
-        }
-
-        void LaneGroupTopoCheck::pre_lane_groups_divider(const shared_ptr<MapDataManager> &mapDataManager,
-                                                         const pair<const string, shared_ptr<DCDivider>> &pair,
-                                                         const string &lane_group) {
-//            auto ptr_lane_group = CommonUtil::get_lane_group(mapDataManager, lane_group);
-//            if (ptr_lane_group) {
-//                if (!is_virtual_lane_group(ptr_lane_group)) {
-//                    if (ptr_lane_group->direction_ == 1) {
-//                        auto f_conn_dividers = CommonUtil::get_ref_conn_divider(mapDataManager, lane_group,
-//                                                                                pair.second, true);
-//
-//                        for (const auto &conn_div : f_conn_dividers) {
-//                            // 连接的lane_group
-//                            auto f_conn_lane_groups = CommonUtil::get_lane_groups_by_divider(mapDataManager,
-//                                                                                             conn_div);
-//                            for (const auto &conn_lg : f_conn_lane_groups) {
-//                                if (is_virtual_lane_group(mapDataManager, conn_lg)) {
-//                                    is_virtual = true;
-//                                    break;
-//                                }
-//
-//                                auto f_conn_ptr_lg = CommonUtil::get_lane_group(mapDataManager, conn_lg);
-//                                if (f_conn_ptr_lg) {
-//                                    if (f_conn_ptr_lg->direction_ == 1) {
-//                                        if (lane_group2_conn_lg_.find(make_pair(lg, conn_lg)) ==
-//                                            lane_group2_conn_lg_.end()) {
-//                                            lane_group2_conn_lg_.insert(make_pair(lg, conn_lg));
-//                                        }
-//                                    }
-//                                } else {
-//                                    LOG(ERROR) << "get lane group failed! lane group : " << conn_lg;
-//                                }
-//
-//
-//                            }
-//                            divider2_conn_divider_.insert(make_pair(div.first, conn_div));
-//                        }
-//                    }
-//                }
-//            } else {
-//                LOG(ERROR) << "get lane group failed! lane group : " << lane_group;
-//            }
-        }
-
-        void LaneGroupTopoCheck::pre_lane_group_divider(const shared_ptr<MapDataManager> &mapDataManager,
-                                                        const pair<const string, shared_ptr<DCDivider>> &pair,
-                                                        const string &lane_group) {
-//            if (!is_virtual_lane_group(mapDataManager, lane_group)) {
-//                auto f_conn_dividers = CommonUtil::get_ref_conn_divider(mapDataManager, lane_group,
-//                                                                        pair.second, true);
-//                bool is_virtual = false;
-//                for (const auto &conn_div : f_conn_dividers) {
-//                    auto f_conn_lane_groups = CommonUtil::get_lane_groups_by_divider(mapDataManager, conn_div);
-//                    for (const auto &conn_lg : f_conn_lane_groups) {
-//                        if (is_virtual_lane_group(mapDataManager, conn_lg)) {
-//                            is_virtual = true;
-//                            break;
-//                        }
-//
-//                        if (lane_group2_conn_lg_.find(make_pair(lane_group, conn_lg)) ==
-//                            lane_group2_conn_lg_.end()) {
-//                            lane_group2_conn_lg_.insert(make_pair(lane_group, conn_lg));
-//                        }
-//                    }
-//                    // 过滤虚拟路口
-//                    if (is_virtual) {
-//                        break;
-//                    }
-//                    divider2_conn_divider_.insert(make_pair(pair.first, conn_div));
-//                }
-//            }
         }
 
         void LaneGroupTopoCheck::check_road_topo(shared_ptr<MapDataManager> mapDataManager,
@@ -214,7 +84,6 @@ namespace kd {
                     shared_ptr<DCError> ptr_error = DCLaneGroupTopoCheckError::createByKXS_04_001(conn_lg.first,
                                                                                                   conn_lg.second);
                     errorOutput->saveError(ptr_error);
-                    int k = 0;
                 }
 
             }
@@ -377,8 +246,6 @@ namespace kd {
                                 }
                             }
 
-                        } else {
-                            // 处理
                         }
 
                         left_divider_idx = right_divider_idx;
@@ -389,17 +256,13 @@ namespace kd {
                 }
 
                 if (!is_conn) {
-                    int k = 0;
+                    shared_ptr<DCError> ptr_error = DCLaneGroupTopoCheckError::createByKXS_05_001(conn_lg.first,
+                                                                                                  conn_lg.second);
+                    errorOutput->saveError(ptr_error);
                 }
             }
         }
 
-        void LaneGroupTopoCheck::pre_lane_topo(shared_ptr<MapDataManager> mapDataManager) {
-            const auto &lanes = mapDataManager->lanes_;
-            for (const auto &lane : lanes) {
-//                lane.second->
-            }
-        }
 
         void LaneGroupTopoCheck::get_conn_lane_groups(shared_ptr<MapDataManager> mapDataManager,
                                                       const shared_ptr<DCLaneGroup> &ptr_lane_group) {
@@ -427,14 +290,12 @@ namespace kd {
                                                                          ptr_div, is_front);
                     for (const auto &div : con_dividers) {
                         insert_divider2_conn_divider(ptr_div->id_, div);
-//                        divider2_conn_divider_.insert(make_pair(ptr_div->id_, div));
                         insert_lane_group_times(lane_group2_times, div);
                     }
                 } else {
                     auto con_dividers = CommonUtil::get_conn_divider(mapDataManager, ptr_div, true);
                     for (const auto &div : con_dividers) {
                         insert_divider2_conn_divider(ptr_div->id_, div);
-//                        divider2_conn_divider_.insert(make_pair(ptr_div->id_, div));
                         insert_lane_group_times(lane_group2_times, div);
                     }
                 }
@@ -474,34 +335,6 @@ namespace kd {
                         LOG(ERROR) << "get divider failed! divider : " << div;
                     }
                 }
-            }
-            return ret_ptr_dividers;
-        }
-
-        vector<shared_ptr<DCDivider>>
-        LaneGroupTopoCheck::get_conn_ptr_dividers(const shared_ptr<MapDataManager> &mapDataManager,
-                                                  const shared_ptr<DCDivider> &left_ptr_divider,
-                                                  const shared_ptr<DCDivider> &right_ptr_divider,
-                                                  bool &is_normal) {
-            is_normal = false;
-            vector<shared_ptr<DCDivider>> ret_ptr_dividers;
-            map<long, shared_ptr<DCDivider>> divider_no2_ptr_divider;
-
-            auto left_conn_dividers = get_conn_dividers(mapDataManager, left_ptr_divider->id_);
-            auto rigth_conn_dividers = get_conn_dividers(mapDataManager, right_ptr_divider->id_);
-            if (!left_conn_dividers.empty() > 0 && !rigth_conn_dividers.empty()) {
-                for (const auto &div : left_conn_dividers) {
-                    divider_no2_ptr_divider.insert(make_pair(div->dividerNo_, div));
-                }
-                for (const auto &div : rigth_conn_dividers) {
-                    divider_no2_ptr_divider.insert(make_pair(div->dividerNo_, div));
-                }
-            }
-            if (left_conn_dividers.size() == 1 && rigth_conn_dividers.size() == 1) {
-                is_normal = true;
-            }
-            for (const auto &div_no_iter : divider_no2_ptr_divider) {
-                ret_ptr_dividers.emplace_back(div_no_iter.second);
             }
             return ret_ptr_dividers;
         }

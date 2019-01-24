@@ -270,6 +270,8 @@ namespace kd {
             string toString() override;
         public:
             static shared_ptr<DCLaneGroupTopoCheckError> createByKXS_04_001(string lg_id1, string lg_id2);
+
+            static shared_ptr<DCLaneGroupTopoCheckError> createByKXS_05_001(string lg_id1, string lg_id2);
         public:
 
             //错误详细信息描述

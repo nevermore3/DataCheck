@@ -43,19 +43,16 @@ namespace kd {
              */
             void pre_divider_topo(shared_ptr<MapDataManager> mapDataManager);
 
-            void pre_lane_topo(shared_ptr<MapDataManager> mapDataManager);
 
+            /**
+             * 获取连接组
+             * @param mapDataManager
+             * @param ptr_lane_group
+             */
             void get_conn_lane_groups(shared_ptr<MapDataManager> mapDataManager,
                                       const shared_ptr<DCLaneGroup> &ptr_lane_group);
         private:
 
-            void pre_lane_groups_divider(const shared_ptr<MapDataManager> &mapDataManager,
-                                         const pair<const string, shared_ptr<DCDivider>> &pair,
-                                         const string &lane_group);
-
-            void pre_lane_group_divider(const shared_ptr<MapDataManager> &mapDataManager,
-                                        const pair<const string, shared_ptr<DCDivider>> &pair,
-                                        const string &lane_group);
             /**
              * 获取所有道路的首尾节点集合，用于判断道路的拓扑连接
              * @param roads
@@ -74,36 +71,62 @@ namespace kd {
 
             bool is_virtual_lane_group(const shared_ptr<DCLaneGroup> &ptr_lane_group);
 
-            void insert_divider2_conn_divider(string divider, string con_divider);
-
+            /**
+             * 获取连接的divider
+             * @param mapDataManager
+             * @param divider
+             * @return
+             */
             vector<shared_ptr<DCDivider>> get_conn_dividers(const shared_ptr<MapDataManager> &mapDataManager,
                                                             string divider);
 
-            vector<shared_ptr<DCDivider>> get_conn_ptr_dividers(const shared_ptr<MapDataManager> &mapDataManager,
-                                                                const shared_ptr<DCDivider> &left_ptr_divider,
-                                                                const shared_ptr<DCDivider> &right_ptr_divider,
-                                                                bool &is_normal);
-
+            /**
+             * 连接的divider排序
+             * @param mapDataManager
+             * @param left_ptr_dividers
+             * @param right_ptr_dividers
+             * @return
+             */
             vector<shared_ptr<DCDivider>> get_conn_ptr_dividers(const shared_ptr<MapDataManager> &mapDataManager,
                                                                 const vector<shared_ptr<DCDivider>> &left_ptr_dividers,
                                                                 const vector<shared_ptr<DCDivider>> &right_ptr_dividers);
 
+            /**
+             * 车道中心线是否连接
+             * @param mapDataManager
+             * @param pre_ptr_lanes
+             * @param lat_ptr_lanes
+             * @param tag_f_lane
+             * @return
+             */
             bool is_lane_conn(const shared_ptr<MapDataManager> &mapDataManager,
                               const vector<shared_ptr<DCLane>> &pre_ptr_lanes,
                               const vector<shared_ptr<DCLane>> &lat_ptr_lanes,
                               set<string> &tag_f_lane);
 
+            /**
+             * 车道中心线是否连接
+             * @param mapDataManager
+             * @param pre_ptr_lanes
+             * @param lat_ptr_lanes
+             * @return
+             */
             bool is_lane_conn(const shared_ptr<MapDataManager> &mapDataManager,
                               const vector<shared_ptr<DCLane>> &pre_ptr_lanes,
                               const vector<shared_ptr<DCLane>> &lat_ptr_lanes);
+
+        private:
+            // 插入divider2_conn_dividers_maps_
+            void insert_divider2_conn_divider(string divider, string con_divider);
+
         private:
             // lane group的连接关系
             set<pair<string, string>> lane_group2_conn_lg_;
-            // divider的连接关系
-            set<pair<string, string>> divider2_conn_divider_;
+            // lane连接对
             set<pair<string, string>> pre_lane_conn_pair_;
+            // divider的连接
             unordered_map<string, set<string>> divider2_conn_dividers_maps_;
-
+            // 虚拟组
             map<string, shared_ptr<DCLaneGroup>> virtual_lane_groups_maps_;
 
         private:

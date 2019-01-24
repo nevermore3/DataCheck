@@ -359,6 +359,19 @@ namespace kd {
 
             return error;
         }
+
+        shared_ptr<DCLaneGroupTopoCheckError> DCLaneGroupTopoCheckError::createByKXS_05_001(string lg_id1,
+                                                                                            string lg_id2) {
+            shared_ptr<DCLaneGroupTopoCheckError> error = make_shared<DCLaneGroupTopoCheckError>("KXS_05_001");
+            error->checkDesc_ = "如果车道组之间是“封闭”的，则车道组之间的车道不会存在孤立的车道。";
+            error->detail += "lane group id:";
+            error->detail += lg_id1;
+            error->detail += ",lane group id:";
+            error->detail += lg_id2;
+            error->detail += "车道中心线不连通";
+
+            return error;
+        }
     }
 }
 

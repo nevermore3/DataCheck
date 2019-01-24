@@ -253,6 +253,9 @@ namespace kd {
 
             static shared_ptr<DCLaneGroupCheckError> createByKXS_03_002(string lane_group_id);
 
+            static shared_ptr<DCLaneGroupCheckError> createByKXS_03_001(string lane_group_id,
+                                                                        const vector<string> &dividers);
+
         public:
 
             //错误详细信息描述

@@ -89,6 +89,16 @@ namespace kd {
             void check_divider_no(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput,
                                   const string &lane_group, const vector<shared_ptr<DCDivider>> &ptr_dividers);
 
+            /**
+             * 车道组内divider长度的检查
+             * @param mapDataManager
+             * @param errorOutput
+             * @param lane_group
+             * @param ptr_dividers
+             */
+            void check_divider_length(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput,
+                                      const string &lane_group, const vector<shared_ptr<DCDivider>> &ptr_dividers);
+
         private:
             const string id = "lanegroup_check";
         };

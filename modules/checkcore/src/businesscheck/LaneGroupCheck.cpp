@@ -212,6 +212,7 @@ namespace kd {
             for (const auto &lane_group : ptr_lane_groups) {
                 auto ptr_dividers = CommonUtil::get_dividers_by_lg(mapDataManager, lane_group.first);
                 check_divider_no(mapDataManager, errorOutput, lane_group.first, ptr_dividers);
+                check_divider_length(mapDataManager, errorOutput, lane_group.first, ptr_dividers);
             }
         }
 
@@ -266,6 +267,36 @@ namespace kd {
 
             if (is_check) {
                 shared_ptr<DCError> ptr_error = DCLaneGroupCheckError::createByKXS_03_002(lane_group);
+                errorOutput->saveError(ptr_error);
+            }
+        }
+
+        void LaneGroupCheck::check_divider_length(shared_ptr<MapDataManager> mapDataManager,
+                                                  shared_ptr<CheckErrorOutput> errorOutput, const string &lane_group,
+                                                  const vector<shared_ptr<DCDivider>> &ptr_dividers) {
+            bool check = false;
+            vector<string> check_dividers;
+            // 读取配置
+            double divider_length_ratio = DataCheckConfig::getInstance().getPropertyD(
+                    DataCheckConfig::DIVIDER_LENGTH_RATIO);
+
+            double total_length = 0;
+            for (const auto &ptr_div : ptr_dividers) {
+                total_length += ptr_div->len_;
+            }
+            double average_length = total_length / ptr_dividers.size();
+            double ratio_length = divider_length_ratio * average_length;
+
+            // 判断长度
+            for (const auto &ptr_div : ptr_dividers) {
+                if (fabs(ptr_div->len_ - average_length) > ratio_length) {
+                    check = true;
+                    check_dividers.emplace_back(ptr_div->id_);
+                }
+            }
+
+            if (check) {
+                shared_ptr<DCError> ptr_error = DCLaneGroupCheckError::createByKXS_03_001(lane_group, check_dividers);
                 errorOutput->saveError(ptr_error);
             }
         }

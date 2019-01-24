@@ -2,7 +2,7 @@
 // Created by gaoyanhong on 2018/3/29.
 //
 
-#include <data/ErrorDataModel.h>
+#include "DataCheckConfig.h"
 
 #include "data/ErrorDataModel.h"
 
@@ -343,7 +343,10 @@ namespace kd {
         shared_ptr<DCLaneGroupCheckError>
         DCLaneGroupCheckError::createByKXS_03_001(string lane_group_id, const vector<string> &dividers) {
             shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>("KXS_03_001");
-            error->checkDesc_ = "同一个车道组内，单根车道线的长度同组内车道线平均长度不应该偏差超过5%以上。";
+            error->checkDesc_ = "同一个车道组内，单根车道线的长度同组内车道线平均长度不应该偏差超过";
+            error->checkDesc_ += to_string((int)(DataCheckConfig::getInstance().getPropertyD(
+                    DataCheckConfig::DIVIDER_LENGTH_RATIO) * 100));
+            error->checkDesc_ += "%以上。";
             error->detail += "lane_group_id:";
             error->detail += lane_group_id;
             error->detail += "的divider长度异常：";

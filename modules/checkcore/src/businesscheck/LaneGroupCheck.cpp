@@ -239,7 +239,7 @@ namespace kd {
                                                           ptr_dividers[index]->nodes_.back();
                             auto div_nodes_length = CommonUtil::get_length_between_divider_nodes(
                                     ptr_left_divider_node, ptr_right_divider_node);
-                            if (div_nodes_length > 0) {
+                            if (div_nodes_length >= 0) {
                                 if (div_nodes_length > current_length ||
                                     fabs(div_nodes_length - current_length) < 1e-7) {
                                     current_length = div_nodes_length;

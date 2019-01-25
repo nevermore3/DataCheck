@@ -284,7 +284,7 @@ namespace kd {
         };
 
         /**
-        * 车道组连接检查错误
+        * 道路检查错误
         */
         class DCRoadCheckError : public DCError {
         public:
@@ -297,6 +297,29 @@ namespace kd {
         public:
             static shared_ptr<DCRoadCheckError> createByKXS_04_002(const string &road_id,
                                                                             const string &lane_group_id);
+        public:
+
+            //错误详细信息描述
+            string detail;
+        };
+
+        /**
+        * 道路检查错误
+        */
+        class DCLaneError : public DCError {
+        public:
+            explicit DCLaneError(const string &checkModel);
+
+        public:
+            string getHeader() override;
+
+            string toString() override;
+        public:
+            static shared_ptr<DCLaneError> createByKXS_05_002(const string &lane_id,
+                                                              const string &divider_id);
+
+            static shared_ptr<DCLaneError> createByKXS_05_003(const string &lane_id,
+                                                              const string &divider_id);
         public:
 
             //错误详细信息描述

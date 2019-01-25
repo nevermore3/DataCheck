@@ -14,8 +14,9 @@ namespace kd {
     namespace dc {
 
 
-        bool MapDataInput::loadDivider(string basePath, map<string, shared_ptr<DCDivider>> &dividers,
+        bool MapDataInput::loadDivider(string basePath, shared_ptr<MapDataManager> mapDataManager,
                                        shared_ptr<CheckErrorOutput> errorOutput) {
+            auto &dividers = mapDataManager->dividers_;
 
             //由于divider引用dividernode,因此先读取dividernode
 
@@ -144,6 +145,10 @@ namespace kd {
                     continue;
                 }
 
+                // 构建fnode与divider关系
+                mapDataManager->insert_fnode_id2_dividers(div->fromNodeId_, div);
+                mapDataManager->insert_node_id2_dividers(div->fromNodeId_, div);
+
                 if(!setDividerNode(div, div->toNodeId_, commonNodeInfos)){
                     stringstream ss;
                     ss << "[Error] div" << div->id_ << " not find toNode " << div->toNodeId_ << " info.";
@@ -151,6 +156,10 @@ namespace kd {
                     div->valid_ = false;
                     continue;
                 }
+
+                // 构建tnode与divider关系
+                mapDataManager->insert_tnode_id2_dividers(div->toNodeId_, div);
+                mapDataManager->insert_node_id2_dividers(div->toNodeId_, div);
             }
 
             //读取车道线属性信息
@@ -557,6 +566,9 @@ namespace kd {
                         lanegroup2_node_index_map[lane_group_id] = std::make_pair(f_index, t_index);
                         road2LaneGroup2NodeIdxs.insert(make_pair(road_id, lanegroup2_node_index_map));
                     }
+
+                    // 插入lane group 与roads关联
+                    mapDataManager->insert_lane_group2_roads(lane_group_id, road_id);
                 }
             } else {
                 LOG(ERROR) << "open LG_ROADNODE_INDEX failed! ";
@@ -581,6 +593,8 @@ namespace kd {
                     ptr_road->id_ = lg_road_data.readStringField(i, "ID");
                     ptr_road->direction_ = lg_road_data.readIntField(i, "DIRECTION");
                     ptr_road->sLanes_ = lg_road_data.readIntField(i, "S_LANES");
+                    ptr_road->f_node_id = to_string(lg_road_data.readIntField(i, "SNODE_ID"));
+                    ptr_road->t_node_id = to_string(lg_road_data.readIntField(i, "ENODE_ID"));
                     ptr_road->fNode_ = nullptr;
                     ptr_road->tNode_ = nullptr;
 

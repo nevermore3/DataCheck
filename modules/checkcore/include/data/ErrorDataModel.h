@@ -256,6 +256,27 @@ namespace kd {
             //错误详细信息描述
             string detail;
         };
+
+        /**
+        * 车道组连接检查错误
+        */
+        class DCLaneGroupTopoCheckError : public DCError {
+        public:
+            explicit DCLaneGroupTopoCheckError(const string &checkModel);
+
+        public:
+            string getHeader() override;
+
+            string toString() override;
+        public:
+            static shared_ptr<DCLaneGroupTopoCheckError> createByKXS_04_001(string lg_id1, string lg_id2);
+
+            static shared_ptr<DCLaneGroupTopoCheckError> createByKXS_05_001(string lg_id1, string lg_id2);
+        public:
+
+            //错误详细信息描述
+            string detail;
+        };
     }
 }
 

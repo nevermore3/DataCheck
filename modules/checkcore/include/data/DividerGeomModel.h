@@ -440,6 +440,12 @@ namespace kd {
             //关联结束节点
             shared_ptr<DCRoadNode> tNode_;
 
+            // 关联开始节点
+            string f_node_id;
+
+            // 关联结束节点
+            string t_node_id;
+
             //道路路线编号
             string routeNo_;
 

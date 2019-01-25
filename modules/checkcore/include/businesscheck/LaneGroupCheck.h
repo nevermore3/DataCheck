@@ -9,7 +9,7 @@
 namespace kd {
     namespace dc {
         struct LGNodeIndex{
-            LGNodeIndex() = default;;
+            LGNodeIndex() = default;
             LGNodeIndex(const string &lg_id, const string &road_id, long f_index, long t_index) {
                 this->lanegroup_id = lg_id;
                 this->f_idx = f_index;
@@ -42,6 +42,12 @@ namespace kd {
             bool execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) override;
 
         private:
+            /**
+             * 释放资源
+             * @param mapDataManager
+             */
+            void release(shared_ptr<MapDataManager> mapDataManager);
+
             /**
              * 车道组关联道路范围检查
              * @return

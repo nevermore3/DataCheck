@@ -26,7 +26,7 @@ namespace kd {
             mapDataInput.loadRoad(basePath_, mapDataManager);
 
             //加载车道线数据
-            if(mapDataInput.loadDivider(basePath_, mapDataManager->dividers_, errorOutput)){
+            if(mapDataInput.loadDivider(basePath_, mapDataManager, errorOutput)){
 
                 for(auto recordit : mapDataManager->dividers_){
                     string divid = recordit.first;

@@ -9,8 +9,12 @@
 #include <geos/geom/LineString.h>
 #include "geos/geom/Point.h"
 #include <geom/geo_util.h>
+#include <geos/geom/Point.h>
 
 #include "util/CommonUtil.h"
+
+using namespace geos::geom;
+using namespace kd::automap;
 
 namespace kd {
     namespace dc {
@@ -239,6 +243,57 @@ namespace kd {
                 return get_length_of_coords(ptr_coords);
             }
             return -1;
+        }
+
+        shared_ptr<geos::geom::LineString> CommonUtil::get_road_line_string(const vector<shared_ptr<DCCoord>> &nodes) {
+            shared_ptr<geos::geom::LineString> ret_road_line_string = nullptr;
+
+            //创建linestring
+            CoordinateSequence *cl = new CoordinateArraySequence();
+            for (const auto &node : nodes) {
+                double X0, Y0;
+                char zone0[8] = {0};
+
+                Coordinates::ll2utm(node->lat_, node->lng_, X0, Y0, zone0);
+
+                cl->add(geos::geom::Coordinate(X0, Y0));
+            }
+
+            if (cl->size() >= 2) {
+                const GeometryFactory *gf = GeometryFactory::getDefaultInstance();
+                geos::geom::LineString *lineString = gf->createLineString(cl);
+                if (lineString) {
+                    ret_road_line_string.reset(lineString);
+                }
+            }
+
+            return ret_road_line_string;
+        }
+
+        shared_ptr<geos::geom::LineString>
+        CommonUtil::get_divider_line_string(const vector<shared_ptr<DCDividerNode>> &nodes) {
+            shared_ptr<geos::geom::LineString> ret_road_line_string = nullptr;
+
+            //创建linestring
+            CoordinateSequence *cl = new CoordinateArraySequence();
+            for (const auto &node : nodes) {
+                double X0, Y0;
+                char zone0[8] = {0};
+
+                Coordinates::ll2utm(node->coord_.lat_, node->coord_.lng_, X0, Y0, zone0);
+
+                cl->add(geos::geom::Coordinate(X0, Y0));
+            }
+
+            if (cl->size() >= 2) {
+                const GeometryFactory *gf = GeometryFactory::getDefaultInstance();
+                geos::geom::LineString *lineString = gf->createLineString(cl);
+                if (lineString) {
+                    ret_road_line_string.reset(lineString);
+                }
+            }
+
+            return ret_road_line_string;
         }
     }
 }

@@ -132,6 +132,11 @@ namespace kd {
             static double get_length_between_divider_nodes(const shared_ptr<DCDividerNode> &divider_node1,
                                                            const shared_ptr<DCDividerNode> &divider_node2);
 
+            static shared_ptr<geos::geom::LineString> get_road_line_string(const vector<shared_ptr<DCCoord>> &nodes);
+
+            static shared_ptr<geos::geom::LineString>
+            get_divider_line_string(const vector<shared_ptr<DCDividerNode>> &nodes);
+
         private:
 
             /**

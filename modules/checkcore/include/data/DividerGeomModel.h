@@ -431,6 +431,12 @@ namespace kd {
             DCRoad():fNode_(nullptr), tNode_(nullptr){}
 
         public:
+            /**
+             * 创建几何对象，用于后期的空间判断
+             * @return 创建是否成功
+             */
+            bool buildGeometryInfo();
+        public:
             //通行方向
             long direction_;
 
@@ -455,6 +461,11 @@ namespace kd {
             //节点
             vector<shared_ptr<DCCoord>> nodes_;
 
+            //geos线对象，用于空间运算判断
+            shared_ptr<geos::geom::LineString> line_;
+
+            //对象的长度
+            double len_;
         };
 
         /**

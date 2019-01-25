@@ -2,6 +2,8 @@
 // Created by gaoyanhong on 2018/3/29.
 //
 
+#include <data/ErrorDataModel.h>
+
 #include "DataCheckConfig.h"
 
 #include "data/ErrorDataModel.h"
@@ -400,6 +402,37 @@ namespace kd {
 
             return error;
         }
+
+        /////////////////////////////////////////////////////////////////////////////////////////
+        // DCRoadCheckError
+        /////////////////////////////////////////////////////////////////////////////////////////
+        DCRoadCheckError::DCRoadCheckError(const string &checkModel) : DCError(checkModel) {
+
+        }
+
+        string DCRoadCheckError::getHeader(){
+            return "";
+        }
+
+        string DCRoadCheckError::toString() {
+            stringstream ss;
+            ss << detail;
+            return ss.str();
+        }
+
+        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_002(const string &road_id,
+                                                                          const string &lane_group_id) {
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>("KXS_04_002");
+            error->checkDesc_ = "道路与车道组的两个车道边缘线无交叉点。双向道路除外。";
+            error->detail += "road_id:";
+            error->detail += road_id;
+            error->detail += ",lane group id:";
+            error->detail += lane_group_id;
+            error->detail += "边缘线有交叉";
+
+            return error;
+        }
+
     }
 }
 

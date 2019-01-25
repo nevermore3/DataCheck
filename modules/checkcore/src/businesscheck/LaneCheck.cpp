@@ -104,6 +104,8 @@ namespace kd {
                                                 const shared_ptr<DCLane> &ptr_lane,
                                                 const shared_ptr<DCDivider> &ptr_divider) {
             bool ret = false;
+            double lane_intersect_length = DataCheckConfig::getInstance().getPropertyD(
+                    DataCheckConfig::LANE_INTERSECT_LENGTH);
             auto ptr_div_line_string = CommonUtil::get_divider_line_string(ptr_divider->nodes_);
             auto ptr_lane_line_string = CommonUtil::get_line_string(ptr_lane->coords_);
             if (ptr_lane_line_string && ptr_div_line_string) {
@@ -117,7 +119,7 @@ namespace kd {
                         geos::geom::LineString *lineString = gf->createLineString(intersections->getCoordinates());
 
                         double intersect_length = lineString->getLength();
-                        if (intersect_length < 50) {
+                        if (intersect_length < lane_intersect_length) {
                             ret = true;
                         }
                     }

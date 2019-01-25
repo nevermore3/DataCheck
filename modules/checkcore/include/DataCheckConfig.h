@@ -35,6 +35,7 @@ namespace kd {
             const static string UPDATE_REGION;
 
             const static string DIVIDER_LENGTH_RATIO;
+            const static string LANE_INTERSECT_LENGTH;
 
 
 

@@ -458,7 +458,10 @@ namespace kd {
             error->detail += lane_id;
             error->detail += ",divider_id:";
             error->detail += divider_id;
-            error->detail += "在5米内存在两个或存在多于2个交点";
+            error->detail += "在";
+            error->detail += to_string(
+                    DataCheckConfig::getInstance().getPropertyI(DataCheckConfig::LANE_INTERSECT_LENGTH));
+            error->detail += "米内存在两个或存在多于2个交点";
 
             return error;
         }

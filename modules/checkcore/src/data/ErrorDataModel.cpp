@@ -433,6 +433,52 @@ namespace kd {
             return error;
         }
 
+        /////////////////////////////////////////////////////////////////////////////////////////
+        // DCLaneError
+        /////////////////////////////////////////////////////////////////////////////////////////
+        DCLaneError::DCLaneError(const string &checkModel) : DCError(checkModel) {
+
+        }
+
+        string DCLaneError::getHeader(){
+            return "";
+        }
+
+        string DCLaneError::toString() {
+            stringstream ss;
+            ss << detail;
+            return ss.str();
+        }
+
+        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_002(const string &lane_id,
+                                                               const string &divider_id) {
+            shared_ptr<DCLaneError> error = make_shared<DCLaneError>("KXS_05_002");
+            error->checkDesc_ = "车道中心线与车道线在5米内不能存在两个交点（只检查组内车道线有共点的做检查）。";
+            error->detail += "lane_id:";
+            error->detail += lane_id;
+            error->detail += ",divider_id:";
+            error->detail += divider_id;
+            error->detail += "在";
+            error->detail += to_string(
+                    DataCheckConfig::getInstance().getPropertyI(DataCheckConfig::LANE_INTERSECT_LENGTH));
+            error->detail += "米内存在两个或存在多于2个交点";
+
+            return error;
+        }
+
+        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_003(const string &lane_id,
+                                                                const string &divider_id) {
+            shared_ptr<DCLaneError> error = make_shared<DCLaneError>("KXS_05_003");
+            error->checkDesc_ = "车道中心线与本组的车道边缘线无交叉点。";
+            error->detail += "lane_id:";
+            error->detail += lane_id;
+            error->detail += ",divider_id:";
+            error->detail += divider_id;
+            error->detail += "边缘线有交点";
+
+            return error;
+        }
+
     }
 }
 

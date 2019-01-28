@@ -103,7 +103,7 @@ namespace kd {
                 }
             }
 
-            return CommonUtil::get_road_line_string(road_nodes);
+            return CommonUtil::get_line_string(road_nodes);
         }
     }
 }

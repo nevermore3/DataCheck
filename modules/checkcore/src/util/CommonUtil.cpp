@@ -245,7 +245,7 @@ namespace kd {
             return -1;
         }
 
-        shared_ptr<geos::geom::LineString> CommonUtil::get_road_line_string(const vector<shared_ptr<DCCoord>> &nodes) {
+        shared_ptr<geos::geom::LineString> CommonUtil::get_line_string(const vector<shared_ptr<DCCoord>> &nodes) {
             shared_ptr<geos::geom::LineString> ret_road_line_string = nullptr;
 
             //创建linestring

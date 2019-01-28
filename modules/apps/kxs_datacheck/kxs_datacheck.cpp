@@ -97,6 +97,9 @@ int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) 
         shared_ptr<LaneTopoCheck> laneTopoCheck = make_shared<LaneTopoCheck>();
         mapProcessManager->registerProcessor(laneTopoCheck);
 
+        shared_ptr<RoadCheck> road_check = make_shared<RoadCheck>();
+        mapProcessManager->registerProcessor(road_check);
+
         shared_ptr<LaneGroupCheck> lanegroup_check = make_shared<LaneGroupCheck>();
         mapProcessManager->registerProcessor(lanegroup_check);
 

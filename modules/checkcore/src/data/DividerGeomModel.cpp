@@ -14,6 +14,8 @@ using namespace geos::geom;
 //core
 #include <core/structure/KCoordinates.h>
 #include <mvg/Coordinates.hpp>
+#include <data/DividerGeomModel.h>
+
 #include "geom/geo_util.h"
 
 using namespace kd::automap;
@@ -417,6 +419,55 @@ namespace kd {
             geos::geom::LineString *lineString = gf->createLineString(cl);
             if (lineString) {
                 line_.reset(lineString);
+                return true;
+            } else {
+                delete cl;
+                this->valid_ = false;
+                return false;
+            }
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////
+        //  DCRoad
+        /////////////////////////////////////////////////////////////////////////////////////////
+        bool DCRoad::buildGeometryInfo() {
+            //创建linestring
+            CoordinateSequence *cl = new CoordinateArraySequence();
+            for (const auto &node : nodes_) {
+                double X0, Y0;
+                char zone0[8] = {0};
+
+                Coordinates::ll2utm(node->lat_, node->lng_, X0, Y0, zone0);
+
+                cl->add(geos::geom::Coordinate(X0, Y0, node->z_));
+            }
+
+            if (cl->size() < 2) {
+                this->valid_ = false;
+                return false;
+            }
+
+            const GeometryFactory *gf = GeometryFactory::getDefaultInstance();
+            geos::geom::LineString *lineString = gf->createLineString(cl);
+            if (lineString) {
+                line_.reset(lineString);
+
+                //计算线段距离轨迹的平均距离
+                double lenTotal = 0.0;
+                size_t segmentCount = cl->size() - 1;
+                for (size_t i = 0; i < segmentCount; i++) {
+                    const Coordinate &coord1 = cl->getAt(i);
+                    const Coordinate &coord2 = cl->getAt(i + 1);
+
+                    double dx = coord1.x - coord2.x;
+                    double dy = coord1.y - coord2.y;
+
+                    double lenTemp = sqrt(dx*dx + dy*dy);
+                    lenTotal += lenTemp;
+                }
+
+                len_ = lenTotal;
+
                 return true;
             } else {
                 delete cl;

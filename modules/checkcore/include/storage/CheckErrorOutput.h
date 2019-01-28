@@ -18,6 +18,7 @@ namespace kd {
             string checkModel_;// 检测模型
             string checkDesc_;//检查模型描述信息
             string detail;//错误详细信息
+            string level;//错误等级，warn error
         };
 
         class CheckErrorOutput{

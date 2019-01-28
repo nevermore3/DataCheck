@@ -28,6 +28,8 @@
 #include "businesscheck/LaneTopoCheck.h"
 #include "businesscheck/LaneGroupCheck.h"
 #include "businesscheck/LaneGroupTopoCheck.h"
+#include "businesscheck/RoadCheck.h"
+#include "businesscheck/LaneCheck.h"
 
 using namespace kd::dc;
 

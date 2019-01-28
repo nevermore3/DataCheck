@@ -31,6 +31,7 @@ namespace kd {
                             for (const auto& detail : details) {
                                 shared_ptr<DCSqlCheckError> sql_check_error = make_shared<DCSqlCheckError>(dcItem.ID);
                                 sql_check_error->checkDesc_ = dcItem.Info;
+                                sql_check_error->checkLevel_ = dcItem.Level;
                                 sql_check_error->detail = detail;
                                 errorOutput->saveError(sql_check_error);
                             }
@@ -43,10 +44,6 @@ namespace kd {
             }
 
             return true;
-        }
-
-        void ModelSqlCheck::SetDB(CppSQLite3::Database *pdb) {
-            m_pdb = pdb;
         }
 
         bool GetReplaceFields(std::string strsql, std::vector<std::string> &vecReplaceField) {
@@ -208,12 +205,12 @@ namespace kd {
 
                     std::string strId = (NULL == szId) ? std::string("-1") : szId;
                     std::string strName = (NULL == szName) ? std::string("") : szName;
-                    std::string strLevel = (NULL == szLevel) ? std::string("0") : szLevel;
+                    std::string strLevel = (NULL == szLevel) ? std::string("") : szLevel;
                     std::string strKind = (NULL == szKind) ? std::string("0") : szKind;
                     std::string strInfo = (NULL == szInfo) ? std::string("") : szInfo;
                     std::string strSQL = (NULL == szSQL) ? std::string("") : szSQL;
                     m_checkitems[dataCheckType].push_back(
-                            DataCheckItem_t(strName, strSQL, strInfo, strId, atoi(strLevel.c_str()),
+                            DataCheckItem_t(strName, strSQL, strInfo, strId, strLevel.c_str(),
                                             atoi(strKind.c_str())));
                 }
 

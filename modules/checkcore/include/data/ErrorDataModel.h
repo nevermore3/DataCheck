@@ -12,7 +12,8 @@
 
 namespace kd {
     namespace dc {
-
+        static const string LEVEL_WARNING = "warning";
+        static const string LEVEL_ERROR = "error";
 
         class DCError{
         public:
@@ -39,6 +40,10 @@ namespace kd {
         public:
             //设置检查模型描述信息
             string checkDesc_;
+
+        public:
+            // 错误级别
+            string checkLevel_;
         };
 
         /**

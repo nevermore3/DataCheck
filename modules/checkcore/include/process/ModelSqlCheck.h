@@ -44,7 +44,7 @@ namespace kd {
         struct DataCheckItem_t {
             std::string ID;
             std::string Name;
-            int Level;
+            std::string Level;
             std::string Sql;
             std::string Info;
             e_DataCheckKind Kind;
@@ -52,13 +52,13 @@ namespace kd {
             DataCheckItem_t() {
                 ID = "";
                 Name = "";
-                Level = 0;
+                Level = "";
                 Sql = "";
                 Info = "";
                 Kind = e_DataCheckKind::DCK_NONE;
             }
 
-            DataCheckItem_t(std::string name, std::string sql, std::string info = "", string id = "", int level = 0,
+            DataCheckItem_t(std::string name, std::string sql, std::string info = "", string id = "", string level = "",
                             int kind = 0) {
                 ID = id;
                 Name = name;
@@ -84,19 +84,11 @@ namespace kd {
             bool execute(shared_ptr<CheckErrorOutput> errorOutput) override;
 
         public:
-            void SetDB(CppSQLite3::Database *pdb);
-
-            int AddCheckItem(DataCheckItem_t &item) {
-                m_checkitems[item.Level].push_back(item);
-                return m_checkitems.size();
-            };
 
             bool GetCheckResults(const std::string &id, const std::string &strSql, std::map<int, std::string> &mFieldNameIndex,
                                  std::vector<std::vector<std::string>> &mCheckResults, vector<string> &details);
 
             bool LoadConfig();
-
-            void SetCompare(bool bCompare = true) { m_bCompare = bCompare; };
 
         protected:
 

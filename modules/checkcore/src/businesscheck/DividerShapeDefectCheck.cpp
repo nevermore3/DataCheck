@@ -69,8 +69,9 @@ namespace kd {
                             DCDividerCheckError::createByNode(checkModel, div, node1);
                     error->checkDesc_ = "检查车道线节点间距判定是否中间有虚线丢失";
                     stringstream ss;
-                    ss << "from node " << node1->id_ << " to node " << node2->id_ << " distance is " << distance << " meter.";
+                    ss << "node_id:" << node1->id_ << "与node_id:" << node2->id_ << "距离" << distance << "米";
                     error->errorDesc_ = ss.str();
+                    error->checkLevel_ = LEVEL_WARNING;
 
                     errorOutput->saveError(error);
                 }
@@ -85,14 +86,14 @@ namespace kd {
             if(divAtt->type_ == DA_TYPE_WHITE_DOTTED){
                 //需求编号：JH_C_1
                 double distLimit = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::DOTLINE_DEFECT_LEN);
-                string checkModel = "JH_C_1";
+                string checkModel = "KXS-05-004";
                 checkShapeDefect(checkModel, distLimit, div, divAtt, beginNodexIdx, endNodeIdx, nodeDirection, errorOutput);
 
             }else if(divAtt->type_ == DA_TYPE_BUS_LANE){
                 //需求编号：JH_C_2
                 double distLimit = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::BUSELINE_DEFECT_LEN);
 
-                string checkModel = "JH_C_2";
+                string checkModel = "KXS-05-005";
                 checkShapeDefect(checkModel, distLimit, div, divAtt, beginNodexIdx, endNodeIdx, nodeDirection, errorOutput);
             }
         }
@@ -137,7 +138,6 @@ namespace kd {
             if(mapDataManager == nullptr)
                 return false;
 
-            errorOutput->writeInfo("[DividerShapeDefectCheck]\n" + make_shared<DCDividerCheckError>("")->getHeader(), false);
             check_JH_C_1_AND_JH_C_2(mapDataManager, errorOutput);
 
             return true;

@@ -84,8 +84,7 @@ namespace kd {
 
         string DCDividerCheckError::toString() {
             stringstream ss;
-            ss <<"\"" << checkModel_ << ":" << checkDesc_ << "\"," << dividerId_ << "," << attId_ << "," << nodeId_;
-            ss << "," << setprecision(12) << lng_ << "," << lat_ << "," << z_ << "," << errorDesc_;
+            ss <<  errorDesc_;
             return ss.str();
         }
 
@@ -166,9 +165,7 @@ namespace kd {
 
         string DCLaneCheckError::toString() {
             stringstream ss;
-            ss << "\"" << checkModel_ << ":" << checkDesc_ << "\"," << laneId_ << "," << leftDividerId_ << "," << rightDividerId_;
-            ss << "," << attId_ << "," << nodeId_;
-            ss << "," << setprecision(12) << lng_ << "," << lat_ << "," << z_ << "," << errorDesc_;
+            ss << errorDesc_;
             return ss.str();
         }
 

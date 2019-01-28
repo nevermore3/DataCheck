@@ -68,7 +68,7 @@ namespace kd {
                 ErrorOutPut error_output;
                 error_output.checkModel_ = error->checkModel_;
                 error_output.checkDesc_ = error->checkDesc_;
-                error_output.level = error->checkLevel_;
+                error_output.level = get_error_level(error->checkModel_);
                 error_output.detail = error->toString();
                 auto check_model_iter = check_model_2_output_maps_.find(error->checkModel_);
                 if (check_model_iter != check_model_2_output_maps_.end()) {
@@ -81,6 +81,32 @@ namespace kd {
             } else {
                 LOG(ERROR) << "saveError error is null!";
             }
+        }
+
+        string CheckErrorOutput::get_error_level(string check_model) {
+            string ret = LEVEL_WARNING;
+            if (check_model == "KXS-01-002" || check_model == "KXS-01-003" || check_model == "KXS-01-004" ||
+                check_model == "KXS-01-008" || check_model == "KXS-01-009" || check_model == "KXS-01-010" ||
+                check_model == "KXS-01-015") {
+                ret = LEVEL_ERROR;
+            } else if (check_model == "KXS-03-002" || check_model == "KXS-03-003" || check_model == "KXS-03-004" ||
+                       check_model == "KXS-03-006" || check_model == "KXS-03-011" || check_model == "KXS-03-012" ||
+                       check_model == "KXS-03-013" || check_model == "KXS-03-014" || check_model == "KXS-03-015" ||
+                       check_model == "KXS-03-016" || check_model == "KXS-03-019" || check_model == "KXS-03-020" ||
+                       check_model == "KXS-03-021" || check_model == "KXS-03-022" || check_model == "KXS-03-023" ||
+                       check_model == "KXS-03-024" || check_model == "KXS-03-025" || check_model == "KXS-03-026") {
+                ret = LEVEL_ERROR;
+            } else if (check_model == "KXS-04-001" || check_model == "KXS-04-002") {
+                ret = LEVEL_ERROR;
+            } else if (check_model == "KXS-05-001" || check_model == "KXS-05-003" || check_model == "KXS-05-006" ||
+                       check_model == "KXS-05-008" || check_model == "KXS-05-012") {
+                ret = LEVEL_ERROR;
+            } else if (check_model == "KXS-06-001") {
+                ret = LEVEL_ERROR;
+            }
+
+
+            return ret;
         }
     }
 }

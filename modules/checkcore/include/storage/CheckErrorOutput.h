@@ -43,6 +43,13 @@ namespace kd {
 
             void saveError(shared_ptr<DCError> error);
 
+            /**
+             * 获取错误级别
+             * @param check_model
+             * @return
+             */
+            string get_error_level(string check_model);
+
         protected:
             CppSQLite3::Database *m_pdb;
             map<string, vector<ErrorOutPut>> check_model_2_output_maps_;

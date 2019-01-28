@@ -20,6 +20,8 @@ namespace kd {
 
             check_lanegroup_divider(mapDataManager, errorOutput);
 
+            check_divider(mapDataManager, errorOutput);
+
             release(mapDataManager);
 
             return true;
@@ -202,6 +204,74 @@ namespace kd {
 
         void LaneGroupCheck::release(shared_ptr<MapDataManager> mapDataManager) {
             mapDataManager->road2LaneGroup2NodeIdxs_.clear();
+        }
+
+        void LaneGroupCheck::check_divider(shared_ptr<MapDataManager> mapDataManager,
+                                           shared_ptr<CheckErrorOutput> errorOutput) {
+            const auto ptr_lane_groups = mapDataManager->laneGroups_;
+            for (const auto &lane_group : ptr_lane_groups) {
+                auto ptr_dividers = CommonUtil::get_dividers_by_lg(mapDataManager, lane_group.first);
+                check_divider_no(mapDataManager, errorOutput, lane_group.first, ptr_dividers);
+            }
+        }
+
+        void LaneGroupCheck::check_divider_no(shared_ptr<MapDataManager> mapDataManager,
+                                              shared_ptr<CheckErrorOutput> errorOutput, const string &lane_group,
+                                              const vector<shared_ptr<DCDivider>> &ptr_dividers) {
+            bool is_check = false;
+            auto ptr_lane_group = CommonUtil::get_lane_group(mapDataManager, lane_group);
+            if (!ptr_lane_group->is_virtual_) {
+                bool is_positive = ptr_lane_group->direction_ == 1;
+                set<string> divider_node_ids;
+                for (const auto &ptr_div : ptr_dividers) {
+                    divider_node_ids.insert(ptr_div->fromNodeId_);
+                }
+                // 选择首尾节点
+                bool is_front = divider_node_ids.size() == ptr_dividers.size();
+
+                // 获取节点
+                auto ptr_left_divider = ptr_dividers.front();
+                auto ptr_left_divider_node = is_positive ^ is_front ? ptr_left_divider->nodes_.back() :
+                                             ptr_left_divider->nodes_.front();
+                if (ptr_left_divider->dividerNo_ == 0) {
+                    double current_length = 0;
+                    for (size_t index = 1; index < ptr_dividers.size(); index++) {
+                        // 判断编号
+                        if (ptr_dividers[index]->dividerNo_ == index) {
+                            auto ptr_right_divider_node = is_front ? ptr_dividers[index]->nodes_.front() :
+                                                          ptr_dividers[index]->nodes_.back();
+                            // 节点距离递增
+                            auto div_nodes_length = CommonUtil::get_length_between_divider_nodes(
+                                    ptr_left_divider_node, ptr_right_divider_node);
+                            if (div_nodes_length >= 0) {
+                                if (div_nodes_length > current_length ||
+                                    fabs(div_nodes_length - current_length) < 1e-7) {
+                                    current_length = div_nodes_length;
+                                } else {
+                                    is_check = true;
+                                    break;
+                                }
+                            } else {
+                                LOG(ERROR) << "get_length_between_divider_nodes failed! node : "
+                                           << ptr_left_divider_node->id_ << ","
+                                           << ptr_dividers[index]->nodes_.front()->id_;
+                            }
+                        } else {
+                            is_check = true;
+                            break;
+                        }
+                    }
+                } else {
+                    // 编号出错
+                    is_check = true;
+                }
+            }
+
+
+            if (is_check) {
+                shared_ptr<DCError> ptr_error = DCLaneGroupCheckError::createByKXS_03_002(lane_group);
+                errorOutput->saveError(ptr_error);
+            }
         }
     }
 }

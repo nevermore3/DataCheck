@@ -251,6 +251,8 @@ namespace kd {
 
             static shared_ptr<DCLaneGroupCheckError> createByKXS_03_004(string divider_id, set<string> lane_groups);
 
+            static shared_ptr<DCLaneGroupCheckError> createByKXS_03_002(string lane_group_id);
+
         public:
 
             //错误详细信息描述

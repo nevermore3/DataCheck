@@ -63,6 +63,14 @@ namespace kd {
             void check_lanegroup_divider(shared_ptr<MapDataManager> mapDataManager,
                                          shared_ptr<CheckErrorOutput> errorOutput);
 
+            /**
+             * 车道组内的divider检查
+             * @param mapDataManager
+             * @param errorOutput
+             */
+            void check_divider(shared_ptr<MapDataManager> mapDataManager,
+                               shared_ptr<CheckErrorOutput> errorOutput);
+
         private:
             /**
              * 车道组关联道路索引点详细检查逻辑
@@ -70,6 +78,16 @@ namespace kd {
              */
             void check_road_node_index(vector<LGNodeIndex> lg_node_index_vec, shared_ptr<DCRoad> ptr_road,
                                        bool is_positive, shared_ptr<CheckErrorOutput> errorOutput);
+
+            /**
+             * 车道组编号检查
+             * @param mapDataManager
+             * @param errorOutput
+             * @param lane_group
+             * @param ptr_dividers
+             */
+            void check_divider_no(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput,
+                                  const string &lane_group, const vector<shared_ptr<DCDivider>> &ptr_dividers);
 
         private:
             const string id = "lanegroup_check";

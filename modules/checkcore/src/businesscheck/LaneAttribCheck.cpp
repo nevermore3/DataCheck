@@ -53,11 +53,11 @@ namespace kd {
                 if ((leftDiv->direction_ != 4 && leftDiv->direction_ == 4)
                     ||(leftDiv->direction_ == 4 && leftDiv->direction_ != 4)){
                     shared_ptr<DCLaneCheckError> error =
-                            DCLaneCheckError::createByAtt("JH_C_16", lane, nullptr);
+                            DCLaneCheckError::createByAtt("KXS-05-008", lane, nullptr);
                     error->checkDesc_ = "车道线方向冲突";
                     stringstream ss;
-                    ss << "two divider direction is conflict. [left divider:" << leftDiv->id_;
-                    ss << "],[right divider:" << rightDiv->id_ << "]";
+                    ss << "divider:" << leftDiv->id_;
+                    ss << "与divider:" << rightDiv->id_ << "方向冲突";
                     errorOutput->saveError(error);
                     lane->valid_ = false;
                 } else if (leftDiv->direction_ == 1 || rightDiv->direction_ == 1){
@@ -94,11 +94,11 @@ namespace kd {
                 double fAngle = fabs(leftAngle - rightAngle);
                 if (fAngle > limitAngle){
                     shared_ptr<DCLaneCheckError> error =
-                            DCLaneCheckError::createByAtt("JH_C_16", lane, nullptr);
+                            DCLaneCheckError::createByAtt("KXS-05-008", lane, nullptr);
                     error->checkDesc_ = "车道线方向冲突";
                     stringstream ss;
-                    ss << "two divider direction is conflict. [left divider:" << leftDiv->id_;
-                    ss << "],[right divider:" << rightDiv->id_ << "] intersect angle:" << fAngle;
+                    ss << "divider:" << leftDiv->id_;
+                    ss << "与divider:" << rightDiv->id_ << "方向冲突";
                     errorOutput->saveError(error);
                     lane->valid_ = false;
                 }
@@ -116,9 +116,10 @@ namespace kd {
                 if (lane->atts_.size() == 0){
                     //车道线没有属性变化点
                     shared_ptr<DCLaneCheckError> error =
-                            DCLaneCheckError::createByAtt("JH_C_19", lane, nullptr);
+                            DCLaneCheckError::createByAtt("KXS-05-010", lane, nullptr);
                     error->checkDesc_ = "车道右侧车道线起点没有LA";
-                    error->errorDesc_ = "lane no la";
+                    error->errorDesc_ = "lane_id:";
+                    error->errorDesc_+= lane->id_;
 
                     errorOutput->saveError(error);
                     continue;
@@ -128,9 +129,10 @@ namespace kd {
                 if( nodeIndex != 0){
                     //车道线起点没有属性变化点
                     shared_ptr<DCLaneCheckError> error =
-                            DCLaneCheckError::createByAtt("JH_C_19", lane, nullptr);
+                            DCLaneCheckError::createByAtt("KXS-05-010", lane, nullptr);
                     error->checkDesc_ = "车道线起点没有属性变化点";
-                    error->errorDesc_ = "lane no la on start point";
+                    error->errorDesc_ = "lane_id:";
+                    error->errorDesc_+= lane->id_;
 
                     errorOutput->saveError(error);
                     continue;
@@ -157,10 +159,10 @@ namespace kd {
 
                     if(la1 != nullptr && la1->typeSame(la2)){
                         shared_ptr<DCLaneCheckError> error =
-                                DCLaneCheckError::createByAtt("JH_C_21", lane, la1);
+                                DCLaneCheckError::createByAtt("KXS-05-011", lane, la1);
                         error->checkDesc_ = "同一Divider上相邻两个LA属性完全相同";
                         stringstream ss;
-                        ss << "la [id:"<< la1->id_ << "] same as la [id:" << la2->id_ << "]";
+                        ss << "la_id:" << la1->id_ << "与la_id:" << la2->id_ << "属性相同";
                         error->errorDesc_ = ss.str();
                         errorOutput->saveError(error);
                     }
@@ -197,10 +199,10 @@ namespace kd {
 
                     if(distance < laSpaceLen){
                         shared_ptr<DCLaneCheckError> error =
-                                DCLaneCheckError::createByAtt("JH_C_20", lane, la1);
+                                DCLaneCheckError::createByAtt("KXS-05-011", lane, la1);
                         error->checkDesc_ = "同一Divider上相邻两个LA距离<1米";
                         stringstream ss;
-                        ss << "length from la [id:"<< la1->id_ << "] to la [id:" << la2->id_ << "] is " << distance << " meter";
+                        ss << "la_id:" << la1->id_ << "与la_id：" << la2->id_ << "相距" << distance << "米";
                         error->errorDesc_ = ss.str();
                         errorOutput->saveError(error);
                     }

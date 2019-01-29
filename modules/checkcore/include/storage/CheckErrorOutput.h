@@ -18,6 +18,7 @@ namespace kd {
             string checkModel_;// 检测模型
             string checkDesc_;//检查模型描述信息
             string detail;//错误详细信息
+            string level;//错误等级，warn error
         };
 
         class CheckErrorOutput{
@@ -41,6 +42,13 @@ namespace kd {
             void saveError();
 
             void saveError(shared_ptr<DCError> error);
+
+            /**
+             * 获取错误级别
+             * @param check_model
+             * @return
+             */
+            string get_error_level(string check_model);
 
         protected:
             CppSQLite3::Database *m_pdb;

@@ -163,10 +163,10 @@ namespace kd {
                         //判断重叠面积是否超过限制
                         double area = geo->getArea();
                         if (area > overlapArea){
-                            shared_ptr<DCLaneCheckError> error = DCLaneCheckError::createByAtt("JH_C_14", curLane, nullptr);
+                            shared_ptr<DCLaneCheckError> error = DCLaneCheckError::createByAtt("KXS-05-006", curLane, nullptr);
                             error->checkDesc_ = "车道面和其他车道面相交";
                             stringstream ss;
-                            ss << "tow lane faces overlap. [onverlap lane id:" << nxtLane->id_ << "]";
+                            ss << "lane_id:" << curLane->id_ << "与lane_id:" << nxtLane->id_ << "相交";
                             error->errorDesc_ = ss.str();
                             errorOutput->saveError(error);
                         }
@@ -268,11 +268,11 @@ namespace kd {
                 }
 
                 if (bError){
-                    shared_ptr<DCLaneCheckError> error = DCLaneCheckError::createByAtt("JH_C_15", lane, nullptr);
+                    shared_ptr<DCLaneCheckError> error = DCLaneCheckError::createByAtt("KXS-05-007", lane, nullptr);
                     error->checkDesc_ = "车道面的4个角点构成夹角<45°或者>135°";
                     stringstream ss;
-                    ss << "lane face corner is not in " << edgeMinAngle << "~" << edgeMaxAngle;
-                    ss << ", " << corner.c_str() << " nodeid:" << nodeId.c_str() << ", angle:" << angle;
+                    ss << "lane_id:" << lane->id_ << ",left_divider:" << lane->leftDivider_->id_ << ",right_divider:"
+                       << lane->rightDivider_->id_;
                     error->errorDesc_ = ss.str();
                     errorOutput->saveError(error);
                     lane->valid_ = false;
@@ -328,11 +328,11 @@ namespace kd {
                                                                    index);
                             if (length < laneWidthMin) {
                                 shared_ptr<DCLaneCheckError> error =
-                                        DCLaneCheckError::createByNode("JH_C_17", lane, rightDiv->nodes_[i]);
+                                        DCLaneCheckError::createByNode("KXS-05-009", lane, rightDiv->nodes_[i]);
                                 error->checkDesc_ = "车道宽度最窄处不能<2.5米";
                                 stringstream ss;
-                                ss << "[divider:" << rightDiv->id_ << "][nodeid:[" << dcNode->id_ << "] distance to ";
-                                ss << "[divider:" << leftDiv->id_ << "] is " << length;
+                                ss << "divider:" << rightDiv->id_ << ",nodeid:" << dcNode->id_ << "与divider:"
+                                   << leftDiv->id_ << "距离" << length;
                                 error->errorDesc_ = ss.str();
 
                                 errorOutput->saveError(error);
@@ -366,11 +366,11 @@ namespace kd {
                                                                    index);
                             if (length > laneWidthMax) {
                                 shared_ptr<DCLaneCheckError> error =
-                                        DCLaneCheckError::createByNode("JH_C_17", lane, rightDiv->nodes_[i]);
+                                        DCLaneCheckError::createByNode("KXS-05-009", lane, rightDiv->nodes_[i]);
                                 error->checkDesc_ = "车道宽度最大不能>7米";
                                 stringstream ss;
-                                ss << "[divider:" << rightDiv->id_ << "][nodeid:[" << dcNode->id_ << "] distance to ";
-                                ss << "[divider:" << leftDiv->id_ << "] is " << length;
+                                ss << "divider:" << rightDiv->id_ << "，nodeid:" << dcNode->id_ << "与divider:"
+                                   << leftDiv->id_ << "距离" << length;
                                 error->errorDesc_ = ss.str();
 
                                 errorOutput->saveError(error);

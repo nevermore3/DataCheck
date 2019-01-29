@@ -36,6 +36,9 @@ namespace kd {
         const string DataCheckConfig::SQL_TASK_FILE = "sql_task_file";
         const string DataCheckConfig::UPDATE_REGION = "update_region";
 
+        const string DataCheckConfig::DIVIDER_LENGTH_RATIO = "divider_length_ratio";
+        const string DataCheckConfig::LANE_INTERSECT_LENGTH = "lane_intersect_length";
+
 
 
         int DataCheckConfig::load(string fileName) {

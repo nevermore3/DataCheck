@@ -12,7 +12,8 @@
 
 namespace kd {
     namespace dc {
-
+        static const string LEVEL_WARNING = "warning";
+        static const string LEVEL_ERROR = "error";
 
         class DCError{
         public:
@@ -39,6 +40,10 @@ namespace kd {
         public:
             //设置检查模型描述信息
             string checkDesc_;
+
+        public:
+            // 错误级别
+            string checkLevel_;
         };
 
         /**
@@ -251,6 +256,11 @@ namespace kd {
 
             static shared_ptr<DCLaneGroupCheckError> createByKXS_03_004(string divider_id, set<string> lane_groups);
 
+            static shared_ptr<DCLaneGroupCheckError> createByKXS_03_002(string lane_group_id);
+
+            static shared_ptr<DCLaneGroupCheckError> createByKXS_03_001(string lane_group_id,
+                                                                        const vector<string> &dividers);
+
         public:
 
             //错误详细信息描述
@@ -272,6 +282,49 @@ namespace kd {
             static shared_ptr<DCLaneGroupTopoCheckError> createByKXS_04_001(string lg_id1, string lg_id2);
 
             static shared_ptr<DCLaneGroupTopoCheckError> createByKXS_05_001(string lg_id1, string lg_id2);
+        public:
+
+            //错误详细信息描述
+            string detail;
+        };
+
+        /**
+        * 道路检查错误
+        */
+        class DCRoadCheckError : public DCError {
+        public:
+            explicit DCRoadCheckError(const string &checkModel);
+
+        public:
+            string getHeader() override;
+
+            string toString() override;
+        public:
+            static shared_ptr<DCRoadCheckError> createByKXS_04_002(const string &road_id,
+                                                                            const string &lane_group_id);
+        public:
+
+            //错误详细信息描述
+            string detail;
+        };
+
+        /**
+        * 道路检查错误
+        */
+        class DCLaneError : public DCError {
+        public:
+            explicit DCLaneError(const string &checkModel);
+
+        public:
+            string getHeader() override;
+
+            string toString() override;
+        public:
+            static shared_ptr<DCLaneError> createByKXS_05_002(const string &lane_id,
+                                                              const string &divider_id);
+
+            static shared_ptr<DCLaneError> createByKXS_05_003(const string &lane_id,
+                                                              const string &divider_id);
         public:
 
             //错误详细信息描述

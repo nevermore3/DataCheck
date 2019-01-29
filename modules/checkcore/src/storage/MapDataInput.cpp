@@ -318,7 +318,7 @@ namespace kd {
                     int nVertices = shpObject->nVertices;
                     for( int i = 0 ; i < nVertices ; i ++ ){
                         shared_ptr<DCCoord> coord = make_shared<DCCoord>();
-                        coord->lat_ = shpObject->padfX[i];
+                        coord->lng_ = shpObject->padfX[i];
                         coord->lat_ = shpObject->padfY[i];
                         coord->z_ = shpObject->padfZ[i];
                         dcLane->coords_.emplace_back(coord);

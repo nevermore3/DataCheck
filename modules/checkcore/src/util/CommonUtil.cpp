@@ -3,8 +3,18 @@
 //
 
 #include <util/CommonUtil.h>
+#include <mvg/Coordinates.hpp>
+#include <geos/geom/GeometryFactory.h>
+#include <geos/geom/CoordinateArraySequence.h>
+#include <geos/geom/LineString.h>
+#include "geos/geom/Point.h"
+#include <geom/geo_util.h>
+#include <geos/geom/Point.h>
 
 #include "util/CommonUtil.h"
+
+using namespace geos::geom;
+using namespace kd::automap;
 
 namespace kd {
     namespace dc {
@@ -196,6 +206,94 @@ namespace kd {
                 }
             }
             return ret;
+        }
+
+        double CommonUtil::get_length_of_coords(const vector<shared_ptr<DCCoord>> &ptr_coords) {
+            geos::geom::CoordinateSequence *cl = new geos::geom::CoordinateArraySequence();
+            for(const auto &ptr_coord : ptr_coords){
+                double X0, Y0;
+                char zone0[8] = {0};
+                double x = ptr_coord->lng_;
+                double y = ptr_coord->lat_;
+                double z = ptr_coord->z_;
+                kd::automap::Coordinates::ll2utm(y, x, X0, Y0, zone0);
+                cl->add(geos::geom::Coordinate(X0, Y0, z));
+            }
+            if (cl->size() < 2) {
+                return -1;
+            }
+            const geos::geom::GeometryFactory *gf = geos::geom::GeometryFactory::getDefaultInstance();
+            geos::geom::LineString *linesString = gf->createLineString(cl);
+            if (linesString) {
+                double len = linesString->getLength();
+                return len;
+            }
+            return -1;
+        }
+
+        double CommonUtil::get_length_between_divider_nodes(const shared_ptr<DCDividerNode> &divider_node1,
+                                                            const shared_ptr<DCDividerNode> &divider_node2) {
+            vector<shared_ptr<DCCoord>> ptr_coords;
+            if (divider_node1 && divider_node2) {
+                shared_ptr<DCCoord> ptr_coord1 = make_shared<DCCoord>(divider_node1->coord_);
+                shared_ptr<DCCoord> ptr_coord2 = make_shared<DCCoord>(divider_node2->coord_);
+
+                ptr_coords.emplace_back(ptr_coord1);
+                ptr_coords.emplace_back(ptr_coord2);
+                return get_length_of_coords(ptr_coords);
+            }
+            return -1;
+        }
+
+        shared_ptr<geos::geom::LineString> CommonUtil::get_line_string(const vector<shared_ptr<DCCoord>> &nodes) {
+            shared_ptr<geos::geom::LineString> ret_road_line_string = nullptr;
+
+            //创建linestring
+            CoordinateSequence *cl = new CoordinateArraySequence();
+            for (const auto &node : nodes) {
+                double X0, Y0;
+                char zone0[8] = {0};
+
+                Coordinates::ll2utm(node->lat_, node->lng_, X0, Y0, zone0);
+
+                cl->add(geos::geom::Coordinate(X0, Y0));
+            }
+
+            if (cl->size() >= 2) {
+                const GeometryFactory *gf = GeometryFactory::getDefaultInstance();
+                geos::geom::LineString *lineString = gf->createLineString(cl);
+                if (lineString) {
+                    ret_road_line_string.reset(lineString);
+                }
+            }
+
+            return ret_road_line_string;
+        }
+
+        shared_ptr<geos::geom::LineString>
+        CommonUtil::get_divider_line_string(const vector<shared_ptr<DCDividerNode>> &nodes) {
+            shared_ptr<geos::geom::LineString> ret_road_line_string = nullptr;
+
+            //创建linestring
+            CoordinateSequence *cl = new CoordinateArraySequence();
+            for (const auto &node : nodes) {
+                double X0, Y0;
+                char zone0[8] = {0};
+
+                Coordinates::ll2utm(node->coord_.lat_, node->coord_.lng_, X0, Y0, zone0);
+
+                cl->add(geos::geom::Coordinate(X0, Y0));
+            }
+
+            if (cl->size() >= 2) {
+                const GeometryFactory *gf = GeometryFactory::getDefaultInstance();
+                geos::geom::LineString *lineString = gf->createLineString(cl);
+                if (lineString) {
+                    ret_road_line_string.reset(lineString);
+                }
+            }
+
+            return ret_road_line_string;
         }
     }
 }

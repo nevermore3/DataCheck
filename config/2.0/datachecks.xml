@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <datachecks>
-  <datacheck TYPE="1" NAME="逻辑关系检查">
+  <datacheck TYPE="warning" NAME="逻辑关系检查">
     <!--LEVEL: 0=ERROR, 1=WARNING, 2=INFO-->
     <datacheckitem ID="KXS-01-001"
                    NAME="对象ID记录重复性检查"
-                   LEVEL="1"
+                   LEVEL="warning"
                    INFO="数据中存在ID相同的重复记录"
                    SQL="SELECT fileName tblName FROM ARCSHAPE_METADATA WHERE SHPType&lt;&gt;0; 
                    select '{tblName}' FileName, id RepeatId, count(*) RecoordCount from {tblName} 
                    group by id having count(*)>1;"/>
     <datacheckitem ID="KXS-01-002"
                    NAME="几何数据重复性检查"
-                   LEVEL="0"
+                   LEVEL="error"
                    INFO="数据中存在几何对象完全相同的重复记录"
                    SQL="SELECT fileName tblName FROM ARCSHAPE_METADATA WHERE SHPType&lt;&gt;0; 
                    SELECT rp.FileName, RepeatGeometryIds, T.TASKID, LocalX, LocalY FROM 
@@ -24,61 +24,61 @@
                    LEFT JOIN HD_AUX_TASKID T ON T.ID=B.MINID AND T.FILENAME='{tblName}' COLLATE NOCASE;"/>
     <datacheckitem ID="KXS-01-003"
                    NAME="多边形形态错误"
-                   LEVEL="0"
+                   LEVEL="error"
                    INFO="多边形对象至少要包含4个点,且首尾点坐标相等构成闭合环"
                    SQL="SELECT FileName||'_GEOCOORDS' tblName FROM ARCSHAPE_METADATA WHERE SHPType=15;
                    SELECT '{tblName}' TBLNAME, FID, COUNT(*) NUMPOINTS FROM {tblName} GROUP BY FID HAVING NUMPOINTS&lt;4;"/>
     <datacheckitem ID="KXS-01-004"
                    NAME="几何数据坐标值异常检查"
-                   LEVEL="0"
+                   LEVEL="error"
                    INFO="几何数据中存在坐标值X(0~360) 或 坐标值Y(-90~90) 或坐标值Z(马里亚纳海沟-11034m~珠穆朗玛峰8848m)异常的情况"
                    SQL="SELECT FileName fileName, FileName||'_GEOCOORDS' tblName FROM ARCSHAPE_METADATA WHERE 
                    SHPType&lt;&gt;0;SELECT '{fileName}' FILENAME, FID, INDEXPOINT, X, Y, Z FROM {tblName} WHERE 
                    (X&gt;360 OR X&lt;0) OR (Y&gt;90 OR Y&lt;-90) OR (Z&gt;8848 OR Z&lt;-11034);"/>
     <datacheckitem ID="KXS-03-003"
                    NAME="车道线不存在于车道组中"
-                   LEVEL="0"
+                   LEVEL="error"
                    INFO="存在孤立的车道线，其没有包含在车道组中"
                    SQL="select id dividerid from hd_divider where id not in 
                    (select divider_l dividerid from hd_lane union select divider_r dividerid from hd_lane);"/>
     <datacheckitem ID="KXS-03-011"
                    NAME="车道组未关联道路或关联道路无效"
-                   LEVEL="0"
+                   LEVEL="error"
                    INFO="表hd_lane_group数据有缺失或错误,车道组LaneGroup未关联道路Road或关联道路Road无效"
                    SQL="select id lanegroupid, road_id roadid from hd_lane_group where road_id=-1 or road_id not in(select id from road);"/>
     <datacheckitem ID="KXS-03-012"
                    NAME="车道组有效性检查"
-                   LEVEL="0"
+                   LEVEL="error"
                    INFO="表HD_LANE_GROUP中的车道组在表hd_r_lane_group中无法找到"
                    SQL="SELECT ID, ROAD_ID ROADID FROM HD_LANE_GROUP WHERE ID IN(SELECT ID FROM 
                    HD_LANE_GROUP EXCEPT SELECT LG_ID FROM HD_R_LANE_GROUP);"/>
     <datacheckitem ID="KXS-03-013"
                    NAME="车道未关联车道组"
-                   LEVEL="0"
+                   LEVEL="error"
                    INFO="表hd_r_lane_group数据有缺失,车道Lane未关联车道组LaneGroup"
                    SQL="select id laneid from hd_lane where id not in (select lane_id from hd_r_lane_group);"/>
     <datacheckitem ID="KXS-03-014"
                    NAME="车道关联多个车道组"
-                   LEVEL="0"
+                   LEVEL="error"
                    INFO="表hd_r_lane_group数据有错误,车道Lane关联多个车道组LaneGroup"
                    SQL="select lane_id laneid, group_concat(LG_ID) lanegroupids from hd_r_lane_group where 
                    lane_id in(select distinct lane_id laneid from hd_r_lane_group group by lane_id having count(*)>1) group by lane_id;"/>
     <datacheckitem ID="KXS-03-015"
                    NAME="车道关联车道线无效"
-                   LEVEL="0"
+                   LEVEL="error"
                    INFO="表hd_divider数据有缺失,车道Lane关联左右车道线Divider无效"
                    SQL="select id laneid, divider_l dividerid, 1 as isleft from hd_lane where divider_l not in 
                    (select id from hd_divider) union select id, divider_r, 0 from hd_lane where divider_r not in 
                    (select id from hd_divider);"/>
     <datacheckitem ID="KXS-03-016"
                    NAME="车道线关联节点无效"
-                   LEVEL="0"
+                   LEVEL="error"
                    INFO="表HD_DIVIDERNODE数据有缺失,车道线Divider关联的节点DividerNode编号在HD_DIVIDERNODE表无法找到"
                    SQL="select * from (SELECT distinct fdnode nodeid FROM HD_DIVIDER union 
                    select distinct tdnode from hd_divider) where nodeid not in(select id from hd_divider_node);"/>
     <datacheckitem ID="KXS-03-017"
                    NAME="两个车道关联的左右车道线完全一致"
-                   LEVEL="1"
+                   LEVEL="warning"
                    INFO="表HD_LANE数据错误,非出入口两条车道Lane关联的左右车道线Divider完全相同"
                    SQL="SELECT L.* FROM (select a.id firstLaneId, b.id secLaneId from hd_lane a join 
                    hd_lane b on a.id&lt;&gt;b.id and ((a.divider_l=b.divider_l and a.divider_r=b.divider_r) or 
@@ -88,41 +88,41 @@
                    A.EGEONODEID=B.SGEONODEID);"/>
     <datacheckitem ID="KXS-03-018"
                    NAME="车道孤立不连通"
-                   LEVEL="1"
+                   LEVEL="warning"
                    INFO="表hd_lane_connectivity数据有丢失,车道Lane是孤立存在,车道连通性存在错误"
                    SQL="select id laneid from hd_lane where id not in (select distinct flane_id from hd_lane_connectivity 
                    group by flane_id union select distinct tlane_id from hd_lane_connectivity group by tlane_id);"/>
     <datacheckitem ID="KXS-03-019"
                    NAME="车道形态连通的关系丢失"
-                   LEVEL="0"
+                   LEVEL="error"
                    INFO="拓扑形态连接的两条Lane在HD_LANE_CONNECTIVITY中不存在导致拓扑关系丢失"
                    SQL="SELECT FLANE_ID,TLANE_ID FROM HD_LANE_GEOCONN EXCEPT SELECT FLID, TLID FROM 
                    (SELECT FLANE_ID FLID,TLANE_ID TLID FROM HD_LANE_CONNECTIVITY UNION 
                    SELECT TLANE_ID,FLANE_ID FROM HD_LANE_CONNECTIVITY);"/>
     <datacheckitem ID="KXS-03-020"
                    NAME="车道拓扑关系无效"
-                   LEVEL="0"
+                   LEVEL="error"
                    INFO="HD_LANE_CONNECTIVITY中存在拓扑关系的两条Lane在形态上不连通,如果连接点XY相等需确认Z值是否相等"
                    SQL="SELECT FLANE_ID,TLANE_ID FROM HD_LANE_CONNECTIVITY EXCEPT SELECT FLID, TLID FROM 
                    (SELECT FLANE_ID FLID, TLANE_ID TLID FROM HD_LANE_GEOCONN UNION 
                    SELECT TLANE_ID, FLANE_ID FROM HD_LANE_GEOCONN);"/>
     <datacheckitem ID="KXS-03-021"
                    NAME="车道线冗余错误"
-                   LEVEL="0"
+                   LEVEL="error"
                    INFO="表hd_divider数据冗余,存在多条车道线Divider几何形态完全一致的情况"
                    SQL="SELECT REPEATID, ID DIVIDERID FROM HD_DIVIDER D JOIN 
                    (SELECT DISTINCT geometry, MIN(ROWID) REPEATID FROM HD_DIVIDER 
                    GROUP BY geometry HAVING COUNT(*)&gt;1) G ON D.GEOMETRY=G.GEOMETRY;"/>
     <datacheckitem ID="KXS-03-022"
                    NAME="车道冗余错误"
-                   LEVEL="0"
+                   LEVEL="error"
                    INFO="表hd_lane数据冗余,存在多条车道Lane几何形态完全一致的情况"
                    SQL="SELECT REPEATID, ID LANEID FROM HD_LANE D JOIN 
                    (SELECT DISTINCT geometry, MIN(ROWID) REPEATID FROM HD_LANE GROUP BY 
                    geometry HAVING COUNT(*)&gt;1) G ON D.GEOMETRY=G.GEOMETRY AND REPEATID!=ID;"/>
     <datacheckitem ID="KXS-03-023"
                    NAME="Lane或Divider分组形态错误"
-                   LEVEL="0"
+                   LEVEL="error"
                    INFO="Lane或Divider几何首尾点完全相同，导致NDS编译无法建立LaneConnectorId拓扑"
                    SQL="SELECT FileName fileName, FileName||'_GEOCOORDS' tblName FROM ARCSHAPE_METADATA WHERE 
                    SHPType=13 AND (FileName LIKE '%lane%' OR FileName LIKE '%divider%') COLLATE NOCASE;
@@ -133,18 +133,18 @@
                    LEFT JOIN {tblName} e ON se.FID=e.FID AND se.eptid=e.indexpoint) GROUP BY sx,sy,sz,ex,ey,ez HAVING COUNT(*)&gt;1;"/>
     <datacheckitem ID="KXS-03-024"
                    NAME="车道LaneType检查"
-                   LEVEL="0"
+                   LEVEL="error"
                    INFO="HD_LANE_ATTRIBUTE表存在一条Lane有多个LANETYPE的情况"
                    SQL="SELECT DISTINCT LANE_ID FROM (SELECT DISTINCT lane_id, lanetype FROM HD_LANE_ATTRIBUTE 
                    GROUP BY lane_id, lanetype HAVING count(*)&gt;1) GROUP BY lane_id HAVING count(*)&gt;1;"/>
     <datacheckitem ID="KXS-03-025"
                    NAME="车道编号检查"
-                   LEVEL="0"
+                   LEVEL="error"
                    INFO="HD_LANE表中存在无效车道号Lane_No不在(0~16)范围"
                    SQL="SELECT ID, Lane_no LaneNO FROM HD_LANE where lane_no&gt;16 or lane_no&lt;0;"/>
     <datacheckitem ID="KXS-03-026"
                    NAME="DIVIDER对应DA属性检查"
-                   LEVEL="0"
+                   LEVEL="error"
                    INFO="DIVIDER的DA属性错误：无DA,首点无DA,SPIDX超限"
                    SQL="SELECT ID, NULL SPIDX, 'Divider无DA' INFO FROM(SELECT ID FROM HD_DIVIDER EXCEPT 
                    SELECT DIVIDER_ID FROM HD_DIVIDER_ATTRIBUTE) 
@@ -158,7 +158,7 @@
                       GROUP BY DIVIDER_ID,SPIDX HAVING COUNT(*)&gt;1 ORDER BY INFO;"/>
     <datacheckitem ID="KXS-06-001"
                    NAME="定位目标与道路的关联关系"
-                   LEVEL="0"
+                   LEVEL="error"
                    INFO="检查定位目标是否关联了道路"
                    SQL="select 'HD_TRAFFICSIGN' FileName, T.ID ID from HD_TRAFFICSIGN T except
                    select 'HD_TRAFFICSIGN', L.LO_ID from HD_R_LO_ROAD L union

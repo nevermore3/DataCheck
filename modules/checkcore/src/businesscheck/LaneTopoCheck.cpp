@@ -47,22 +47,28 @@ namespace kd {
                 if(fromLaneCount == 0 && toLaneCount == 0){
 
                     shared_ptr<DCLaneCheckError> error =
-                            DCLaneCheckError::createByNode("JH_C_22", lane, nullptr);
-                    error->errorDesc_ = "lane no connected lane.";
+                            DCLaneCheckError::createByNode("KXS-05-012", lane, nullptr);
+                    error->errorDesc_ = "lane_id:";
+                    error->errorDesc_ += lane->id_;
+                    error->errorDesc_ += "没有连接车道";
                     error->checkDesc_ = "存在没有进入车道和退出车道的车道";
                     errorOutput->saveError(error);
 
                 }else if(fromLaneCount == 0 && toLaneCount > 0){
                     shared_ptr<DCLaneCheckError> error =
-                            DCLaneCheckError::createByNode("JH_C_22", lane, nullptr);
-                    error->errorDesc_ = "lane no exit.";
+                            DCLaneCheckError::createByNode("KXS-05-012", lane, nullptr);
+                    error->errorDesc_ = "lane_id:";
+                    error->errorDesc_ += lane->id_;
+                    error->errorDesc_ += "没有退出车道";
                     error->checkDesc_ = "存在没有进入车道和退出车道的车道";
                     errorOutput->saveError(error);
 
                 }else if(fromLaneCount > 0 && toLaneCount == 0){
                     shared_ptr<DCLaneCheckError> error =
-                            DCLaneCheckError::createByNode("JH_C_22", lane, nullptr);
-                    error->errorDesc_ = "lane no enter.";
+                            DCLaneCheckError::createByNode("KXS-05-012", lane, nullptr);
+                    error->errorDesc_ = "lane_id:";
+                    error->errorDesc_ += lane->id_;
+                    error->errorDesc_ += "没有进入车道";
                     error->checkDesc_ = "存在没有进入车道和退出车道的车道";
                     errorOutput->saveError(error);
                 }

@@ -54,12 +54,13 @@ namespace kd {
                         dAngle = 360 - dAngle;
                     if (dAngle > (180-edgeAngle)) {
                         shared_ptr<DCDividerCheckError> error =
-                                DCDividerCheckError::createByNode("JH_C_7", div, node1);
+                                DCDividerCheckError::createByNode("KXS-01-011", div, node1);
                         error->checkDesc_ = "车道线不平滑夹角<135";
                         stringstream ss;
-                        ss << "angle is " << dAngle << ". node id is[" << node1->id_ << ":" << node2->id_ << ":"
-                           << node3->id_ << "]";
+                        ss << "divider:" << div->id_ << ",node_id1:" << node1->id_ << ",node_id2:" << node2->id_
+                        << ",node_id3:" << node3->id_ << "夹角：" << dAngle << "度";
                         error->errorDesc_ = ss.str();
+                        error->checkLevel_ = LEVEL_WARNING;
 
                         errorOutput->saveError(error);
                     }
@@ -93,10 +94,11 @@ namespace kd {
                     double distance = KDGeoUtil::distanceLL(node1->coord_.lng_, node1->coord_.lat_, node2->coord_.lng_, node2->coord_.lat_);
                     if(distance < nodespace){
                         shared_ptr<DCDividerCheckError> error =
-                                DCDividerCheckError::createByNode("JH_C_8", div, node1);
+                                DCDividerCheckError::createByNode("KXS-01-012", div, node1);
                         error->checkDesc_ = "车道线两个节点长度<0.2米";
                         stringstream ss;
-                        ss << "from node " << node1->id_ << " to node " << node2->id_ << " distance is " << distance;
+                        ss << "divider:" << div->id_ << ",node_id:" << node1->id_ << "与node_id:" << node2->id_
+                           << "距离" << distance << "米";
                         error->errorDesc_ = ss.str();
 
                         errorOutput->saveError(error);
@@ -107,11 +109,10 @@ namespace kd {
                     double realDeltaZ = node1->coord_.z_ - node2->coord_.z_;
                     if(fabs(realDeltaZ) > slopLimit ){
                         shared_ptr<DCDividerCheckError> error =
-                                DCDividerCheckError::createByNode("JH_C_9", div, node1);
+                                DCDividerCheckError::createByNode("KXS-01-013", div, node1);
                         error->checkDesc_ = "车道线高程突变>±10厘米";
                         stringstream ss;
-                        ss << "node " << node1->id_ << " height " << node1->coord_.z_ << ". node " << node2->id_ ;
-                        ss << " height " << node2->coord_.z_ << ". delta z is " << realDeltaZ << " and distance is " << distance;
+                        ss << "divider:" << div->id_ << ",node_id:" << node1->id_ << ",node_id:" << node2->id_;
                         error->errorDesc_ = ss.str();
 
                         errorOutput->saveError(error);

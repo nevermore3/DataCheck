@@ -403,9 +403,9 @@ namespace kd {
 
 //            check_JH_C_4(mapDataManager, topoNodes, errorOutput);
 
-//            check_JH_C_5(mapDataManager, errorOutput);
+            check_JH_C_5(mapDataManager, errorOutput);
 
-//            check_JH_C_6(mapDataManager, topoNodes, errorOutput);
+            check_JH_C_6(mapDataManager, topoNodes, errorOutput);
 
             return true;
         }

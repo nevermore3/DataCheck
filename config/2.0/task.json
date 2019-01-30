@@ -124,15 +124,9 @@
       },
       {
         "fileName": "HD_TRAFFIC_LIGHT",
-        "fileType": "point",
+        "fileType": "polygon",
         "modelName": "HD_TRAFFIC_LIGHT"
       },
-      {
-        "fileName": "HD_TRAFFIC_LIGHT_GROUP",
-        "fileType": "dbf",
-        "modelName": "HD_TRAFFIC_LIGHT_GROUP"
-      },
-
       {
         "fileName": "HD_BRIDGE",
         "fileType": "arc",

@@ -39,7 +39,7 @@ namespace kd {
             /**
              * 输出检查信息到sql中
              */
-            void saveError();
+            int saveError();
 
             void saveError(shared_ptr<DCError> error);
 

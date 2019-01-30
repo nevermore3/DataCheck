@@ -52,8 +52,8 @@ int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) 
         modelProcessManager->registerProcessor(modelBussCheck);
 
         //属性关系检查
-        shared_ptr<ModelRelationCheck> modelRelationCheck = make_shared<ModelRelationCheck>();
-        modelProcessManager->registerProcessor(modelRelationCheck);
+//        shared_ptr<ModelRelationCheck> modelRelationCheck = make_shared<ModelRelationCheck>();
+//        modelProcessManager->registerProcessor(modelRelationCheck);
 
         //执行已注册检查项
         shared_ptr<ModelDataManager> modelDataManager = make_shared<ModelDataManager>();
@@ -231,7 +231,7 @@ int main(int argc, const char *argv[]) {
         ret |= sql_data_check(p_db, errorOutput);
         ret |= dataCheck(base_path, errorOutput);
 
-        errorOutput->saveError();
+        ret |= errorOutput->saveError();
 
         LOG(INFO) << "total task costs: " << compilerTimer.elapsed_message();
     } catch (CppSQLite3::Exception &e) {

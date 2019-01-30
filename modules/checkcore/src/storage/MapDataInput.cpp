@@ -548,6 +548,7 @@ namespace kd {
             string lg_road_index_file = basePath + "/LG_ROADNODE_INDEX";
             DbfData lg_road_index_data(lg_road_index_file);
             if (lg_road_index_data.isInit()) {
+                mapDataManager->is_auto_road = true;
                 auto& road2LaneGroup2NodeIdxs = mapDataManager->road2LaneGroup2NodeIdxs_;
 
                 int record_nums = lg_road_index_data.getRecords();

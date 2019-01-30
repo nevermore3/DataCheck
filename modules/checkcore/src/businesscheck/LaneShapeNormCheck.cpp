@@ -393,7 +393,7 @@ namespace kd {
 
             check_JH_C_15(mapDataManager, errorOutput);
 
-            check_JH_C_17(mapDataManager, errorOutput);
+//            check_JH_C_17(mapDataManager, errorOutput);
 
             return true;
         }

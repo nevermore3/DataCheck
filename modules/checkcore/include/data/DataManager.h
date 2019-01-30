@@ -106,6 +106,9 @@ namespace kd {
 
            // key为lane group id，value为road id
            map<string, vector<string>> lane_group2_roads_maps_;
+       public:
+           // 是否道路是自动生成
+           bool is_auto_road = false;
        };
 
     }

@@ -17,7 +17,9 @@ namespace kd {
             bool ret = true;
             try {
                 pre_divider_topo(mapDataManager);
-                check_road_topo(mapDataManager, errorOutput);
+                if (mapDataManager->is_auto_road) {
+                    check_road_topo(mapDataManager, errorOutput);
+                }
                 check_lane_topo(mapDataManager, errorOutput);
             } catch (exception &e) {
                 LOG(ERROR) << e.what();
@@ -191,6 +193,7 @@ namespace kd {
                         auto left_conn_dividers = get_conn_dividers(mapDataManager,
                                                                     ptr_dividers[left_divider_idx]->id_);
 
+                        bool is_break = false;
                         while (left_conn_dividers.empty()) {
                             left_divider_idx++;
                             right_divider_idx = left_divider_idx + 1;
@@ -198,8 +201,12 @@ namespace kd {
                                 left_conn_dividers = get_conn_dividers(mapDataManager,
                                                                        ptr_dividers[left_divider_idx]->id_);
                             } else {
+                                is_break = true;
                                 break;
                             }
+                        }
+                        if (is_break) {
+                            continue;
                         }
                         auto right_conn_dividers = get_conn_dividers(mapDataManager,
                                                                      ptr_dividers[right_divider_idx]->id_);
@@ -209,8 +216,12 @@ namespace kd {
                                 right_conn_dividers = get_conn_dividers(mapDataManager,
                                                                        ptr_dividers[right_divider_idx]->id_);
                             } else {
+                                is_break = true;
                                 break;
                             }
+                        }
+                        if (is_break) {
+                            continue;
                         }
 
                         if (left_conn_dividers.empty() || right_conn_dividers.empty()) {
@@ -220,10 +231,6 @@ namespace kd {
                         auto divider_no2_ptr_divider = get_conn_ptr_dividers(mapDataManager,
                                                                              left_conn_dividers,
                                                                              right_conn_dividers);
-//                        auto divider_no2_ptr_divider = get_conn_ptr_dividers(mapDataManager,
-//                                                                             ptr_dividers[left_divider_idx],
-//                                                                             ptr_dividers[right_divider_idx],
-//                                                                             is_normal);
 
                         if (!divider_no2_ptr_divider.empty()) {
                             auto pre_ptr_lanes = CommonUtil::get_lanes_between_dividers(mapDataManager,
@@ -235,8 +242,8 @@ namespace kd {
                             auto lat_ptr_lanes = CommonUtil::get_lanes_between_dividers(mapDataManager,
                                                                                         lat_left_ptr_divider,
                                                                                         lat_right_ptr_divider);
-
-                            if (left_conn_dividers.size() == 1 && right_conn_dividers.size() == 1 && !is_depart) {
+                            if (pre_ptr_lanes.size() == lat_ptr_lanes.size()) {
+//                            if (left_conn_dividers.size() == 1 && right_conn_dividers.size() == 1 && !is_depart) {
                                 if (!is_lane_conn(mapDataManager, pre_ptr_lanes, lat_ptr_lanes)) {
                                     is_conn = false;
                                 }
@@ -267,7 +274,8 @@ namespace kd {
         void LaneGroupTopoCheck::get_conn_lane_groups(shared_ptr<MapDataManager> mapDataManager,
                                                       const shared_ptr<DCLaneGroup> &ptr_lane_group) {
             set<string> ret_conn_lane_groups;
-            auto insert_lane_group_times = [&](map<string, int> &lane_group2_times, const string &div) {
+            auto insert_lane_group_times = [&](map<string, int> &lane_group2_times, const string &pre_div,
+                    const string &div, map<string, vector<pair<string, string>>> &lane_group2_div2_div) {
                 auto conn_lane_groups = CommonUtil::get_lane_groups_by_divider(mapDataManager, div);
                 for (auto lg : conn_lane_groups) {
                     auto times_iter = lane_group2_times.find(lg);
@@ -277,26 +285,36 @@ namespace kd {
                         int time = 1;
                         lane_group2_times.insert(make_pair(lg, time));
                     }
+                    auto lg2_div_iter = lane_group2_div2_div.find(lg);
+                    if (lg2_div_iter != lane_group2_div2_div.end()) {
+                        lg2_div_iter->second.emplace_back(make_pair(pre_div, div));
+                    } else {
+                        vector<pair<string, string>> vec_div2_div;
+                        vec_div2_div.emplace_back(make_pair(pre_div, div));
+                        lane_group2_div2_div.insert(make_pair(lg, vec_div2_div));
+                    }
                 }
             };
 
             auto ptr_dividers = CommonUtil::get_dividers_by_lg(mapDataManager, ptr_lane_group->id_);
 
             map<string, int> lane_group2_times;
+            // key:lane group id value:divider关联对
+            map<string, vector<pair<string, string>>> lane_group2_div2_div;
             for (const auto &ptr_div : ptr_dividers) {
                 if (ptr_div->dividerNo_ == 0 && ptr_div->direction_ == 1) {
                     bool is_front = (ptr_lane_group->direction_ == 1);
                     auto con_dividers = CommonUtil::get_ref_conn_divider(mapDataManager, ptr_lane_group->id_,
                                                                          ptr_div, is_front);
                     for (const auto &div : con_dividers) {
-                        insert_divider2_conn_divider(ptr_div->id_, div);
-                        insert_lane_group_times(lane_group2_times, div);
+//                        insert_divider2_conn_divider(ptr_div->id_, div);
+                        insert_lane_group_times(lane_group2_times, ptr_div->id_, div, lane_group2_div2_div);
                     }
                 } else {
                     auto con_dividers = CommonUtil::get_conn_divider(mapDataManager, ptr_div, true);
                     for (const auto &div : con_dividers) {
-                        insert_divider2_conn_divider(ptr_div->id_, div);
-                        insert_lane_group_times(lane_group2_times, div);
+//                        insert_divider2_conn_divider(ptr_div->id_, div);
+                        insert_lane_group_times(lane_group2_times, ptr_div->id_, div, lane_group2_div2_div);
                     }
                 }
             }
@@ -306,6 +324,12 @@ namespace kd {
                     ret_conn_lane_groups.insert(lg2_time.first);
                     if (!is_virtual_lane_group(mapDataManager, lg2_time.first)) {
                         lane_group2_conn_lg_.insert(make_pair(ptr_lane_group->id_, lg2_time.first));
+                        auto lg2_div_iter = lane_group2_div2_div.find(lg2_time.first);
+                        if (lg2_div_iter != lane_group2_div2_div.end()) {
+                            for (auto div2_div : lg2_div_iter->second) {
+                                insert_divider2_conn_divider(div2_div.first, div2_div.second);
+                            }
+                        }
                     }
                 }
             }
@@ -345,14 +369,38 @@ namespace kd {
                                                   const vector<shared_ptr<DCDivider>> &right_ptr_dividers) {
             vector<shared_ptr<DCDivider>> ret_ptr_dividers;
 
-            map<long, shared_ptr<DCDivider>> divider_no2_ptr_divider;
-            for (const auto &div : left_ptr_dividers) {
-                divider_no2_ptr_divider.insert(make_pair(div->dividerNo_, div));
+            map<long, shared_ptr<DCDivider>> left_divider_no2_ptr_divider;
+            map<long, shared_ptr<DCDivider>> right_divider_no2_ptr_divider;
+            if (left_ptr_dividers.size() > 1 && right_ptr_dividers.size() == 1) {
+                auto right_lane_group = CommonUtil::get_lane_groups_by_divider(mapDataManager,
+                                                                               right_ptr_dividers.front()->id_);
+                for (const auto &div : left_ptr_dividers) {
+                    auto left_lane_group = CommonUtil::get_lane_groups_by_divider(mapDataManager,
+                                                                                  div->id_);
+                    for (const auto &lg : left_lane_group) {
+                        if (right_lane_group.find(lg) != right_lane_group.end()) {
+                            left_divider_no2_ptr_divider.insert(make_pair(div->dividerNo_, div));
+                        }
+                    }
+                }
+                for (const auto &div : right_ptr_dividers) {
+                    right_divider_no2_ptr_divider.insert(make_pair(div->dividerNo_, div));
+                }
+            } else {
+                for (const auto &div : left_ptr_dividers) {
+                    left_divider_no2_ptr_divider.insert(make_pair(div->dividerNo_, div));
+                }
+                for (const auto &div : right_ptr_dividers) {
+                    right_divider_no2_ptr_divider.insert(make_pair(div->dividerNo_, div));
+                }
+
             }
-            for (const auto &div : right_ptr_dividers) {
-                divider_no2_ptr_divider.insert(make_pair(div->dividerNo_, div));
+
+            for (const auto &div_no_iter : left_divider_no2_ptr_divider) {
+                ret_ptr_dividers.emplace_back(div_no_iter.second);
             }
-            for (const auto &div_no_iter : divider_no2_ptr_divider) {
+
+            for (const auto &div_no_iter : right_divider_no2_ptr_divider) {
                 ret_ptr_dividers.emplace_back(div_no_iter.second);
             }
             return ret_ptr_dividers;

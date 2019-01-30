@@ -211,8 +211,10 @@ namespace kd {
             const auto ptr_lane_groups = mapDataManager->laneGroups_;
             for (const auto &lane_group : ptr_lane_groups) {
                 auto ptr_dividers = CommonUtil::get_dividers_by_lg(mapDataManager, lane_group.first);
-                check_divider_no(mapDataManager, errorOutput, lane_group.first, ptr_dividers);
-                check_divider_length(mapDataManager, errorOutput, lane_group.first, ptr_dividers);
+                if (!ptr_dividers.empty()) {
+                    check_divider_no(mapDataManager, errorOutput, lane_group.first, ptr_dividers);
+                    check_divider_length(mapDataManager, errorOutput, lane_group.first, ptr_dividers);
+                }
             }
         }
 

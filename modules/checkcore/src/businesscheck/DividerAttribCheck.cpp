@@ -127,7 +127,8 @@ namespace kd {
                                 error->checkDesc_ = "车道分割线黄白线变化不一致";
                                 error->checkLevel_ = LEVEL_WARNING;
                                 stringstream ss;
-                                ss << "第一个属性索引点：" << (j - 1) << ",type: " << div->atts_[j - 1]->type_;
+                                ss << "divider:" << div->id_;
+                                ss << ",第一个属性索引点：" << (j - 1) << ",type: " << div->atts_[j - 1]->type_;
                                 ss << "第二个属性索引点：" << j << ",type: " << div->atts_[j]->type_;
                                 error->errorDesc_ = ss.str();
                                 errorOutput->saveError(error);
@@ -147,7 +148,8 @@ namespace kd {
                                     error->checkDesc_ = "车道分割线黄白线变化不一致";
                                     error->checkLevel_ = LEVEL_WARNING;
                                     stringstream ss;
-                                    ss << "第一个属性索引点：" << (j - 1) << ",type: " << div->atts_[j - 1]->type_;
+                                    ss << "divider:" << div->id_;
+                                    ss << ",第一个属性索引点：" << (j - 1) << ",type: " << div->atts_[j - 1]->type_;
                                     ss << "第二个属性索引点：" << j << ",type: " << div->atts_[j]->type_;
                                     error->errorDesc_ = ss.str();
                                     errorOutput->saveError(error);

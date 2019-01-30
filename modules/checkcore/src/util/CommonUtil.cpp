@@ -166,9 +166,10 @@ namespace kd {
                                                const shared_ptr<DCDivider> &left_divider,
                                                const shared_ptr<DCDivider> &right_divider) {
             vector<shared_ptr<DCLane>> ret_ptr_lanes;
-            if (left_divider->id_ != right_divider->id_ && left_divider->dividerNo_ < right_divider->dividerNo_) {
-                string lane_group;
-                if (is_same_lane_group(mapDataManager, left_divider, right_divider, lane_group)) {
+            string lane_group;
+            if (is_same_lane_group(mapDataManager, left_divider, right_divider, lane_group)) {
+                if (left_divider->id_ != right_divider->id_ && left_divider->dividerNo_ < right_divider->dividerNo_) {
+
                     const auto &ptr_lanes = get_lanes_by_lg(mapDataManager, lane_group);
                     for (const auto &lane : ptr_lanes) {
                         auto lane_left_divider = lane->leftDivider_;
@@ -180,6 +181,26 @@ namespace kd {
                         }
                     }
 
+                }
+            } else {
+                auto left_lane_group = get_lane_groups_by_divider(mapDataManager, left_divider->id_);
+                auto right_lane_group = get_lane_groups_by_divider(mapDataManager, right_divider->id_);
+                if (!left_lane_group.empty()) {
+                    auto left_dividers = get_dividers_by_lg(mapDataManager, *left_lane_group.begin());
+                    if (!left_dividers.empty()) {
+                        auto left_lanes = get_lanes_between_dividers(mapDataManager, left_divider,
+                                                                     left_dividers.at(left_dividers.size() - 1));
+                        ret_ptr_lanes.insert(ret_ptr_lanes.end(), left_lanes.begin(), left_lanes.end());
+                    }
+                }
+
+                if (!right_lane_group.empty()) {
+                    auto right_dividers = get_dividers_by_lg(mapDataManager, *right_lane_group.begin());
+                    if (!right_dividers.empty()) {
+                        auto right_lanes = get_lanes_between_dividers(mapDataManager, right_dividers.at(0),
+                                                                      right_divider);
+                        ret_ptr_lanes.insert(ret_ptr_lanes.end(), right_lanes.begin(), right_lanes.end());
+                    }
                 }
             }
 
@@ -204,6 +225,8 @@ namespace kd {
                         ret = true;
                     }
                 }
+            } else {
+                LOG(ERROR) << "is_same_lane_group error! lane_group : " << lane_group;
             }
             return ret;
         }

@@ -123,7 +123,7 @@ namespace kd {
                         DCDividerCheckError::createByNode("KXS-01-008", div, nullptr);
                 error->checkDesc_ = "车行道边缘线在非停止线/出入口标线的地方断开";
                 stringstream ss;
-                ss << "divider:" << div->id_ << "from node_id:" << fromNodeId << "断开.";
+                ss << "divider:" << div->id_ << ",from node_id:" << fromNodeId << "断开.";
                 error->errorDesc_ = ss.str();
                 errorOutput->saveError(error);
             }
@@ -135,7 +135,7 @@ namespace kd {
                         DCDividerCheckError::createByNode("KXS-01-008", div, nullptr);
                 error->checkDesc_ = "车行道边缘线在非停止线/出入口标线的地方断开";
                 stringstream ss;
-                ss << "divider:" << div->id_ << "from node_id:" << fromNodeId << "断开.";
+                ss << "divider:" << div->id_ << ",from node_id:" << fromNodeId << "断开.";
                 error->errorDesc_ = ss.str();
                 errorOutput->saveError(error);
             }
@@ -401,7 +401,7 @@ namespace kd {
             map<string, shared_ptr<DCDividerTopoNode>> topoNodes;
             buildTopoNodes(mapDataManager, topoNodes);
 
-            check_JH_C_4(mapDataManager, topoNodes, errorOutput);
+//            check_JH_C_4(mapDataManager, topoNodes, errorOutput);
 
             check_JH_C_5(mapDataManager, errorOutput);
 

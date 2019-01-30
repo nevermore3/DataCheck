@@ -12,7 +12,8 @@ namespace kd {
             LOG(ERROR) << info;
         }
 
-        void CheckErrorOutput::saveError() {
+        int CheckErrorOutput::saveError() {
+            int ret = 0;
             LOG(INFO) << "task [save error] start. ";
             TimerUtil compilerTimer;
 
@@ -37,6 +38,9 @@ namespace kd {
 
                 for (const auto &check_item : check_model_2_output_maps_) {
                     for (const auto& item : check_item.second) {
+                        if (item.level == LEVEL_ERROR) {
+                            ret = 1;
+                        }
                         int count = 1;
                         statement.bindNull(count++);
                         statement.bindNull(count++);
@@ -58,9 +62,11 @@ namespace kd {
 
             } catch (CppSQLite3::Exception &e) {
                 LOG(ERROR) << e.errorMessage().c_str();
+                ret = 1;
             }
 
             LOG(INFO) << "task [save error] end successfully " << " costs : " << compilerTimer.elapsed_message();
+            return ret;
         }
 
         void CheckErrorOutput::saveError(shared_ptr<DCError> error) {
@@ -86,12 +92,11 @@ namespace kd {
         string CheckErrorOutput::get_error_level(string check_model) {
             string ret = LEVEL_WARNING;
             if (check_model == "KXS-01-002" || check_model == "KXS-01-003" || check_model == "KXS-01-004" ||
-                check_model == "KXS-01-008" || check_model == "KXS-01-009" || check_model == "KXS-01-010" ||
-                check_model == "KXS-01-015") {
+                check_model == "KXS-01-008" || check_model == "KXS-01-015") {
                 ret = LEVEL_ERROR;
-            } else if (check_model == "KXS-03-002" || check_model == "KXS-03-003" || check_model == "KXS-03-004" ||
+            } else if (check_model == "KXS-03-002" || check_model == "KXS-03-004" ||
                        check_model == "KXS-03-006" || check_model == "KXS-03-011" || check_model == "KXS-03-012" ||
-                       check_model == "KXS-03-013" || check_model == "KXS-03-014" || check_model == "KXS-03-015" ||
+                       check_model == "KXS-03-014" || check_model == "KXS-03-015" ||
                        check_model == "KXS-03-016" || check_model == "KXS-03-019" || check_model == "KXS-03-020" ||
                        check_model == "KXS-03-021" || check_model == "KXS-03-022" || check_model == "KXS-03-023" ||
                        check_model == "KXS-03-024" || check_model == "KXS-03-025" || check_model == "KXS-03-026") {

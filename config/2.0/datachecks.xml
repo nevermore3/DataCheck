@@ -126,7 +126,7 @@
                    LEVEL="error"
                    INFO="Lane或Divider几何首尾点完全相同，导致NDS编译无法建立LaneConnectorId拓扑"
                    SQL="SELECT FileName fileName, FileName||'_GEOCOORDS' tblName FROM ARCSHAPE_METADATA WHERE 
-                   SHPType=13 AND (FileName LIKE '%lane%' OR FileName LIKE '%divider%') COLLATE NOCASE;
+                   SHPType=13 AND (FileName LIKE '%lane%') COLLATE NOCASE;
                    SELECT DISTINCT '{fileName}' FILENAME, group_concat(FID) FEATUREIDS FROM 
                    (SELECT se.FID, s.x sx, s.y sy, s.z sz, e.x ex, e.y ey, e.z ez FROM 
                    (SELECT FID, MIN(indexpoint) sptid, MAX(indexpoint) eptid FROM {tblName} GROUP BY FID) se 

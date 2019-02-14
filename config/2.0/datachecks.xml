@@ -9,12 +9,6 @@
                    SQL="SELECT fileName tblName FROM ARCSHAPE_METADATA WHERE SHPType&lt;&gt;0 and fileName&lt;&gt;'HD_DIVIDER_NODE_INDEX';
                    select '{tblName}' FileName, id RepeatId, count(*) RecoordCount from {tblName} 
                    group by id having count(*)>1;"/>
-    <datacheckitem ID="KXS-01-001"
-                   NAME="对象ID记录重复性检查"
-                   LEVEL="warning"
-                   INFO="数据中存在ID相同的重复记录"
-                   SQL="select 'HD_DIVIDER_NODE_INDEX' FileName, id RepeatId, count(*) RecoordCount from HD_DIVIDER_NODE_INDEX
-                   group by id,divider_id having count(*)>1;"/>
     <datacheckitem ID="KXS-01-002"
                    NAME="几何数据重复性检查"
                    LEVEL="error"
@@ -29,13 +23,6 @@
                    JOIN (SELECT min(FID) minid, X LocalX, Y LocalY FROM {tblName}_GEOCOORDS GROUP BY FID) 
                    b ON b.minid=rp.localid 
                    LEFT JOIN HD_AUX_TASKID T ON T.ID=B.MINID AND T.FILENAME='{tblName}' COLLATE NOCASE;"/>
-    <datacheckitem ID="KXS-01-002"
-                   NAME="几何数据重复性检查"
-                   LEVEL="error"
-                   INFO="数据中存在几何对象完全相同的重复记录"
-                   SQL=" select 'HD_DIVIDER_NODE' FileName, N.id RepeatId, count(*) RecoordCount from HD_DIVIDER_NODE N
-                    join HD_DIVIDER_NODE_INDEX I on I.id = N.id
-                   group by N.geometry,I.divider_id having count(*)>1;"/>
     <datacheckitem ID="KXS-01-003"
                    NAME="多边形形态错误"
                    LEVEL="error"
@@ -139,7 +126,7 @@
                    LEVEL="error"
                    INFO="Lane或Divider几何首尾点完全相同，导致NDS编译无法建立LaneConnectorId拓扑"
                    SQL="SELECT FileName fileName, FileName||'_GEOCOORDS' tblName FROM ARCSHAPE_METADATA WHERE 
-                   SHPType=13 AND (FileName LIKE '%lane%' OR FileName LIKE '%divider%') COLLATE NOCASE;
+                   SHPType=13 AND (FileName LIKE '%lane%') COLLATE NOCASE;
                    SELECT DISTINCT '{fileName}' FILENAME, group_concat(FID) FEATUREIDS FROM 
                    (SELECT se.FID, s.x sx, s.y sy, s.z sz, e.x ex, e.y ey, e.z ez FROM 
                    (SELECT FID, MIN(indexpoint) sptid, MAX(indexpoint) eptid FROM {tblName} GROUP BY FID) se 

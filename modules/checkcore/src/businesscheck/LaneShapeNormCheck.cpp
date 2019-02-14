@@ -387,8 +387,6 @@ namespace kd {
             if (mapDataManager == nullptr)
                 return false;
 
-            errorOutput->writeInfo("[LaneShapeNormCheck]\n" + make_shared<DCLaneCheckError>("")->getHeader(), false);
-
             check_JH_C_14(mapDataManager, errorOutput);
 
             check_JH_C_15(mapDataManager, errorOutput);

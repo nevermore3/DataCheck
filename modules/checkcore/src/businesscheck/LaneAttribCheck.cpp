@@ -216,8 +216,6 @@ namespace kd {
             if (mapDataManager == nullptr)
                 return false;
 
-            errorOutput->writeInfo("[LaneAttribCheck]\n" + make_shared<DCLaneCheckError>("")->getHeader(), false);
-
             check_JH_C_16(mapDataManager, errorOutput);
 
 //            check_JH_C_19(mapDataManager, errorOutput);

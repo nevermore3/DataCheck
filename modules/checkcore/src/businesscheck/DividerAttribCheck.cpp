@@ -430,8 +430,6 @@ namespace kd {
             if (mapDataManager == nullptr)
                 return false;
 
-            errorOutput->writeInfo("[DividerAttribCheck]\n" + make_shared<DCDividerCheckError>("")->getHeader(), false);
-
             check_JH_C_3(mapDataManager, errorOutput);
 
             check_JH_C_10(mapDataManager, errorOutput);

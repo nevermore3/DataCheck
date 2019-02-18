@@ -38,6 +38,12 @@ namespace kd {
             void check_lane_topo(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput);
 
             /**
+             * 检查是否存在既是出口又是入口的车道组
+             */
+            void check_lane_group_depart_merge(shared_ptr<MapDataManager> mapDataManager,
+                                               shared_ptr<CheckErrorOutput> errorOutput);
+
+            /**
              * 预处理divider连接关系，lane group连接关系
              * @param mapDataManager
              */

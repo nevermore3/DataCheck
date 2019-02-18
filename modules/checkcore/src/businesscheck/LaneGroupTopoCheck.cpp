@@ -21,6 +21,8 @@ namespace kd {
                     check_road_topo(mapDataManager, errorOutput);
                 }
                 check_lane_topo(mapDataManager, errorOutput);
+
+                check_lane_group_depart_merge(mapDataManager, errorOutput);
             } catch (exception &e) {
                 LOG(ERROR) << e.what();
                 ret = false;
@@ -445,6 +447,46 @@ namespace kd {
 
 
             return ret;
+        }
+
+        void LaneGroupTopoCheck::check_lane_group_depart_merge(shared_ptr<MapDataManager> mapDataManager,
+                                                               shared_ptr<CheckErrorOutput> errorOutput) {
+            // 通行方向后面的在前
+            map<string, set<string>> f_lane_group2_conn_lg;
+            // 通行方向前面的在前
+            map<string, set<string>> t_lane_group2_conn_lg;
+            for (const auto &pairLg : lane_group2_conn_lg_) {
+                auto f_lg_iter = f_lane_group2_conn_lg.find(pairLg.first);
+                if (f_lg_iter != f_lane_group2_conn_lg.end()) {
+                    f_lg_iter->second.insert(pairLg.second);
+                } else {
+                    set<string> conn_lg_set;
+                    conn_lg_set.insert(pairLg.second);
+                    f_lane_group2_conn_lg.insert(make_pair(pairLg.first, conn_lg_set));
+                }
+                auto t_lg_iter = t_lane_group2_conn_lg.find(pairLg.second);
+                if (t_lg_iter != t_lane_group2_conn_lg.end()) {
+                    t_lg_iter->second.insert(pairLg.first);
+                } else {
+                    set<string> conn_lg_set;
+                    conn_lg_set.insert(pairLg.first);
+                    t_lane_group2_conn_lg.insert(make_pair(pairLg.second, conn_lg_set));
+                }
+            }
+
+            for (auto f_lg2_conn_lg : f_lane_group2_conn_lg) {
+                // 存在进入车道
+                if (f_lg2_conn_lg.second.size() > 1) {
+                    auto t_lg2_conn_lg_iter = t_lane_group2_conn_lg.find(f_lg2_conn_lg.first);
+                    if (t_lg2_conn_lg_iter != t_lane_group2_conn_lg.end()) {
+                        if (t_lg2_conn_lg_iter->second.size() > 1) {
+                            // 错误输出
+                            shared_ptr<DCError> ptr_error = DCLaneGroupCheckError::createByKXS_03_027(f_lg2_conn_lg.first);
+                            errorOutput->saveError(ptr_error);
+                        }
+                    }
+                }
+            }
         }
     }
 }

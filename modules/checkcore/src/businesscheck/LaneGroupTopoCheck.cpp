@@ -39,12 +39,17 @@ namespace kd {
                                                      to_string(lane_conn.second->tLaneId_)));
             }
             const auto &dividers = mapDataManager->dividers_;
+            // 过滤重复组
+            set<string> tag_lane_group;
             for (const auto &div : dividers) {
                 auto lane_groups = CommonUtil::get_lane_groups_by_divider(mapDataManager, div.first);
                 for (const auto &lg : lane_groups) {
-                    if (!is_virtual_lane_group(mapDataManager, lg)) {
-                        auto ptr_lg = CommonUtil::get_lane_group(mapDataManager, lg);
-                        get_conn_lane_groups(mapDataManager, ptr_lg);
+                    if (tag_lane_group.find(lg) == tag_lane_group.end()) {
+                        if (!is_virtual_lane_group(mapDataManager, lg)) {
+                            auto ptr_lg = CommonUtil::get_lane_group(mapDataManager, lg);
+                            get_conn_lane_groups(mapDataManager, ptr_lg);
+                        }
+                        tag_lane_group.insert(lg);
                     }
                 }
             }

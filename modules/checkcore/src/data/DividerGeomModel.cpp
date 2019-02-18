@@ -274,6 +274,9 @@ namespace kd {
                     }else if(tmpNode->id_ == eId){
                         lsNode = leftDivider_->nodes_[leftDivider_->nodes_.size()-1];
                         leNode = leftDivider_->nodes_[0];
+                    } else {
+                        lsNode = leftDivider_->nodes_[0];
+                        leNode = leftDivider_->nodes_[leftDivider_->nodes_.size()-1];
                     }
                 }
                 //right divider
@@ -296,6 +299,9 @@ namespace kd {
                     }else if(tmpNode->id_ == eId){
                         rsNode = rightDivider_->nodes_[rightDivider_->nodes_.size()-1];
                         reNode = rightDivider_->nodes_[0];
+                    }else {
+                        rsNode = rightDivider_->nodes_[0];
+                        reNode = rightDivider_->nodes_[rightDivider_->nodes_.size()-1];
                     }
                 }
                 //根据方向判定通行方向的起始终止点

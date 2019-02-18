@@ -193,7 +193,6 @@ namespace kd {
                         auto left_conn_dividers = get_conn_dividers(mapDataManager,
                                                                     ptr_dividers[left_divider_idx]->id_);
 
-                        bool is_break = false;
                         while (left_conn_dividers.empty()) {
                             left_divider_idx++;
                             right_divider_idx = left_divider_idx + 1;
@@ -201,11 +200,10 @@ namespace kd {
                                 left_conn_dividers = get_conn_dividers(mapDataManager,
                                                                        ptr_dividers[left_divider_idx]->id_);
                             } else {
-                                is_break = true;
                                 break;
                             }
                         }
-                        if (is_break) {
+                        if (right_divider_idx < 0 || right_divider_idx >= ptr_dividers.size()) {
                             continue;
                         }
                         auto right_conn_dividers = get_conn_dividers(mapDataManager,
@@ -216,11 +214,10 @@ namespace kd {
                                 right_conn_dividers = get_conn_dividers(mapDataManager,
                                                                        ptr_dividers[right_divider_idx]->id_);
                             } else {
-                                is_break = true;
                                 break;
                             }
                         }
-                        if (is_break) {
+                        if (right_divider_idx < 0 || right_divider_idx >= ptr_dividers.size()) {
                             continue;
                         }
 

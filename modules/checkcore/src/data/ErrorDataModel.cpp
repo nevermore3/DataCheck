@@ -363,6 +363,17 @@ namespace kd {
             return error;
         }
 
+        shared_ptr<DCLaneGroupCheckError> DCLaneGroupCheckError::createByKXS_03_027(string lane_group_id) {
+            shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>("KXS-03-027");
+            error->checkLevel_ = LEVEL_ERROR;
+            error->checkDesc_ = "车道组没有打断，不应该存在既是入口又是出口的组";
+            error->detail += "lane_group_id:";
+            error->detail += lane_group_id;
+            error->detail += "车道组没有打断";
+
+            return error;
+        }
+
         /////////////////////////////////////////////////////////////////////////////////////////
         // DCLaneGroupTopoCheckError
         /////////////////////////////////////////////////////////////////////////////////////////

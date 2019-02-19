@@ -137,6 +137,23 @@ namespace kd {
             static shared_ptr<geos::geom::LineString>
             get_divider_line_string(const vector<shared_ptr<DCDividerNode>> &nodes);
 
+            /**
+             * divider是否是相同数字化方向的
+             * @param left_divider
+             * @param right_divider
+             * @return
+             */
+            static bool check_dividers_same_direction(const shared_ptr<DCDivider> &left_divider,
+                                                      const shared_ptr<DCDivider> &right_divider);
+
+            /**
+             * 返回node到DIVIDER的最短距离
+             * @param divider_node
+             * @param divider
+             * @return
+             */
+            static double get_min_distance_from_divider(const shared_ptr<DCDividerNode> &divider_node,
+                                                        const shared_ptr<DCDivider> &divider);
 
         private:
 
@@ -151,6 +168,14 @@ namespace kd {
             static bool is_same_lane_group(const shared_ptr<MapDataManager> &mapDataManager,
                                            const shared_ptr<DCDivider> &left_divider,
                                            const shared_ptr<DCDivider> &right_divider, string &lane_group);
+
+            /**
+            * 判断两条线是否方向相同
+            * @return
+            */
+            static bool calLaneSameDir(double firstNode1X, double firstNode1Y, double firstNode2X, double firstNode2Y,
+                                       double secondNode1X, double secondNode1Y, double secondNode2X,
+                                       double secondNode2Y, double angleLimit = 90.0);
         };
     }
 }

@@ -23,6 +23,13 @@
                    JOIN (SELECT min(FID) minid, X LocalX, Y LocalY FROM {tblName}_GEOCOORDS GROUP BY FID) 
                    b ON b.minid=rp.localid 
                    LEFT JOIN HD_AUX_TASKID T ON T.ID=B.MINID AND T.FILENAME='{tblName}' COLLATE NOCASE;"/>
+    <datacheckitem ID="KXS-01-002"
+                   NAME="几何数据重复性检查"
+                   LEVEL="error"
+                   INFO="数据中存在几何对象完全相同的重复记录"
+                   SQL="select 'HD_DIVIDER_NODE' FileName, group_concat(n.id) id from hd_divider_node n join (select distinct(geometry) from hd_divider_node
+                   where id in (select fdnode from hd_divider union select tdnode from hd_divider) GROUP BY
+                   geometry HAVING count(*)>1) g on g.geometry = n.geometry GROUP BY g.geometry;"/>
     <datacheckitem ID="KXS-01-003"
                    NAME="多边形形态错误"
                    LEVEL="error"

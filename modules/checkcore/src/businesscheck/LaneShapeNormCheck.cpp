@@ -387,11 +387,11 @@ namespace kd {
             if (mapDataManager == nullptr)
                 return false;
 
-            check_JH_C_14(mapDataManager, errorOutput);
-
+//            check_JH_C_14(mapDataManager, errorOutput);
+//
             check_JH_C_15(mapDataManager, errorOutput);
-
-            check_JH_C_17(mapDataManager, errorOutput);
+//
+//            check_JH_C_17(mapDataManager, errorOutput);
 
             return true;
         }

@@ -38,6 +38,12 @@ namespace kd {
             void check_lane_topo(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput);
 
             /**
+             * 检查是否存在既是出口又是入口的车道组
+             */
+            void check_lane_group_depart_merge(shared_ptr<MapDataManager> mapDataManager,
+                                               shared_ptr<CheckErrorOutput> errorOutput);
+
+            /**
              * 预处理divider连接关系，lane group连接关系
              * @param mapDataManager
              */
@@ -70,6 +76,16 @@ namespace kd {
             bool is_virtual_lane_group(const shared_ptr<MapDataManager> &mapDataManager, const string &lane_group_id);
 
             bool is_virtual_lane_group(const shared_ptr<DCLaneGroup> &ptr_lane_group);
+
+            /**
+             * 获取连接的divider,相同组的DIVIDER
+             * @param mapDataManager
+             * @param lane_group
+             * @param divider
+             * @return
+             */
+            vector<shared_ptr<DCDivider>> get_conn_dividers(const shared_ptr<MapDataManager> &mapDataManager,
+                                                            string lane_group, string divider);
 
             /**
              * 获取连接的divider
@@ -114,6 +130,18 @@ namespace kd {
             bool is_lane_conn(const shared_ptr<MapDataManager> &mapDataManager,
                               const vector<shared_ptr<DCLane>> &pre_ptr_lanes,
                               const vector<shared_ptr<DCLane>> &lat_ptr_lanes);
+
+            /**
+             * 车道中心线是否连接
+             * @param mapDataManager
+             * @param pre_ptr_lanes
+             * @param lat_ptr_lanes
+             * @return
+             */
+            bool is_lane_conn_case(const shared_ptr<MapDataManager> &mapDataManager,
+                                   const vector<shared_ptr<DCLane>> &pre_ptr_lanes,
+                                   const vector<shared_ptr<DCLane>> &lat_ptr_lanes,
+                                   set<string> &tag_f_lane);
 
         private:
             // 插入divider2_conn_dividers_maps_

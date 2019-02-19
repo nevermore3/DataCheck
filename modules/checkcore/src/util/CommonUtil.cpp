@@ -10,8 +10,7 @@
 #include "geos/geom/Point.h"
 #include <geom/geo_util.h>
 #include <geos/geom/Point.h>
-
-#include "util/CommonUtil.h"
+#include "util/GeosObjUtil.h"
 
 using namespace geos::geom;
 using namespace kd::automap;
@@ -317,6 +316,58 @@ namespace kd {
             }
 
             return ret_road_line_string;
+        }
+
+        bool CommonUtil::check_dividers_same_direction(const shared_ptr<DCDivider> &left_divider,
+                                                       const shared_ptr<DCDivider> &right_divider) {
+            auto first_ptr_node = left_divider->nodes_;
+            auto second_ptr_node = right_divider->nodes_;
+            if (calLaneSameDir(first_ptr_node[0]->coord_.lng_, first_ptr_node[0]->coord_.lat_,
+                               first_ptr_node[1]->coord_.lng_, first_ptr_node[1]->coord_.lat_,
+                               second_ptr_node[0]->coord_.lng_, second_ptr_node[0]->coord_.lat_,
+                               second_ptr_node[1]->coord_.lng_, second_ptr_node[1]->coord_.lat_)) {
+                return true;
+            }
+            return false;
+        }
+
+        bool CommonUtil::calLaneSameDir(double firstNode1X, double firstNode1Y, double firstNode2X, double firstNode2Y,
+                                        double secondNode1X, double secondNode1Y, double secondNode2X,
+                                        double secondNode2Y, double angleLimit) {
+            double thetaFirst = geo::geo_util::calcAngle(firstNode1X, firstNode1Y, firstNode2X, firstNode2Y);
+            double thetaSencond = geo::geo_util::calcAngle(secondNode1X, secondNode1Y, secondNode2X, secondNode2Y);
+
+            double angleDiff = fabs(thetaFirst - thetaSencond);
+            if (angleDiff > PI) {
+                angleDiff = 2 * PI - angleDiff;
+            }
+            double angle =  180/PI * angleDiff;
+            bool isSameDir = true;
+            if(angle > angleLimit){
+                isSameDir = false;
+            }
+            return isSameDir;
+        }
+
+        double CommonUtil::get_min_distance_from_divider(const shared_ptr<DCDividerNode> &divider_node,
+                                                         const shared_ptr<DCDivider> &divider) {
+            char zone0[8] = {0};
+
+            auto ptr_coordinate = GeosObjUtil::CreateCoordinate(divider_node, zone0);
+            double PtA[2] = {0};
+            PtA[0] = ptr_coordinate->x;
+            PtA[1] = ptr_coordinate->y;
+            auto *Line = new double[divider->nodes_.size() * 2];
+            for (int i = 0; i < divider->nodes_.size(); i++) {
+                auto ptr_tmp_coordinate = GeosObjUtil::CreateCoordinate(divider->nodes_[i], zone0);
+                Line[i * 2] = ptr_tmp_coordinate->x;
+                Line[i * 2 + 1] = ptr_tmp_coordinate->y;
+            }
+            double PtB[2], PtC[4];
+            int index = 0;
+            double dis = geo::geo_util::pt2LineDist(Line, static_cast<int>(divider->nodes_.size() * 2),
+                                                    PtA, PtB, PtC, index);
+            return dis;
         }
     }
 }

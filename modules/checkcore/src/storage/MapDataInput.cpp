@@ -122,6 +122,27 @@ namespace kd {
                             divider->nodes_.emplace_back(divNode);
                         }
                     }
+                    if (divider->fromNodeId_ != divider->nodes_.front()->id_ &&
+                        divider->fromNodeId_ != divider->nodes_.back()->id_) {
+                        shared_ptr<DCDividerCheckError> error =
+                                DCDividerCheckError::createByNode("KXS-01-018", divider, nullptr);
+                        error->checkDesc_ = "DIVIDER的FDNODE与TDNODE应该是实际的首尾点";
+                        stringstream ss;
+                        ss << "divider:" << divider->id_ << ",from node_id:" << divider->fromNodeId_ << "标记错误";
+                        error->errorDesc_ = ss.str();
+                        errorOutput->saveError(error);
+                    }
+
+                    if (divider->toNodeId_ != divider->nodes_.front()->id_ &&
+                        divider->toNodeId_ != divider->nodes_.back()->id_) {
+                        shared_ptr<DCDividerCheckError> error =
+                                DCDividerCheckError::createByNode("KXS-01-018", divider, nullptr);
+                        error->checkDesc_ = "DIVIDER的FDNODE与TDNODE应该是实际的首尾点";
+                        stringstream ss;
+                        ss << "divider:" << divider->id_ << ",to node_id:" << divider->fromNodeId_ << "标记错误";
+                        error->errorDesc_ = ss.str();
+                        errorOutput->saveError(error);
+                    }
                     dividers.insert(make_pair(divider->id_, divider));
                 }
             }else{

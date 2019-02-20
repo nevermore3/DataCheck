@@ -345,7 +345,8 @@ namespace kd {
 
             string toString() override;
         public:
-            static shared_ptr<DCAdasError> createByKXS_07_001();
+            static shared_ptr<DCAdasError> createByKXS_07_001(long road_id, string f_adas_node_id,
+                                                              string t_adas_node_id, double distance);
 
             static shared_ptr<DCAdasError> createByKXS_07_002();
         public:

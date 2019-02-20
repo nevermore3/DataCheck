@@ -651,7 +651,7 @@ namespace kd {
             double heading_;
 
             //坐标信息
-            DCCoord coord_;
+            shared_ptr<DCCoord> coord_;
         };
 
         /**
@@ -668,7 +668,7 @@ namespace kd {
             double slope_;
 
             //坐标信息
-            DCCoord coord_;
+            shared_ptr<DCCoord> coord_;
         };
 
         /**

@@ -502,8 +502,22 @@ namespace kd {
 
         }
 
-        shared_ptr<DCAdasError> DCAdasError::createByKXS_07_001() {
-            return shared_ptr<DCAdasError>();
+        shared_ptr<DCAdasError> DCAdasError::createByKXS_07_001(long road_id, string f_adas_node_id,
+                                                                string t_adas_node_id, double distance) {
+            shared_ptr<DCAdasError> error = make_shared<DCAdasError>("KXS-07-001");
+            error->checkDesc_ = "相邻属性点间的距离不等于1米，除去与终点距离可能小于1米。";
+            error->detail += "road_id:";
+            error->detail += std::to_string(road_id);
+            error->detail += ",属性点adas_node_id:";
+            error->detail += f_adas_node_id;
+            error->detail += ",";
+            error->detail += t_adas_node_id;
+            error->detail += "距离:";
+            error->detail += to_string(distance);
+            error->detail += "米";
+
+
+            return error;
         }
 
         shared_ptr<DCAdasError> DCAdasError::createByKXS_07_002() {
@@ -511,7 +525,7 @@ namespace kd {
         }
 
         string DCAdasError::toString() {
-            return std::__cxx11::string();
+            return detail;
         }
 
         string DCAdasError::getHeader() {

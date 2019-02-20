@@ -38,6 +38,7 @@ namespace kd {
 
         const string DataCheckConfig::DIVIDER_LENGTH_RATIO = "divider_length_ratio";
         const string DataCheckConfig::LANE_INTERSECT_LENGTH = "lane_intersect_length";
+        const string DataCheckConfig::ADAS_NODE_DISTANCE = "adas_node_distance";
 
 
 

@@ -498,6 +498,25 @@ namespace kd {
             return error;
         }
 
+        DCAdasError::DCAdasError(const string &checkModel) : DCError(checkModel)  {
+
+        }
+
+        shared_ptr<DCAdasError> DCAdasError::createByKXS_07_001() {
+            return shared_ptr<DCAdasError>();
+        }
+
+        shared_ptr<DCAdasError> DCAdasError::createByKXS_07_002() {
+            return shared_ptr<DCAdasError>();
+        }
+
+        string DCAdasError::toString() {
+            return std::__cxx11::string();
+        }
+
+        string DCAdasError::getHeader() {
+            return std::__cxx11::string();
+        }
     }
 }
 

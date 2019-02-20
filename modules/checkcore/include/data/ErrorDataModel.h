@@ -332,6 +332,27 @@ namespace kd {
             //错误详细信息描述
             string detail;
         };
+
+        /**
+        * ADAS检查错误
+        */
+        class DCAdasError : public DCError {
+        public:
+            explicit DCAdasError(const string &checkModel);
+
+        public:
+            string getHeader() override;
+
+            string toString() override;
+        public:
+            static shared_ptr<DCAdasError> createByKXS_07_001();
+
+            static shared_ptr<DCAdasError> createByKXS_07_002();
+        public:
+
+            //错误详细信息描述
+            string detail;
+        };
     }
 }
 

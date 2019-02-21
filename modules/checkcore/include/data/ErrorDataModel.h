@@ -15,7 +15,7 @@ namespace kd {
         static const string LEVEL_WARNING = "warning";
         static const string LEVEL_ERROR = "error";
 
-        class DCError{
+        class DCError {
         public:
 
             DCError(string checkModel);
@@ -56,9 +56,9 @@ namespace kd {
 
             DCAttCheckError(string checkModel, string modelName, string fieldName, string recordId);
 
-            virtual string getHeader() override ;
+            virtual string getHeader() override;
 
-            virtual string toString() override ;
+            virtual string toString() override;
 
         public:
             //模型名称，或表名
@@ -82,11 +82,12 @@ namespace kd {
         public:
             DCRelationCheckError(string checkModel);
 
-            DCRelationCheckError(string checkModel, string modelName, string fieldName, string refModelName, string refFieldName);
+            DCRelationCheckError(string checkModel, string modelName, string fieldName, string refModelName,
+                                 string refFieldName);
 
-            virtual string getHeader() override ;
+            virtual string getHeader() override;
 
-            virtual string toString() override ;
+            virtual string toString() override;
 
         public:
             //模型名称
@@ -122,12 +123,13 @@ namespace kd {
             static shared_ptr<DCDividerCheckError>
             createByNode(string checkModel, shared_ptr<DCDivider> div, shared_ptr<DCDividerNode> node);
 
-            static shared_ptr<DCDividerCheckError> createByNode(string checkModel, string nodeId, double lng, double lat, double z);
+            static shared_ptr<DCDividerCheckError>
+            createByNode(string checkModel, string nodeId, double lng, double lat, double z);
 
         public:
-            virtual string getHeader() override ;
+            virtual string getHeader() override;
 
-            virtual string toString() override ;
+            virtual string toString() override;
 
         public:
             //车道线id
@@ -161,15 +163,15 @@ namespace kd {
             DCLaneCheckError(string checkModel);
 
             static shared_ptr<DCLaneCheckError> createByAtt(string checkModel, shared_ptr<DCLane> lane,
-                                                               shared_ptr<DCLaneAttribute> att);
+                                                            shared_ptr<DCLaneAttribute> att);
 
             static shared_ptr<DCLaneCheckError>
             createByNode(string checkModel, shared_ptr<DCLane> lane, shared_ptr<DCDividerNode> node);
 
         public:
-            virtual string getHeader() override ;
+            virtual string getHeader() override;
 
-            virtual string toString() override ;
+            virtual string toString() override;
 
         public:
             //车道id
@@ -210,9 +212,9 @@ namespace kd {
 
             DCSqlCheckError(string checkModel, string modelName, string fieldName, string recordId);
 
-            virtual string getHeader() override ;
+            virtual string getHeader() override;
 
-            virtual string toString() override ;
+            virtual string toString() override;
 
         public:
             //模型名称，或表名
@@ -242,6 +244,7 @@ namespace kd {
             string getHeader() override;
 
             string toString() override;
+
         public:
             static shared_ptr<DCLaneGroupCheckError> createByKXS_03_005(string road_id, long s_index, long e_index,
                                                                         bool is_positive = true);
@@ -280,10 +283,12 @@ namespace kd {
             string getHeader() override;
 
             string toString() override;
+
         public:
             static shared_ptr<DCLaneGroupTopoCheckError> createByKXS_04_001(string lg_id1, string lg_id2);
 
             static shared_ptr<DCLaneGroupTopoCheckError> createByKXS_05_001(string lg_id1, string lg_id2);
+
         public:
 
             //错误详细信息描述
@@ -301,9 +306,11 @@ namespace kd {
             string getHeader() override;
 
             string toString() override;
+
         public:
             static shared_ptr<DCRoadCheckError> createByKXS_04_002(const string &road_id,
-                                                                            const string &lane_group_id);
+                                                                   const string &lane_group_id);
+
         public:
 
             //错误详细信息描述
@@ -321,12 +328,14 @@ namespace kd {
             string getHeader() override;
 
             string toString() override;
+
         public:
             static shared_ptr<DCLaneError> createByKXS_05_002(const string &lane_id,
                                                               const string &divider_id);
 
             static shared_ptr<DCLaneError> createByKXS_05_003(const string &lane_id,
                                                               const string &divider_id);
+
         public:
 
             //错误详细信息描述
@@ -344,11 +353,14 @@ namespace kd {
             string getHeader() override;
 
             string toString() override;
+
         public:
             static shared_ptr<DCAdasError> createByKXS_07_001(long road_id, string f_adas_node_id,
                                                               string t_adas_node_id, double distance);
 
-            static shared_ptr<DCAdasError> createByKXS_07_002();
+            static shared_ptr<DCAdasError> createByKXS_07_002(long road_id, const shared_ptr<DCCoord> &ptr_coord,
+                                                              long index, double distance);
+
         public:
 
             //错误详细信息描述

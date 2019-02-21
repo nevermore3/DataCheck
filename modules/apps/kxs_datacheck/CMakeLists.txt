@@ -5,7 +5,7 @@ add_executable(${PROJECT_NAME} kxs_datacheck.cpp)
 
 #
 target_link_libraries(${PROJECT_NAME} autohdmap_checkcore)
-target_link_libraries(${PROJECT_NAME} general autohdmap_core autohdmap_api)
+target_link_libraries(${PROJECT_NAME} general autohdmap_core autohdmap_api autohdmap_clothoidd)
 target_link_libraries(${PROJECT_NAME} general PocoJSON PocoFoundation PocoNet PocoUtil pthread)
 target_link_libraries(${PROJECT_NAME} general geos glog cppsqlite3 nds_sqlite3 tinyxml)
 
@@ -13,6 +13,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${HDMAP_LIBS_DIR}/modules/api/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${HDMAP_LIBS_DIR}/modules/core/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${HDMAP_LIBS_DIR}/modules/server/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${HDMAP_LIBS_DIR}/modules/clothoid/include)
 
 if (CMAKE_HOST_WIN32)
     INSTALL(TARGETS ${PROJECT_NAME} DESTINATION download/bin/win64)

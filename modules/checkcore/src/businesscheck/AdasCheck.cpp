@@ -6,6 +6,12 @@
 #include <shp/shapefil.h>
 #include <shp/ShpData.hpp>
 #include <util/CommonUtil.h>
+#include <seg/LineSegmentation.h>
+#include <seg/CircleSegmentation.h>
+#include <seg/ClothoidSegmentation.h>
+#include <util/GeosObjUtil.h>
+
+using namespace kd::seg;
 
 namespace kd {
     namespace dc {
@@ -27,11 +33,21 @@ namespace kd {
             error_output = errorOutput;
 
             // 加载数据
-            ret &= load_adas_data();
+//            ret &= load_adas_data();
 
             // 加载点数据
             if (load_adas_node()) {
                 check_adas_node();
+            }
+
+            // 加载坡度数据
+//            if (load_adas_node_slope()) {
+//                check_adas_node_slope();
+//            }
+
+            // 加载曲率数据
+            if (load_adas_node_curvature()) {
+                check_adas_node_curvature();
             }
 
             return false;
@@ -41,7 +57,7 @@ namespace kd {
             bool ret = true;
 //            ret &= load_adas_node();
             ret &= load_adas_node_slope();
-            ret &= load_adas_node_fitting();
+//            ret &= load_adas_node_fitting();
             ret &= load_adas_node_curvature();
             return ret;
         }
@@ -76,7 +92,6 @@ namespace kd {
                         ptr_adas_node->coord_ = ptr_coord;
                     }
                     insert_road_id2_adas_node_maps(ptr_adas_node);
-//                    adas_nodes_vec_.emplace_back(ptr_adas_node);
                 }
             } else {
                 LOG(ERROR) << "open shp file " << adas_node_file << "failed!";
@@ -116,7 +131,7 @@ namespace kd {
                         ptr_coord->z_ = shpObject->padfZ[idx];
                         ptr_adas_node_slope->nodes_.emplace_back(ptr_coord);
                     }
-                    adas_nodes_slope_vec_.emplace_back(ptr_adas_node_slope);
+                    insert_road_id2_adas_nodes_slope(ptr_adas_node_slope);
                 }
             } else {
                 LOG(ERROR) << "open shp file " << adas_node_slope_file << "failed!";
@@ -174,7 +189,7 @@ namespace kd {
                         continue;
 
                     //读取基本属性
-                    shared_ptr<AdasNodeCurvaTure> ptr_adas_node_curvature = make_shared<AdasNodeCurvaTure>();
+                    shared_ptr<AdasNodeCurvature> ptr_adas_node_curvature = make_shared<AdasNodeCurvature>();
                     ptr_adas_node_curvature->id_ = to_string(shpData.readIntField(i, "id"));
                     ptr_adas_node_curvature->road_id_ = shpData.readIntField(i, "road_id");
                     ptr_adas_node_curvature->node_num_ = shpData.readIntField(i, "node_num");
@@ -218,7 +233,7 @@ namespace kd {
                         ptr_coord->z_ = shpObject->padfZ[idx];
                         ptr_adas_node_curvature->nodes_.emplace_back(ptr_coord);
                     }
-                    adas_nodes_curvature_vec_.emplace_back(ptr_adas_node_curvature);
+                    insert_road_id2_adas_nodes_cur(ptr_adas_node_curvature);
                 }
             } else {
                 LOG(ERROR) << "open shp file " << adas_node_cur_file << "failed!";
@@ -228,10 +243,10 @@ namespace kd {
         }
 
         void AdasCheck::release() {
-            adas_nodes_vec_.clear();
+            road_id2_adas_node_maps_.clear();
             adas_nodes_fitting_vec_.clear();
-            adas_nodes_slope_vec_.clear();
-            adas_nodes_curvature_vec_.clear();
+            road_id2_adas_nodes_slope_maps_.clear();
+            road_id2_adas_nodes_cur_maps_.clear();
         }
 
         void AdasCheck::check_adas_node() {
@@ -251,7 +266,8 @@ namespace kd {
                     // 距离大于参数
                     if (distance_ret == 3) {
                         check = true;
-                    } if (distance_ret == 2 && adas_node_next_iter != road_id2_adas_node.second.end()) {
+                    }
+                    if (distance_ret == 2 && adas_node_next_iter != road_id2_adas_node.second.end()) {
                         // 距离小于参数并且不是最后两个点
                         check = true;
                     }
@@ -268,6 +284,116 @@ namespace kd {
             }
         }
 
+
+        void AdasCheck::check_adas_node_slope() {
+            for (const auto &road_id2_adas_node_slope : road_id2_adas_nodes_slope_maps_) {
+                auto ptr_nodes_slopes_vec = road_id2_adas_node_slope.second;
+                for (const auto &node_slope : ptr_nodes_slopes_vec) {
+                    auto ptr_road = CommonUtil::get_road(data_manager, to_string(node_slope->road_id_));
+                    vector<shared_ptr<DCCoord>> road_nodes_vec;
+                    // 获取道路节点集合
+                    get_road_nodes(ptr_road, node_slope->from_node_, node_slope->to_node_, road_nodes_vec);
+                    vector<shared_ptr<DCCoord>> slope_nodes_vec;
+                    // 获取拟合节点集合
+                    get_slope_nodes(node_slope, slope_nodes_vec);
+                    // 判断节点间距
+                    check_slope_node_distance(road_nodes_vec, slope_nodes_vec);
+                }
+            }
+        }
+
+        void AdasCheck::check_adas_node_curvature() {
+            for (const auto &road_id2_adas_node_cur : road_id2_adas_nodes_cur_maps_) {
+                auto ptr_nodes_curs = road_id2_adas_node_cur.second;
+                for (const auto &nodes_curvature : ptr_nodes_curs) {
+                    auto ptr_road = CommonUtil::get_road(data_manager, to_string(nodes_curvature->road_id_));
+                    vector<shared_ptr<DCCoord>> road_nodes_vec;
+                    // 获取道路节点集合
+                    get_road_nodes(ptr_road, nodes_curvature->from_node_, nodes_curvature->to_node_, road_nodes_vec);
+                    vector<shared_ptr<geos::geom::Coordinate>> curvature_nodes_vec;
+
+                    char zone[8] = {};
+                    if (nodes_curvature->type_ == 1) {
+                        LineModel lm;
+                        lm.setup(nodes_curvature->curvature_line_.ratio_, nodes_curvature->curvature_line_.intercept_,
+                                 nodes_curvature->offset_x_, nodes_curvature->offset_y_);
+                        int count = 0;
+                        for (const auto &node : nodes_curvature->nodes_) {
+                            auto ptr_utm_node = GeosObjUtil::create_coordinate(node, zone);
+
+                            // 拟合值计算
+                            if (nodes_curvature->curvature_line_.x_axis_based_) {
+                                double predit_y = lm.predict(ptr_utm_node->x);
+                                double fabs_sub_dis = fabs(predit_y - ptr_utm_node->y);
+                                check_cur_node_distance(nodes_curvature, node, fabs_sub_dis,
+                                                        nodes_curvature->from_node_ + count);
+                            } else {
+                                double predit_x = lm.predict(ptr_utm_node->y);
+                                double fabs_sub_dis = fabs(predit_x - ptr_utm_node->x);
+                                check_cur_node_distance(nodes_curvature, node, fabs_sub_dis,
+                                                        nodes_curvature->from_node_ + count);
+                            }
+
+                            count++;
+                        }
+                    } else if (nodes_curvature->type_ == 2) {
+                        CircleModel cm;
+                        cm.setup(nodes_curvature->curvature_circle_.radius_,
+                                 nodes_curvature->curvature_circle_.center_x_,
+                                 nodes_curvature->curvature_circle_.center_y_,
+                                 nodes_curvature->offset_x_,
+                                 nodes_curvature->offset_y_);
+                        int count = 0;
+
+                        for (const auto &node : nodes_curvature->nodes_) {
+                            auto ptr_utm_node = GeosObjUtil::create_coordinate(node, zone);
+
+                            // 拟合值计算
+                            double predit_y = cm.predictWithGuess(ptr_utm_node->y, ptr_utm_node->x);
+                            double fabs_sub_dis = fabs(predit_y - ptr_utm_node->y);
+                            check_cur_node_distance(nodes_curvature, node, fabs_sub_dis,
+                                                    nodes_curvature->from_node_ + count);
+
+                            count++;
+                        }
+                    } else if (nodes_curvature->type_ == 3) {
+                        ClothoidModel clm;
+                        clm.setup(nodes_curvature->curvature_curve_.theta0_,
+                                  nodes_curvature->curvature_curve_.theta1_,
+                                  nodes_curvature->curvature_curve_.x0_,
+                                  nodes_curvature->curvature_curve_.y0_,
+                                  nodes_curvature->curvature_curve_.x1_,
+                                  nodes_curvature->curvature_curve_.y1_,
+                                  nodes_curvature->offset_x_,
+                                  nodes_curvature->offset_y_);
+                        vector<double> vFit, sFit, vec_x, vec_y;
+                        for (const auto &node : nodes_curvature->nodes_) {
+                            auto ptr_utm_node = GeosObjUtil::create_coordinate(node, zone);
+                            vec_x.emplace_back(ptr_utm_node->x);
+                            vec_y.emplace_back(ptr_utm_node->y);
+                        }
+
+                        clm.predict(vFit, sFit, vec_x, vec_y, nodes_curvature->curvature_curve_.x_axis_based_);
+
+                        for (size_t idx = 0; idx < vFit.size(); idx++) {
+                            double fabs_sub_dis = 0;
+                            if (nodes_curvature->curvature_curve_.x_axis_based_) {
+                                fabs_sub_dis = fabs(vFit[idx] - vec_y[idx]);
+                                check_cur_node_distance(nodes_curvature, nodes_curvature->nodes_[idx], fabs_sub_dis,
+                                                        nodes_curvature->from_node_ + idx);
+                            } else {
+                                fabs_sub_dis = fabs(vFit[idx] - vec_x[idx]);
+                                check_cur_node_distance(nodes_curvature, nodes_curvature->nodes_[idx], fabs_sub_dis,
+                                                        nodes_curvature->from_node_ + idx);
+                            }
+                        }
+                    } else {
+                        LOG(ERROR) << "adas node curavature type is wrong, id : " << nodes_curvature->id_;
+                    }
+                }
+            }
+        }
+
         void AdasCheck::insert_road_id2_adas_node_maps(const shared_ptr<AdasNode> &ptr_adas_node) {
             auto adas_node_iter = road_id2_adas_node_maps_.find(ptr_adas_node->road_id_);
             if (adas_node_iter != road_id2_adas_node_maps_.end()) {
@@ -279,6 +405,30 @@ namespace kd {
             }
         }
 
+        void AdasCheck::insert_road_id2_adas_nodes_slope(const shared_ptr<AdasNodeSlope> &ptr_adas_node_slope) {
+            auto adas_node_slope_iter = road_id2_adas_nodes_slope_maps_.find(ptr_adas_node_slope->road_id_);
+            if (adas_node_slope_iter != road_id2_adas_nodes_slope_maps_.end()) {
+                adas_node_slope_iter->second.emplace_back(ptr_adas_node_slope);
+            } else {
+                vector<shared_ptr<AdasNodeSlope>> adas_node_slope_vector;
+                adas_node_slope_vector.emplace_back(ptr_adas_node_slope);
+                road_id2_adas_nodes_slope_maps_.insert(
+                        make_pair(ptr_adas_node_slope->road_id_, adas_node_slope_vector));
+            }
+        }
+
+        void AdasCheck::insert_road_id2_adas_nodes_cur(const shared_ptr<AdasNodeCurvature> &ptr_adas_node_cur) {
+            auto adas_node_cur_iter = road_id2_adas_nodes_cur_maps_.find(ptr_adas_node_cur->road_id_);
+            if (adas_node_cur_iter != road_id2_adas_nodes_cur_maps_.end()) {
+                adas_node_cur_iter->second.emplace_back(ptr_adas_node_cur);
+            } else {
+                vector<shared_ptr<AdasNodeCurvature>> adas_node_cur_vector;
+                adas_node_cur_vector.emplace_back(ptr_adas_node_cur);
+                road_id2_adas_nodes_cur_maps_.insert(make_pair(ptr_adas_node_cur->road_id_, adas_node_cur_vector));
+            }
+        }
+
+
         int AdasCheck::check_adas_node_distance(const shared_ptr<AdasNode> &f_ptr_adas_node,
                                                 const shared_ptr<AdasNode> &t_ptr_adas_node, double &distance) {
             int ret = 1;
@@ -288,7 +438,7 @@ namespace kd {
                 dc_coords_vec.emplace_back(f_ptr_adas_node->coord_);
                 dc_coords_vec.emplace_back(t_ptr_adas_node->coord_);
 
-                distance = CommonUtil::get_length_of_coords(dc_coords_vec);
+                distance = GeosObjUtil::get_length_of_coords(dc_coords_vec);
             } else {
                 auto ptr_road = CommonUtil::get_road(data_manager, to_string(t_ptr_adas_node->road_id_));
                 auto ptr_road_node = ptr_road->nodes_[t_ptr_adas_node->road_node_idx_];
@@ -296,12 +446,14 @@ namespace kd {
                 dc_coords_vec.emplace_back(f_ptr_adas_node->coord_);
                 dc_coords_vec.emplace_back(ptr_road_node);
                 dc_coords_vec.emplace_back(t_ptr_adas_node->coord_);
-                distance = CommonUtil::get_length_of_coords(dc_coords_vec);
+                distance = GeosObjUtil::get_length_of_coords(dc_coords_vec);
             }
 
             double adas_node_distance = DataCheckConfig::getInstance().getPropertyD(
                     DataCheckConfig::ADAS_NODE_DISTANCE);
-            if (fabs(distance - adas_node_distance) < 1e-5) {
+            double adas_node_distance_acc = DataCheckConfig::getInstance().getPropertyD(
+                    DataCheckConfig::ADAS_NODE_DISTANCE_ACCURACY);
+            if (fabs(distance - adas_node_distance) < adas_node_distance_acc) {
                 ret = 1;
             } else if (distance < adas_node_distance) {
                 ret = 2;
@@ -311,5 +463,44 @@ namespace kd {
             return ret;
         }
 
+        void AdasCheck::get_road_nodes(const shared_ptr<DCRoad> &ptr_road, long from_node, long to_node,
+                                       vector<shared_ptr<DCCoord>> &ptr_nodes_vec) {
+            for (long idx = from_node; idx <= to_node; idx++) {
+                if (idx >= 0 && idx < ptr_road->nodes_.size()) {
+                    ptr_nodes_vec.emplace_back(ptr_road->nodes_[idx]);
+                }
+            }
+        }
+
+        void AdasCheck::get_slope_nodes(const shared_ptr<AdasNodeSlope> &ptr_node_slope,
+                                        vector<shared_ptr<DCCoord>> &ptr_nodes_vec) {
+//            for (const auto &node : ptr_node_slope->nodes_) {
+//                LineModel lm;
+//                lm.setup(node->lng_, ptr_node_slope->intercept_, 0, 0);
+//            }
+        }
+
+        void AdasCheck::check_slope_node_distance(const vector<shared_ptr<DCCoord>> &road_nodes,
+                                                  const vector<shared_ptr<DCCoord>> &slope_nodes) {
+            if (road_nodes.size() == slope_nodes.size()) {
+
+            }
+        }
+
+        void AdasCheck::check_cur_node_distance(const shared_ptr<AdasNodeCurvature> &ptr_adas_node_cur,
+                                                const shared_ptr<DCCoord> &ptr_coord,
+                                                double fabs_sub_dis, int index) {
+
+            double adas_cur_dis = DataCheckConfig::getInstance().getPropertyD(
+                    DataCheckConfig::ADAS_NODE_CURVATURE_DISTANCE);
+
+            if (fabs_sub_dis > adas_cur_dis) {
+                shared_ptr<DCError> ptr_error = DCAdasError::createByKXS_07_002(ptr_adas_node_cur->road_id_,
+                                                                                ptr_coord, index, fabs_sub_dis);
+                if (ptr_error) {
+                    error_output->saveError(ptr_error);
+                }
+            }
+        }
     }
 }

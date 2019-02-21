@@ -18,7 +18,21 @@ namespace kd {
 
             bool execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) override;
 
+            /**
+             * 对拟合点进行检查
+             */
             void check_adas_node();
+
+            /**
+             * 坡度检查
+             */
+            void check_adas_node_slope();
+
+            /**
+             * 曲率检查
+             */
+            void check_adas_node_curvature();
+
 
         private:
             // 数据加载
@@ -34,6 +48,10 @@ namespace kd {
 
             void insert_road_id2_adas_node_maps(const shared_ptr<AdasNode> &ptr_adas_node);
 
+            void insert_road_id2_adas_nodes_slope(const shared_ptr<AdasNodeSlope> &ptr_adas_node_slope);
+
+            void insert_road_id2_adas_nodes_cur(const shared_ptr<AdasNodeCurvature> &ptr_adas_node_cur);
+
             void release();
         private:
             /**
@@ -46,18 +64,32 @@ namespace kd {
             int check_adas_node_distance(const shared_ptr<AdasNode> &f_ptr_adas_node,
                                           const shared_ptr<AdasNode> &t_ptr_adas_node, double &distance);
 
+            void get_road_nodes(const shared_ptr<DCRoad> &ptr_road, long from_node, long to_node,
+                                vector<shared_ptr<DCCoord>> &ptr_nodes_vec);
+
+            void get_slope_nodes(const shared_ptr<AdasNodeSlope> &ptr_node_slope,
+                                 vector<shared_ptr<DCCoord>> &ptr_nodes_vec);
+
+            void check_slope_node_distance(const vector<shared_ptr<DCCoord>> &road_nodes,
+                                           const vector<shared_ptr<DCCoord>> &slope_nodes);
+
+            void check_cur_node_distance(const shared_ptr<AdasNodeCurvature> &ptr_adas_node_cur,
+                                         const shared_ptr<DCCoord> &ptr_coord,
+                                         double fabs_sub_dis, int index);
+
+
         private:
             const string id = "adas_check";
             string base_path;
             shared_ptr<MapDataManager> data_manager;
             shared_ptr<CheckErrorOutput> error_output;
         private:
-            vector<shared_ptr<AdasNode>> adas_nodes_vec_;
             // road_id与adas_node_index与adas_node的映射
             unordered_map<long, map<long, shared_ptr<AdasNode>>> road_id2_adas_node_maps_;
+            unordered_map<long, vector<shared_ptr<AdasNodeSlope>>> road_id2_adas_nodes_slope_maps_;
+            unordered_map<long, vector<shared_ptr<AdasNodeCurvature>>> road_id2_adas_nodes_cur_maps_;
             vector<shared_ptr<AdasNodeFitting>> adas_nodes_fitting_vec_;
-            vector<shared_ptr<AdasNodeSlope>> adas_nodes_slope_vec_;
-            vector<shared_ptr<AdasNodeCurvaTure>> adas_nodes_curvature_vec_;
+//            vector<shared_ptr<AdasNodeSlope>> adas_nodes_slope_vec_;
         };
     }
 }

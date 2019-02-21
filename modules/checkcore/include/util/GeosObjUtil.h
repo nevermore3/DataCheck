@@ -14,8 +14,28 @@ namespace kd {
     namespace dc {
         class GeosObjUtil {
         public :
-            static shared_ptr<geos::geom::Coordinate> CreateCoordinate(const shared_ptr<DCDividerNode> &ptr_node,
+            static shared_ptr<geos::geom::Coordinate> create_coordinate(const shared_ptr<DCDividerNode> &ptr_node,
                                                                        char *zone0, bool is_z = false);
+
+            static shared_ptr<geos::geom::Coordinate> create_coordinate(const shared_ptr<DCCoord> &ptr_node,
+                                                                       char *zone0, bool is_z = false);
+
+            static shared_ptr<DCCoord> get_coord(const shared_ptr<geos::geom::Coordinate> &ptr_coord,
+                                                                 char *zone0, bool is_z = false);
+
+            /**
+             * 获取点集合长度
+             * @param ptr_coords
+             * @return
+             */
+            static double get_length_of_coords(const vector<shared_ptr<DCCoord>> &ptr_coords);
+
+            /**
+             * 获取点集合长度
+             * @param ptr_coords
+             * @return
+             */
+            static double get_length_of_coords(const vector<shared_ptr<geos::geom::Coordinate>> &ptr_coords);
         };
     }
 }

@@ -726,7 +726,7 @@ namespace kd {
         /**
          * adas_node_curvaature信息
          */
-        class AdasNodeCurvaTure : public DCModel {
+        class AdasNodeCurvature : public DCModel {
         public:
             long road_id_;
 

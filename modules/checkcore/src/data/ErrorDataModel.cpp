@@ -15,57 +15,59 @@ namespace kd {
         // DCkError
         /////////////////////////////////////////////////////////////////////////////////////////
 
-        DCError::DCError(string checkModel){
+        DCError::DCError(string checkModel) {
             checkModel_ = checkModel;
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////
         // DCAttCheckError
         /////////////////////////////////////////////////////////////////////////////////////////
-        DCAttCheckError::DCAttCheckError(string checkModel): DCError(checkModel){
+        DCAttCheckError::DCAttCheckError(string checkModel) : DCError(checkModel) {
 
         }
 
-        DCAttCheckError::DCAttCheckError(string checkModel, string modelName, string fieldName, string recordId):
-                DCError(checkModel){
+        DCAttCheckError::DCAttCheckError(string checkModel, string modelName, string fieldName, string recordId) :
+                DCError(checkModel) {
             modelName_ = modelName;
             fieldName_ = fieldName;
-            recordId_  = recordId;
+            recordId_ = recordId;
         }
 
-        string DCAttCheckError::getHeader(){
+        string DCAttCheckError::getHeader() {
             return "checkModel,modelName,fieldName,recordId,errorDesc";
         }
 
         string DCAttCheckError::toString() {
             stringstream ss;
-            ss << "\"" << checkModel_ << ":" << checkDesc_ << "\"," << modelName_ << "," << fieldName_ << "," << recordId_ << "," << errorDesc_;
+            ss << "\"" << checkModel_ << ":" << checkDesc_ << "\"," << modelName_ << "," << fieldName_ << ","
+               << recordId_ << "," << errorDesc_;
             return ss.str();
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////
         // DCRelationCheckError
         /////////////////////////////////////////////////////////////////////////////////////////
-        DCRelationCheckError::DCRelationCheckError(string checkModel) : DCError(checkModel){
+        DCRelationCheckError::DCRelationCheckError(string checkModel) : DCError(checkModel) {
 
         }
 
         DCRelationCheckError::DCRelationCheckError(string checkModel, string modelName, string fieldName,
-                                                   string refModelName, string refFieldName):
-                DCError(checkModel){
+                                                   string refModelName, string refFieldName) :
+                DCError(checkModel) {
             modelName_ = modelName;
             fieldName_ = fieldName;
             refModelName_ = refModelName;
             refFieldName_ = refFieldName;
         }
 
-        string DCRelationCheckError::getHeader(){
+        string DCRelationCheckError::getHeader() {
             return "checkModel,modelName,fieldName,refModelName,refFieldName,recordValue,errorDesc";
         }
 
         string DCRelationCheckError::toString() {
             stringstream ss;
-            ss << "\"" << checkModel_ << ":" << checkDesc_ << "\"," << modelName_ << "," << fieldName_ << "," << refModelName_;
+            ss << "\"" << checkModel_ << ":" << checkDesc_ << "\"," << modelName_ << "," << fieldName_ << ","
+               << refModelName_;
             ss << "," << refFieldName_ << "," << recordValue_ << "," << errorDesc_;
             return ss.str();
         }
@@ -78,13 +80,13 @@ namespace kd {
 
         }
 
-        string DCDividerCheckError::getHeader(){
+        string DCDividerCheckError::getHeader() {
             return "checkModel,dividerId,attId,nodeId,lng,lat,z,errorDesc";
         }
 
         string DCDividerCheckError::toString() {
             stringstream ss;
-            ss <<  errorDesc_;
+            ss << errorDesc_;
             return ss.str();
         }
 
@@ -93,17 +95,17 @@ namespace kd {
                                          shared_ptr<DCDividerAttribute> att) {
 
             shared_ptr<DCDividerCheckError> error = make_shared<DCDividerCheckError>(checkModel);
-            if(div == nullptr)
+            if (div == nullptr)
                 return error;
 
             error->dividerId_ = div->id_;
-            if( att != nullptr){
+            if (att != nullptr) {
                 error->nodeId_ = att->dividerNode_->id_;
                 error->attId_ = att->id_;
                 error->lng_ = att->dividerNode_->coord_.lng_;
                 error->lat_ = att->dividerNode_->coord_.lat_;
                 error->z_ = att->dividerNode_->coord_.z_;
-            }else{
+            } else {
                 error->nodeId_ = "";
                 error->attId_ = "";
                 error->lng_ = 0.0;
@@ -115,20 +117,21 @@ namespace kd {
         }
 
         shared_ptr<DCDividerCheckError>
-        DCDividerCheckError::createByNode(string checkModel, shared_ptr<DCDivider> div, shared_ptr<DCDividerNode> node){
+        DCDividerCheckError::createByNode(string checkModel, shared_ptr<DCDivider> div,
+                                          shared_ptr<DCDividerNode> node) {
             shared_ptr<DCDividerCheckError> error = make_shared<DCDividerCheckError>(checkModel);
-            if(div == nullptr)
+            if (div == nullptr)
                 return error;
 
             error->dividerId_ = div->id_;
 
-            if( node != nullptr){
+            if (node != nullptr) {
                 error->nodeId_ = node->id_;
                 error->attId_ = "";
                 error->lng_ = node->coord_.lng_;
                 error->lat_ = node->coord_.lat_;
                 error->z_ = node->coord_.z_;
-            }else{
+            } else {
                 error->nodeId_ = "";
                 error->attId_ = "";
                 error->lng_ = 0.0;
@@ -139,7 +142,8 @@ namespace kd {
             return error;
         }
 
-        shared_ptr<DCDividerCheckError> DCDividerCheckError::createByNode(string checkModel, string nodeId, double lng, double lat, double z){
+        shared_ptr<DCDividerCheckError>
+        DCDividerCheckError::createByNode(string checkModel, string nodeId, double lng, double lat, double z) {
             shared_ptr<DCDividerCheckError> error = make_shared<DCDividerCheckError>(checkModel);
             error->dividerId_ = "";
             error->nodeId_ = nodeId;
@@ -159,7 +163,7 @@ namespace kd {
 
         }
 
-        string DCLaneCheckError::getHeader(){
+        string DCLaneCheckError::getHeader() {
             return "checkModel,laneId,leftDividerId,rightDividerId,attId,nodeId,lng,lat,z,errorDesc";
         }
 
@@ -173,28 +177,28 @@ namespace kd {
         DCLaneCheckError::createByAtt(string checkModel, shared_ptr<DCLane> lane, shared_ptr<DCLaneAttribute> att) {
 
             shared_ptr<DCLaneCheckError> error = make_shared<DCLaneCheckError>(checkModel);
-            if(lane == nullptr)
+            if (lane == nullptr)
                 return error;
 
             error->laneId_ = lane->id_;
-            if(lane->leftDivider_)
+            if (lane->leftDivider_)
                 error->leftDividerId_ = lane->leftDivider_->id_;
             else
                 error->leftDividerId_ = "";
 
-            if(lane->rightDivider_)
+            if (lane->rightDivider_)
                 error->rightDividerId_ = lane->rightDivider_->id_;
             else
                 error->rightDividerId_ = "";
 
 
-            if( att != nullptr){
+            if (att != nullptr) {
                 error->nodeId_ = att->dividerNode_->id_;
                 error->attId_ = att->id_;
                 error->lng_ = att->dividerNode_->coord_.lng_;
                 error->lat_ = att->dividerNode_->coord_.lat_;
                 error->z_ = att->dividerNode_->coord_.z_;
-            }else{
+            } else {
                 error->nodeId_ = "";
                 error->attId_ = "";
                 error->lng_ = 0.0;
@@ -206,29 +210,29 @@ namespace kd {
         }
 
         shared_ptr<DCLaneCheckError>
-        DCLaneCheckError::createByNode(string checkModel, shared_ptr<DCLane> lane, shared_ptr<DCDividerNode> node){
+        DCLaneCheckError::createByNode(string checkModel, shared_ptr<DCLane> lane, shared_ptr<DCDividerNode> node) {
             shared_ptr<DCLaneCheckError> error = make_shared<DCLaneCheckError>(checkModel);
-            if(lane == nullptr)
+            if (lane == nullptr)
                 return error;
 
             error->laneId_ = lane->id_;
-            if(lane->leftDivider_)
+            if (lane->leftDivider_)
                 error->leftDividerId_ = lane->leftDivider_->id_;
             else
                 error->leftDividerId_ = "";
 
-            if(lane->rightDivider_)
+            if (lane->rightDivider_)
                 error->rightDividerId_ = lane->rightDivider_->id_;
             else
                 error->rightDividerId_ = "";
 
-            if( node != nullptr){
+            if (node != nullptr) {
                 error->nodeId_ = node->id_;
                 error->attId_ = "";
                 error->lng_ = node->coord_.lng_;
                 error->lat_ = node->coord_.lat_;
                 error->z_ = node->coord_.z_;
-            }else{
+            } else {
                 error->nodeId_ = "";
                 error->attId_ = "";
                 error->lng_ = 0.0;
@@ -242,18 +246,18 @@ namespace kd {
         /////////////////////////////////////////////////////////////////////////////////////////
         // DCLaneCheckError
         /////////////////////////////////////////////////////////////////////////////////////////
-        DCSqlCheckError::DCSqlCheckError(string checkModel): DCError(checkModel){
+        DCSqlCheckError::DCSqlCheckError(string checkModel) : DCError(checkModel) {
 
         }
 
-        DCSqlCheckError::DCSqlCheckError(string checkModel, string modelName, string fieldName, string recordId):
-                DCError(checkModel){
+        DCSqlCheckError::DCSqlCheckError(string checkModel, string modelName, string fieldName, string recordId) :
+                DCError(checkModel) {
             modelName_ = modelName;
             fieldName_ = fieldName;
-            recordId_  = recordId;
+            recordId_ = recordId;
         }
 
-        string DCSqlCheckError::getHeader(){
+        string DCSqlCheckError::getHeader() {
             return "checkModel,modelName,fieldName,recordId,errorDesc";
         }
 
@@ -262,6 +266,7 @@ namespace kd {
             ss << detail;
             return ss.str();
         }
+
         /////////////////////////////////////////////////////////////////////////////////////////
         // DCLaneGroupCheckError
         /////////////////////////////////////////////////////////////////////////////////////////
@@ -269,7 +274,7 @@ namespace kd {
 
         }
 
-        string DCLaneGroupCheckError::getHeader(){
+        string DCLaneGroupCheckError::getHeader() {
             return "";
         }
 
@@ -285,8 +290,8 @@ namespace kd {
             error->checkLevel_ = LEVEL_WARNING;
             error->checkDesc_ = "自动生成二维路网时，车道组要对道路全覆盖";
             error->detail = "roadid:" + road_id + "未全被车道组覆盖.未覆盖的范围是" +
-                    to_string(s_index) + "," + to_string(e_index) + "," +
-                    "lane group direction " + to_string(is_positive);
+                            to_string(s_index) + "," + to_string(e_index) + "," +
+                            "lane group direction " + to_string(is_positive);
 
             return error;
         }
@@ -349,7 +354,7 @@ namespace kd {
             shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>("KXS-03-001");
             error->checkLevel_ = LEVEL_WARNING;
             error->checkDesc_ = "同一个车道组内，单根车道线的长度同组内车道线平均长度不应该偏差超过";
-            error->checkDesc_ += to_string((int)(DataCheckConfig::getInstance().getPropertyD(
+            error->checkDesc_ += to_string((int) (DataCheckConfig::getInstance().getPropertyD(
                     DataCheckConfig::DIVIDER_LENGTH_RATIO) * 100));
             error->checkDesc_ += "%以上。";
             error->detail += "lane_group_id:";
@@ -381,7 +386,7 @@ namespace kd {
 
         }
 
-        string DCLaneGroupTopoCheckError::getHeader(){
+        string DCLaneGroupTopoCheckError::getHeader() {
             return "";
         }
 
@@ -426,7 +431,7 @@ namespace kd {
 
         }
 
-        string DCRoadCheckError::getHeader(){
+        string DCRoadCheckError::getHeader() {
             return "";
         }
 
@@ -457,7 +462,7 @@ namespace kd {
 
         }
 
-        string DCLaneError::getHeader(){
+        string DCLaneError::getHeader() {
             return "";
         }
 
@@ -468,7 +473,7 @@ namespace kd {
         }
 
         shared_ptr<DCLaneError> DCLaneError::createByKXS_05_002(const string &lane_id,
-                                                               const string &divider_id) {
+                                                                const string &divider_id) {
             shared_ptr<DCLaneError> error = make_shared<DCLaneError>("KXS-05-002");
             error->checkLevel_ = LEVEL_WARNING;
             error->checkDesc_ = "车道中心线与车道线在5米内不能存在两个交点（只检查组内车道线有共点的做检查）。";
@@ -498,7 +503,7 @@ namespace kd {
             return error;
         }
 
-        DCAdasError::DCAdasError(const string &checkModel) : DCError(checkModel)  {
+        DCAdasError::DCAdasError(const string &checkModel) : DCError(checkModel) {
 
         }
 
@@ -520,8 +525,25 @@ namespace kd {
             return error;
         }
 
-        shared_ptr<DCAdasError> DCAdasError::createByKXS_07_002() {
-            return shared_ptr<DCAdasError>();
+        shared_ptr<DCAdasError> DCAdasError::createByKXS_07_002(long road_id, const shared_ptr<DCCoord> &ptr_coord,
+                                                                long index, double distance) {
+            shared_ptr<DCAdasError> error = make_shared<DCAdasError>("KXS-07-002");
+            error->checkDesc_ = "属性点与拟合曲线属性点的距离不大于10厘米。";
+            error->detail += "road_id:";
+            error->detail += std::to_string(road_id);
+            error->detail += ",属性点索引:";
+            error->detail += to_string(index);
+            error->detail += ",点坐标:";
+            error->detail += to_string(ptr_coord->lng_);
+            error->detail += ",";
+            error->detail += to_string(ptr_coord->lat_);
+            error->detail += ",";
+            error->detail += to_string(ptr_coord->z_);
+            error->detail += ",与拟合曲线属性点距离:";
+            error->detail += to_string(distance);
+            error->detail += "米。";
+
+            return error;
         }
 
         string DCAdasError::toString() {

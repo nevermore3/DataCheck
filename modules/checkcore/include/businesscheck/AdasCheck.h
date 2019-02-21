@@ -70,9 +70,6 @@ namespace kd {
             void get_slope_nodes(const shared_ptr<AdasNodeSlope> &ptr_node_slope,
                                  vector<shared_ptr<DCCoord>> &ptr_nodes_vec);
 
-            void check_slope_node_distance(const vector<shared_ptr<DCCoord>> &road_nodes,
-                                           const vector<shared_ptr<DCCoord>> &slope_nodes);
-
             void check_cur_node_distance(const shared_ptr<AdasNodeCurvature> &ptr_adas_node_cur,
                                          const shared_ptr<DCCoord> &ptr_coord,
                                          double fabs_sub_dis, int index);

@@ -295,9 +295,16 @@ namespace kd {
                     get_road_nodes(ptr_road, node_slope->from_node_, node_slope->to_node_, road_nodes_vec);
                     vector<shared_ptr<DCCoord>> slope_nodes_vec;
                     // 获取拟合节点集合
-                    get_slope_nodes(node_slope, slope_nodes_vec);
-                    // 判断节点间距
-                    check_slope_node_distance(road_nodes_vec, slope_nodes_vec);
+                    LineModel lm;
+                    lm.setup(node_slope->ratio_, node_slope->intercept_, 0, 0);
+                    int count = 0;
+                    for (const auto &node : node_slope->nodes_) {
+                        double predit_z = lm.predict(node->z_);
+                        double fabs_sub_dis = fabs(predit_z - node->z_);
+
+
+                        count++;
+                    }
                 }
             }
         }
@@ -478,13 +485,6 @@ namespace kd {
 //                LineModel lm;
 //                lm.setup(node->lng_, ptr_node_slope->intercept_, 0, 0);
 //            }
-        }
-
-        void AdasCheck::check_slope_node_distance(const vector<shared_ptr<DCCoord>> &road_nodes,
-                                                  const vector<shared_ptr<DCCoord>> &slope_nodes) {
-            if (road_nodes.size() == slope_nodes.size()) {
-
-            }
         }
 
         void AdasCheck::check_cur_node_distance(const shared_ptr<AdasNodeCurvature> &ptr_adas_node_cur,

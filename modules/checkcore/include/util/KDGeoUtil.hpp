@@ -123,7 +123,7 @@ namespace kd {
              */
             static bool isLineSegmentCross(const geos::geom::Coordinate *start1, const geos::geom::Coordinate *end1,
                                            const geos::geom::Coordinate *start2, const geos::geom::Coordinate *end2,
-                                           double sameLimit = 0.01);
+                                           double sameLimit = 0.01, CoordinateSequence** coor_seq = nullptr);
 
 
             /**
@@ -133,8 +133,8 @@ namespace kd {
              * @param sameLimit 相交容差判断
              * @return true代表相交, false代表不相交
              */
-            static bool
-            isLineCross(geos::geom::LineString *line1, geos::geom::LineString *line2, double sameLimit = 0.01);
+            static bool isLineCross(geos::geom::LineString *line1, geos::geom::LineString *line2,
+                                    CoordinateSequence **coor_seq = nullptr, double sameLimit = 0.01);
 
             /**
              * 判断两条线是否相交
@@ -144,9 +144,8 @@ namespace kd {
              * @param sameLimit
              * @return
              */
-            static bool
-            isLineCross(geos::geom::LineString *line1, geos::geom::Geometry *geom_buffer, geos::geom::LineString *line2,
-                        double sameLimit);
+            static bool isLineCross(geos::geom::LineString *line1, geos::geom::Geometry *geom_buffer,
+                                    geos::geom::LineString *line2, double sameLimit, CoordinateSequence** coor_seq = nullptr);
 
             /**
              * 统计两条线相交的部分
@@ -157,10 +156,12 @@ namespace kd {
              * @param buffer 缓冲区大小，单位为米
              * @return 操作是否成功
              */
-            static bool getCorssPart(geos::geom::LineString * line1, geos::geom::LineString * line2, vector<int> & vecLine1, vector<int> & vecLine2, double buffer);
+            static bool getCorssPart(geos::geom::LineString *line1, geos::geom::LineString *line2,
+                                     vector<int> &vecLine1, vector<int> &vecLine2, double buffer);
 
 
-            static bool getPedalInfo(geos::geom::LineString * line, geos::geom::Coordinate * coord, double buffer, int & index, double & len);
+            static bool getPedalInfo(geos::geom::LineString *line, geos::geom::Coordinate *coord,
+                                     double buffer, int &index, double &len);
 
 
             /**

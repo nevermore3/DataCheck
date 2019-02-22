@@ -3,10 +3,11 @@
 //
 
 #include "businesscheck/LaneCheck.h"
-
 #include <geos/geom/GeometryFactory.h>
-
 #include "util/CommonUtil.h"
+#include "util/KDGeoUtil.hpp"
+
+using namespace kd::automap;
 
 namespace kd {
     namespace dc {
@@ -95,7 +96,7 @@ namespace kd {
             auto ptr_div_line_string = CommonUtil::get_divider_line_string(ptr_divider->nodes_);
             auto ptr_lane_line_string = CommonUtil::get_line_string(ptr_lane->coords_);
             if (ptr_lane_line_string && ptr_div_line_string) {
-                ret = ptr_lane_line_string->intersects(ptr_div_line_string.get());
+                ret = KDGeoUtil::isLineCross(ptr_lane_line_string.get(), ptr_div_line_string.get());
             }
             return ret;
         }
@@ -109,14 +110,14 @@ namespace kd {
             auto ptr_div_line_string = CommonUtil::get_divider_line_string(ptr_divider->nodes_);
             auto ptr_lane_line_string = CommonUtil::get_line_string(ptr_lane->coords_);
             if (ptr_lane_line_string && ptr_div_line_string) {
-                if (ptr_lane_line_string->intersects(ptr_div_line_string.get())) {
-                    auto intersections = ptr_lane_line_string->intersection(ptr_div_line_string.get());
+                CoordinateSequence *intersections = nullptr;
+                if (KDGeoUtil::isLineCross(ptr_lane_line_string.get(), ptr_div_line_string.get(), &intersections)) {
 
-                    if (intersections->getNumPoints() > 2) {
+                    if (intersections->size() > 2) {
                         ret = true;
-                    } else if (intersections->getNumPoints() == 2) {
+                    } else if (intersections->size() == 2) {
                         const GeometryFactory *gf = GeometryFactory::getDefaultInstance();
-                        geos::geom::LineString *lineString = gf->createLineString(intersections->getCoordinates());
+                        geos::geom::LineString *lineString = gf->createLineString(intersections);
 
                         double intersect_length = lineString->getLength();
                         if (intersect_length < lane_intersect_length) {

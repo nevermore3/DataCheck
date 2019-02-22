@@ -255,7 +255,7 @@ namespace kd {
 
                 Coordinates::ll2utm(node->lat_, node->lng_, X0, Y0, zone0);
 
-                cl->add(geos::geom::Coordinate(X0, Y0));
+                cl->add(geos::geom::Coordinate(X0, Y0, node->z_));
             }
 
             if (cl->size() >= 2) {
@@ -281,7 +281,7 @@ namespace kd {
 
                 Coordinates::ll2utm(node->coord_.lat_, node->coord_.lng_, X0, Y0, zone0);
 
-                cl->add(geos::geom::Coordinate(X0, Y0));
+                cl->add(geos::geom::Coordinate(X0, Y0, node->coord_.z_));
             }
 
             if (cl->size() >= 2) {

@@ -629,6 +629,151 @@ namespace kd {
             //所有tonode指向本节点的车道线，key和value都是车道线id
             map<string, string> endRels_;
         };
+
+        //////////////////////////////////
+        // Adas信息
+        //////////////////////////////////
+        /**
+         * adas_node信息
+         */
+        class AdasNode : public DCModel {
+        public:
+            long road_id_;
+
+            long road_node_idx_;
+
+            long adas_node_id_;
+
+            double curvature_;
+
+            double slope_;
+
+            double heading_;
+
+            //坐标信息
+            shared_ptr<DCCoord> coord_;
+        };
+
+        /**
+         * adas_node_fitting信息
+         */
+        class AdasNodeFitting : public DCModel {
+        public:
+            long road_id_;
+
+            long node_index_;
+
+            double curvature_;
+
+            double slope_;
+
+            //坐标信息
+            shared_ptr<DCCoord> coord_;
+        };
+
+        /**
+         * 线参数
+         */
+        class CurvatureLine {
+        public:
+            double ratio_;
+
+            double intercept_;
+
+            long x_axis_based_;
+        };
+
+        /**
+         * 圆弧参数
+         */
+        class CurvatureCircle {
+        public:
+            double radius_;
+
+            double center_x_;
+
+            double center_y_;
+
+            double center_dir_;
+        };
+
+        /**
+         * 回旋曲线参数
+         */
+        class CurvatureCurve {
+        public:
+            double theta0_;
+
+            double theta1_;
+
+            double arc_len_;
+
+            double curvature0_;
+
+            double curvature1_;
+
+            double x0_;
+
+            double y0_;
+
+            double x1_;
+
+            double y1_;
+
+            long x_axis_based_;
+        };
+
+        /**
+         * adas_node_curvaature信息
+         */
+        class AdasNodeCurvature : public DCModel {
+        public:
+            long road_id_;
+
+            long node_num_;
+
+            long seg_index_;
+
+            long from_node_;
+
+            long to_node_;
+
+            long type_;
+
+            CurvatureLine curvature_line_;
+
+            CurvatureCircle curvature_circle_;
+
+            CurvatureCurve curvature_curve_;
+
+            double offset_x_;
+
+            double offset_y_;
+
+            std::vector<shared_ptr<DCCoord>> nodes_;
+        };
+
+        /**
+       * adas_node_curvaature信息
+       */
+        class AdasNodeSlope : public DCModel {
+        public:
+            long road_id_;
+
+            long node_num_;
+
+            long seg_index_;
+
+            long from_node_;
+
+            long to_node_;
+
+            double ratio_;
+
+            double intercept_;
+
+            std::vector<shared_ptr<DCCoord>> nodes_;
+        };
     }
 }
 

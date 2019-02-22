@@ -36,7 +36,9 @@ namespace kd {
 
             const static string DIVIDER_LENGTH_RATIO;
             const static string LANE_INTERSECT_LENGTH;
-
+            const static string ADAS_NODE_DISTANCE;
+            const static string ADAS_NODE_DISTANCE_ACCURACY;
+            const static string ADAS_NODE_CURVATURE_DISTANCE;
 
 
         public:

@@ -8,3 +8,4 @@ add_library(autohdmap_checkcore ${checkcore_files_header} ${checkcore_files_cpp}
 target_include_directories(autohdmap_checkcore PUBLIC include)
 target_include_directories(autohdmap_checkcore PUBLIC ${HDMAP_LIBS_DIR}/modules/api/include)
 target_include_directories(autohdmap_checkcore PUBLIC ${HDMAP_LIBS_DIR}/modules/core/include)
+target_include_directories(autohdmap_checkcore PUBLIC ${HDMAP_LIBS_DIR}/modules/clothoid/include)

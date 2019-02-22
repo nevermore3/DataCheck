@@ -117,13 +117,6 @@ namespace kd {
                                        const shared_ptr<DCDivider> &right_divider);
 
             /**
-             * 获取点集合长度
-             * @param ptr_coords
-             * @return
-             */
-            static double get_length_of_coords(const vector<shared_ptr<DCCoord>> &ptr_coords);
-
-            /**
              * 获取2个divider node距离
              * @param divider_node1
              * @param divider_node2

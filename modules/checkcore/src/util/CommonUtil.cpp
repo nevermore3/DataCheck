@@ -230,29 +230,6 @@ namespace kd {
             return ret;
         }
 
-        double CommonUtil::get_length_of_coords(const vector<shared_ptr<DCCoord>> &ptr_coords) {
-            geos::geom::CoordinateSequence *cl = new geos::geom::CoordinateArraySequence();
-            for(const auto &ptr_coord : ptr_coords){
-                double X0, Y0;
-                char zone0[8] = {0};
-                double x = ptr_coord->lng_;
-                double y = ptr_coord->lat_;
-                double z = ptr_coord->z_;
-                kd::automap::Coordinates::ll2utm(y, x, X0, Y0, zone0);
-                cl->add(geos::geom::Coordinate(X0, Y0, z));
-            }
-            if (cl->size() < 2) {
-                return -1;
-            }
-            const geos::geom::GeometryFactory *gf = geos::geom::GeometryFactory::getDefaultInstance();
-            geos::geom::LineString *linesString = gf->createLineString(cl);
-            if (linesString) {
-                double len = linesString->getLength();
-                return len;
-            }
-            return -1;
-        }
-
         double CommonUtil::get_length_between_divider_nodes(const shared_ptr<DCDividerNode> &divider_node1,
                                                             const shared_ptr<DCDividerNode> &divider_node2) {
             vector<shared_ptr<DCCoord>> ptr_coords;
@@ -262,7 +239,7 @@ namespace kd {
 
                 ptr_coords.emplace_back(ptr_coord1);
                 ptr_coords.emplace_back(ptr_coord2);
-                return get_length_of_coords(ptr_coords);
+                return GeosObjUtil::get_length_of_coords(ptr_coords);
             }
             return -1;
         }
@@ -353,13 +330,13 @@ namespace kd {
                                                          const shared_ptr<DCDivider> &divider) {
             char zone0[8] = {0};
 
-            auto ptr_coordinate = GeosObjUtil::CreateCoordinate(divider_node, zone0);
+            auto ptr_coordinate = GeosObjUtil::create_coordinate(divider_node, zone0);
             double PtA[2] = {0};
             PtA[0] = ptr_coordinate->x;
             PtA[1] = ptr_coordinate->y;
             auto *Line = new double[divider->nodes_.size() * 2];
             for (int i = 0; i < divider->nodes_.size(); i++) {
-                auto ptr_tmp_coordinate = GeosObjUtil::CreateCoordinate(divider->nodes_[i], zone0);
+                auto ptr_tmp_coordinate = GeosObjUtil::create_coordinate(divider->nodes_[i], zone0);
                 Line[i * 2] = ptr_tmp_coordinate->x;
                 Line[i * 2 + 1] = ptr_tmp_coordinate->y;
             }

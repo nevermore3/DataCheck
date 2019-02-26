@@ -114,7 +114,7 @@ namespace kd {
             static vector<shared_ptr<DCLane>>
             get_lanes_between_dividers(const shared_ptr<MapDataManager> &mapDataManager,
                                        const shared_ptr<DCDivider> &left_divider,
-                                       const shared_ptr<DCDivider> &right_divider);
+                                       const shared_ptr<DCDivider> &right_divider, bool same = false);
 
             /**
              * 获取2个divider node距离

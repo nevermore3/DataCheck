@@ -163,7 +163,7 @@ namespace kd {
         vector<shared_ptr<DCLane>>
         CommonUtil::get_lanes_between_dividers(const shared_ptr<MapDataManager> &mapDataManager,
                                                const shared_ptr<DCDivider> &left_divider,
-                                               const shared_ptr<DCDivider> &right_divider) {
+                                               const shared_ptr<DCDivider> &right_divider, bool same) {
             vector<shared_ptr<DCLane>> ret_ptr_lanes;
             string lane_group;
             if (is_same_lane_group(mapDataManager, left_divider, right_divider, lane_group)) {
@@ -182,23 +182,25 @@ namespace kd {
 
                 }
             } else {
-                auto left_lane_group = get_lane_groups_by_divider(mapDataManager, left_divider->id_);
-                auto right_lane_group = get_lane_groups_by_divider(mapDataManager, right_divider->id_);
-                if (!left_lane_group.empty()) {
-                    auto left_dividers = get_dividers_by_lg(mapDataManager, *left_lane_group.begin());
-                    if (!left_dividers.empty()) {
-                        auto left_lanes = get_lanes_between_dividers(mapDataManager, left_divider,
-                                                                     left_dividers.at(left_dividers.size() - 1));
-                        ret_ptr_lanes.insert(ret_ptr_lanes.end(), left_lanes.begin(), left_lanes.end());
+                if (!same) {
+                    auto left_lane_group = get_lane_groups_by_divider(mapDataManager, left_divider->id_);
+                    auto right_lane_group = get_lane_groups_by_divider(mapDataManager, right_divider->id_);
+                    if (!left_lane_group.empty()) {
+                        auto left_dividers = get_dividers_by_lg(mapDataManager, *left_lane_group.begin());
+                        if (!left_dividers.empty()) {
+                            auto left_lanes = get_lanes_between_dividers(mapDataManager, left_divider,
+                                                                         left_dividers.at(left_dividers.size() - 1), true);
+                            ret_ptr_lanes.insert(ret_ptr_lanes.end(), left_lanes.begin(), left_lanes.end());
+                        }
                     }
-                }
 
-                if (!right_lane_group.empty()) {
-                    auto right_dividers = get_dividers_by_lg(mapDataManager, *right_lane_group.begin());
-                    if (!right_dividers.empty()) {
-                        auto right_lanes = get_lanes_between_dividers(mapDataManager, right_dividers.at(0),
-                                                                      right_divider);
-                        ret_ptr_lanes.insert(ret_ptr_lanes.end(), right_lanes.begin(), right_lanes.end());
+                    if (!right_lane_group.empty()) {
+                        auto right_dividers = get_dividers_by_lg(mapDataManager, *right_lane_group.begin());
+                        if (!right_dividers.empty()) {
+                            auto right_lanes = get_lanes_between_dividers(mapDataManager, right_dividers.at(0),
+                                                                          right_divider, true);
+                            ret_ptr_lanes.insert(ret_ptr_lanes.end(), right_lanes.begin(), right_lanes.end());
+                        }
                     }
                 }
             }
@@ -255,7 +257,7 @@ namespace kd {
 
                 Coordinates::ll2utm(node->lat_, node->lng_, X0, Y0, zone0);
 
-                cl->add(geos::geom::Coordinate(X0, Y0));
+                cl->add(geos::geom::Coordinate(X0, Y0, node->z_));
             }
 
             if (cl->size() >= 2) {
@@ -281,7 +283,7 @@ namespace kd {
 
                 Coordinates::ll2utm(node->coord_.lat_, node->coord_.lng_, X0, Y0, zone0);
 
-                cl->add(geos::geom::Coordinate(X0, Y0));
+                cl->add(geos::geom::Coordinate(X0, Y0, node->coord_.z_));
             }
 
             if (cl->size() >= 2) {

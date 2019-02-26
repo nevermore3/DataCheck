@@ -94,7 +94,7 @@ namespace kd {
             if (check_model == "KXS-01-002" || check_model == "KXS-01-003" || check_model == "KXS-01-004" ||
                 check_model == "KXS-01-008" || check_model == "KXS-01-015") {
                 ret = LEVEL_ERROR;
-            } else if (check_model == "KXS-03-002" || check_model == "KXS-03-004" ||
+            } else if (check_model == "KXS-03-002" || check_model == "KXS-03-004" || check_model == "KXS-03-005" ||
                        check_model == "KXS-03-006" || check_model == "KXS-03-011" || check_model == "KXS-03-012" ||
                        check_model == "KXS-03-014" || check_model == "KXS-03-015" ||
                        check_model == "KXS-03-016" || check_model == "KXS-03-019" || check_model == "KXS-03-020" ||

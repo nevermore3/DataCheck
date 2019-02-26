@@ -88,7 +88,7 @@ namespace kd {
 
         bool KDGeoUtil::isLineSegmentCross(const geos::geom::Coordinate *start1, const geos::geom::Coordinate *end1,
                                            const geos::geom::Coordinate *start2, const geos::geom::Coordinate *end2,
-                                           double sameLimit) {
+                                           double sameLimit, CoordinateSequence **coor_seq) {
 
             //判断两个线段在平面上是否相交
             double cpt[2];
@@ -108,8 +108,17 @@ namespace kd {
 
                 if (calZValue(start1, end1, &crosspt1) && calZValue(start2, end2, &crosspt2)) {
                     double dz = fabs(crosspt1.z - crosspt2.z);
-                    if (dz < sameLimit)
+                    if (dz < sameLimit) {
+                        if (coor_seq != nullptr) {
+                            if (*coor_seq == nullptr) {
+                                *coor_seq = new CoordinateArraySequence();
+                            }
+                            double cpt_z = (crosspt1.z + crosspt2.z) / 2;
+                            geos::geom::Coordinate cross_pt(cpt[0], cpt[1], cpt_z);
+                            (*coor_seq)->add(cross_pt);
+                        }
                         return true;
+                    }
                 }
             }
 
@@ -117,7 +126,8 @@ namespace kd {
         }
 
 
-        bool KDGeoUtil::isLineCross(geos::geom::LineString *line1, geos::geom::LineString *line2, double sameLimit) {
+        bool KDGeoUtil::isLineCross(geos::geom::LineString *line1, geos::geom::LineString *line2,
+                                    CoordinateSequence **coor_seq, double sameLimit) {
             if (line1 == nullptr || line2 == nullptr || sameLimit < 0)
                 return false;
 
@@ -127,7 +137,7 @@ namespace kd {
 
             geos::geom::Geometry *geom_buffer = line1->buffer(sameLimit);
 
-            bool ret = isLineCross(line1, geom_buffer, line2, sameLimit);
+            bool ret = isLineCross(line1, geom_buffer, line2, sameLimit, coor_seq);
 
             delete geom_buffer;
 
@@ -135,7 +145,7 @@ namespace kd {
         }
 
         bool KDGeoUtil::isLineCross(geos::geom::LineString *line1, geos::geom::Geometry *geom_buffer,
-                                    geos::geom::LineString *line2, double sameLimit) {
+                                    geos::geom::LineString *line2, double sameLimit, CoordinateSequence **coor_seq) {
 
             //参数检验
             if (line1 == nullptr || line2 == nullptr || geom_buffer == nullptr || sameLimit < 0)
@@ -162,7 +172,7 @@ namespace kd {
                     const Coordinate &start2 = longLine->getCoordinateN(j);
                     const Coordinate &end2 = longLine->getCoordinateN(j + 1);
 
-                    if (isLineSegmentCross(&start1, &end1, &start2, &end2, sameLimit)) {
+                    if (isLineSegmentCross(&start1, &end1, &start2, &end2, sameLimit, coor_seq)) {
                         return true;
                     }
                 }

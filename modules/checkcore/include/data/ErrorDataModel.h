@@ -366,6 +366,28 @@ namespace kd {
             //错误详细信息描述
             string detail;
         };
+
+        /**
+        * 字段检查错误
+        */
+        class DCFieldError : public DCError {
+        public:
+            explicit DCFieldError(const string &checkModel);
+
+        public:
+            string getHeader() override;
+
+            string toString() override;
+
+        public:
+            static shared_ptr<DCFieldError> createByKXS_01_019(const string &detail);
+
+
+        public:
+
+            //错误详细信息描述
+            string detail;
+        };
     }
 }
 

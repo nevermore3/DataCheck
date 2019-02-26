@@ -31,11 +31,14 @@ namespace kd {
 
 
         private:
-            void checkDoubleValueIn(const shared_ptr<DCFieldDefine> fieldDef, const shared_ptr<DCModalData> modelData, const string& fieldName, const shared_ptr<CheckErrorOutput> errorOutput);
+            void checkDoubleValueIn(const string &task_name, const shared_ptr<DCFieldDefine> &fieldDef, const shared_ptr<DCModalData> &modelData,
+                                    const string &fieldName, const shared_ptr<CheckErrorOutput> &errorOutput);
 
-            void checkLongValueIn(const shared_ptr<DCFieldDefine> fieldDef, const shared_ptr<DCModalData> modelData, const string& fieldName, const shared_ptr<CheckErrorOutput> errorOutput);
+            void checkLongValueIn(const string &task_name, const shared_ptr<DCFieldDefine> &fieldDef, const shared_ptr<DCModalData> &modelData,
+                                  const string &fieldName, const shared_ptr<CheckErrorOutput> &errorOutput);
 
-            void checkStringValueIn(const shared_ptr<DCFieldDefine> fieldDef, const shared_ptr<DCModalData> modelData, const string& fieldName, const shared_ptr<CheckErrorOutput> errorOutput);
+            void checkStringValueIn(const string &task_name, const shared_ptr<DCFieldDefine> &fieldDef, const shared_ptr<DCModalData> &modelData,
+                                    const string &fieldName, const shared_ptr<CheckErrorOutput> &errorOutput);
 
 
         private:

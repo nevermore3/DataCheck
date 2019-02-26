@@ -553,6 +553,26 @@ namespace kd {
         string DCAdasError::getHeader() {
             return std::__cxx11::string();
         }
+
+        DCFieldError::DCFieldError(const string &checkModel) : DCError(checkModel) {
+
+        }
+
+        string DCFieldError::toString() {
+            return detail;
+        }
+
+        string DCFieldError::getHeader() {
+            return std::__cxx11::string();
+        }
+
+        shared_ptr<DCFieldError> DCFieldError::createByKXS_01_019(const string &detail) {
+            shared_ptr<DCFieldError> error = make_shared<DCFieldError>("KXS-01-019");
+            error->checkDesc_ = "字段范围检查";
+            error->detail = detail;
+
+            return error;
+        }
     }
 }
 

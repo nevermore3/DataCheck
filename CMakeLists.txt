@@ -64,6 +64,7 @@ elseif(CMAKE_HOST_UNIX)
     link_directories(${HDMAP_LIBS_DIR}/modules/api/lib/linux)
     link_directories(${HDMAP_LIBS_DIR}/modules/core/lib/linux)
     link_directories(${HDMAP_LIBS_DIR}/modules/server/lib/linux)
+    link_directories(${HDMAP_LIBS_DIR}/modules/clothoid/lib/linux)
 endif()
 #thirdparty include
 include_directories(${HDMAP_LIBS_DIR}/thirdparty/include)

@@ -14,7 +14,7 @@
                    LEVEL="error"
                    INFO="数据中存在几何对象完全相同的重复记录"
                    SQL="SELECT fileName tblName FROM ARCSHAPE_METADATA WHERE SHPType&lt;&gt;0 and fileName&lt;&gt;'HD_DIVIDER_NODE_INDEX'
-                   and fileName&lt;&gt;'HD_DIVIDER_NODE and fileName&lt;&gt;'ADAS_NODE';
+                   and fileName&lt;&gt;'HD_DIVIDER_NODE' and fileName&lt;&gt;'ADAS_NODE';
                    SELECT rp.FileName, RepeatGeometryIds, T.TASKID, LocalX, LocalY FROM 
                    (SELECT '{tblName}' FileName, min(r.id) localid, group_concat(id) 
                    RepeatGeometryIds FROM {tblName} r 
@@ -161,7 +161,7 @@
                    UNION SELECT DIVIDERID, SPIDX, 'DA SPIDX值超限' FROM (SELECT DIVIDER_ID DIVIDERID, SPIDX FROM 
                    HD_DIVIDER_ATTRIBUTE WHERE SPIDX&lt;0 
                      UNION SELECT DIVIDER_ID, SPIDX FROM HD_DIVIDER_ATTRIBUTE DA JOIN 
-                     (SELECT FID, MAX(INDEXPOINT) NUMPT FROM HD_DIVIDER_GEOCOORDS GROUP BY FID) DN ON DA.DIVIDER_ID=DN.FID AND DA.SPIDX>NUMPT) 
+                     (SELECT FID, MAX(INDEXPOINT) NUMPT FROM HD_DIVIDER_GEOCOORDS GROUP BY FID) DN ON DA.DIVIDER_ID=DN.FID AND DA.SPIDX>NUMPT)
                      UNION SELECT DIVIDER_ID,SPIDX, '单个DividerNode上有多个DA' FROM HD_DIVIDER_ATTRIBUTE
                       GROUP BY DIVIDER_ID,SPIDX HAVING COUNT(*)&gt;1 ORDER BY INFO;"/>
     <datacheckitem ID="KXS-06-001"

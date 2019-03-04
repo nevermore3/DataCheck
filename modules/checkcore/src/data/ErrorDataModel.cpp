@@ -455,6 +455,23 @@ namespace kd {
             return error;
         }
 
+        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_003(const string &road_id,
+                                                                          vector<pair<int, int>> &error_index_pair) {
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>("KXS-04-003");
+            error->checkDesc_ = "道路高程突变>±10厘米/米。";
+            error->detail += "road_id:";
+            error->detail += road_id;
+            error->detail += ",结点索引:";
+            for (auto index_pair : error_index_pair) {
+                error->detail += to_string(index_pair.first);
+                error->detail += ",";
+                error->detail += to_string(index_pair.second);
+                error->detail += " ";
+            }
+
+            return error;
+        }
+
         /////////////////////////////////////////////////////////////////////////////////////////
         // DCLaneError
         /////////////////////////////////////////////////////////////////////////////////////////

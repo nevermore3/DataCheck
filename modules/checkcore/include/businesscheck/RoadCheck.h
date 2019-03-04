@@ -34,6 +34,9 @@ namespace kd {
             void check_road_divider_intersect(shared_ptr<MapDataManager> mapDataManager,
                                               shared_ptr<CheckErrorOutput> errorOutput);
 
+            void check_road_node_height(shared_ptr<MapDataManager> mapDataManager,
+                                        shared_ptr<CheckErrorOutput> errorOutput);
+
         private:
             shared_ptr<geos::geom::LineString> get_road_line_string(const shared_ptr<MapDataManager> &mapDataManager,
                                                                     const shared_ptr<DCRoad> &ptr_road,

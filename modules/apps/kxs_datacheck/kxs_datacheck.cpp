@@ -49,8 +49,8 @@ int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) 
         modelProcessManager->registerProcessor(modelFiledCheck);
 
         //属性业务检查
-        shared_ptr<ModelBussCheck> modelBussCheck = make_shared<ModelBussCheck>();
-        modelProcessManager->registerProcessor(modelBussCheck);
+//        shared_ptr<ModelBussCheck> modelBussCheck = make_shared<ModelBussCheck>();
+//        modelProcessManager->registerProcessor(modelBussCheck);
 
         //属性关系检查
 //        shared_ptr<ModelRelationCheck> modelRelationCheck = make_shared<ModelRelationCheck>();

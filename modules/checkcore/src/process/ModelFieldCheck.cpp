@@ -15,7 +15,8 @@ namespace kd {
             return id;
         }
 
-        bool ModelFieldCheck::execute(shared_ptr<ModelDataManager> dataManager, shared_ptr<CheckErrorOutput> errorOutput) {
+        bool
+        ModelFieldCheck::execute(shared_ptr<ModelDataManager> dataManager, shared_ptr<CheckErrorOutput> errorOutput) {
 
             for (auto taskit : dataManager->tasks_) {
                 string strTaskName = taskit.first;
@@ -23,7 +24,7 @@ namespace kd {
                 //获取模型数据
                 shared_ptr<DCModalData> modelData = nullptr;
                 auto itdata = dataManager->modelDatas_.find(strTaskName);
-                if (itdata != dataManager->modelDatas_.end()){
+                if (itdata != dataManager->modelDatas_.end()) {
                     modelData = itdata->second;
                 } else {
                     continue;
@@ -32,7 +33,7 @@ namespace kd {
                 //获取模型配置
                 shared_ptr<DCModelDefine> modelDefine = nullptr;
                 auto itdef = dataManager->modelDefines_.find(strTaskName);
-                if (itdef != dataManager->modelDefines_.end()){
+                if (itdef != dataManager->modelDefines_.end()) {
                     modelDefine = itdef->second;
                 } else {
                     continue;
@@ -47,14 +48,14 @@ namespace kd {
                     string fieldName = fieldDef->name;
                     switch (fieldDef->type) {
                         case DC_FIELD_TYPE_LONG:
-                            checkLongValueIn(fieldDef, modelData, fieldName, errorOutput);
+                            checkLongValueIn(strTaskName, fieldDef, modelData, fieldName, errorOutput);
                             break;
                         case DC_FIELD_TYPE_DOUBLE:
-                            checkDoubleValueIn(fieldDef, modelData, fieldName, errorOutput);
+                            checkDoubleValueIn(strTaskName, fieldDef, modelData, fieldName, errorOutput);
                             break;
                         case DC_FIELD_TYPE_VARCHAR:
                         case DC_FIELD_TYPE_TEXT:
-                            checkStringValueIn(fieldDef, modelData, fieldName, errorOutput);
+                            checkStringValueIn(strTaskName, fieldDef, modelData, fieldName, errorOutput);
                             break;
                         default:
                             ss << "[Error] not support field type limit check.";
@@ -66,84 +67,108 @@ namespace kd {
             return true;
         }
 
-        void ModelFieldCheck::checkDoubleValueIn(const shared_ptr<DCFieldDefine> fieldDef, const shared_ptr<DCModalData> modelData,
-                               const string& fieldName, const shared_ptr<CheckErrorOutput> errorOutput) {
+        void ModelFieldCheck::checkDoubleValueIn(const string &task_name, const shared_ptr<DCFieldDefine> &fieldDef,
+                                                 const shared_ptr<DCModalData> &modelData,
+                                                 const string &fieldName,
+                                                 const shared_ptr<CheckErrorOutput> &errorOutput) {
 
             for (shared_ptr<DCModelRecord> record : modelData->records) {
 
                 auto valuepair = record->doubleDatas.find(fieldName);
                 if (valuepair == record->doubleDatas.end()) {
                     stringstream ss;
-                    ss << "[Error] not find field " << fieldName << " value.";
-                    errorOutput->writeInfo(ss.str());
+                    ss << task_name << " 没有找到字段" << fieldName << " value.";
+//                    errorOutput->writeInfo(ss.str());
+                    shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
+                    errorOutput->saveError(ptr_error);
                     continue;
                 }
 
                 double recordValue = valuepair->second;
-                if (!IsValid<double>(fieldDef->valueLimit, recordValue)){
+                if (!IsValid<double>(fieldDef->valueLimit, recordValue)) {
                     stringstream ss;
-                    ss << "[Error] checkDoubleValueIn : " << fieldName << "=" << recordValue << " not in '"<< fieldDef->valueLimit <<"'";
+                    ss << task_name << " 检查double类型 : " << fieldName << "=" << recordValue << " not in '"
+                       << fieldDef->valueLimit << "'";
                     errorOutput->writeInfo(ss.str());
                 }
             }
         }
 
-        void ModelFieldCheck::checkLongValueIn(const shared_ptr<DCFieldDefine> fieldDef, const shared_ptr<DCModalData> modelData,
-                                               const string& fieldName, const shared_ptr<CheckErrorOutput> errorOutput) {
+        void ModelFieldCheck::checkLongValueIn(const string &task_name, const shared_ptr<DCFieldDefine> &fieldDef,
+                                               const shared_ptr<DCModalData> &modelData,
+                                               const string &fieldName,
+                                               const shared_ptr<CheckErrorOutput> &errorOutput) {
 
             for (shared_ptr<DCModelRecord> record : modelData->records) {
 
                 auto valuepair = record->longDatas.find(fieldName);
                 if (valuepair == record->longDatas.end()) {
                     stringstream ss;
-                    ss << "[Error] not find field " << fieldName << " value.";
-                    errorOutput->writeInfo(ss.str());
+                    ss << task_name << " 没有找到字段" << fieldName << " value.";
+                    shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
+                    errorOutput->saveError(ptr_error);
+//                    errorOutput->writeInfo(ss.str());
                     continue;
                 }
 
                 long recordValue = valuepair->second;
-                if (!IsValid<long>(fieldDef->valueLimit, recordValue)){
+                if (!IsValid<long>(fieldDef->valueLimit, recordValue)) {
                     stringstream ss;
-                    ss << "[Error] checkLongValueIn : " << fieldName << "=" << recordValue << " not in '"<< fieldDef->valueLimit <<"'";
-                    errorOutput->writeInfo(ss.str());
+                    ss << task_name << "检查long类型 : " << fieldName << "=" << recordValue << " not in '"
+                       << fieldDef->valueLimit << "'";
+                    shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
+                    errorOutput->saveError(ptr_error);
+                    //                    errorOutput->writeInfo(ss.str());
                 }
             }
         }
 
-        void ModelFieldCheck::checkStringValueIn(const shared_ptr<DCFieldDefine> fieldDef, const shared_ptr<DCModalData> modelData,
-                                               const string& fieldName, const shared_ptr<CheckErrorOutput> errorOutput) {
+        void ModelFieldCheck::checkStringValueIn(const string &task_name, const shared_ptr<DCFieldDefine> &fieldDef,
+                                                 const shared_ptr<DCModalData> &modelData,
+                                                 const string &fieldName,
+                                                 const shared_ptr<CheckErrorOutput> &errorOutput) {
 
             for (shared_ptr<DCModelRecord> record : modelData->records) {
 
                 auto valuepair = record->textDatas.find(fieldName);
                 if (valuepair == record->textDatas.end()) {
                     stringstream ss;
-                    ss << "[Error] not find field " << fieldName << " value.";
-                    errorOutput->writeInfo(ss.str());
+                    ss << task_name << " 没有找到字段 " << fieldName << " value.";
+//                    errorOutput->writeInfo(ss.str());
+                    shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
+                    errorOutput->saveError(ptr_error);
                     continue;
                 }
 
                 auto recordValue = valuepair->second;
                 int len = recordValue.length();
                 //判断值是否非空
-                if (fieldDef->inputLimit == 1 && len == 0){
+                if (fieldDef->inputLimit == 1 && len == 0) {
                     stringstream ss;
-                    ss << "[Error] checkStringValueIn : " << fieldName << " value should not null.";
-                    errorOutput->writeInfo(ss.str());
+                    ss << task_name << " 检查string类型非空 : " << fieldName << " value should not null.";
+//                    errorOutput->writeInfo(ss.str());
+                    shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
+                    errorOutput->saveError(ptr_error);
                 }
 
                 //判断值是否超长
-                if (fieldDef->len > 0 && len > fieldDef->len){
+                if (fieldDef->len > 0 && len > fieldDef->len) {
                     stringstream ss;
-                    ss << "[Error] checkStringValueIn : " << fieldName << " len=" << len << " exceed '"<< fieldDef->len <<"'";
-                    errorOutput->writeInfo(ss.str());
+                    ss << task_name << " 检查string类型是否超长 : " << fieldName << " len=" << len << " exceed '"
+                       << fieldDef->len << "'";
+                    shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
+                    errorOutput->saveError(ptr_error);
+//                    errorOutput->writeInfo(ss.str());
                 }
 
                 //判断值是否超限
-                if (len > 0 && !IsValid<string>(fieldDef->valueLimit, recordValue)){
+                if (len > 0 && !IsValid<string>(fieldDef->valueLimit, recordValue)) {
                     stringstream ss;
-                    ss << "[Error] checkStringValueIn : " << fieldName << "=" << recordValue << " not in '"<< fieldDef->valueLimit <<"'";
-                    errorOutput->writeInfo(ss.str());
+                    ss << task_name << "检查string类型 : " << fieldName << "=" << recordValue << " not in '"
+                       << fieldDef->valueLimit << "'";
+                    shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
+                    errorOutput->saveError(ptr_error);
+//                    errorOutput->writeInfo(ss.str());
                 }
             }
         }

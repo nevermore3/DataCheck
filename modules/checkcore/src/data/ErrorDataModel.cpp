@@ -33,10 +33,6 @@ namespace kd {
             recordId_ = recordId;
         }
 
-        string DCAttCheckError::getHeader() {
-            return "checkModel,modelName,fieldName,recordId,errorDesc";
-        }
-
         string DCAttCheckError::toString() {
             stringstream ss;
             ss << "\"" << checkModel_ << ":" << checkDesc_ << "\"," << modelName_ << "," << fieldName_ << ","
@@ -60,10 +56,6 @@ namespace kd {
             refFieldName_ = refFieldName;
         }
 
-        string DCRelationCheckError::getHeader() {
-            return "checkModel,modelName,fieldName,refModelName,refFieldName,recordValue,errorDesc";
-        }
-
         string DCRelationCheckError::toString() {
             stringstream ss;
             ss << "\"" << checkModel_ << ":" << checkDesc_ << "\"," << modelName_ << "," << fieldName_ << ","
@@ -78,10 +70,6 @@ namespace kd {
         /////////////////////////////////////////////////////////////////////////////////////////
         DCDividerCheckError::DCDividerCheckError(string checkModel) : DCError(checkModel) {
 
-        }
-
-        string DCDividerCheckError::getHeader() {
-            return "checkModel,dividerId,attId,nodeId,lng,lat,z,errorDesc";
         }
 
         string DCDividerCheckError::toString() {
@@ -161,10 +149,6 @@ namespace kd {
         /////////////////////////////////////////////////////////////////////////////////////////
         DCLaneCheckError::DCLaneCheckError(string checkModel) : DCError(checkModel) {
 
-        }
-
-        string DCLaneCheckError::getHeader() {
-            return "checkModel,laneId,leftDividerId,rightDividerId,attId,nodeId,lng,lat,z,errorDesc";
         }
 
         string DCLaneCheckError::toString() {
@@ -257,10 +241,6 @@ namespace kd {
             recordId_ = recordId;
         }
 
-        string DCSqlCheckError::getHeader() {
-            return "checkModel,modelName,fieldName,recordId,errorDesc";
-        }
-
         string DCSqlCheckError::toString() {
             stringstream ss;
             ss << detail;
@@ -272,10 +252,6 @@ namespace kd {
         /////////////////////////////////////////////////////////////////////////////////////////
         DCLaneGroupCheckError::DCLaneGroupCheckError(const string &checkModel) : DCError(checkModel) {
 
-        }
-
-        string DCLaneGroupCheckError::getHeader() {
-            return "";
         }
 
         string DCLaneGroupCheckError::toString() {
@@ -386,10 +362,6 @@ namespace kd {
 
         }
 
-        string DCLaneGroupTopoCheckError::getHeader() {
-            return "";
-        }
-
         string DCLaneGroupTopoCheckError::toString() {
             stringstream ss;
             ss << detail;
@@ -429,10 +401,6 @@ namespace kd {
         /////////////////////////////////////////////////////////////////////////////////////////
         DCRoadCheckError::DCRoadCheckError(const string &checkModel) : DCError(checkModel) {
 
-        }
-
-        string DCRoadCheckError::getHeader() {
-            return "";
         }
 
         string DCRoadCheckError::toString() {
@@ -477,10 +445,6 @@ namespace kd {
         /////////////////////////////////////////////////////////////////////////////////////////
         DCLaneError::DCLaneError(const string &checkModel) : DCError(checkModel) {
 
-        }
-
-        string DCLaneError::getHeader() {
-            return "";
         }
 
         string DCLaneError::toString() {
@@ -567,8 +531,20 @@ namespace kd {
             return detail;
         }
 
-        string DCAdasError::getHeader() {
-            return std::__cxx11::string();
+        DCFieldError::DCFieldError(const string &checkModel) : DCError(checkModel) {
+
+        }
+
+        string DCFieldError::toString() {
+            return detail;
+        }
+
+        shared_ptr<DCFieldError> DCFieldError::createByKXS_01_019(const string &detail) {
+            shared_ptr<DCFieldError> error = make_shared<DCFieldError>("KXS-01-019");
+            error->checkDesc_ = "字段范围检查";
+            error->detail = detail;
+
+            return error;
         }
     }
 }

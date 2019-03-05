@@ -119,6 +119,9 @@ namespace kd {
 
             //读取数据
             int record_nums = shpData.getRecords();
+            if (record_nums <= 0) {
+                return false;
+            }
             for (int i = 0; i < record_nums; i++) {
                 SHPObject *shpObject = shpData.readShpObject(i);
                 if (!shpObject || !(shpObject->nSHPType == SHPT_POINT || shpObject->nSHPType == SHPT_POINTZ)) {
@@ -187,6 +190,9 @@ namespace kd {
 
             //读取数据
             int record_nums = shpData.getRecords();
+            if (record_nums <= 0) {
+                return false;
+            }
             for (int i = 0; i < record_nums; i++) {
                 SHPObject *shpObject = shpData.readShpObject(i);
                 if (!shpObject || !(shpObject->nSHPType == SHPT_ARCZ || shpObject->nSHPType == SHPT_ARC)) {
@@ -256,6 +262,9 @@ namespace kd {
 
             //读取数据
             int record_nums = dbfData.getRecords();
+            if (record_nums <= 0) {
+                return false;
+            }
             for (int i = 0; i < record_nums; i++) {
                 //遍历各个字段
                 shared_ptr<DCModelRecord> record = make_shared<DCModelRecord>();
@@ -316,6 +325,9 @@ namespace kd {
 
             //读取数据
             int record_nums = shpData.getRecords();
+            if (record_nums <= 0) {
+                return false;
+            }
             for (int i = 0; i < record_nums; i++) {
                 SHPObject *shpObject = shpData.readShpObject(i);
                 if (!shpObject || !(shpObject->nSHPType == SHPT_POLYGON || shpObject->nSHPType == SHPT_POLYGONZ || shpObject->nSHPType == SHPT_POLYGONM)) {

@@ -36,6 +36,14 @@ namespace kd {
              * @return
              */
             static double get_length_of_coords(const vector<shared_ptr<geos::geom::Coordinate>> &ptr_coords);
+
+            /**
+             * 判断是否是相同点
+             * @param coord1
+             * @param coord2
+             * @return
+             */
+            static bool is_same_coord(Coordinate coord1, Coordinate coord2, double precise = 0.0001);
         };
     }
 }

@@ -3,9 +3,10 @@
 //
 
 #include <businesscheck/RoadCheck.h>
-
-#include "businesscheck/RoadCheck.h"
 #include "util/CommonUtil.h"
+#include <util/KDGeoUtil.hpp>
+#include <util/GeosObjUtil.h>
+
 
 namespace kd {
     namespace dc {
@@ -67,8 +68,30 @@ namespace kd {
             bool ret = false;
             auto ptr_road_line_string = get_road_line_string(mapDataManager, ptr_road, lane_group_id);
             auto ptr_div_line_string = CommonUtil::get_divider_line_string(ptr_divider->nodes_);
+
+
             if (ptr_road_line_string && ptr_div_line_string) {
-                ret = ptr_road_line_string->intersects(ptr_div_line_string.get());
+                CoordinateSequence *coor_seq = nullptr;
+                ret = kd::automap::KDGeoUtil::isLineCross(ptr_road_line_string.get(),
+                                                          ptr_div_line_string.get(), &coor_seq, 1);
+//                ret = ptr_road_line_string->intersects(ptr_div_line_string.get());
+
+
+                if (ret) {
+                    auto f_node = ptr_div_line_string->getCoordinates()->front();
+                    auto t_node = ptr_div_line_string->getCoordinates()->back();
+                    bool is_same = true;
+                    for (size_t i = 0; i < coor_seq->size(); i++) {
+                        if (!GeosObjUtil::is_same_coord(coor_seq->getAt(i), f_node) &&
+                            !GeosObjUtil::is_same_coord(coor_seq->getAt(i), t_node)) {
+                            is_same = false;
+                            break;
+                        }
+                    }
+                    if (is_same) {
+                        ret = false;
+                    }
+                }
             }
             return ret;
         }
@@ -88,8 +111,8 @@ namespace kd {
                 auto node_index_iter = lane_group_index.find(lane_group_id);
                 if (node_index_iter != lane_group_index.end()) {
                     auto index_pair = node_index_iter->second;
-                    if (index_pair.first >=0 && index_pair.first < ptr_road->nodes_.size() &&
-                            index_pair.second >=0 && index_pair.second < ptr_road->nodes_.size()) {
+                    if (index_pair.first >= 0 && index_pair.first < ptr_road->nodes_.size() &&
+                        index_pair.second >= 0 && index_pair.second < ptr_road->nodes_.size()) {
                         if (index_pair.first < index_pair.second) {
                             for (long idx = index_pair.first; idx <= index_pair.second; idx++) {
                                 road_nodes.emplace_back(ptr_road->nodes_.at(idx));

@@ -134,7 +134,7 @@ namespace kd {
              * @return true代表相交, false代表不相交
              */
             static bool isLineCross(geos::geom::LineString *line1, geos::geom::LineString *line2,
-                                    CoordinateSequence **coor_seq = nullptr, double sameLimit = 0.01);
+                                    CoordinateSequence **coor_seq = nullptr, double sameLimit = 0.5);
 
             /**
              * 判断两条线是否相交

@@ -74,8 +74,6 @@ namespace kd {
                 CoordinateSequence *coor_seq = nullptr;
                 ret = kd::automap::KDGeoUtil::isLineCross(ptr_road_line_string.get(),
                                                           ptr_div_line_string.get(), &coor_seq, 1);
-//                ret = ptr_road_line_string->intersects(ptr_div_line_string.get());
-
 
                 if (ret) {
                     auto f_node = ptr_div_line_string->getCoordinates()->front();

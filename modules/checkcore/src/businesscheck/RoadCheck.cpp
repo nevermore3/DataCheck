@@ -16,6 +16,7 @@ namespace kd {
 
         bool RoadCheck::execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) {
             check_road_divider_intersect(mapDataManager, errorOutput);
+            check_road_node_height(mapDataManager, errorOutput);
             return true;
         }
 
@@ -125,6 +126,49 @@ namespace kd {
             }
 
             return CommonUtil::get_line_string(road_nodes);
+        }
+
+        void RoadCheck::check_road_node_height(shared_ptr<MapDataManager> mapDataManager,
+                                               shared_ptr<CheckErrorOutput> errorOutput) {
+            double heightchange = DataCheckConfig::getInstance().getPropertyD(
+                    DataCheckConfig::DIVIDER_HEIGHT_CHANGE_PER_METER);
+
+            const auto &ptr_roads_map = mapDataManager->roads_;
+            for (const auto &road : ptr_roads_map) {
+                auto ptr_road = road.second;
+                if (!ptr_road->valid_) {
+                    continue;
+                }
+                size_t nodeCount = ptr_road->nodes_.size();
+                if (nodeCount < 2)
+                    continue;
+
+                vector<pair<int, int>> error_index_pair;
+                bool check = false;
+
+                for (int i = 1; i < nodeCount; i++) {
+
+                    auto node1 = ptr_road->nodes_[i - 1];
+                    auto node2 = ptr_road->nodes_[i];
+
+                    //间距判断
+                    double distance = kd::automap::KDGeoUtil::distanceLL(node1->lng_, node1->lat_,
+                                                                         node2->lng_, node2->lat_);
+
+                    //坡度判断
+                    double slopLimit = distance * heightchange;
+                    double realDeltaZ = node1->z_ - node2->z_;
+                    if (fabs(realDeltaZ) > slopLimit) {
+                        check = true;
+                        error_index_pair.emplace_back(make_pair(i - 1, i));
+                    }
+                }
+                if (check) {
+                    shared_ptr<DCRoadCheckError> error =
+                            DCRoadCheckError::createByKXS_04_003(ptr_road->id_, error_index_pair);
+                    errorOutput->saveError(error);
+                }
+            }
         }
     }
 }

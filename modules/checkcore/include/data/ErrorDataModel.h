@@ -21,12 +21,6 @@ namespace kd {
             DCError(string checkModel);
 
             /**
-             * 获得错误字段信息
-             * @return 字段信息描述字符串
-             */
-            virtual string getHeader() = 0;
-
-            /**
              * 获得错误信息
              * @return 错误信息字符串
              */
@@ -56,8 +50,6 @@ namespace kd {
 
             DCAttCheckError(string checkModel, string modelName, string fieldName, string recordId);
 
-            virtual string getHeader() override;
-
             virtual string toString() override;
 
         public:
@@ -84,8 +76,6 @@ namespace kd {
 
             DCRelationCheckError(string checkModel, string modelName, string fieldName, string refModelName,
                                  string refFieldName);
-
-            virtual string getHeader() override;
 
             virtual string toString() override;
 
@@ -127,8 +117,6 @@ namespace kd {
             createByNode(string checkModel, string nodeId, double lng, double lat, double z);
 
         public:
-            virtual string getHeader() override;
-
             virtual string toString() override;
 
         public:
@@ -169,8 +157,6 @@ namespace kd {
             createByNode(string checkModel, shared_ptr<DCLane> lane, shared_ptr<DCDividerNode> node);
 
         public:
-            virtual string getHeader() override;
-
             virtual string toString() override;
 
         public:
@@ -212,8 +198,6 @@ namespace kd {
 
             DCSqlCheckError(string checkModel, string modelName, string fieldName, string recordId);
 
-            virtual string getHeader() override;
-
             virtual string toString() override;
 
         public:
@@ -241,8 +225,6 @@ namespace kd {
             explicit DCLaneGroupCheckError(const string &checkModel);
 
         public:
-            string getHeader() override;
-
             string toString() override;
 
         public:
@@ -280,8 +262,6 @@ namespace kd {
             explicit DCLaneGroupTopoCheckError(const string &checkModel);
 
         public:
-            string getHeader() override;
-
             string toString() override;
 
         public:
@@ -303,8 +283,6 @@ namespace kd {
             explicit DCRoadCheckError(const string &checkModel);
 
         public:
-            string getHeader() override;
-
             string toString() override;
 
         public:
@@ -325,8 +303,6 @@ namespace kd {
             explicit DCLaneError(const string &checkModel);
 
         public:
-            string getHeader() override;
-
             string toString() override;
 
         public:
@@ -350,8 +326,6 @@ namespace kd {
             explicit DCAdasError(const string &checkModel);
 
         public:
-            string getHeader() override;
-
             string toString() override;
 
         public:
@@ -360,6 +334,26 @@ namespace kd {
 
             static shared_ptr<DCAdasError> createByKXS_07_002(long road_id, const shared_ptr<DCCoord> &ptr_coord,
                                                               long index, double distance);
+
+        public:
+
+            //错误详细信息描述
+            string detail;
+        };
+
+        /**
+        * 字段检查错误
+        */
+        class DCFieldError : public DCError {
+        public:
+            explicit DCFieldError(const string &checkModel);
+
+        public:
+            string toString() override;
+
+        public:
+            static shared_ptr<DCFieldError> createByKXS_01_019(const string &detail);
+
 
         public:
 

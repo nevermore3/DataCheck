@@ -289,6 +289,9 @@ namespace kd {
             static shared_ptr<DCRoadCheckError> createByKXS_04_002(const string &road_id,
                                                                    const string &lane_group_id);
 
+            static shared_ptr<DCRoadCheckError> createByKXS_04_003(const string &road_id,
+                                                                   vector<pair<int, int>> &error_index_pair);
+
         public:
 
             //错误详细信息描述

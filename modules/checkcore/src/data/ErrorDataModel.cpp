@@ -546,6 +546,22 @@ namespace kd {
 
             return error;
         }
+
+        shared_ptr<DCFieldError> DCFieldError::createByKXS_01_020(const string &file) {
+            shared_ptr<DCFieldError> error = make_shared<DCFieldError>("KXS-01-020");
+            error->checkDesc_ = "缺少数据文件，或者数据为空";
+            error->detail = file;
+
+            return error;
+        }
+
+        bool DCFieldError::check_file(const string &file) {
+            return file == "HD_DIVIDER" || file == "HD_DIVIDER_ATTRIBUTE" || file == "HD_DIVIDER_NODE" ||
+            file == "HD_LANE" || file == "HD_LANE_ATTRIBUTE" || file == "HD_LANE_CONNECTIVITY" ||
+            file == "HD_LANE_GROUP" || file == "HD_R_LANE_GROUP" || file == "ROAD" ||
+            file == "ROAD_NODE";
+        }
+
     }
 }
 

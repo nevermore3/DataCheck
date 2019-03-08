@@ -357,6 +357,9 @@ namespace kd {
         public:
             static shared_ptr<DCFieldError> createByKXS_01_019(const string &detail);
 
+            static shared_ptr<DCFieldError> createByKXS_01_020(const string &file);
+        public:
+            bool check_file(const string &file);
 
         public:
 

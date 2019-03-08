@@ -53,13 +53,37 @@ namespace kd {
             if (taskInput.loadTaskModel(modelPath, modelDefine)) {
                 ModelDataInput dataInput;
                 if (task->fileType == "point") {
-                    bLoad &= dataInput.loadPointFile(dataPath, modelDefine->vecFieldDefines, modelData, errorOutput);
+                    if (!dataInput.loadPointFile(dataPath, modelDefine->vecFieldDefines, modelData, errorOutput)) {
+                        bLoad = false;
+                        shared_ptr<DCFieldError> error = DCFieldError::createByKXS_01_020(taskName);
+                        if (error->check_file(taskName)) {
+                            errorOutput->saveError(error);
+                        }
+                    }
                 } else if (task->fileType == "arc") {
-                    bLoad &= dataInput.loadArcFile(dataPath, modelDefine->vecFieldDefines, modelData, errorOutput);
+                    if (!dataInput.loadArcFile(dataPath, modelDefine->vecFieldDefines, modelData, errorOutput)) {
+                        bLoad = false;
+                        shared_ptr<DCFieldError> error = DCFieldError::createByKXS_01_020(taskName);
+                        if (error->check_file(taskName)) {
+                            errorOutput->saveError(error);
+                        }
+                    }
                 } else if (task->fileType == "dbf") {
-                    bLoad &= dataInput.loadDBFFile(dataPath, modelDefine->vecFieldDefines, modelData, errorOutput);
+                    if (!dataInput.loadDBFFile(dataPath, modelDefine->vecFieldDefines, modelData, errorOutput)) {
+                        bLoad = false;
+                        shared_ptr<DCFieldError> error = DCFieldError::createByKXS_01_020(taskName);
+                        if (error->check_file(taskName)) {
+                            errorOutput->saveError(error);
+                        }
+                    }
                 } else if (task->fileType == "polygon") {
-                    bLoad &= dataInput.loadPolygonFile(dataPath, modelDefine->vecFieldDefines, modelData, errorOutput);
+                    if (!dataInput.loadPolygonFile(dataPath, modelDefine->vecFieldDefines, modelData, errorOutput)) {
+                        bLoad = false;
+                        shared_ptr<DCFieldError> error = DCFieldError::createByKXS_01_020(taskName);
+                        if (error->check_file(taskName)) {
+                            errorOutput->saveError(error);
+                        }
+                    }
                 } else {
                     stringstream ss;
                     ss << "[Error] data file type error " << task->fileType;

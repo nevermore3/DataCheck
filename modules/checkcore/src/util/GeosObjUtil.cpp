@@ -102,5 +102,14 @@ namespace kd {
             }
             return -1;
         }
+
+        bool GeosObjUtil::is_same_coord(Coordinate coord1, Coordinate coord2, double precise) {
+            if (fabs(coord1.x - coord2.x) < precise && fabs(coord1.y - coord2.y) < precise &&
+                fabs(coord1.z - coord2.z) < precise) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 }

@@ -49,11 +49,11 @@
                    INFO="道路拓扑的连接结点应该包含在ROADNODE数据中"
                    SQL="SELECT 'NODECONN' FileName, NODE_ID node_id FROM NODECONN WHERE NODE_ID NOT IN(SELECT ID FROM ROAD_NODE);"/>
     <datacheckitem ID="KXS-01-022"
-                   NAME="数据有效性检查"
+                   NAME="道路拓扑的数据检查"
                    LEVEL="error"
                    INFO="道路拓扑的进入道路与连接结点应该是唯一的,双向道路除外"
                    SQL="SELECT DISTINCT EROAD_ID eroad_id, NODE_ID node_id FROM (SELECT distinct EROAD_ID, NODE_ID FROM
-                   NODECONN N JOIN ROAD R on R.DIRECTION==2 and N.FLAG=1)GROUP BY EROAD_ID HAVING COUNT(*)>1; "/>
+                   NODECONN N JOIN ROAD R on R.DIRECTION==2 and N.FLAG=1)GROUP BY EROAD_ID HAVING COUNT(*)>1;"/>
     <datacheckitem ID="KXS-03-003"
                    NAME="车道线不存在于车道组中"
                    LEVEL="error"

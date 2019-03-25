@@ -43,6 +43,17 @@
                    SQL="SELECT FileName fileName, FileName||'_GEOCOORDS' tblName FROM ARCSHAPE_METADATA WHERE 
                    SHPType&lt;&gt;0;SELECT '{fileName}' FILENAME, FID, INDEXPOINT, X, Y, Z FROM {tblName} WHERE 
                    (X&gt;360 OR X&lt;0) OR (Y&gt;90 OR Y&lt;-90) OR (Z&gt;8848 OR Z&lt;-11034);"/>
+    <datacheckitem ID="KXS-01-021"
+                   NAME="数据有效性检查"
+                   LEVEL="error"
+                   INFO="道路拓扑的连接结点应该包含在ROADNODE数据中"
+                   SQL="SELECT 'NODECONN' FileName, NODE_ID node_id FROM NODECONN WHERE NODE_ID NOT IN(SELECT ID FROM ROAD_NODE);"/>
+    <datacheckitem ID="KXS-01-022"
+                   NAME="道路拓扑的数据检查"
+                   LEVEL="error"
+                   INFO="道路拓扑的进入道路与连接结点应该是唯一的,双向道路除外"
+                   SQL="SELECT DISTINCT EROAD_ID eroad_id, NODE_ID node_id FROM (SELECT distinct EROAD_ID, NODE_ID FROM
+                   NODECONN N JOIN ROAD R on R.DIRECTION==2 and N.FLAG=1)GROUP BY EROAD_ID HAVING COUNT(*)>1;"/>
     <datacheckitem ID="KXS-03-003"
                    NAME="车道线不存在于车道组中"
                    LEVEL="error"
@@ -178,5 +189,14 @@
                     select 'HD_POLYLINE', L.LO_ID from HD_R_LO_ROAD L union
                     select 'HD_TRAFFIC_LIGHT' FileName, T.ID ID from HD_TRAFFIC_LIGHT T except 
                     select 'HD_TRAFFIC_LIGHT', L.LO_ID from HD_R_LO_ROAD L;"/>
+    <datacheckitem ID="KXS-04-004"
+                   NAME="Road的起点终点检查"
+                   LEVEL="error"
+                   INFO="Road起点和终点是否关联正确的Road_NODE"
+                   SQL="SELECT R.ID ROAD_ID, NODE_ID.ID NODE_ID FROM (
+                    SELECT DISTINCT SNODE_ID ID FROM ROAD GROUP BY SNODE_ID
+                    UNION SELECT DISTINCT ENODE_ID FROM ROAD GROUP BY ENODE_ID
+                    ) NODE_ID JOIN ROAD R ON R.SNODE_ID = NODE_ID.ID OR R.ENODE_ID = NODE_ID.ID
+                     WHERE NODE_ID.ID NOT IN (SELECT ID FROM ROAD_NODE);"/>
   </datacheck>
 </datachecks>

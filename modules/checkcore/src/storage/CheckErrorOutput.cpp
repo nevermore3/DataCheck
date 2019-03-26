@@ -93,7 +93,7 @@ namespace kd {
             string ret = LEVEL_WARNING;
             if (check_model == "KXS-01-002" || check_model == "KXS-01-003" || check_model == "KXS-01-004" ||
                 check_model == "KXS-01-008" || check_model == "KXS-01-015" || check_model == "KXS-01-020" ||
-                check_model == "KXS-01-021" || check_model == "KXS-01-022") {
+                check_model == "KXS-01-021" || check_model == "KXS-01-022" || check_model == "KXS-01-023") {
                 ret = LEVEL_ERROR;
             } else if (check_model == "KXS-03-002" || check_model == "KXS-03-004" || check_model == "KXS-03-005" ||
                        check_model == "KXS-03-006" || check_model == "KXS-03-011" || check_model == "KXS-03-012" ||

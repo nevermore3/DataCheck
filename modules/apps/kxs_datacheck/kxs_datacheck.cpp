@@ -236,6 +236,7 @@ int main(int argc, const char *argv[]) {
         ret |= dataCheck(base_path, errorOutput);
 
         ret |= errorOutput->saveError();
+        ret |= errorOutput->countError();
 
         LOG(INFO) << "total task costs: " << compilerTimer.elapsed_message();
     } catch (CppSQLite3::Exception &e) {

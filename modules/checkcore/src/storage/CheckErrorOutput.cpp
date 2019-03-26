@@ -69,6 +69,35 @@ namespace kd {
             return ret;
         }
 
+        int CheckErrorOutput::countError() {
+            int ret = 0;
+            LOG(INFO) << "task [save error] start. ";
+            TimerUtil compilerTimer;
+
+            try {
+                string create_table_sql = "CREATE TABLE IF NOT EXISTS dataCheckCountTable(   \
+                                        sequenceId INTEGER PRIMARY KEY AUTOINCREMENT,\
+                                        level TEXT,\
+                                        testId TEXT NOT NULL,\
+                                        testName TEXT NOT NULL,\
+                                        count INTEGER NOT NULL)";
+                m_pdb->execDML(create_table_sql);
+
+                string insert_sql = "INSERT INTO dataCheckCountTable (level,testId,testName,count) \
+                                    select level,testId,testName,count(*) from \
+                                    dataCheckResultTable group by level , testId, testName;";
+                m_pdb->execDML(insert_sql);
+
+
+            } catch (CppSQLite3::Exception &e) {
+                LOG(ERROR) << e.errorMessage().c_str();
+                ret = 1;
+            }
+
+            LOG(INFO) << "task [save error] end successfully " << " costs : " << compilerTimer.elapsed_message();
+            return ret;
+        }
+
         void CheckErrorOutput::saveError(shared_ptr<DCError> error) {
             if (error) {
                 ErrorOutPut error_output;

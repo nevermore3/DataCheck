@@ -114,8 +114,9 @@
                    NAME="车道孤立不连通"
                    LEVEL="warning"
                    INFO="表hd_lane_connectivity数据有丢失,车道Lane是孤立存在,车道连通性存在错误"
-                   SQL="select id laneid from hd_lane where id not in (select distinct flane_id from hd_lane_connectivity 
-                   group by flane_id union select distinct tlane_id from hd_lane_connectivity group by tlane_id);"/>
+                   SQL="select l.id laneid from hd_lane l join hd_lane_attribute at on l.id = at.lane_id and l.id not in
+                   (select distinct flane_id from hd_lane_connectivity group by flane_id union select distinct tlane_id
+                   from hd_lane_connectivity group by tlane_id) and at.lanetype <>9;"/>
     <datacheckitem ID="KXS-03-019"
                    NAME="车道形态连通的关系丢失"
                    LEVEL="error"

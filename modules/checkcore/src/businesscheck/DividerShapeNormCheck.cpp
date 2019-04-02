@@ -113,7 +113,7 @@ namespace kd {
                         error->checkDesc_ = "车道线高程突变>±10厘米";
                         stringstream ss;
                         ss << "divider:" << div->id_ << ",node_id:" << node1->id_ << ",node_id:" << node2->id_
-                           << ",diff_height:" << realDeltaZ;
+                           << ",高度差:" << realDeltaZ << ",距离:" << distance ;
                         error->errorDesc_ = ss.str();
 
                         errorOutput->saveError(error);

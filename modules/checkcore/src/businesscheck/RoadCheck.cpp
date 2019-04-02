@@ -143,7 +143,7 @@ namespace kd {
                 if (nodeCount < 2)
                     continue;
 
-                vector<pair<int, int>> error_index_pair;
+                vector<NodeCheck> error_index_pair;
                 bool check = false;
 
                 for (int i = 1; i < nodeCount; i++) {
@@ -160,7 +160,12 @@ namespace kd {
                     double realDeltaZ = node1->z_ - node2->z_;
                     if (fabs(realDeltaZ) > slopLimit) {
                         check = true;
-                        error_index_pair.emplace_back(make_pair(i - 1, i));
+                        NodeCheck node_check{};
+                        node_check.pre_index = i - 1;
+                        node_check.index = i;
+                        node_check.diff_height = realDeltaZ;
+                        node_check.distance = distance;
+                        error_index_pair.emplace_back(node_check);
                     }
                 }
                 if (check) {

@@ -15,14 +15,13 @@
                    INFO="数据中存在几何对象完全相同的重复记录"
                    SQL="SELECT fileName tblName FROM ARCSHAPE_METADATA WHERE SHPType&lt;&gt;0 and fileName&lt;&gt;'HD_DIVIDER_NODE_INDEX'
                    and fileName&lt;&gt;'HD_DIVIDER_NODE' and fileName&lt;&gt;'ADAS_NODE';
-                   SELECT rp.FileName, RepeatGeometryIds, T.TASKID, LocalX, LocalY FROM 
+                   SELECT rp.FileName, RepeatGeometryIds, LocalX, LocalY FROM
                    (SELECT '{tblName}' FileName, min(r.id) localid, group_concat(id) 
                    RepeatGeometryIds FROM {tblName} r 
                    JOIN (SELECT DISTINCT geometry FROM {tblName} GROUP BY geometry HAVING count(*)>1) g 
                    ON r.geometry=g.geometry GROUP BY r.geometry) rp 
                    JOIN (SELECT min(FID) minid, X LocalX, Y LocalY FROM {tblName}_GEOCOORDS GROUP BY FID) 
-                   b ON b.minid=rp.localid 
-                   LEFT JOIN HD_AUX_TASKID T ON T.ID=B.MINID AND T.FILENAME='{tblName}' COLLATE NOCASE;"/>
+                   b ON b.minid=rp.localid;"/>
     <datacheckitem ID="KXS-01-002"
                    NAME="几何数据重复性检查"
                    LEVEL="error"

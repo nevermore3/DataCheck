@@ -83,8 +83,10 @@ namespace kd {
              * @param is_front 是否是当前首点连接
              * @return
              */
-            static set<string> get_ref_conn_divider(const shared_ptr<MapDataManager> &mapDataManager, const string &lg,
-                                                const shared_ptr<DCDivider> &ptr_divider, bool is_front);
+            static set<shared_ptr<DCDivider>> get_ref_conn_divider(const shared_ptr<MapDataManager> &mapDataManager,
+                                                                   const string &lg,
+                                                                   const shared_ptr<DCDivider> &ptr_divider,
+                                                                   bool is_front);
 
             /**
              * 获取lane group组内lane集合，已排序
@@ -147,6 +149,8 @@ namespace kd {
              */
             static double get_min_distance_from_divider(const shared_ptr<DCDividerNode> &divider_node,
                                                         const shared_ptr<DCDivider> &divider);
+
+            static long GetMaxDividerNo(const shared_ptr<MapDataManager> &mapDataManager, const string &lane_group);
 
         private:
 

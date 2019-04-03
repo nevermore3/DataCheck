@@ -318,14 +318,14 @@ namespace kd {
                                     int time = 1;
                                     lane_group2_times.insert(make_pair(lg, time));
                                 }
-//                                auto lg2_div_iter = lane_group2_div2_div.find(lg);
-//                                if (lg2_div_iter != lane_group2_div2_div.end()) {
-//                                    lg2_div_iter->second.emplace_back(make_pair(ptr_div->id_, div));
-//                                } else {
-//                                    vector<pair<string, string>> vec_div2_div;
-//                                    vec_div2_div.emplace_back(make_pair(ptr_div->id_, div));
-//                                    lane_group2_div2_div.insert(make_pair(lg, vec_div2_div));
-//                                }
+                                auto lg2_div_iter = lane_group2_div2_div.find(lg);
+                                if (lg2_div_iter != lane_group2_div2_div.end()) {
+                                    lg2_div_iter->second.emplace_back(make_pair(ptr_div->id_, div->id_));
+                                } else {
+                                    vector<pair<string, string>> vec_div2_div;
+                                    vec_div2_div.emplace_back(make_pair(ptr_div->id_, div->id_));
+                                    lane_group2_div2_div.insert(make_pair(lg, vec_div2_div));
+                                }
                                 lane_group_tag.insert(lg);
                             }
                         }
@@ -373,6 +373,7 @@ namespace kd {
                                     if (!is_virtual_lane_group(ptr_lane_group) &&
                                         !is_virtual_lane_group(mapDataManager, conn_lg)) {
                                         lane_group2_conn_lg_.insert(make_pair(ptr_lane_group->id_, conn_lg));
+                                        insert_divider2_conn_divider(ptr_div->id_, div->id_);
                                     }
                                 }
                             }
@@ -385,24 +386,14 @@ namespace kd {
                                 int time = 1;
                                 lane_group2_times.insert(make_pair(lg, time));
                             }
-//                            auto f_lg2_div_iter = f_lane_group2_div2_div_.find(lg);
-//                            if (f_lg2_div_iter != f_lane_group2_div2_div_.end()) {
-//                                f_lg2_div_iter->second.emplace_back(make_pair(ptrDivider->ID, div->ID));
-//                            } else {
-//                                vector<pair<long, long>> vec_div2_div;
-//                                vec_div2_div.emplace_back(make_pair(ptrDivider->ID, div->ID));
-//                                f_lane_group2_div2_div_.insert(make_pair(lg, vec_div2_div));
-//                            }
-//
-//                            auto t_lg2_div_iter = t_lane_group2_div2_div_.find(laneGroupId);
-//                            if (t_lg2_div_iter != t_lane_group2_div2_div_.end()) {
-//                                t_lg2_div_iter->second.emplace_back(make_pair(ptrDivider->ID, div->ID));
-//                            } else {
-//                                vector<pair<long, long>> vec_div2_div;
-//                                vec_div2_div.emplace_back(make_pair(ptrDivider->ID, div->ID));
-//                                t_lane_group2_div2_div_.insert(make_pair(laneGroupId, vec_div2_div));
-//                            }
-
+                            auto lg2_div_iter = lane_group2_div2_div.find(lg);
+                            if (lg2_div_iter != lane_group2_div2_div.end()) {
+                                lg2_div_iter->second.emplace_back(make_pair(ptr_div->id_, div->id_));
+                            } else {
+                                vector<pair<string, string>> vec_div2_div;
+                                vec_div2_div.emplace_back(make_pair(ptr_div->id_, div->id_));
+                                lane_group2_div2_div.insert(make_pair(lg, vec_div2_div));
+                            }
                         }
                     }
                 }

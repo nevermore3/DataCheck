@@ -77,6 +77,9 @@ namespace kd {
 
             bool is_virtual_lane_group(const shared_ptr<DCLaneGroup> &ptr_lane_group);
 
+            bool is_double_lane_group(shared_ptr<MapDataManager> mapDataManager,
+                                      const string &lane_group_id);
+
             /**
              * 获取连接的divider,相同组的DIVIDER
              * @param mapDataManager

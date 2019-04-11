@@ -82,7 +82,10 @@ namespace kd {
                                                    bool is_positive, shared_ptr<CheckErrorOutput> errorOutput) {
             // 检查是否存在交叉
             if (is_positive) {
-                sort(lg_node_index_vec.begin(), lg_node_index_vec.end());
+                sort(lg_node_index_vec.begin(), lg_node_index_vec.end(), [](const LGNodeIndex &lg_node_idx1,
+                                                                            const LGNodeIndex &lg_node_idx2) {
+                    return lg_node_idx1.f_idx < lg_node_idx2.f_idx;
+                });
             } else {
                 sort(lg_node_index_vec.begin(), lg_node_index_vec.end(), [](const LGNodeIndex &lg_node_idx1,
                                                                             const LGNodeIndex &lg_node_idx2) {

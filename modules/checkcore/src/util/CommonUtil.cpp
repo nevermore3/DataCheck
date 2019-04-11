@@ -77,9 +77,11 @@ namespace kd {
         }
 
 
-        set<string> CommonUtil::get_ref_conn_divider(const shared_ptr<MapDataManager> &mapDataManager, const string &lg,
-                                                     const shared_ptr<DCDivider> &ptr_divider, bool is_front) {
-            set<string> ret_divider_ids;
+        set<shared_ptr<DCDivider>> CommonUtil::get_ref_conn_divider(const shared_ptr<MapDataManager> &mapDataManager,
+                                                                    const string &lg,
+                                                                    const shared_ptr<DCDivider> &ptr_divider,
+                                                                    bool is_front) {
+            set<shared_ptr<DCDivider>> ret_dividers;
             const auto &node_id2_dividers_maps_ = mapDataManager->node_id2_dividers_maps_;
             string node_id = is_front ? ptr_divider->nodes_.front()->id_ : ptr_divider->nodes_.back()->id_;
             auto node_iter = node_id2_dividers_maps_.find(node_id);
@@ -91,11 +93,11 @@ namespace kd {
                         if (lane_groups.size() == 1 && *lane_groups.begin() == lg) {
                             continue;
                         }
-                        ret_divider_ids.insert(ptr_div->id_);
+                        ret_dividers.insert(ptr_div);
                     }
                 }
             }
-            return ret_divider_ids;
+            return ret_dividers;
         }
 
         set<string> CommonUtil::get_lane_groups_by_divider(shared_ptr<MapDataManager> mapDataManager,
@@ -348,5 +350,19 @@ namespace kd {
                                                     PtA, PtB, PtC, index);
             return dis;
         }
+
+        long CommonUtil::GetMaxDividerNo(const shared_ptr<MapDataManager> &mapDataManager, const string &lane_group) {
+            map<int, shared_ptr<DCDivider>> dividerNo2Divder;
+            auto dividers = get_dividers_by_lg(mapDataManager, lane_group);
+            long max_no = 0;
+            for (const auto &div : dividers) {
+                auto no = div->dividerNo_;
+                if (no > max_no) {
+                    max_no = no;
+                }
+            }
+            return max_no;
+        }
+
     }
 }

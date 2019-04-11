@@ -278,6 +278,12 @@ namespace kd {
         /**
         * 道路检查错误
         */
+        struct NodeCheck {
+            int pre_index;
+            int index;
+            double diff_height;
+            double distance;
+        };
         class DCRoadCheckError : public DCError {
         public:
             explicit DCRoadCheckError(const string &checkModel);
@@ -290,7 +296,7 @@ namespace kd {
                                                                    const string &lane_group_id);
 
             static shared_ptr<DCRoadCheckError> createByKXS_04_003(const string &road_id,
-                                                                   vector<pair<int, int>> &error_index_pair);
+                                                                   vector<NodeCheck> &error_index_pair);
 
         public:
 

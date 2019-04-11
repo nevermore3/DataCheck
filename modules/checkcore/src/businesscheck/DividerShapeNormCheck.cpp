@@ -112,7 +112,8 @@ namespace kd {
                                 DCDividerCheckError::createByNode("KXS-01-013", div, node1);
                         error->checkDesc_ = "车道线高程突变>±10厘米";
                         stringstream ss;
-                        ss << "divider:" << div->id_ << ",node_id:" << node1->id_ << ",node_id:" << node2->id_;
+                        ss << "divider:" << div->id_ << ",node_id:" << node1->id_ << ",node_id:" << node2->id_
+                           << ",高度差:" << realDeltaZ << ",距离:" << distance ;
                         error->errorDesc_ = ss.str();
 
                         errorOutput->saveError(error);

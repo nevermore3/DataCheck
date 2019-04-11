@@ -15,14 +15,13 @@
                    INFO="数据中存在几何对象完全相同的重复记录"
                    SQL="SELECT fileName tblName FROM ARCSHAPE_METADATA WHERE SHPType&lt;&gt;0 and fileName&lt;&gt;'HD_DIVIDER_NODE_INDEX'
                    and fileName&lt;&gt;'HD_DIVIDER_NODE' and fileName&lt;&gt;'ADAS_NODE';
-                   SELECT rp.FileName, RepeatGeometryIds, T.TASKID, LocalX, LocalY FROM 
+                   SELECT rp.FileName, RepeatGeometryIds, LocalX, LocalY FROM
                    (SELECT '{tblName}' FileName, min(r.id) localid, group_concat(id) 
                    RepeatGeometryIds FROM {tblName} r 
                    JOIN (SELECT DISTINCT geometry FROM {tblName} GROUP BY geometry HAVING count(*)>1) g 
                    ON r.geometry=g.geometry GROUP BY r.geometry) rp 
                    JOIN (SELECT min(FID) minid, X LocalX, Y LocalY FROM {tblName}_GEOCOORDS GROUP BY FID) 
-                   b ON b.minid=rp.localid 
-                   LEFT JOIN HD_AUX_TASKID T ON T.ID=B.MINID AND T.FILENAME='{tblName}' COLLATE NOCASE;"/>
+                   b ON b.minid=rp.localid;"/>
     <datacheckitem ID="KXS-01-002"
                    NAME="几何数据重复性检查"
                    LEVEL="error"
@@ -53,7 +52,12 @@
                    LEVEL="error"
                    INFO="道路拓扑的进入道路与连接结点应该是唯一的,双向道路除外"
                    SQL="SELECT DISTINCT EROAD_ID eroad_id, NODE_ID node_id FROM (SELECT distinct EROAD_ID, NODE_ID FROM
-                   NODECONN N JOIN ROAD R on R.DIRECTION==2 and N.FLAG=1)GROUP BY EROAD_ID HAVING COUNT(*)>1;"/>
+                   NODECONN N JOIN ROAD R on R.DIRECTION=2 and N.FLAG=1 and R.ID = N.EROAD_ID)GROUP BY EROAD_ID HAVING COUNT(*)>1;"/>
+    <datacheckitem ID="KXS-01-023"
+                   NAME="车道组与道路关联关系检查"
+                   LEVEL="error"
+                   INFO="车道组只能关联一条道路,不能关联多条道路"
+                   SQL="SELECT ID lane_group_id,ROAD_ID road_id FROM HD_LANE_GROUP GROUP BY ID HAVING COUNT(*)>1"/>
     <datacheckitem ID="KXS-03-003"
                    NAME="车道线不存在于车道组中"
                    LEVEL="error"
@@ -109,8 +113,9 @@
                    NAME="车道孤立不连通"
                    LEVEL="warning"
                    INFO="表hd_lane_connectivity数据有丢失,车道Lane是孤立存在,车道连通性存在错误"
-                   SQL="select id laneid from hd_lane where id not in (select distinct flane_id from hd_lane_connectivity 
-                   group by flane_id union select distinct tlane_id from hd_lane_connectivity group by tlane_id);"/>
+                   SQL="select l.id laneid from hd_lane l join hd_lane_attribute at on l.id = at.lane_id and l.id not in
+                   (select distinct flane_id from hd_lane_connectivity group by flane_id union select distinct tlane_id
+                   from hd_lane_connectivity group by tlane_id) and at.lanetype <>9;"/>
     <datacheckitem ID="KXS-03-019"
                    NAME="车道形态连通的关系丢失"
                    LEVEL="error"
@@ -198,5 +203,13 @@
                     UNION SELECT DISTINCT ENODE_ID FROM ROAD GROUP BY ENODE_ID
                     ) NODE_ID JOIN ROAD R ON R.SNODE_ID = NODE_ID.ID OR R.ENODE_ID = NODE_ID.ID
                      WHERE NODE_ID.ID NOT IN (SELECT ID FROM ROAD_NODE);"/>
+    <datacheckitem ID="KXS-04-005"
+                   NAME="道路RANGE索引号检查"
+                   LEVEL="error"
+                   INFO="道路RANGE索引号超限,最大号超限，最小号非０"
+                   SQL="SELECT RD.ID road_id, NUMVERTEX road_node_num, MINIDX min_index, MAXIDX max_index FROM ROAD RD
+                    JOIN(SELECT ROADID,MAX(MAX(F_INDEX),MAX(T_INDEX)) MAXIDX,MIN(MIN(F_INDEX),MIN(T_INDEX))
+                    MINIDX FROM LG_ROADNODE_INDEX GROUP BY ROADID) MIDX
+                    ON RD.ID=MIDX.ROADID AND (MIDX.MAXIDX>=RD.NUMVERTEX OR MINIDX<0);"/>
   </datacheck>
 </datachecks>

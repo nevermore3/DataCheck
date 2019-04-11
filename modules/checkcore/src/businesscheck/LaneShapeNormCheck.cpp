@@ -197,6 +197,14 @@ namespace kd {
                     continue;
                 }
 
+                // 过滤分离以及合并的车道组
+                if (lane->leftDivider_->nodes_.front()->id_ == lane->rightDivider_->nodes_.front()->id_ ||
+                    lane->leftDivider_->nodes_.front()->id_ == lane->rightDivider_->nodes_.back()->id_ ||
+                    lane->leftDivider_->nodes_.back()->id_ == lane->rightDivider_->nodes_.front()->id_ ||
+                    lane->leftDivider_->nodes_.back()->id_ == lane->rightDivider_->nodes_.back()->id_) {
+                    continue;
+                }
+
                 //检查车道面四个角点的夹角
                 shared_ptr<DCDividerNode> lsNode = lane->getPassDividerNode(true, true);
                 shared_ptr<DCDividerNode> leNode = lane->getPassDividerNode(true, false);

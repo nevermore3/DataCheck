@@ -69,6 +69,35 @@ namespace kd {
             return ret;
         }
 
+        int CheckErrorOutput::countError() {
+            int ret = 0;
+            LOG(INFO) << "task [save error] start. ";
+            TimerUtil compilerTimer;
+
+            try {
+                string create_table_sql = "CREATE TABLE IF NOT EXISTS dataCheckCountTable(   \
+                                        sequenceId INTEGER PRIMARY KEY AUTOINCREMENT,\
+                                        level TEXT,\
+                                        testId TEXT NOT NULL,\
+                                        testName TEXT NOT NULL,\
+                                        count INTEGER NOT NULL)";
+                m_pdb->execDML(create_table_sql);
+
+                string insert_sql = "INSERT INTO dataCheckCountTable (level,testId,testName,count) \
+                                    select level,testId,testName,count(*) from \
+                                    dataCheckResultTable group by level , testId, testName;";
+                m_pdb->execDML(insert_sql);
+
+
+            } catch (CppSQLite3::Exception &e) {
+                LOG(ERROR) << e.errorMessage().c_str();
+                ret = 1;
+            }
+
+            LOG(INFO) << "task [save error] end successfully " << " costs : " << compilerTimer.elapsed_message();
+            return ret;
+        }
+
         void CheckErrorOutput::saveError(shared_ptr<DCError> error) {
             if (error) {
                 ErrorOutPut error_output;
@@ -93,7 +122,7 @@ namespace kd {
             string ret = LEVEL_WARNING;
             if (check_model == "KXS-01-002" || check_model == "KXS-01-003" || check_model == "KXS-01-004" ||
                 check_model == "KXS-01-008" || check_model == "KXS-01-015" || check_model == "KXS-01-020" ||
-                check_model == "KXS-01-021" || check_model == "KXS-01-022") {
+                check_model == "KXS-01-021" || check_model == "KXS-01-022" || check_model == "KXS-01-023") {
                 ret = LEVEL_ERROR;
             } else if (check_model == "KXS-03-002" || check_model == "KXS-03-004" || check_model == "KXS-03-005" ||
                        check_model == "KXS-03-006" || check_model == "KXS-03-011" || check_model == "KXS-03-012" ||
@@ -103,7 +132,8 @@ namespace kd {
                        check_model == "KXS-03-024" || check_model == "KXS-03-025" || check_model == "KXS-03-026" ||
                        check_model == "KXS-03-027") {
                 ret = LEVEL_ERROR;
-            } else if (check_model == "KXS-04-001" || check_model == "KXS-04-002" || check_model == "KXS-04-004") {
+            } else if (check_model == "KXS-04-001" || check_model == "KXS-04-002" || check_model == "KXS-04-004" ||
+                       check_model == "KXS-04-005") {
                 ret = LEVEL_ERROR;
             } else if (check_model == "KXS-05-001" || check_model == "KXS-05-003" || check_model == "KXS-05-006" ||
                        check_model == "KXS-05-008" || check_model == "KXS-05-012") {

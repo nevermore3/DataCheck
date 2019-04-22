@@ -444,6 +444,30 @@ namespace kd {
             return error;
         }
 
+        shared_ptr<DCRoadCheckError>
+        DCRoadCheckError::createByKXS_04_006(const string &road_id,
+                                             const vector<shared_ptr<NodeError>> &ptr_error_nodes) {
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>("KXS-04-006");
+            error->checkLevel_ = LEVEL_ERROR;
+            error->checkDesc_ = "道路前后结点重复,前后点xy坐标相同（z值可能相同）";
+            error->detail += "road_id:";
+            error->detail += road_id;
+            for (const auto &error_node : ptr_error_nodes) {
+                error->detail += ",索引点";
+                error->detail += to_string(error_node->index);
+                error->detail += ",坐标(";
+                error->detail += to_string(error_node->ptr_coord->lng_);
+                error->detail += ",";
+                error->detail += to_string(error_node->ptr_coord->lat_);
+                error->detail += ",";
+                error->detail += to_string(error_node->ptr_coord->z_);
+                error->detail += ")";
+            }
+            error->detail += "重复";
+
+            return error;
+        }
+
         /////////////////////////////////////////////////////////////////////////////////////////
         // DCLaneError
         /////////////////////////////////////////////////////////////////////////////////////////
@@ -497,6 +521,29 @@ namespace kd {
             error->detail += ",lane_id:";
             error->detail += lane_id2;
             error->detail += "有交点";
+
+            return error;
+        }
+
+        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_014(const string &lane_id,
+                                                                const vector<shared_ptr<NodeError>> &ptr_error_nodes) {
+            shared_ptr<DCLaneError> error = make_shared<DCLaneError>("KXS-05-014");
+            error->checkLevel_ = LEVEL_ERROR;
+            error->checkDesc_ = "车道中心线前后结点重复,前后点xy坐标相同（z值可能相同）";
+            error->detail += "lane_id:";
+            error->detail += lane_id;
+            for (const auto &error_node : ptr_error_nodes) {
+                error->detail += ",索引点";
+                error->detail += to_string(error_node->index);
+                error->detail += ",坐标(";
+                error->detail += to_string(error_node->ptr_coord->lng_);
+                error->detail += ",";
+                error->detail += to_string(error_node->ptr_coord->lat_);
+                error->detail += ",";
+                error->detail += to_string(error_node->ptr_coord->z_);
+                error->detail += ")";
+            }
+            error->detail += "重复";
 
             return error;
         }

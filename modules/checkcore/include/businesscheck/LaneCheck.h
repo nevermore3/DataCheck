@@ -49,6 +49,15 @@ namespace kd {
              */
             void check_lane_lane_intersect(shared_ptr<MapDataManager> mapDataManager,
                                            shared_ptr<CheckErrorOutput> errorOutput);
+
+            /**
+             * 车道中心线结点重复，前后点xy坐标相同（z值可能相同）
+             * @param mapDataManager
+             * @param errorOutput
+             */
+            void check_lane_node(shared_ptr<MapDataManager> mapDataManager,
+                                 shared_ptr<CheckErrorOutput> errorOutput,
+                                 shared_ptr<DCLaneGroup> ptr_lane_group);
         private:
             /**
              * lane与divider是否相交

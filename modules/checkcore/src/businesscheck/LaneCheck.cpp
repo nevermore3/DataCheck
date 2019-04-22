@@ -136,6 +136,7 @@ namespace kd {
 
             shared_ptr<DCError> ptr_error = nullptr;
             for (const auto &lg : ptr_lane_groups) {
+                check_lane_node(mapDataManager, errorOutput, lg.second);
                 auto ptr_lanes = lg.second->lanes_;
                 if (ptr_lanes.size() > 1) {
                     auto ptr_left_lane = ptr_lanes.front();
@@ -213,6 +214,39 @@ namespace kd {
                 }
             }
 
+        }
+
+        void LaneCheck::check_lane_node(shared_ptr<MapDataManager> mapDataManager,
+                                        shared_ptr<CheckErrorOutput> errorOutput,
+                                        shared_ptr<DCLaneGroup> ptr_lane_group) {
+            for (const auto &ptr_lane : ptr_lane_group->lanes_) {
+                vector<shared_ptr<NodeError>> ptr_error_nodes;
+                auto first_node = ptr_lane->coords_.front();
+                shared_ptr<NodeError> ptr_e_node = make_shared<NodeError>();
+                ptr_e_node->index = 0;
+                ptr_e_node->ptr_coord = first_node;
+                ptr_error_nodes.emplace_back(ptr_e_node);
+                for (int i = 1; i < ptr_lane->coords_.size(); i++) {
+                    if (first_node->lng_ == ptr_lane->coords_.at(i)->lng_ &&
+                        first_node->lat_ == ptr_lane->coords_.at(i)->lat_) {
+                        shared_ptr<NodeError> ptr_cur_e_node = make_shared<NodeError>();
+                        ptr_cur_e_node->index = i;
+                        ptr_cur_e_node->ptr_coord = ptr_lane->coords_.at(i);
+                        ptr_error_nodes.emplace_back(ptr_cur_e_node);
+                    } else {
+                        if (ptr_error_nodes.size() > 1) {
+                            auto ptr_error = DCLaneError::createByKXS_05_014(ptr_lane->id_, ptr_error_nodes);
+                            errorOutput->saveError(ptr_error);
+                        }
+                        ptr_error_nodes.clear();
+                        first_node = ptr_lane->coords_.at(i);
+                        shared_ptr<NodeError> ptr_cur_e_node = make_shared<NodeError>();
+                        ptr_cur_e_node->index = i;
+                        ptr_cur_e_node->ptr_coord = first_node;
+                        ptr_error_nodes.emplace_back(ptr_cur_e_node);
+                    }
+                }
+            }
         }
     }
 }

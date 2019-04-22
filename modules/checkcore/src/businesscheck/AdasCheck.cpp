@@ -449,11 +449,13 @@ namespace kd {
             } else {
                 auto ptr_road = CommonUtil::get_road(data_manager, to_string(t_ptr_adas_node->road_id_));
                 auto ptr_road_node = ptr_road->nodes_[t_ptr_adas_node->road_node_idx_];
-                vector<shared_ptr<DCCoord>> dc_coords_vec;
-                dc_coords_vec.emplace_back(f_ptr_adas_node->coord_);
-                dc_coords_vec.emplace_back(ptr_road_node);
-                dc_coords_vec.emplace_back(t_ptr_adas_node->coord_);
-                distance = GeosObjUtil::get_length_of_coords(dc_coords_vec);
+                if (ptr_road_node) {
+                    vector<shared_ptr<DCCoord>> dc_coords_vec;
+                    dc_coords_vec.emplace_back(f_ptr_adas_node->coord_);
+                    dc_coords_vec.emplace_back(ptr_road_node);
+                    dc_coords_vec.emplace_back(t_ptr_adas_node->coord_);
+                    distance = GeosObjUtil::get_length_of_coords(dc_coords_vec);
+                }
             }
 
             double adas_node_distance = DataCheckConfig::getInstance().getPropertyD(

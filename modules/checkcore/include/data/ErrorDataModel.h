@@ -321,6 +321,9 @@ namespace kd {
             static shared_ptr<DCLaneError> createByKXS_05_003(const string &lane_id,
                                                               const string &divider_id);
 
+            static shared_ptr<DCLaneError> createByKXS_05_013(const string &lane_id1,
+                                                              const string &lane_id2);
+
         public:
 
             //错误详细信息描述

@@ -15,15 +15,23 @@ namespace kd {
         static const string LEVEL_WARNING = "warning";
         static const string LEVEL_ERROR = "error";
 
+        // 结点错误信息
         struct NodeError {
+            // 索引
             long index;
+            // 结点坐标
             shared_ptr<DCCoord> ptr_coord;
         };
 
+        // 结点高度错误
         struct NodeCheck {
+            // 前一点索引
             int pre_index;
+            // 当前索引
             int index;
+            // 实际高度差
             double diff_height;
+            // 实际距离
             double distance;
         };
 

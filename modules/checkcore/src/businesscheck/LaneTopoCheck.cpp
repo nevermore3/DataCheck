@@ -63,8 +63,8 @@ namespace kd {
                                 DCLaneCheckError::createByNode("KXS-05-012", lane, nullptr);
                         error->errorDesc_ = "lane_id:";
                         error->errorDesc_ += lane->id_;
-                        error->errorDesc_ += "孤立车道,没有进入和退出车道连接,并且没有标注应急车道属性";
-                        error->checkDesc_ = "孤立车道";
+                        error->errorDesc_ += "孤立车道,没有进入车道和退出车道";
+                        error->checkDesc_ = "孤立车道,没有进入和退出车道连接,并且没有标注应急车道属性";
                         errorOutput->saveError(error);
                     }
 

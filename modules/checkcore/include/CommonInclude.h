@@ -27,6 +27,7 @@
 #include "cppsqlite3/Query.h"
 
 #include "tinyxml.h"
+#include "CommonDefine.h"
 using namespace std;
 
 //thirdparty -- Eigen

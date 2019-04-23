@@ -120,7 +120,7 @@ namespace kd {
             string fromNodeId = div->fromNodeId_;
             if(!findConnectEdge(fromNodeId, true, topoNodes, quadtree, mapDataManager)){
                 shared_ptr<DCDividerCheckError> error =
-                        DCDividerCheckError::createByNode("KXS-01-008", div, nullptr);
+                        DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_008, div, nullptr);
                 error->checkDesc_ = "车行道边缘线在非停止线/出入口标线的地方断开";
                 stringstream ss;
                 ss << "divider:" << div->id_ << ",from node_id:" << fromNodeId << "断开.";
@@ -132,7 +132,7 @@ namespace kd {
             string toNodeId = div->toNodeId_;
             if(!findConnectEdge(toNodeId, false, topoNodes, quadtree, mapDataManager)){
                 shared_ptr<DCDividerCheckError> error =
-                        DCDividerCheckError::createByNode("KXS-01-008", div, nullptr);
+                        DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_008, div, nullptr);
                 error->checkDesc_ = "车行道边缘线在非停止线/出入口标线的地方断开";
                 stringstream ss;
                 ss << "divider:" << div->id_ << ",from node_id:" << fromNodeId << "断开.";
@@ -225,7 +225,7 @@ namespace kd {
                 //检查车道线id是否使用过
                 if(divRelIds.find(divid) == divRelIds.end()){
                     shared_ptr<DCDividerCheckError> error =
-                            DCDividerCheckError::createByNode("KXS-01-009", div, nullptr);
+                            DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_009, div, nullptr);
                     error->checkDesc_ = "非路口虚拟线的车道线未构成车道";
                     error->errorDesc_ = "divider:";
                     error->errorDesc_ += div->id_;
@@ -256,7 +256,7 @@ namespace kd {
                 //排除了只有一个关联车道线的情况后，如果某个方向的关联信息为0，则说明有问题
                 if(topoNode->startRels_.size() == 0){
                     shared_ptr<DCDividerCheckError> error =
-                            DCDividerCheckError::createByNode("KXS-01-010", topoNode->nodeId_, topoNode->lng_, topoNode->lat_, topoNode->z_);
+                            DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_010, topoNode->nodeId_, topoNode->lng_, topoNode->lat_, topoNode->z_);
                     error->checkDesc_ = "共点的车道线通行方向冲突";
                     stringstream ss;
                     ss << "divider_node:" << topoNode->nodeId_ << " has no FDNODE relation.";
@@ -267,7 +267,7 @@ namespace kd {
 
                 if(topoNode->endRels_.size() == 0){
                     shared_ptr<DCDividerCheckError> error =
-                            DCDividerCheckError::createByNode("KXS-01-010", topoNode->nodeId_, topoNode->lng_, topoNode->lat_, topoNode->z_);
+                            DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_010, topoNode->nodeId_, topoNode->lng_, topoNode->lat_, topoNode->z_);
                     error->checkDesc_ = "共点的车道线通行方向冲突";
                     stringstream ss;
                     ss << "divider_node:" << topoNode->nodeId_ << " has no TDNODE relation.";

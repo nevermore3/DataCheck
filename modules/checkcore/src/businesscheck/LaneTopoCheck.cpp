@@ -60,7 +60,7 @@ namespace kd {
 
                     if (!is_emergency) {
                         shared_ptr<DCLaneCheckError> error =
-                                DCLaneCheckError::createByNode("KXS-05-012", lane, nullptr);
+                                DCLaneCheckError::createByNode(CHECK_ITEM_KXS_LANE_012, lane, nullptr);
                         error->errorDesc_ = "lane_id:";
                         error->errorDesc_ += lane->id_;
                         error->errorDesc_ += "孤立车道,没有进入车道和退出车道";
@@ -73,7 +73,7 @@ namespace kd {
                     auto div_back_node = right_divider->nodes_.back();
                     if (f_node2_divider_maps.find(div_back_node->id_) != f_node2_divider_maps.end()) {
                         shared_ptr<DCLaneCheckError> error =
-                                DCLaneCheckError::createByNode("KXS-05-013", lane, nullptr);
+                                DCLaneCheckError::createByNode(CHECK_ITEM_KXS_LANE_013, lane, nullptr);
                         error->errorDesc_ = "lane_id:";
                         error->errorDesc_ += lane->id_;
                         error->errorDesc_ += "没有退出车道连接";
@@ -85,7 +85,7 @@ namespace kd {
                     auto div_front_node = right_divider->nodes_.front();
                     if (t_node2_divider_maps.find(div_front_node->id_) != t_node2_divider_maps.end()) {
                         shared_ptr<DCLaneCheckError> error =
-                                DCLaneCheckError::createByNode("KXS-05-014", lane, nullptr);
+                                DCLaneCheckError::createByNode(CHECK_ITEM_KXS_LANE_014, lane, nullptr);
                         error->errorDesc_ = "lane_id:";
                         error->errorDesc_ += lane->id_;
                         error->errorDesc_ += "没有进入车道连接";

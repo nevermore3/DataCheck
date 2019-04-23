@@ -17,6 +17,7 @@ namespace kd {
         bool RoadCheck::execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) {
             check_road_divider_intersect(mapDataManager, errorOutput);
             check_road_node_height(mapDataManager, errorOutput);
+            check_road_node(mapDataManager, errorOutput);
             return true;
         }
 
@@ -172,6 +173,41 @@ namespace kd {
                     shared_ptr<DCRoadCheckError> error =
                             DCRoadCheckError::createByKXS_04_003(ptr_road->id_, error_index_pair);
                     errorOutput->saveError(error);
+                }
+            }
+        }
+
+        void RoadCheck::check_road_node(shared_ptr<MapDataManager> mapDataManager,
+                                        shared_ptr<CheckErrorOutput> errorOutput) {
+            for (auto road_iter : mapDataManager->roads_) {
+                auto ptr_road = road_iter.second;
+                if (ptr_road) {
+                    vector<shared_ptr<NodeError>> ptr_error_nodes;
+                    auto first_node = ptr_road->nodes_.front();
+                    shared_ptr<NodeError> ptr_e_node = make_shared<NodeError>();
+                    ptr_e_node->index = 0;
+                    ptr_e_node->ptr_coord = first_node;
+                    ptr_error_nodes.emplace_back(ptr_e_node);
+                    for (int i = 1; i < ptr_road->nodes_.size(); i++) {
+                        if (first_node->lng_ == ptr_road->nodes_.at(i)->lng_ &&
+                            first_node->lat_ == ptr_road->nodes_.at(i)->lat_) {
+                            shared_ptr<NodeError> ptr_cur_e_node = make_shared<NodeError>();
+                            ptr_cur_e_node->index = i;
+                            ptr_cur_e_node->ptr_coord = ptr_road->nodes_.at(i);
+                            ptr_error_nodes.emplace_back(ptr_cur_e_node);
+                        } else {
+                            if (ptr_error_nodes.size() > 1) {
+                                auto ptr_error = DCRoadCheckError::createByKXS_04_006(ptr_road->id_, ptr_error_nodes);
+                                errorOutput->saveError(ptr_error);
+                            }
+                            ptr_error_nodes.clear();
+                            first_node = ptr_road->nodes_.at(i);
+                            shared_ptr<NodeError> ptr_cur_e_node = make_shared<NodeError>();
+                            ptr_cur_e_node->index = i;
+                            ptr_cur_e_node->ptr_coord = first_node;
+                            ptr_error_nodes.emplace_back(ptr_cur_e_node);
+                        }
+                    }
                 }
             }
         }

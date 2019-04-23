@@ -123,7 +123,7 @@ namespace kd {
                             if (whiteTypes.find(checkType) == whiteTypes.end()) {
                                 //找到非同类属性数据
                                 shared_ptr<DCDividerCheckError> error =
-                                        DCDividerCheckError::createByAtt("KXS-01-007", div, div->atts_[j]);
+                                        DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_007, div, div->atts_[j]);
                                 error->checkDesc_ = "车道分割线黄白线变化不一致";
                                 error->checkLevel_ = LEVEL_WARNING;
                                 stringstream ss;
@@ -144,7 +144,7 @@ namespace kd {
                                 if (yellowTypes.find(checkType) == yellowTypes.end()) {
                                     //找到非同类属性数据
                                     shared_ptr<DCDividerCheckError> error =
-                                            DCDividerCheckError::createByAtt("KXS-01-007", div, div->atts_[j]);
+                                            DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_007, div, div->atts_[j]);
                                     error->checkDesc_ = "车道分割线黄白线变化不一致";
                                     error->checkLevel_ = LEVEL_WARNING;
                                     stringstream ss;
@@ -187,7 +187,7 @@ namespace kd {
                         if(att->type_ != 0 || att->color_ != 0 || att->driveRule_ != 0){
                             //车道线没有属性变化点
                             shared_ptr<DCDividerCheckError> error =
-                                    DCDividerCheckError::createByAtt("KXS-01-014", div, att);
+                                    DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_014, div, att);
                             error->checkDesc_ = "颜色、类型、通行类型属性冲突检查";
                             stringstream ss;
                             ss << "divider:" << div->id_;
@@ -208,7 +208,7 @@ namespace kd {
                         if(typeit == dividerTypes.end()){
                             //颜色和车道线线型不匹配
                             shared_ptr<DCDividerCheckError> error =
-                                    DCDividerCheckError::createByAtt("KXS-01-014", div, att);
+                                    DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_014, div, att);
                             error->checkDesc_ = "颜色和车道线线型不匹配";
                             stringstream ss;
                             ss << "divider:" << div->id_;
@@ -232,7 +232,7 @@ namespace kd {
                         if(typeit == dividerTypes.end()){
                             //通行类型和车道线线型不匹配
                             shared_ptr<DCDividerCheckError> error =
-                                    DCDividerCheckError::createByAtt("KXS-01-014", div, att);
+                                    DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_014, div, att);
                             error->checkDesc_ = "通行类型和车道线线型不匹配";
                             stringstream ss;
                             ss << "divider:" << div->id_;
@@ -263,7 +263,7 @@ namespace kd {
                 if ( daCount == 0){
                     //车道线没有属性变化点
                     shared_ptr<DCDividerCheckError> error =
-                            DCDividerCheckError::createByAtt("KXS-01-015", div, nullptr);
+                            DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_015, div, nullptr);
                     error->errorDesc_ = "divider:";
                     error->errorDesc_ += div->id_;
                     error->checkDesc_ = "车道线没有属性变化点";
@@ -288,7 +288,7 @@ namespace kd {
                     if(startAttNodeId != div->fromNodeId_){
                         //车道线起点没有属性变化点
                         shared_ptr<DCDividerCheckError> error =
-                                DCDividerCheckError::createByAtt("KXS-01-015", div, nullptr);
+                                DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_015, div, nullptr);
                         error->errorDesc_ = "divider:";
                         error->errorDesc_ += div->id_;
                         error->checkDesc_ = "车道线起点没有属性变化点";
@@ -307,7 +307,7 @@ namespace kd {
                         (startAttNodeId == div->toNodeId_ && endAttNodeId == div->fromNodeId_) ){
                         //车道线起点和终点都有属性变化点
                         shared_ptr<DCDividerCheckError> error =
-                                DCDividerCheckError::createByAtt("KXS-01-015", div, nullptr);
+                                DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_015, div, nullptr);
                         error->errorDesc_ = "divider:";
                         error->errorDesc_ += div->id_;
                         error->checkDesc_ = "车道线起点和终点都有属性变化点";
@@ -337,7 +337,7 @@ namespace kd {
 
                     if(da1 != nullptr && da1->typeSame(da2)){
                         shared_ptr<DCDividerCheckError> error =
-                                DCDividerCheckError::createByAtt("KXS-01-016", div, da1);
+                                DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_016, div, da1);
                         error->checkDesc_ = "同一个divider上相邻两个DA属性完全相同";
                         stringstream ss;
                         ss << "divider:" << div->id_;
@@ -388,7 +388,7 @@ namespace kd {
 
                     if(distance < daSpaceLen){
                         shared_ptr<DCDividerCheckError> error =
-                                DCDividerCheckError::createByAtt("KXS-01-017", div, da1);
+                                DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_017, div, da1);
                         error->checkDesc_ = "同一个divider上相邻两个DA距离<1米";
                         stringstream ss;
                         ss << "divider:" << div->id_;

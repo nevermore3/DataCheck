@@ -8,6 +8,54 @@
 namespace kd {
     namespace dc {
 
+        CheckErrorOutput::CheckErrorOutput(CppSQLite3::Database *pdb) {
+            m_pdb = pdb;
+            error_check_levels_.insert(CHECK_ITEM_KXS_ORG_002);
+            error_check_levels_.insert(CHECK_ITEM_KXS_ORG_003);
+            error_check_levels_.insert(CHECK_ITEM_KXS_ORG_004);
+            error_check_levels_.insert(CHECK_ITEM_KXS_ORG_008);
+            error_check_levels_.insert(CHECK_ITEM_KXS_ORG_015);
+            error_check_levels_.insert(CHECK_ITEM_KXS_ORG_020);
+            error_check_levels_.insert(CHECK_ITEM_KXS_ORG_021);
+            error_check_levels_.insert(CHECK_ITEM_KXS_ORG_022);
+            error_check_levels_.insert(CHECK_ITEM_KXS_ORG_023);
+
+            error_check_levels_.insert(CHECK_ITEM_KXS_LG_002);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LG_004);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LG_005);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LG_006);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LG_011);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LG_012);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LG_014);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LG_015);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LG_016);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LG_019);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LG_020);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LG_021);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LG_022);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LG_023);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LG_024);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LG_025);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LG_026);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LG_027);
+
+
+            error_check_levels_.insert(CHECK_ITEM_KXS_ROAD_001);
+            error_check_levels_.insert(CHECK_ITEM_KXS_ROAD_002);
+            error_check_levels_.insert(CHECK_ITEM_KXS_ROAD_004);
+            error_check_levels_.insert(CHECK_ITEM_KXS_ROAD_005);
+
+            error_check_levels_.insert(CHECK_ITEM_KXS_LANE_001);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LANE_003);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LANE_006);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LANE_008);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LANE_012);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LANE_013);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LANE_014);
+
+            error_check_levels_.insert(CHECK_ITEM_KXS_LM_001);
+        }
+
         void CheckErrorOutput::writeInfo(string info, bool bLongString) {
             LOG(ERROR) << info;
         }
@@ -120,28 +168,10 @@ namespace kd {
 
         string CheckErrorOutput::get_error_level(string check_model) {
             string ret = LEVEL_WARNING;
-            if (check_model == "KXS-01-002" || check_model == "KXS-01-003" || check_model == "KXS-01-004" ||
-                check_model == "KXS-01-008" || check_model == "KXS-01-015" || check_model == "KXS-01-020" ||
-                check_model == "KXS-01-021" || check_model == "KXS-01-022" || check_model == "KXS-01-023") {
-                ret = LEVEL_ERROR;
-            } else if (check_model == "KXS-03-002" || check_model == "KXS-03-004" || check_model == "KXS-03-005" ||
-                       check_model == "KXS-03-006" || check_model == "KXS-03-011" || check_model == "KXS-03-012" ||
-                       check_model == "KXS-03-014" || check_model == "KXS-03-015" ||
-                       check_model == "KXS-03-016" || check_model == "KXS-03-019" || check_model == "KXS-03-020" ||
-                       check_model == "KXS-03-021" || check_model == "KXS-03-022" || check_model == "KXS-03-023" ||
-                       check_model == "KXS-03-024" || check_model == "KXS-03-025" || check_model == "KXS-03-026" ||
-                       check_model == "KXS-03-027") {
-                ret = LEVEL_ERROR;
-            } else if (check_model == "KXS-04-001" || check_model == "KXS-04-002" || check_model == "KXS-04-004" ||
-                       check_model == "KXS-04-005") {
-                ret = LEVEL_ERROR;
-            } else if (check_model == "KXS-05-001" || check_model == "KXS-05-003" || check_model == "KXS-05-006" ||
-                       check_model == "KXS-05-008" || check_model == "KXS-05-012") {
-                ret = LEVEL_ERROR;
-            } else if (check_model == "KXS-06-001") {
+
+            if (error_check_levels_.find(check_model) != error_check_levels_.end()) {
                 ret = LEVEL_ERROR;
             }
-
 
             return ret;
         }

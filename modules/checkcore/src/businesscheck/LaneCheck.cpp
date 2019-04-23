@@ -4,6 +4,9 @@
 
 #include "businesscheck/LaneCheck.h"
 #include <geos/geom/GeometryFactory.h>
+#include <businesscheck/LaneCheck.h>
+#include <util/GeosObjUtil.h>
+
 #include "util/CommonUtil.h"
 #include "util/KDGeoUtil.hpp"
 
@@ -17,6 +20,7 @@ namespace kd {
 
         bool LaneCheck::execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) {
             check_lane_divider_intersect(mapDataManager, errorOutput);
+            check_lane_lane_intersect(mapDataManager, errorOutput);
             return true;
         }
 
@@ -28,9 +32,6 @@ namespace kd {
             for (const auto &lg : ptr_lane_groups) {
                 if (lg.second->is_virtual_) {
                     continue;
-                }
-                if (lg.first == "59340043") {
-                    int l = 0;
                 }
                 auto lane_group_id = lg.first;
                 auto ptr_lane_group = lg.second;
@@ -127,6 +128,125 @@ namespace kd {
                 }
             }
             return ret;
+        }
+
+        void LaneCheck::check_lane_lane_intersect(shared_ptr<MapDataManager> mapDataManager,
+                                                  shared_ptr<CheckErrorOutput> errorOutput) {
+            const auto &ptr_lane_groups = mapDataManager->laneGroups_;
+
+            shared_ptr<DCError> ptr_error = nullptr;
+            for (const auto &lg : ptr_lane_groups) {
+                check_lane_node(mapDataManager, errorOutput, lg.second);
+                auto ptr_lanes = lg.second->lanes_;
+                if (ptr_lanes.size() > 1) {
+                    auto ptr_left_lane = ptr_lanes.front();
+                    vector<shared_ptr<DCLane>> ptr_same_node_lanes;
+                    ptr_same_node_lanes.emplace_back(ptr_left_lane);
+                    for (int i = 1; i < ptr_lanes.size(); i++) {
+                        if (ptr_left_lane && ptr_lanes[i]) {
+                            // 如果首点相同
+                            if (GeosObjUtil::is_same_coord(ptr_left_lane->coords_.front(),
+                                                           ptr_lanes[i]->coords_.front())) {
+                                ptr_same_node_lanes.emplace_back(ptr_lanes[i]);
+                            } else {
+                                // check
+                                lane_intersects(mapDataManager, errorOutput, ptr_same_node_lanes);
+                                ptr_same_node_lanes.clear();
+                                ptr_left_lane = ptr_lanes[i];
+                                ptr_same_node_lanes.emplace_back(ptr_left_lane);
+                            }
+                        }
+                    }
+
+                    ptr_same_node_lanes.clear();
+                    ptr_left_lane = ptr_lanes.front();
+                    ptr_same_node_lanes.emplace_back(ptr_left_lane);
+                    for (int i = 1; i < ptr_lanes.size(); i++) {
+                        if (ptr_left_lane && ptr_lanes[i]) {
+                            // 如果首点相同
+                            if (GeosObjUtil::is_same_coord(ptr_left_lane->coords_.back(),
+                                                           ptr_lanes[i]->coords_.back())) {
+                                ptr_same_node_lanes.emplace_back(ptr_lanes[i]);
+                            } else {
+                                // check
+                                lane_intersects(mapDataManager, errorOutput, ptr_same_node_lanes);
+                                ptr_same_node_lanes.clear();
+                                ptr_left_lane = ptr_lanes[i];
+                                ptr_same_node_lanes.emplace_back(ptr_left_lane);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        void LaneCheck::lane_intersects(const shared_ptr<MapDataManager> &mapDataManager,
+                                        const shared_ptr<CheckErrorOutput> &errorOutput,
+                                        const vector<shared_ptr<DCLane>> &ptr_lanes) {
+            char zone[8] = {0};
+            auto ptr_f_coord = GeosObjUtil::create_coordinate(ptr_lanes.front()->coords_.front(), zone);
+            auto ptr_t_coord = GeosObjUtil::create_coordinate(ptr_lanes.front()->coords_.back(), zone);
+
+            if (ptr_f_coord == nullptr) {
+                return;
+            }
+            if (ptr_t_coord == nullptr) {
+                return;
+            }
+
+            for (int i = 0; i < ptr_lanes.size() - 1; i++) {
+                for (int j = i + 1; j < ptr_lanes.size(); j++) {
+                    auto ptr_left_line = CommonUtil::get_line_string(ptr_lanes[i]->coords_);
+                    auto ptr_right_line = CommonUtil::get_line_string(ptr_lanes[j]->coords_);
+                    auto ptr_intersects_geos = ptr_left_line->intersection(ptr_right_line.get());
+                    auto coord_size = ptr_intersects_geos->getCoordinates()->size();
+                    if (coord_size > 1 && coord_size < 4) {
+                        auto ptr_intersect_coords = ptr_intersects_geos->getCoordinates();
+                        for (int k = 0; k < ptr_intersect_coords->size(); k++) {
+                            // 如果不是第一个点
+                            if (!GeosObjUtil::is_same_coord(*ptr_f_coord.get(), ptr_intersect_coords->getAt(k)) &&
+                                !GeosObjUtil::is_same_coord(*ptr_t_coord.get(), ptr_intersect_coords->getAt(k))) {
+                                auto ptr_error = DCLaneError::createByKXS_05_015(ptr_lanes[i]->id_, ptr_lanes[j]->id_);
+                                errorOutput->saveError(ptr_error);
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
+        void LaneCheck::check_lane_node(shared_ptr<MapDataManager> mapDataManager,
+                                        shared_ptr<CheckErrorOutput> errorOutput,
+                                        shared_ptr<DCLaneGroup> ptr_lane_group) {
+            for (const auto &ptr_lane : ptr_lane_group->lanes_) {
+                vector<shared_ptr<NodeError>> ptr_error_nodes;
+                auto first_node = ptr_lane->coords_.front();
+                shared_ptr<NodeError> ptr_e_node = make_shared<NodeError>();
+                ptr_e_node->index = 0;
+                ptr_e_node->ptr_coord = first_node;
+                ptr_error_nodes.emplace_back(ptr_e_node);
+                for (int i = 1; i < ptr_lane->coords_.size(); i++) {
+                    if (first_node->lng_ == ptr_lane->coords_.at(i)->lng_ &&
+                        first_node->lat_ == ptr_lane->coords_.at(i)->lat_) {
+                        shared_ptr<NodeError> ptr_cur_e_node = make_shared<NodeError>();
+                        ptr_cur_e_node->index = i;
+                        ptr_cur_e_node->ptr_coord = ptr_lane->coords_.at(i);
+                        ptr_error_nodes.emplace_back(ptr_cur_e_node);
+                    } else {
+                        if (ptr_error_nodes.size() > 1) {
+                            auto ptr_error = DCLaneError::createByKXS_05_016(ptr_lane->id_, ptr_error_nodes);
+                            errorOutput->saveError(ptr_error);
+                        }
+                        ptr_error_nodes.clear();
+                        first_node = ptr_lane->coords_.at(i);
+                        shared_ptr<NodeError> ptr_cur_e_node = make_shared<NodeError>();
+                        ptr_cur_e_node->index = i;
+                        ptr_cur_e_node->ptr_coord = first_node;
+                        ptr_error_nodes.emplace_back(ptr_cur_e_node);
+                    }
+                }
+            }
         }
     }
 }

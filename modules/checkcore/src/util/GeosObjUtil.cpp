@@ -111,5 +111,15 @@ namespace kd {
                 return false;
             }
         }
+
+        bool GeosObjUtil::is_same_coord(const shared_ptr<DCCoord> &coord1, const shared_ptr<DCCoord> &coord2,
+                                        double precise) {
+            if (fabs(coord1->lng_ - coord2->lng_) < precise && fabs(coord1->lat_ - coord2->lat_) < precise &&
+                fabs(coord1->z_ - coord2->z_) < precise) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 }

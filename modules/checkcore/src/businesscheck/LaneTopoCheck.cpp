@@ -2,6 +2,7 @@
 // Created by gaoyanhong on 2018/4/5.
 //
 
+#include <util/CommonUtil.h>
 #include "businesscheck/LaneTopoCheck.h"
 
 namespace kd {
@@ -70,28 +71,60 @@ namespace kd {
 
                 } else if (fromLaneCount == 0 && toLaneCount > 0) {
                     auto right_divider = lane->rightDivider_;
-                    auto div_back_node = right_divider->nodes_.back();
-                    if (f_node2_divider_maps.find(div_back_node->id_) != f_node2_divider_maps.end()) {
-                        shared_ptr<DCLaneCheckError> error =
-                                DCLaneCheckError::createByNode(CHECK_ITEM_KXS_LANE_013, lane, nullptr);
-                        error->errorDesc_ = "lane_id:";
-                        error->errorDesc_ += lane->id_;
-                        error->errorDesc_ += "没有退出车道连接";
-                        error->checkDesc_ = "没有退出车道,divider拓扑存在,检查lane_connectivity是否正确";
-                        errorOutput->saveError(error);
+                    if (right_divider) {
+                        auto div_back_node = right_divider->nodes_.back();
+                        if (div_back_node) {
+                            auto f_iter = f_node2_divider_maps.find(div_back_node->id_);
+                            if (f_iter != f_node2_divider_maps.end()) {
+                                bool check = false;
+                                for (const auto &conn_div : f_iter->second) {
+                                    auto conn_lgs = CommonUtil::get_lane_groups_by_divider(mapDataManager, conn_div->id_);
+                                    if (!conn_lgs.empty()) {
+                                        check = true;
+                                        break;
+                                    }
+                                }
+                                if (check) {
+                                    shared_ptr<DCLaneCheckError> error =
+                                            DCLaneCheckError::createByNode(CHECK_ITEM_KXS_LANE_013, lane, nullptr);
+                                    error->errorDesc_ = "lane_id:";
+                                    error->errorDesc_ += lane->id_;
+                                    error->errorDesc_ += "没有退出车道连接";
+                                    error->checkDesc_ = "没有退出车道,divider拓扑存在,检查lane_connectivity是否正确";
+                                    errorOutput->saveError(error);
+                                }
+                            }
+                        }
                     }
+
                 } else if (fromLaneCount > 0 && toLaneCount == 0) {
                     auto right_divider = lane->rightDivider_;
-                    auto div_front_node = right_divider->nodes_.front();
-                    if (t_node2_divider_maps.find(div_front_node->id_) != t_node2_divider_maps.end()) {
-                        shared_ptr<DCLaneCheckError> error =
-                                DCLaneCheckError::createByNode(CHECK_ITEM_KXS_LANE_014, lane, nullptr);
-                        error->errorDesc_ = "lane_id:";
-                        error->errorDesc_ += lane->id_;
-                        error->errorDesc_ += "没有进入车道连接";
-                        error->checkDesc_ = "没有进入车道,divider拓扑存在,检查lane_connectivity是否正确";
-                        errorOutput->saveError(error);
+                    if (right_divider) {
+                        auto div_front_node = right_divider->nodes_.front();
+                        if (div_front_node) {
+                            auto t_iter = t_node2_divider_maps.find(div_front_node->id_);
+                            if (t_iter != t_node2_divider_maps.end()) {
+                                bool check = false;
+                                for (const auto &conn_div : t_iter->second) {
+                                    auto conn_lgs = CommonUtil::get_lane_groups_by_divider(mapDataManager, conn_div->id_);
+                                    if (!conn_lgs.empty()) {
+                                        check = true;
+                                        break;
+                                    }
+                                }
+                                if (check) {
+                                    shared_ptr<DCLaneCheckError> error =
+                                            DCLaneCheckError::createByNode(CHECK_ITEM_KXS_LANE_014, lane, nullptr);
+                                    error->errorDesc_ = "lane_id:";
+                                    error->errorDesc_ += lane->id_;
+                                    error->errorDesc_ += "没有进入车道连接";
+                                    error->checkDesc_ = "没有进入车道,divider拓扑存在,检查lane_connectivity是否正确";
+                                    errorOutput->saveError(error);
+                                }
+                            }
+                        }
                     }
+
                 }
             }
         }

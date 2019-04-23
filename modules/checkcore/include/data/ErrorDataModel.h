@@ -330,10 +330,10 @@ namespace kd {
             static shared_ptr<DCLaneError> createByKXS_05_003(const string &lane_id,
                                                               const string &divider_id);
 
-            static shared_ptr<DCLaneError> createByKXS_05_013(const string &lane_id1,
+            static shared_ptr<DCLaneError> createByKXS_05_015(const string &lane_id1,
                                                               const string &lane_id2);
 
-            static shared_ptr<DCLaneError> createByKXS_05_014(const string &lane_id,
+            static shared_ptr<DCLaneError> createByKXS_05_016(const string &lane_id,
                                                               const vector<shared_ptr<NodeError>> &ptr_error_nodes);
 
         public:

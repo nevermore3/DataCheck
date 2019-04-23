@@ -512,8 +512,8 @@ namespace kd {
             return error;
         }
 
-        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_013(const string &lane_id1, const string &lane_id2) {
-            shared_ptr<DCLaneError> error = make_shared<DCLaneError>("KXS-05-013");
+        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_015(const string &lane_id1, const string &lane_id2) {
+            shared_ptr<DCLaneError> error = make_shared<DCLaneError>("KXS-05-015");
             error->checkLevel_ = LEVEL_ERROR;
             error->checkDesc_ = "检查同组内中心线与中心线是否存在交叉问题（组内有共点的中心线做检查）。";
             error->detail += "lane_id:";
@@ -525,9 +525,9 @@ namespace kd {
             return error;
         }
 
-        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_014(const string &lane_id,
+        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_016(const string &lane_id,
                                                                 const vector<shared_ptr<NodeError>> &ptr_error_nodes) {
-            shared_ptr<DCLaneError> error = make_shared<DCLaneError>("KXS-05-014");
+            shared_ptr<DCLaneError> error = make_shared<DCLaneError>("KXS-05-016");
             error->checkLevel_ = LEVEL_ERROR;
             error->checkDesc_ = "车道中心线前后结点重复,前后点xy坐标相同（z值可能相同）";
             error->detail += "lane_id:";

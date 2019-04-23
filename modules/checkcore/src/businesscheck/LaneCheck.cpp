@@ -206,7 +206,7 @@ namespace kd {
                             // 如果不是第一个点
                             if (!GeosObjUtil::is_same_coord(*ptr_f_coord.get(), ptr_intersect_coords->getAt(k)) &&
                                 !GeosObjUtil::is_same_coord(*ptr_t_coord.get(), ptr_intersect_coords->getAt(k))) {
-                                auto ptr_error = DCLaneError::createByKXS_05_013(ptr_lanes[i]->id_, ptr_lanes[j]->id_);
+                                auto ptr_error = DCLaneError::createByKXS_05_015(ptr_lanes[i]->id_, ptr_lanes[j]->id_);
                                 errorOutput->saveError(ptr_error);
                             }
                         }
@@ -235,7 +235,7 @@ namespace kd {
                         ptr_error_nodes.emplace_back(ptr_cur_e_node);
                     } else {
                         if (ptr_error_nodes.size() > 1) {
-                            auto ptr_error = DCLaneError::createByKXS_05_014(ptr_lane->id_, ptr_error_nodes);
+                            auto ptr_error = DCLaneError::createByKXS_05_016(ptr_lane->id_, ptr_error_nodes);
                             errorOutput->saveError(ptr_error);
                         }
                         ptr_error_nodes.clear();

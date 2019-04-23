@@ -136,7 +136,8 @@ namespace kd {
                        check_model == "KXS-04-005") {
                 ret = LEVEL_ERROR;
             } else if (check_model == "KXS-05-001" || check_model == "KXS-05-003" || check_model == "KXS-05-006" ||
-                       check_model == "KXS-05-008" || check_model == "KXS-05-012") {
+                       check_model == "KXS-05-008" || check_model == "KXS-05-012" || check_model == "KXS-05-013" ||
+                       check_model == "KXS-05-014") {
                 ret = LEVEL_ERROR;
             } else if (check_model == "KXS-06-001") {
                 ret = LEVEL_ERROR;

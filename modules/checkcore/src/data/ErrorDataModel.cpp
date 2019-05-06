@@ -623,7 +623,7 @@ namespace kd {
 
         bool DCFieldError::check_file(const string &file) {
             return file == "HD_DIVIDER" || file == "HD_DIVIDER_ATTRIBUTE" || file == "HD_DIVIDER_NODE" ||
-                   file == "HD_LANE" || file == "HD_LANE_ATTRIBUTE" || file == "HD_LANE_CONNECTIVITY" ||
+                   file == "HD_LANE"  ||
                    file == "HD_LANE_GROUP" || file == "HD_R_LANE_GROUP" || file == "ROAD" ||
                    file == "ROAD_NODE";
         }

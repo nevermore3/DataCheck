@@ -230,13 +230,23 @@ namespace kd {
                 // 获取节点
                 auto ptr_left_divider = ptr_dividers.front();
                 // 选节点
-                auto ptr_left_divider_node = ptr_left_divider->nodes_.front();
+                auto ptr_left_divider_node = ptr_left_divider->nodes_[ptr_left_divider->nodes_.size() / 2];
                 auto f_conn_dividers = CommonUtil::get_conn_divider(mapDataManager, ptr_left_divider, false);
                 if (!f_conn_dividers.empty()) {
                     for (const auto &div : f_conn_dividers) {
                         auto lgs = CommonUtil::get_lane_groups_by_divider(mapDataManager, div);
                         if (!lgs.empty()) {
                             ptr_left_divider_node = ptr_left_divider->nodes_.back();
+                            break;
+                        }
+                    }
+                }
+                auto t_conn_dividers = CommonUtil::get_conn_divider(mapDataManager, ptr_left_divider, true);
+                if (!t_conn_dividers.empty()) {
+                    for (const auto &div : t_conn_dividers) {
+                        auto lgs = CommonUtil::get_lane_groups_by_divider(mapDataManager, div);
+                        if (!lgs.empty()) {
+                            ptr_left_divider_node = ptr_left_divider->nodes_.front();
                             break;
                         }
                     }

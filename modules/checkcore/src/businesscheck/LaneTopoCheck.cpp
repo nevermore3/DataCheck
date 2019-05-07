@@ -51,19 +51,7 @@ namespace kd {
                     int toLaneCount = toLaneConns.count(lane->id_);
 
                     if (fromLaneCount == 0 && toLaneCount == 0) {
-                        bool is_emergency = false;
-
-                        for (const auto &attr : lane->atts_) {
-                            if (attr->laneType_ == 9) {
-                                is_emergency = true;
-                                break;
-                            }
-                        }
-
-                        if (!is_emergency) {
-                            tag_emergency_lanes.emplace_back(lane);
-                        }
-
+                        tag_emergency_lanes.emplace_back(lane);
                     } else if (fromLaneCount == 0 && toLaneCount > 0) {
                         auto right_divider = lane->rightDivider_;
                         if (right_divider) {
@@ -127,13 +115,24 @@ namespace kd {
                 if (!tag_emergency_lanes.empty()) {
                     if (tag_emergency_lanes.size() < lg.second->lanes_.size()) {
                         for (auto lane : tag_emergency_lanes) {
-                            shared_ptr<DCLaneCheckError> error =
-                                    DCLaneCheckError::createByNode(CHECK_ITEM_KXS_LANE_012, lane, nullptr);
-                            error->errorDesc_ = "lane_id:";
-                            error->errorDesc_ += lane->id_;
-                            error->errorDesc_ += "孤立车道,没有进入车道和退出车道";
-                            error->checkDesc_ = "孤立车道,没有进入和退出车道连接,并且没有标注应急车道属性";
-                            errorOutput->saveError(error);
+                            bool is_emergency = false;
+
+                            for (const auto &attr : lane->atts_) {
+                                if (attr->laneType_ == 9) {
+                                    is_emergency = true;
+                                    break;
+                                }
+                            }
+
+                            if (!is_emergency) {
+                                shared_ptr<DCLaneCheckError> error =
+                                        DCLaneCheckError::createByNode(CHECK_ITEM_KXS_LANE_012, lane, nullptr);
+                                error->errorDesc_ = "lane_id:";
+                                error->errorDesc_ += lane->id_;
+                                error->errorDesc_ += "孤立车道,没有进入车道和退出车道";
+                                error->checkDesc_ = "孤立车道,没有进入和退出车道连接,并且没有标注应急车道属性";
+                                errorOutput->saveError(error);
+                            }
                         }
                     }
                 }

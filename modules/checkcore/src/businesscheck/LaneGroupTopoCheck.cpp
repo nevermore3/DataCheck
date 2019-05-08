@@ -250,7 +250,7 @@ namespace kd {
                                                                                         ptr_dividers[left_divider_idx],
                                                                                         ptr_dividers[right_divider_idx]);
 
-                            auto lat_left_ptr_divider = divider_no2_ptr_divider.front();
+                            auto lat_left_ptr_divider = divider_no2_ptr_divider.back();
                             auto lat_right_ptr_divider = divider_no2_ptr_divider.back();
                             auto lat_ptr_lanes = CommonUtil::get_lanes_between_dividers(mapDataManager,
                                                                                         lat_left_ptr_divider,

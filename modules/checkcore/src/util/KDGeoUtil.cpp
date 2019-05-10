@@ -636,6 +636,17 @@ namespace kd {
             return true;
         }
 
+        int KDGeoUtil::calPTOrentationOfLine(double x0, double y0, double x1, double y1, double ptx, double pty) {
+            double tempValue =(y0 - y1)*ptx + (x1 - x0)* pty +( x0 * y1) - (x1 * y0);
+            //tempValue>0，说明点在线的左边，小于在右边，等于则在线上
+            if (tempValue > 0){
+                return 1;
+            } else if(tempValue == 0){
+                return 0;
+            } else{
+                return -1;
+            }
+        }
 
         /**
          * 创建三角形追踪区域

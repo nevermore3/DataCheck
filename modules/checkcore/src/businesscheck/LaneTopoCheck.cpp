@@ -61,6 +61,9 @@ namespace kd {
                                 if (f_iter != f_node2_divider_maps.end()) {
                                     bool check = false;
                                     for (const auto &conn_div : f_iter->second) {
+                                        if (conn_div->dividerNo_ == 0) {
+                                            continue;
+                                        }
                                         auto conn_lgs = CommonUtil::get_lane_groups_by_divider(mapDataManager,
                                                                                                conn_div->id_);
                                         if (!conn_lgs.empty()) {

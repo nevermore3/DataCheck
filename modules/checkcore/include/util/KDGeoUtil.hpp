@@ -282,6 +282,18 @@ namespace kd {
                                         geos::geom::Coordinate * crossPt);
 
 
+            /**
+             * 计算一个点在线段点左侧还是右侧
+             * @param x0  线段起点x
+             * @param y0  线段起点y
+             * @param x1  线段终点x
+             * @param y1  线段终点y
+             * @param x2  判断点x
+             * @param y2  判断点y
+             * @return  返回值为1则在左侧，0为在线段上，-1为右侧
+             */
+            static int calPTOrentationOfLine(double x0, double y0, double x1, double y1, double ptx, double pty);
+
             //////////////////////////////////
             //根据两个点创建追踪三角形
             static geos::geom::Polygon *

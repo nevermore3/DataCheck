@@ -11,6 +11,7 @@
 #include <geom/geo_util.h>
 #include <geos/geom/Point.h>
 #include "util/GeosObjUtil.h"
+#include "util/KDGeoUtil.hpp"
 
 using namespace geos::geom;
 using namespace kd::automap;
@@ -362,6 +363,53 @@ namespace kd {
                 }
             }
             return max_no;
+        }
+
+        shared_ptr<DCDividerNode> CommonUtil::get_distance_node(shared_ptr<DCDivider> ptr_divider,
+                                                                double length, bool is_front) {
+            shared_ptr<DCDividerNode> ret_ptr_node = nullptr;
+            if (ptr_divider && !ptr_divider->nodes_.empty()) {
+                vector<shared_ptr<DCCoord>> divider_node_vecs;
+                if (is_front) {
+                    ret_ptr_node = ptr_divider->nodes_.back();
+                    divider_node_vecs.emplace_back(make_shared<DCCoord>(ptr_divider->nodes_.front()->coord_));
+                    for (int i = 1; i < ptr_divider->nodes_.size(); i++) {
+                        divider_node_vecs.emplace_back(make_shared<DCCoord>(ptr_divider->nodes_[i]->coord_));
+                        double temp_length = GeosObjUtil::get_length_of_coords(divider_node_vecs);
+                        if (temp_length > length) {
+                            ret_ptr_node = ptr_divider->nodes_[i];
+                            break;
+                        }
+                    }
+                } else {
+                    ret_ptr_node = ptr_divider->nodes_.front();
+                    divider_node_vecs.emplace_back(make_shared<DCCoord>(ptr_divider->nodes_.back()->coord_));
+                    for (int i = static_cast<int>(ptr_divider->nodes_.size() - 2); i >= 0; i--) {
+                        divider_node_vecs.emplace_back(make_shared<DCCoord>(ptr_divider->nodes_[i]->coord_));
+                        double temp_length = GeosObjUtil::get_length_of_coords(divider_node_vecs);
+                        if (temp_length > length) {
+                            ret_ptr_node = ptr_divider->nodes_[i];
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return ret_ptr_node;
+        }
+
+        int CommonUtil::NodeOrentationOfDivider(shared_ptr<DCDividerNode> f_ptr_node,
+                                                shared_ptr<DCDividerNode> t_ptr_node,
+                                                shared_ptr<DCDividerNode> ptr_node) {
+            if (f_ptr_node == nullptr || t_ptr_node == nullptr || ptr_node == nullptr) {
+                return -2;
+            }
+            char zone[8] = {0};
+            auto f_coord = GeosObjUtil::create_coordinate(f_ptr_node, zone);
+            auto t_coord = GeosObjUtil::create_coordinate(t_ptr_node, zone);
+            auto coord = GeosObjUtil::create_coordinate(ptr_node, zone);
+
+            return KDGeoUtil::calPTOrentationOfLine(f_coord->x, f_coord->y, t_coord->x, t_coord->y, coord->x, coord->y);
         }
 
     }

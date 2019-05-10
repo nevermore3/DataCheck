@@ -4,11 +4,14 @@
 
 #include <businesscheck/LaneGroupCheck.h>
 #include <util/CommonUtil.h>
+#include <util/GeosObjUtil.h>
 
 #include "businesscheck/LaneGroupCheck.h"
 
 namespace kd {
     namespace dc {
+
+        static const double DIVIDER_NODE_LENGTH = 10;
 
         string LaneGroupCheck::getId() {
             return id;
@@ -225,71 +228,101 @@ namespace kd {
                                               shared_ptr<CheckErrorOutput> errorOutput, const string &lane_group,
                                               const vector<shared_ptr<DCDivider>> &ptr_dividers) {
             bool is_check = false;
+
             auto ptr_lane_group = CommonUtil::get_lane_group(mapDataManager, lane_group);
             if (!ptr_lane_group->is_virtual_) {
-                // 获取节点
-                auto ptr_left_divider = ptr_dividers.front();
-                // 选节点
-                auto ptr_left_divider_node = ptr_left_divider->nodes_[ptr_left_divider->nodes_.size() / 2];
-                auto f_conn_dividers = CommonUtil::get_conn_divider(mapDataManager, ptr_left_divider, false);
-                if (!f_conn_dividers.empty()) {
-                    for (const auto &div : f_conn_dividers) {
-                        auto lgs = CommonUtil::get_lane_groups_by_divider(mapDataManager, div);
-                        if (!lgs.empty()) {
-                            ptr_left_divider_node = ptr_left_divider->nodes_.back();
-                            break;
-                        }
-                    }
+                vector<shared_ptr<DCCoord>> divider_f_node_vecs;
+                vector<shared_ptr<DCCoord>> divider_t_node_vecs;
+                for (const auto &div : ptr_dividers) {
+                    divider_f_node_vecs.emplace_back(make_shared<DCCoord>(div->nodes_.front()->coord_));
+                    divider_t_node_vecs.emplace_back(make_shared<DCCoord>(div->nodes_.back()->coord_));
                 }
-                auto t_conn_dividers = CommonUtil::get_conn_divider(mapDataManager, ptr_left_divider, true);
-                if (!t_conn_dividers.empty()) {
-                    for (const auto &div : t_conn_dividers) {
-                        auto lgs = CommonUtil::get_lane_groups_by_divider(mapDataManager, div);
-                        if (!lgs.empty()) {
-                            ptr_left_divider_node = ptr_left_divider->nodes_.front();
-                            break;
-                        }
-                    }
-                }
-                if (ptr_left_divider->dividerNo_ == 0) {
-                    double current_length = 0;
-                    for (size_t index = 1; index < ptr_dividers.size(); index++) {
-                        // 判断编号
-                        if (ptr_dividers[index]->dividerNo_ == index) {
-                            // 节点距离递增
-                            auto div_nodes_length = CommonUtil::get_min_distance_from_divider(
-                                    ptr_left_divider_node, ptr_dividers[index]);
+                double temp_f_length = GeosObjUtil::get_length_of_coords(divider_f_node_vecs);
+                double temp_t_length = GeosObjUtil::get_length_of_coords(divider_t_node_vecs);
 
-
-                            if (div_nodes_length >= 0) {
-                                if (div_nodes_length > current_length ||
-                                    fabs(div_nodes_length - current_length) < 1e-7) {
-                                    current_length = div_nodes_length;
-                                } else {
-                                    is_check = true;
-                                    break;
-                                }
-                            } else {
-                                LOG(ERROR) << "get_length_between_divider_nodes failed! node : "
-                                           << ptr_left_divider_node->id_ << ","
-                                           << ptr_dividers[index]->nodes_.front()->id_;
-                            }
-                        } else {
-                            is_check = true;
-                            break;
-                        }
+                bool direction = ptr_lane_group->direction_ == 1;
+                if (temp_f_length < ptr_dividers.size() * DIVIDER_NODE_LENGTH) {
+                    if (check_divider_no(ptr_dividers, true, direction)) {
+                        is_check = true;
                     }
                 } else {
-                    // 编号出错
-                    is_check = true;
+                    if (temp_t_length < ptr_dividers.size() * DIVIDER_NODE_LENGTH) {
+                        if (check_divider_no(ptr_dividers, false, direction)) {
+                            is_check = true;
+                        }
+                    }
                 }
-            }
 
+
+
+            }
 
             if (is_check) {
                 shared_ptr<DCError> ptr_error = DCLaneGroupCheckError::createByKXS_03_002(lane_group);
                 errorOutput->saveError(ptr_error);
             }
+
+        }
+
+        bool LaneGroupCheck::check_divider_no(const vector<shared_ptr<DCDivider>> &ptr_dividers,
+                                              bool is_front, bool direction) {
+            bool is_check = false;
+
+            // 获取节点
+            auto ptr_left_divider = ptr_dividers.front();
+            auto ptr_left_divider_node = (is_front & direction) ? ptr_left_divider->nodes_.front()
+                                                              : ptr_left_divider->nodes_.back();
+
+            auto ptr_left_dis_node = CommonUtil::get_distance_node(ptr_left_divider, DIVIDER_NODE_LENGTH,
+                                                                   (is_front & direction));
+            if (ptr_left_divider->dividerNo_ == 0) {
+                for (size_t index = 1; index < ptr_dividers.size(); index++) {
+                    auto ptr_right_divider_node = is_front ? ptr_dividers[index]->nodes_.front()
+                                                           : ptr_dividers[index]->nodes_.back();
+                    auto ptr_right_dis_node = CommonUtil::get_distance_node(ptr_dividers[index],
+                                                                            DIVIDER_NODE_LENGTH, is_front);
+
+                    if (ptr_left_dis_node->id_ != ptr_right_dis_node->id_) {
+                        if (is_front) {
+                            if (CommonUtil::NodeOrentationOfDivider(ptr_left_divider_node, ptr_left_dis_node,
+                                                                    ptr_right_dis_node) != -1) {
+                                is_check = true;
+                                break;
+                            }
+                        } else {
+                            if (CommonUtil::NodeOrentationOfDivider(ptr_left_divider_node, ptr_left_dis_node,
+                                                                    ptr_right_dis_node) != 1) {
+                                is_check = true;
+                                break;
+                            }
+                        }
+                    } else {
+                        if (ptr_right_divider_node->id_ != ptr_left_divider_node->id_) {
+                            if (is_front) {
+                                if (CommonUtil::NodeOrentationOfDivider(ptr_left_divider_node, ptr_left_dis_node,
+                                                                        ptr_right_divider_node) != -1) {
+                                    is_check = true;
+                                    break;
+                                }
+                            } else {
+                                if (CommonUtil::NodeOrentationOfDivider(ptr_left_divider_node, ptr_left_dis_node,
+                                                                        ptr_right_divider_node) != 1) {
+                                    is_check = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    ptr_left_divider_node = ptr_right_divider_node;
+                    ptr_left_dis_node = ptr_right_dis_node;
+                }
+            } else {
+                // 编号出错
+                is_check = true;
+            }
+
+            return is_check;
         }
 
         void LaneGroupCheck::check_divider_length(shared_ptr<MapDataManager> mapDataManager,

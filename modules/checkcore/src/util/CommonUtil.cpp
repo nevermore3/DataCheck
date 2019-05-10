@@ -412,5 +412,32 @@ namespace kd {
             return KDGeoUtil::calPTOrentationOfLine(f_coord->x, f_coord->y, t_coord->x, t_coord->y, coord->x, coord->y);
         }
 
+        bool CommonUtil::CheckCoordValid(DCCoord coord) {
+            bool ret = true;
+            if (__isnan(coord.lat_) || __isnan(coord.lng_) || __isnan(coord.z_)) {
+                ret = false;
+            }
+            if (-180 > coord.lng_ || coord.lat_ > 180) {
+                ret = false;
+            }
+            if (-90 > coord.lat_ || coord.lat_ > 90) {
+                ret = false;
+            }
+            return ret;
+        }
+
+        bool CommonUtil::CheckCoordValid(shared_ptr<DCCoord> coord) {
+            bool ret = true;
+            if (__isnan(coord->lat_) || __isnan(coord->lng_) || __isnan(coord->z_)) {
+                ret = false;
+            }
+            if (-180 > coord->lng_ || coord->lat_ > 180) {
+                ret = false;
+            }
+            if (-90 > coord->lat_ || coord->lat_ > 90) {
+                ret = false;
+            }
+            return ret;
+        }
     }
 }

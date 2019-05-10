@@ -3,6 +3,7 @@
 //
 
 #include "storage/MapDataInput.h"
+#include "util/CommonUtil.h"
 
 //thirdparty
 #include <shp/shapefil.h>
@@ -108,6 +109,8 @@ namespace kd {
 
                     //读取空间信息
                     int nVertices = shpObject->nVertices;
+                    set<long> error_node_index;
+
                     for (int i = 0; i < nVertices; i++) {
                         DCCoord coord;
                         coord.lng_ = shpObject->padfX[i];
@@ -120,7 +123,18 @@ namespace kd {
                             divNode->coord_ = coord;
                             divider->nodes_.emplace_back(divNode);
                         }
+
+                        if (!CommonUtil::CheckCoordValid(coord)) {
+                            error_node_index.emplace(i);
+                        }
                     }
+
+                    if (!error_node_index.empty()) {
+                        shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_024("divider", divider->id_,
+                                                                                         error_node_index);
+                        errorOutput->saveError(ptr_error);
+                    }
+
                     if (divider->fromNodeId_ != divider->nodes_.front()->id_ &&
                         divider->fromNodeId_ != divider->nodes_.back()->id_) {
                         shared_ptr<DCDividerCheckError> error =
@@ -336,12 +350,24 @@ namespace kd {
 
                     //读取空间信息
                     int nVertices = shpObject->nVertices;
+                    set<long> error_node_index;
+
                     for (int i = 0; i < nVertices; i++) {
                         shared_ptr<DCCoord> coord = make_shared<DCCoord>();
                         coord->lng_ = shpObject->padfX[i];
                         coord->lat_ = shpObject->padfY[i];
                         coord->z_ = shpObject->padfZ[i];
                         dcLane->coords_.emplace_back(coord);
+
+                        if (!CommonUtil::CheckCoordValid(coord)) {
+                            error_node_index.emplace(i);
+                        }
+                    }
+
+                    if (!error_node_index.empty()) {
+                        shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_024("lane", dcLane->id_,
+                                                                                         error_node_index);
+                        errorOutput->saveError(ptr_error);
                     }
                     lanes.insert(make_pair(dcLane->id_, dcLane));
                 }
@@ -599,7 +625,8 @@ namespace kd {
             return bRet;
         }
 
-        bool MapDataInput::loadRoad(string basePath, shared_ptr<MapDataManager> mapDataManager) {
+        bool MapDataInput::loadRoad(string basePath, shared_ptr<MapDataManager> mapDataManager,
+                                    shared_ptr<CheckErrorOutput> errorOutput) {
             bool bRet = true;
             // 读取车道组与道路的关联索引点
             string lg_road__file = basePath + "/ROAD";
@@ -622,13 +649,26 @@ namespace kd {
 
                     //读取空间信息
                     int nVertices = shp_object->nVertices;
+                    set<long> error_node_index;
                     for (int idx = 0; idx < nVertices; idx++) {
                         shared_ptr<DCCoord> coord = make_shared<DCCoord>();
                         coord->lng_ = shp_object->padfX[idx];
                         coord->lat_ = shp_object->padfY[idx];
                         coord->z_ = shp_object->padfZ[idx];
+
+                        if (!CommonUtil::CheckCoordValid(coord)) {
+                            error_node_index.emplace(idx);
+                        }
+
                         ptr_road->nodes_.emplace_back(coord);
                     }
+
+                    if (!error_node_index.empty()) {
+                        shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_024("road", ptr_road->id_,
+                                                                                         error_node_index);
+                        errorOutput->saveError(ptr_error);
+                    }
+
 
                     roads.insert(make_pair(ptr_road->id_, ptr_road));
                     SHPDestroyObject(shp_object);

@@ -628,6 +628,21 @@ namespace kd {
                    file == "ROAD_NODE";
         }
 
+        shared_ptr<DCFieldError> DCFieldError::createByKXS_01_024(const string &type,
+                                                                  const string &id, const set<long> &index) {
+            shared_ptr<DCFieldError> error = make_shared<DCFieldError>(CHECK_ITEM_KXS_ORG_024);
+            error->checkDesc_ = "结点坐标有效性检查";
+            error->detail = type;
+            error->detail += ":";
+            error->detail += id;
+            for (auto idx : index) {
+                error->detail += ",索引点";
+                error->detail += to_string(idx);
+            }
+            return error;
+        }
+
+
     }
 }
 

@@ -45,6 +45,7 @@ namespace kd {
             error_check_levels_.insert(CHECK_ITEM_KXS_ROAD_002);
             error_check_levels_.insert(CHECK_ITEM_KXS_ROAD_004);
             error_check_levels_.insert(CHECK_ITEM_KXS_ROAD_005);
+            error_check_levels_.insert(CHECK_ITEM_KXS_ROAD_007);
 
             error_check_levels_.insert(CHECK_ITEM_KXS_LANE_001);
             error_check_levels_.insert(CHECK_ITEM_KXS_LANE_003);

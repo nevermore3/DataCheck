@@ -648,6 +648,19 @@ namespace kd {
             }
         }
 
+        //计算两条线段质检的角度差，返回值为角度差的弧度值
+        double KDGeoUtil::getAngleDiff(double cx1, double cy1, double cx2, double cy2,
+                                       double cx3, double cy3, double cx4, double cy4) {
+            double thetaFirst = geo::geo_util::calcAngle(cx1, cy1, cx2, cy2);
+            double thetaSencond = geo::geo_util::calcAngle(cx3, cy3, cx4, cy4);
+
+            double angleDiff = fabs(thetaFirst - thetaSencond);
+            while (angleDiff > 2 * PI) {
+                angleDiff = angleDiff - 2 * PI;
+            }
+            return angleDiff;
+        }
+
         /**
          * 创建三角形追踪区域
          *

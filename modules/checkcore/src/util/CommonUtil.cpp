@@ -10,6 +10,7 @@
 #include "geos/geom/Point.h"
 #include <geom/geo_util.h>
 #include <geos/geom/Point.h>
+#include <DataCheckConfig.h>
 #include "util/GeosObjUtil.h"
 #include "util/KDGeoUtil.hpp"
 
@@ -438,6 +439,26 @@ namespace kd {
                 ret = false;
             }
             return ret;
+        }
+
+        bool CommonUtil::CheckCoordAngle(shared_ptr<DCCoord> ptr_coord1, shared_ptr<DCCoord> ptr_coord2,
+                                         shared_ptr<DCCoord> ptr_coord3) {
+            double diff_angle = KDGeoUtil::getAngleDiff(ptr_coord1->lng_, ptr_coord1->lat_,
+                                                        ptr_coord2->lng_, ptr_coord2->lat_,
+                                                        ptr_coord2->lng_, ptr_coord2->lat_,
+                                                        ptr_coord3->lng_, ptr_coord3->lat_);
+
+            double road_node_angle = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::ROAD_NODE_ANGLE);
+
+            if (fabs(road_node_angle) < 0.001) {
+                road_node_angle = kd::automap::PI / 2;
+            } else {
+                road_node_angle = kd::automap::PI * road_node_angle / 180;
+            }
+            if (diff_angle > road_node_angle) {
+                return false;
+            }
+            return true;
         }
     }
 }

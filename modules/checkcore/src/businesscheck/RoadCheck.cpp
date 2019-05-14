@@ -208,6 +208,30 @@ namespace kd {
                             ptr_error_nodes.emplace_back(ptr_cur_e_node);
                         }
                     }
+
+                    if (ptr_road->nodes_.size() > 2) {
+                        shared_ptr<DCCoord> ptr_coord1 = ptr_road->nodes_[0];
+                        shared_ptr<DCCoord> ptr_coord2 = ptr_road->nodes_[1];
+
+                        vector<shared_ptr<NodeError>> check_road_indexs;
+                        for (int i = 2; i < ptr_road->nodes_.size(); i++) {
+                            shared_ptr<DCCoord> ptr_coord3 = ptr_road->nodes_[i];
+                            if (!CommonUtil::CheckCoordAngle(ptr_coord1, ptr_coord2, ptr_coord3)) {
+                                shared_ptr<NodeError> ptr_error_node = make_shared<NodeError>();
+                                ptr_error_node->ptr_coord = ptr_coord2;
+                                ptr_error_node->index = i - 1;
+                                check_road_indexs.emplace_back(ptr_error_node);
+                            }
+
+                            ptr_coord1 = ptr_coord2;
+                            ptr_coord2 = ptr_coord3;
+                        }
+
+                        if (check_road_indexs.size() > 1) {
+                            auto ptr_error = DCRoadCheckError::createByKXS_04_007(ptr_road->id_, check_road_indexs);
+                            errorOutput->saveError(ptr_error);
+                        }
+                    }
                 }
             }
         }

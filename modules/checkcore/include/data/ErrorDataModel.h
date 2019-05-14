@@ -315,6 +315,8 @@ namespace kd {
             static shared_ptr<DCRoadCheckError> createByKXS_04_006(const string &road_id,
                                                                    const vector<shared_ptr<NodeError>> &ptr_error_nodes);
 
+            static shared_ptr<DCRoadCheckError> createByKXS_04_007(const string &road_id,
+                                                                   const vector<shared_ptr<NodeError>> &ptr_error_nodes);
         public:
 
             //错误详细信息描述

@@ -40,6 +40,8 @@ namespace kd {
             const static string ADAS_NODE_DISTANCE_ACCURACY;
             const static string ADAS_NODE_CURVATURE_DISTANCE;
 
+            const static string ROAD_NODE_ANGLE;
+
 
         public:
             static DataCheckConfig & getInstance() {

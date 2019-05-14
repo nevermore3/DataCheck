@@ -661,6 +661,25 @@ namespace kd {
             return angleDiff;
         }
 
+        double KDGeoUtil::getAngleDiff(shared_ptr<geos::geom::Coordinate> ptr_coord1,
+                                       shared_ptr<geos::geom::Coordinate> ptr_coord2,
+                                       shared_ptr<geos::geom::Coordinate> ptr_coord3,
+                                       shared_ptr<geos::geom::Coordinate> ptr_coord4) {
+            double cx1 = ptr_coord2->x - ptr_coord1->x;
+            double cx2 = ptr_coord4->x - ptr_coord3->x;
+            double cy1 = ptr_coord2->y - ptr_coord1->y;
+            double cy2 = ptr_coord4->y - ptr_coord3->y;
+            double theta = sqrt((cx1 * cx1 + cy1 * cy1) * (cx2 * cx2 + cy2 * cy2));
+
+            if (theta > 0) {
+                double angle_cos = (cx1 * cx2 + cy1 * cy2) / theta;
+                double angleDiff = acos(angle_cos);
+                return angleDiff;
+            }
+
+            return 0;
+        }
+        
         /**
          * 创建三角形追踪区域
          *

@@ -298,6 +298,11 @@ namespace kd {
             static double getAngleDiff(double cx1, double cy1, double cx2, double cy2,
                                        double cx3, double cy3, double cx4, double cy4);
 
+            static double getAngleDiff(shared_ptr<geos::geom::Coordinate> ptr_coord1,
+                                       shared_ptr<geos::geom::Coordinate> ptr_coord2,
+                                       shared_ptr<geos::geom::Coordinate> ptr_coord3,
+                                       shared_ptr<geos::geom::Coordinate> ptr_coord4);
+
             //////////////////////////////////
             //根据两个点创建追踪三角形
             static geos::geom::Polygon *

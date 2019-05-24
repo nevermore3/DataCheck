@@ -91,6 +91,7 @@ const static std::string CHECK_ITEM_KXS_LANE_016 = "KXS-05-016";
 
 // 定位目标
 const static std::string CHECK_ITEM_KXS_LM_001 = "KXS-06-001";
+const static std::string CHECK_ITEM_KXS_LM_002 = "KXS-06-002";
 
 // ADAS
 const static std::string CHECK_ITEM_KXS_ADAS_001 = "KXS-07-001";

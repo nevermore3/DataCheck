@@ -56,6 +56,7 @@ namespace kd {
             error_check_levels_.insert(CHECK_ITEM_KXS_LANE_014);
 
             error_check_levels_.insert(CHECK_ITEM_KXS_LM_001);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LM_002);
         }
 
         void CheckErrorOutput::writeInfo(string info, bool bLongString) {

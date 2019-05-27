@@ -43,6 +43,8 @@ namespace kd {
 
             int countError();
 
+            void saveTotalError();
+
             /**
              * 获取错误级别
              * @param check_model

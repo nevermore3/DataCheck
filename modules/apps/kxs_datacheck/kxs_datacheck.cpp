@@ -177,6 +177,7 @@ int main(int argc, const char *argv[]) {
     string ur_path;
     string db_file_name;
     string output_path;
+    string task_id;
 
     CppSQLite3::Database *p_db = nullptr;
     CppSQLite3::Database *p_db_out = nullptr;
@@ -190,8 +191,10 @@ int main(int argc, const char *argv[]) {
             output_path = argc >= 5 ? argv[4] : ".";
             output_path = output_path + "/" + ur_path;
             base_path = base_path + "/" + ur_path;
+            task_id = argc >= 6 ? argv[5] : "";
+            DataCheckConfig::getInstance().setTaskId(task_id);
         } else {
-            LOG(ERROR) << "usage:" << argv[0] << " <ur> <base_path> <dump_db_file> [<output_path>]";
+            LOG(ERROR) << "usage:" << argv[0] << " <ur> <base_path> <dump_db_file> [<output_path>] [<task_id>]";
             return 1;
         }
 

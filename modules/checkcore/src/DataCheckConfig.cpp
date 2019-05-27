@@ -118,5 +118,13 @@ namespace kd {
             m_properties.insert(make_pair(key, value));
         }
 
+        string DataCheckConfig::getTaskId() {
+            return task_id;
+        }
+
+        void DataCheckConfig::setTaskId(string id) {
+            task_id = id;
+        }
+
     }
 }

@@ -164,8 +164,8 @@
     <datacheckitem ID="KXS-03-025"
                    NAME="车道编号检查"
                    LEVEL="error"
-                   INFO="HD_LANE表中存在无效车道号Lane_No不在(0~32)范围"
-                   SQL="SELECT ID, Lane_no LaneNO FROM HD_LANE where lane_no&gt;32 or lane_no&lt;0;"/>
+                   INFO="HD_LANE表中存在无效车道号Lane_No不在(0~64)范围"
+                   SQL="SELECT ID, Lane_no LaneNO FROM HD_LANE where lane_no&gt;64 or lane_no&lt;0;"/>
     <datacheckitem ID="KXS-03-026"
                    NAME="DIVIDER对应DA属性检查"
                    LEVEL="error"

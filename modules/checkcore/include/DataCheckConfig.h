@@ -78,10 +78,14 @@ namespace kd {
 
             void addProperty(string key, string value);
 
+            string getTaskId();
+
+            void setTaskId(string id);
 
         private:
             //所有配置属性
             map<string, string> m_properties;
+            string task_id;
 
         };
     }

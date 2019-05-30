@@ -172,6 +172,14 @@ namespace kd {
             static int NodeOrentationOfDivider(shared_ptr<DCDividerNode> f_ptr_node,
                                                shared_ptr<DCDividerNode> t_ptr_node,
                                                shared_ptr<DCDividerNode> ptr_node);
+
+            static bool CheckCoordValid(DCCoord coord);
+
+            static bool CheckCoordValid(shared_ptr<DCCoord> coord);
+
+            static bool CheckCoordAngle(shared_ptr<DCCoord> ptr_coord1, shared_ptr<DCCoord> ptr_coord2,
+                                        shared_ptr<DCCoord> ptr_coord3);
+
         private:
 
             /**

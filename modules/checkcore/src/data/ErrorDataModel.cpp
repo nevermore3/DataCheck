@@ -470,6 +470,28 @@ namespace kd {
             return error;
         }
 
+        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_007(const string &road_id,
+                                                                          const vector<shared_ptr<NodeError>> &ptr_error_nodes) {
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_007);
+            error->checkDesc_ = "道路结点出现拐点，或者角度过大";
+            error->detail += "road_id:";
+            error->detail += road_id;
+            for (const auto &error_node : ptr_error_nodes) {
+                error->detail += ",索引点";
+                error->detail += to_string(error_node->index);
+                error->detail += ",坐标(";
+                error->detail += to_string(error_node->ptr_coord->lng_);
+                error->detail += ",";
+                error->detail += to_string(error_node->ptr_coord->lat_);
+                error->detail += ",";
+                error->detail += to_string(error_node->ptr_coord->z_);
+                error->detail += ")";
+            }
+            error->detail += "有拐点";
+
+            return error;
+        }
+
         /////////////////////////////////////////////////////////////////////////////////////////
         // DCLaneError
         /////////////////////////////////////////////////////////////////////////////////////////
@@ -627,6 +649,21 @@ namespace kd {
                    file == "HD_LANE_GROUP" || file == "HD_R_LANE_GROUP" || file == "ROAD" ||
                    file == "ROAD_NODE";
         }
+
+        shared_ptr<DCFieldError> DCFieldError::createByKXS_01_024(const string &type,
+                                                                  const string &id, const set<long> &index) {
+            shared_ptr<DCFieldError> error = make_shared<DCFieldError>(CHECK_ITEM_KXS_ORG_024);
+            error->checkDesc_ = "结点坐标有效性检查";
+            error->detail = type;
+            error->detail += ":";
+            error->detail += id;
+            for (auto idx : index) {
+                error->detail += ",索引点";
+                error->detail += to_string(idx);
+            }
+            return error;
+        }
+
 
     }
 }

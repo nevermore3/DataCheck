@@ -23,7 +23,7 @@ namespace kd {
 
             MapDataInput mapDataInput;
 
-            if (mapDataInput.loadRoad(basePath_, mapDataManager)) {
+            if (mapDataInput.loadRoad(basePath_, mapDataManager, errorOutput)) {
                 // 暂时不使用
 //                for (auto road : mapDataManager->roads_) {
 //                    if (!road.second->valid_) {

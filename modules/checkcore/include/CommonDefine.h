@@ -31,6 +31,7 @@ const static std::string CHECK_ITEM_KXS_ORG_020 = "KXS-01-020";
 const static std::string CHECK_ITEM_KXS_ORG_021 = "KXS-01-021";
 const static std::string CHECK_ITEM_KXS_ORG_022 = "KXS-01-022";
 const static std::string CHECK_ITEM_KXS_ORG_023 = "KXS-01-023";
+const static std::string CHECK_ITEM_KXS_ORG_024 = "KXS-01-024";
 
 // 分组检查
 const static std::string CHECK_ITEM_KXS_LG_001 = "KXS-03-001";
@@ -68,6 +69,7 @@ const static std::string CHECK_ITEM_KXS_ROAD_003 = "KXS-04-003";
 const static std::string CHECK_ITEM_KXS_ROAD_004 = "KXS-04-004";
 const static std::string CHECK_ITEM_KXS_ROAD_005 = "KXS-04-005";
 const static std::string CHECK_ITEM_KXS_ROAD_006 = "KXS-04-006";
+const static std::string CHECK_ITEM_KXS_ROAD_007 = "KXS-04-007";
 
 // 车道中心线
 const static std::string CHECK_ITEM_KXS_LANE_001 = "KXS-05-001";
@@ -89,6 +91,7 @@ const static std::string CHECK_ITEM_KXS_LANE_016 = "KXS-05-016";
 
 // 定位目标
 const static std::string CHECK_ITEM_KXS_LM_001 = "KXS-06-001";
+const static std::string CHECK_ITEM_KXS_LM_002 = "KXS-06-002";
 
 // ADAS
 const static std::string CHECK_ITEM_KXS_ADAS_001 = "KXS-07-001";

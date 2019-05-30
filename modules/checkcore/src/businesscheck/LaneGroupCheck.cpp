@@ -218,7 +218,7 @@ namespace kd {
             for (const auto &lane_group : ptr_lane_groups) {
                 auto ptr_dividers = CommonUtil::get_dividers_by_lg(mapDataManager, lane_group.first);
                 if (!ptr_dividers.empty()) {
-                    check_divider_no(mapDataManager, errorOutput, lane_group.first, ptr_dividers);
+//                    check_divider_no(mapDataManager, errorOutput, lane_group.first, ptr_dividers);
                     check_divider_length(mapDataManager, errorOutput, lane_group.first, ptr_dividers);
                 }
             }
@@ -279,34 +279,37 @@ namespace kd {
                 for (size_t index = 1; index < ptr_dividers.size(); index++) {
                     auto ptr_right_divider_node = is_front ? ptr_dividers[index]->nodes_.front()
                                                            : ptr_dividers[index]->nodes_.back();
-                    auto ptr_right_dis_node = CommonUtil::get_distance_node(ptr_dividers[index],
-                                                                            DIVIDER_NODE_LENGTH, is_front);
+//                    auto ptr_right_dis_node = CommonUtil::get_distance_node(ptr_dividers[index],
+//                                                                            DIVIDER_NODE_LENGTH, is_front);
 
-                    if (ptr_left_dis_node->id_ != ptr_right_dis_node->id_) {
+                    if (ptr_right_divider_node->id_ != ptr_left_divider_node->id_) {
                         if (is_front) {
                             if (CommonUtil::NodeOrentationOfDivider(ptr_left_divider_node, ptr_left_dis_node,
-                                                                    ptr_right_dis_node) != -1) {
+                                                                    ptr_right_divider_node) != -1) {
                                 is_check = true;
                                 break;
                             }
                         } else {
                             if (CommonUtil::NodeOrentationOfDivider(ptr_left_divider_node, ptr_left_dis_node,
-                                                                    ptr_right_dis_node) != 1) {
+                                                                    ptr_right_divider_node) != 1) {
                                 is_check = true;
                                 break;
                             }
                         }
                     } else {
-                        if (ptr_right_divider_node->id_ != ptr_left_divider_node->id_) {
+                        auto ptr_right_dis_node = CommonUtil::get_distance_node(ptr_dividers[index],
+                                                                                DIVIDER_NODE_LENGTH, is_front);
+                        if (ptr_left_dis_node->id_ != ptr_right_dis_node->id_) {
+
                             if (is_front) {
                                 if (CommonUtil::NodeOrentationOfDivider(ptr_left_divider_node, ptr_left_dis_node,
-                                                                        ptr_right_divider_node) != -1) {
+                                                                        ptr_right_dis_node) != -1) {
                                     is_check = true;
                                     break;
                                 }
                             } else {
                                 if (CommonUtil::NodeOrentationOfDivider(ptr_left_divider_node, ptr_left_dis_node,
-                                                                        ptr_right_divider_node) != 1) {
+                                                                        ptr_right_dis_node) != 1) {
                                     is_check = true;
                                     break;
                                 }
@@ -315,7 +318,8 @@ namespace kd {
                     }
 
                     ptr_left_divider_node = ptr_right_divider_node;
-                    ptr_left_dis_node = ptr_right_dis_node;
+                    ptr_left_dis_node = CommonUtil::get_distance_node(ptr_dividers[index],
+                                                                      DIVIDER_NODE_LENGTH, is_front);
                 }
             } else {
                 // 编号出错

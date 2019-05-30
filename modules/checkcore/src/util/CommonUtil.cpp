@@ -10,6 +10,7 @@
 #include "geos/geom/Point.h"
 #include <geom/geo_util.h>
 #include <geos/geom/Point.h>
+#include <DataCheckConfig.h>
 #include "util/GeosObjUtil.h"
 #include "util/KDGeoUtil.hpp"
 
@@ -412,5 +413,56 @@ namespace kd {
             return KDGeoUtil::calPTOrentationOfLine(f_coord->x, f_coord->y, t_coord->x, t_coord->y, coord->x, coord->y);
         }
 
+        bool CommonUtil::CheckCoordValid(DCCoord coord) {
+            bool ret = true;
+            if (__isnan(coord.lat_) || __isnan(coord.lng_) || __isnan(coord.z_)) {
+                ret = false;
+            }
+            if (-180 > coord.lng_ || coord.lat_ > 180) {
+                ret = false;
+            }
+            if (-90 > coord.lat_ || coord.lat_ > 90) {
+                ret = false;
+            }
+            return ret;
+        }
+
+        bool CommonUtil::CheckCoordValid(shared_ptr<DCCoord> coord) {
+            bool ret = true;
+            if (__isnan(coord->lat_) || __isnan(coord->lng_) || __isnan(coord->z_)) {
+                ret = false;
+            }
+            if (-180 > coord->lng_ || coord->lat_ > 180) {
+                ret = false;
+            }
+            if (-90 > coord->lat_ || coord->lat_ > 90) {
+                ret = false;
+            }
+            return ret;
+        }
+
+        bool CommonUtil::CheckCoordAngle(shared_ptr<DCCoord> ptr_coord1, shared_ptr<DCCoord> ptr_coord2,
+                                         shared_ptr<DCCoord> ptr_coord3) {
+            char zone[8] = {0};
+            auto ptr_utm_coord1 = GeosObjUtil::create_coordinate(ptr_coord1, zone);
+            auto ptr_utm_coord2 = GeosObjUtil::create_coordinate(ptr_coord2, zone);
+            auto ptr_utm_coord3 = GeosObjUtil::create_coordinate(ptr_coord3, zone);
+            double diff_angle = KDGeoUtil::getAngleDiff(ptr_utm_coord1,
+                                                        ptr_utm_coord2,
+                                                        ptr_utm_coord2,
+                                                        ptr_utm_coord3);
+
+            double road_node_angle = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::ROAD_NODE_ANGLE);
+
+            if (fabs(road_node_angle) < 0.001) {
+                road_node_angle = kd::automap::PI / 2;
+            } else {
+                road_node_angle = kd::automap::PI * road_node_angle / 180;
+            }
+            if (fabs(diff_angle) > road_node_angle) {
+                return false;
+            }
+            return true;
+        }
     }
 }

@@ -294,6 +294,15 @@ namespace kd {
              */
             static int calPTOrentationOfLine(double x0, double y0, double x1, double y1, double ptx, double pty);
 
+            //计算两条线段的角度差，返回值为角度差的弧度值
+            static double getAngleDiff(double cx1, double cy1, double cx2, double cy2,
+                                       double cx3, double cy3, double cx4, double cy4);
+
+            static double getAngleDiff(shared_ptr<geos::geom::Coordinate> ptr_coord1,
+                                       shared_ptr<geos::geom::Coordinate> ptr_coord2,
+                                       shared_ptr<geos::geom::Coordinate> ptr_coord3,
+                                       shared_ptr<geos::geom::Coordinate> ptr_coord4);
+
             //////////////////////////////////
             //根据两个点创建追踪三角形
             static geos::geom::Polygon *

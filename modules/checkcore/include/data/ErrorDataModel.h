@@ -315,6 +315,8 @@ namespace kd {
             static shared_ptr<DCRoadCheckError> createByKXS_04_006(const string &road_id,
                                                                    const vector<shared_ptr<NodeError>> &ptr_error_nodes);
 
+            static shared_ptr<DCRoadCheckError> createByKXS_04_007(const string &road_id,
+                                                                   const vector<shared_ptr<NodeError>> &ptr_error_nodes);
         public:
 
             //错误详细信息描述
@@ -387,6 +389,10 @@ namespace kd {
             static shared_ptr<DCFieldError> createByKXS_01_019(const string &detail);
 
             static shared_ptr<DCFieldError> createByKXS_01_020(const string &file);
+
+            static shared_ptr<DCFieldError> createByKXS_01_024(const string &type, const string &id,
+                                                               const set<long> &index);
+
         public:
             bool check_file(const string &file);
 

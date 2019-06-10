@@ -38,6 +38,11 @@ namespace kd {
             static double get_length_of_coords(const vector<shared_ptr<geos::geom::Coordinate>> &ptr_coords);
 
             /**
+             * 获取结点长度
+             */
+            static double get_length_of_node(shared_ptr<DCCoord> node1, shared_ptr<DCCoord> node2);
+
+            /**
              * 判断是否是相同点
              * @param coord1
              * @param coord2

@@ -60,7 +60,7 @@ namespace kd {
                     }
                 }
                 if (!pos_dir_lg_vec.empty()) {
-                    check_road_node_index(pos_dir_lg_vec, ptr_road, true, errorOutput);
+                    check_road_node_index(pos_dir_lg_vec, ptr_road, true, mapDataManager, errorOutput);
                 } else {
                     //
                     LOG(ERROR) << "lanegroup关联road索引缺失";
@@ -69,7 +69,7 @@ namespace kd {
                     // 双向道路
                     if (ptr_road->direction_ == 1) {
                         if (!neg_dir_lg_vec.empty()) {
-                            check_road_node_index(neg_dir_lg_vec, ptr_road, false, errorOutput);
+                            check_road_node_index(neg_dir_lg_vec, ptr_road, false, mapDataManager, errorOutput);
                         } else {
                             //
                             LOG(ERROR) << "lanegroup关联road索引缺失";
@@ -82,7 +82,8 @@ namespace kd {
         }
 
         void LaneGroupCheck::check_road_node_index(vector<LGNodeIndex> lg_node_index_vec, shared_ptr<DCRoad> ptr_road,
-                                                   bool is_positive, shared_ptr<CheckErrorOutput> errorOutput) {
+                                                   bool is_positive, shared_ptr<MapDataManager> mapDataManager,
+                                                   shared_ptr<CheckErrorOutput> errorOutput) {
             // 检查是否存在交叉
             if (is_positive) {
                 sort(lg_node_index_vec.begin(), lg_node_index_vec.end(), [](const LGNodeIndex &lg_node_idx1,
@@ -98,34 +99,7 @@ namespace kd {
             shared_ptr<DCError> ptr_error;
             if (ptr_road) {
                 // 检查索引点是否铺满
-                long min_index = 0;
-                long max_index = 0;
-                if (is_positive) {
-                    min_index = lg_node_index_vec.front().f_idx;
-                    max_index = lg_node_index_vec.back().t_idx;
-                    if (min_index != 0) {
-                        ptr_error = DCLaneGroupCheckError::createByKXS_03_005(ptr_road->id_, 0, is_positive);
-                        errorOutput->saveError(ptr_error);
-                    }
-                    if (max_index != ptr_road->nodes_.size() - 1) {
-                        ptr_error = DCLaneGroupCheckError::createByKXS_03_005(ptr_road->id_,
-                                                                              ptr_road->nodes_.size() - 1, is_positive);
-                        errorOutput->saveError(ptr_error);
-                    }
-                } else {
-                    min_index = lg_node_index_vec.back().t_idx;
-                    max_index = lg_node_index_vec.front().f_idx;
-                    if (min_index != 0) {
-                        ptr_error = DCLaneGroupCheckError::createByKXS_03_005(ptr_road->id_, 0, is_positive);
-                        errorOutput->saveError(ptr_error);
-                    }
-                    if (max_index != ptr_road->nodes_.size() - 1) {
-                        ptr_error = DCLaneGroupCheckError::createByKXS_03_005(ptr_road->id_,
-                                                                              ptr_road->nodes_.size() - 1,
-                                                                              is_positive);
-                        errorOutput->saveError(ptr_error);
-                    }
-                }
+                check_index_fill_all(lg_node_index_vec, ptr_road, is_positive, errorOutput);
             }
 
             auto pre_iter = lg_node_index_vec.begin();
@@ -133,28 +107,29 @@ namespace kd {
 
             while (lat_iter != lg_node_index_vec.end()) {
                 if (lat_iter->f_idx > pre_iter->t_idx) {
-                    if (is_positive) {
-                        // lanegroup没有铺满整条道路
-                        ptr_error = DCLaneGroupCheckError::createByKXS_03_005(pre_iter->road_id, pre_iter->t_idx,
-                                                                              lat_iter->f_idx, is_positive);
-                    } else {
-                        ptr_error = DCLaneGroupCheckError::createByKXS_03_006(pre_iter->road_id, pre_iter->lanegroup_id,
-                                                                              pre_iter->f_idx, pre_iter->t_idx,
-                                                                              lat_iter->lanegroup_id, lat_iter->f_idx,
-                                                                              lat_iter->t_idx, is_positive);
+                    if (!is_positive) {
+                        auto ptr_lane_group = CommonUtil::get_lane_group(mapDataManager, lat_iter->lanegroup_id);
+                        if (ptr_lane_group && ptr_lane_group->is_virtual_ != 1) {
+                            ptr_error = DCLaneGroupCheckError::createByKXS_03_006(pre_iter->road_id, pre_iter->lanegroup_id,
+                                                                                  pre_iter->f_idx, pre_iter->t_idx,
+                                                                                  lat_iter->lanegroup_id, lat_iter->f_idx,
+                                                                                  lat_iter->t_idx, is_positive);
+                        }
                     }
 
                     errorOutput->saveError(ptr_error);
                 } else if (lat_iter->f_idx < pre_iter->t_idx) {
                     if (is_positive) {
                         // 出现交叉
-                        ptr_error = DCLaneGroupCheckError::createByKXS_03_006(pre_iter->road_id, pre_iter->lanegroup_id,
-                                                                              pre_iter->f_idx, pre_iter->t_idx,
-                                                                              lat_iter->lanegroup_id, lat_iter->f_idx,
-                                                                              lat_iter->t_idx, is_positive);
-                    } else {
-                        ptr_error = DCLaneGroupCheckError::createByKXS_03_005(pre_iter->road_id, pre_iter->t_idx,
-                                                                              lat_iter->f_idx, is_positive);
+                        auto ptr_lane_group = CommonUtil::get_lane_group(mapDataManager, lat_iter->lanegroup_id);
+                        if (ptr_lane_group && ptr_lane_group->is_virtual_ != 1) {
+                            ptr_error = DCLaneGroupCheckError::createByKXS_03_006(pre_iter->road_id,
+                                                                                  pre_iter->lanegroup_id,
+                                                                                  pre_iter->f_idx, pre_iter->t_idx,
+                                                                                  lat_iter->lanegroup_id,
+                                                                                  lat_iter->f_idx,
+                                                                                  lat_iter->t_idx, is_positive);
+                        }
                     }
 
                     errorOutput->saveError(ptr_error);
@@ -163,6 +138,45 @@ namespace kd {
                 }
                 pre_iter = lat_iter;
                 lat_iter++;
+            }
+        }
+
+        void LaneGroupCheck::check_index_fill_all(vector<LGNodeIndex> lg_node_index_vec, shared_ptr<DCRoad> ptr_road,
+                                                  bool is_positive, shared_ptr<CheckErrorOutput> errorOutput) {
+            shared_ptr<DCError> ptr_error;
+            int min_index = 0;
+            int max_index = 0;
+
+            int *road_index = new int[sizeof(int) * ptr_road->nodes_.size()];
+            if (road_index != nullptr) {
+                memset(road_index, 0, sizeof(int) * ptr_road->nodes_.size());
+                for (const auto &node_index : lg_node_index_vec) {
+                    if (is_positive) {
+                        min_index = node_index.f_idx;
+                        max_index = node_index.t_idx;
+                    } else {
+                        min_index = node_index.t_idx;
+                        max_index = node_index.f_idx;
+                    }
+                    for (int i = min_index; i <= max_index; i++) {
+                        if (0 <= i && i < ptr_road->nodes_.size()) {
+                            if (road_index[i] == 0) {
+                                road_index[i] = 1;
+                            }
+                        }
+                    }
+                }
+                for (int i = 0; i < ptr_road->nodes_.size(); i++) {
+                    if (road_index[i] == 0) {
+                        ptr_error = DCLaneGroupCheckError::createByKXS_03_005(ptr_road->id_, i, is_positive);
+                        errorOutput->saveError(ptr_error);
+                    }
+                }
+            }
+
+            if (road_index != nullptr) {
+                delete[] road_index;
+                road_index = nullptr;
             }
         }
 
@@ -179,7 +193,8 @@ namespace kd {
                         // 如果是参考线
                         if (ptr_divider->dividerNo_ == 0) {
                             for (const auto &lg : div2_lg.second) {
-                                auto ptr_road = CommonUtil::get_road_by_lg(mapDataManager, lg);
+                                auto ptr_road =
+                                        CommonUtil::get_road_by_lg(mapDataManager, lg);
                                 if (ptr_road) {
                                     // 不是双向的
                                     if (ptr_road->direction_ != 1) {

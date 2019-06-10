@@ -70,6 +70,7 @@ const static std::string CHECK_ITEM_KXS_ROAD_004 = "KXS-04-004";
 const static std::string CHECK_ITEM_KXS_ROAD_005 = "KXS-04-005";
 const static std::string CHECK_ITEM_KXS_ROAD_006 = "KXS-04-006";
 const static std::string CHECK_ITEM_KXS_ROAD_007 = "KXS-04-007";
+const static std::string CHECK_ITEM_KXS_ROAD_008 = "KXS-04-008";
 
 // 车道中心线
 const static std::string CHECK_ITEM_KXS_LANE_001 = "KXS-05-001";

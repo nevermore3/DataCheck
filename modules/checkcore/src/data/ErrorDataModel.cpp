@@ -494,7 +494,7 @@ namespace kd {
 
         shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_008(const string &road_id,
                                                                           const vector<shared_ptr<NodeError>> &ptr_error_nodes) {
-            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_007);
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_008);
             error->checkDesc_ = "道路形态点间距过近";
             error->detail += "road_id:";
             error->detail += road_id;

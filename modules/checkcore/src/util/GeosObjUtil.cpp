@@ -121,5 +121,15 @@ namespace kd {
                 return false;
             }
         }
+
+        double GeosObjUtil::get_length_of_node(shared_ptr<DCCoord> node1, shared_ptr<DCCoord> node2) {
+            if (node1 && node2) {
+                vector<shared_ptr<DCCoord>> vector_nodes;
+                vector_nodes.emplace_back(node1);
+                vector_nodes.emplace_back(node2);
+                return get_length_of_coords(vector_nodes);
+            }
+            return -1;
+        }
     }
 }

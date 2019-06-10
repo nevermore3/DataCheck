@@ -41,6 +41,7 @@ namespace kd {
             const static string ADAS_NODE_CURVATURE_DISTANCE;
 
             const static string ROAD_NODE_ANGLE;
+            const static string ROAD_NODE_DISTANCE;
 
 
         public:

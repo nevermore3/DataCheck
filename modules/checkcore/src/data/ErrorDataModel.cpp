@@ -492,6 +492,28 @@ namespace kd {
             return error;
         }
 
+        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_008(const string &road_id,
+                                                                          const vector<shared_ptr<NodeError>> &ptr_error_nodes) {
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_007);
+            error->checkDesc_ = "道路形态点间距过近";
+            error->detail += "road_id:";
+            error->detail += road_id;
+            for (const auto &error_node : ptr_error_nodes) {
+                error->detail += ",索引点";
+                error->detail += to_string(error_node->index);
+                error->detail += ",坐标(";
+                error->detail += to_string(error_node->ptr_coord->lng_);
+                error->detail += ",";
+                error->detail += to_string(error_node->ptr_coord->lat_);
+                error->detail += ",";
+                error->detail += to_string(error_node->ptr_coord->z_);
+                error->detail += ")";
+            }
+            error->detail += "距离过近";
+
+            return error;
+        }
+
         /////////////////////////////////////////////////////////////////////////////////////////
         // DCLaneError
         /////////////////////////////////////////////////////////////////////////////////////////

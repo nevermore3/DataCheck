@@ -180,23 +180,6 @@
                      (SELECT FID, MAX(INDEXPOINT) NUMPT FROM HD_DIVIDER_GEOCOORDS GROUP BY FID) DN ON DA.DIVIDER_ID=DN.FID AND DA.SPIDX>NUMPT)
                      UNION SELECT DIVIDER_ID,SPIDX, '单个DividerNode上有多个DA' FROM HD_DIVIDER_ATTRIBUTE
                       GROUP BY DIVIDER_ID,SPIDX HAVING COUNT(*)&gt;1 ORDER BY INFO;"/>
-    <datacheckitem ID="KXS-04-004"
-                   NAME="Road的起点终点检查"
-                   LEVEL="error"
-                   INFO="Road起点和终点是否关联正确的Road_NODE"
-                   SQL="SELECT R.ID ROAD_ID, NODE_ID.ID NODE_ID FROM (
-                    SELECT DISTINCT SNODE_ID ID FROM ROAD GROUP BY SNODE_ID
-                    UNION SELECT DISTINCT ENODE_ID FROM ROAD GROUP BY ENODE_ID
-                    ) NODE_ID JOIN ROAD R ON R.SNODE_ID = NODE_ID.ID OR R.ENODE_ID = NODE_ID.ID
-                     WHERE NODE_ID.ID NOT IN (SELECT ID FROM ROAD_NODE);"/>
-    <datacheckitem ID="KXS-04-005"
-                   NAME="道路RANGE索引号检查"
-                   LEVEL="error"
-                   INFO="道路RANGE索引号超限,最大号超限，最小号非０"
-                   SQL="SELECT RD.ID road_id, NUMVERTEX road_node_num, MINIDX min_index, MAXIDX max_index FROM ROAD RD
-                    JOIN(SELECT ROADID,MAX(MAX(F_INDEX),MAX(T_INDEX)) MAXIDX,MIN(MIN(F_INDEX),MIN(T_INDEX))
-                    MINIDX FROM LG_ROADNODE_INDEX GROUP BY ROADID) MIDX
-                    ON RD.ID=MIDX.ROADID AND (MIDX.MAXIDX>=RD.NUMVERTEX OR MINIDX<0);"/>
     <datacheckitem ID="KXS-06-001"
                    NAME="定位目标与道路的关联关系"
                    LEVEL="error"
@@ -217,25 +200,22 @@
                    INFO="检查定位目标POINT高度值是否超出范围"
                    SQL="select 'HD_POINT' FileName, T.ID ID, T.height height from HD_POINT T where T.height < 0 or
                     T.height > 655;"/>
-    <datacheckitem ID="KXS-08-006"
-                   NAME="护栏关联的道路检查"
+    <datacheckitem ID="KXS-04-004"
+                   NAME="Road的起点终点检查"
                    LEVEL="error"
-                   INFO="护栏关联关系中道路不存在"
-                   SQL="select ROAD_ID road_id from Barrier where road_id not in (select id from road);"/>
-    <datacheckitem ID="KXS-08-007"
-                   NAME="护栏关联的HD_DIVIDER高精分割线检查"
+                   INFO="Road起点和终点是否关联正确的Road_NODE"
+                   SQL="SELECT R.ID ROAD_ID, NODE_ID.ID NODE_ID FROM (
+                    SELECT DISTINCT SNODE_ID ID FROM ROAD GROUP BY SNODE_ID
+                    UNION SELECT DISTINCT ENODE_ID FROM ROAD GROUP BY ENODE_ID
+                    ) NODE_ID JOIN ROAD R ON R.SNODE_ID = NODE_ID.ID OR R.ENODE_ID = NODE_ID.ID
+                     WHERE NODE_ID.ID NOT IN (SELECT ID FROM ROAD_NODE);"/>
+    <datacheckitem ID="KXS-04-005"
+                   NAME="道路RANGE索引号检查"
                    LEVEL="error"
-                   INFO="护栏关联关系中分割线不存在"
-                   SQL="select DIVIDER_ID divider_id from Barrier where divider_id not in (select id from HD_DIVIDER);"/>
-    <datacheckitem ID="KXS-08-008"
-                   NAME="道路上方结构ROAD_FACILITIES关联的道路检查"
-                   LEVEL="error"
-                   INFO="道路上方结构关联关系中道路不存在"
-                   SQL="select ROAD_ID road_id from Road_Facilities where road_id not in (select id from road);"/>
-    <datacheckitem ID="KXS-08-009"
-                   NAME="道路上方结构ROAD_FACILITIES关联的HD_DIVIDER高精分割线检查"
-                   LEVEL="error"
-                   INFO="道路上方结构关联关系中分割线不存在"
-                   SQL="select DIVIDER_ID divider_id from Road_Facilities where divider_id not in (select id from HD_DIVIDER);"/>
+                   INFO="道路RANGE索引号超限,最大号超限，最小号非０"
+                   SQL="SELECT RD.ID road_id, NUMVERTEX road_node_num, MINIDX min_index, MAXIDX max_index FROM ROAD RD
+                    JOIN(SELECT ROADID,MAX(MAX(F_INDEX),MAX(T_INDEX)) MAXIDX,MIN(MIN(F_INDEX),MIN(T_INDEX))
+                    MINIDX FROM LG_ROADNODE_INDEX GROUP BY ROADID) MIDX
+                    ON RD.ID=MIDX.ROADID AND (MIDX.MAXIDX>=RD.NUMVERTEX OR MINIDX<0);"/>
   </datacheck>
 </datachecks>

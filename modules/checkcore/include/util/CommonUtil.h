@@ -178,7 +178,7 @@ namespace kd {
             static bool CheckCoordValid(shared_ptr<DCCoord> coord);
 
             static bool CheckCoordAngle(shared_ptr<DCCoord> ptr_coord1, shared_ptr<DCCoord> ptr_coord2,
-                                        shared_ptr<DCCoord> ptr_coord3);
+                                        shared_ptr<DCCoord> ptr_coord3, double angle_threthold, double &angle);
 
         private:
 

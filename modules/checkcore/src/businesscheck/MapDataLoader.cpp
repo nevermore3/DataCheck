@@ -21,85 +21,9 @@ namespace kd {
             if( mapDataManager == nullptr)
                 return false;
 
-            MapDataInput mapDataInput;
+            shared_ptr<MapDataInput> map_data_input = make_shared<MapDataInput>(mapDataManager, errorOutput, basePath_);
 
-            if (mapDataInput.loadRoad(basePath_, mapDataManager, errorOutput)) {
-                // 暂时不使用
-//                for (auto road : mapDataManager->roads_) {
-//                    if (!road.second->valid_) {
-//                        continue;
-//                    }
-//                    road.second->buildGeometryInfo();
-//                }
-
-            }
-
-            //加载车道线数据
-            if(mapDataInput.loadDivider(basePath_, mapDataManager, errorOutput)){
-
-                for(auto recordit : mapDataManager->dividers_){
-                    string divid = recordit.first;
-                    shared_ptr<DCDivider> div = recordit.second;
-
-                    if(!div->valid_)
-                        continue;
-
-                    //属性重排
-                    div->sortAtts();
-
-                    //构造空间几何属性
-                    div->buildGeometryInfo();
-                }
-            }
-
-            //加载车道
-            if (mapDataInput.loadLane(basePath_, mapDataManager->dividers_, mapDataManager->lanes_, errorOutput)){
-                for(auto recordit : mapDataManager->lanes_){
-                    string laneid = recordit.first;
-                    shared_ptr<DCLane> lane = recordit.second;
-
-                    if(!lane->valid_)
-                        continue;
-
-                    //属性重排
-                    lane->sortAtts();
-                }
-            }
-
-            //加载车道分组
-            if(mapDataInput.loadLaneGroup(basePath_, mapDataManager, errorOutput)){
-                for( auto recordit : mapDataManager->laneGroups_ ){
-
-                    string lgid = recordit.first;
-                    shared_ptr<DCLaneGroup> laneGroup = recordit.second;
-
-                    if(!laneGroup->valid_)
-                        continue;
-
-                    //根据车道编号重排车道顺序
-                    laneGroup->sortLanes();
-                }
-            }
-
-            //加载车道关联关系
-            mapDataInput.loadLaneConnectivity(basePath_, mapDataManager->laneConnectivitys_, errorOutput);
-
-            //加载线对象
-//            if(mapDataInput.loadObjectLine(basePath_, mapDataManager->objectPLs_, errorOutput)){
-//                for( auto recordit : mapDataManager->objectPLs_ ){
-//
-//                    string plid = recordit.first;
-//                    shared_ptr<DCObjectPL> objPL = recordit.second;
-//
-//                    if(!objPL->valid_)
-//                        continue;
-//
-//                    //建立空间信息
-//                    objPL->buildGeometryInfo();
-//                }
-//            }
-
-            mapDataInput.loadLaneGroupLogicInfo(basePath_, mapDataManager);
+            map_data_input->LoadData();
 
             return true;
         }

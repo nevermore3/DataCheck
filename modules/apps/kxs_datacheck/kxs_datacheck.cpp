@@ -31,6 +31,7 @@
 #include "businesscheck/RoadCheck.h"
 #include "businesscheck/LaneCheck.h"
 #include "businesscheck/AdasCheck.h"
+#include "businesscheck/JsonDataLoader.h"
 
 using namespace kd::dc;
 
@@ -67,6 +68,9 @@ int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) 
     //交换格式逻辑检查
     {
         shared_ptr<MapProcessManager> mapProcessManager = make_shared<MapProcessManager>("mapCheck");
+
+        shared_ptr<JsonDataLoader> json_data_loader = make_shared<JsonDataLoader>();
+        mapProcessManager->registerProcessor(json_data_loader);
 
         //加载数据
         shared_ptr<MapDataLoader> loader = make_shared<MapDataLoader>(basePath);

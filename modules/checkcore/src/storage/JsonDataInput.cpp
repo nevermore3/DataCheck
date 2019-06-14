@@ -53,8 +53,6 @@ namespace kd {
                 if (divider_iter == dividers.end()) {
                     shared_ptr<DCDivider> dc_divider = KDSUtil::CopyFromKDSDivider(kds_divider);
                     if (dc_divider) {
-                        dividers.emplace(dc_divider->id_, dc_divider);
-
                         // 构建fnode与divider关系
                         map_data_manager_->insert_fnode_id2_dividers(dc_divider->fromNodeId_, dc_divider);
                         map_data_manager_->insert_node_id2_dividers(dc_divider->fromNodeId_, dc_divider);
@@ -63,7 +61,16 @@ namespace kd {
                         map_data_manager_->insert_tnode_id2_dividers(dc_divider->toNodeId_, dc_divider);
                         map_data_manager_->insert_node_id2_dividers(dc_divider->toNodeId_, dc_divider);
 
-                        auto da_maps = KDSUtil::GetDividerDAs(stol(dc_divider->id_), divider2_da_maps);
+                        const auto &da_maps = KDSUtil::GetDividerDAs(stol(dc_divider->id_), divider2_da_maps);
+
+                        for (auto da : da_maps) {
+                            shared_ptr<DCDividerAttribute> dc_da = KDSUtil::CopyFromKDSDA(da.second);
+                            if (dc_da) {
+                                dc_divider->atts_.emplace_back(dc_da);
+                            }
+                        }
+
+                        dividers.emplace(dc_divider->id_, dc_divider);
                     }
                 } else {
                     // divider 重复

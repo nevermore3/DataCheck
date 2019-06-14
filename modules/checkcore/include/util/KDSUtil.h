@@ -16,6 +16,8 @@ namespace kd {
 
             static shared_ptr<DCDividerNode> CopyFromKDSDividerNode(shared_ptr<KDSNode> kds_divider_node);
 
+            static shared_ptr<DCDividerAttribute> CopyFromKDSDA(shared_ptr<KDSDividerAttribute> kds_da);
+
             static bool BuildDividerId2DAs(shared_ptr<ResourceManager> resource_manager,
                                            map<long, map<int, shared_ptr<kd::api::KDSDividerAttribute>>> &divId2Das,
                                            bool del_redundancy = false);

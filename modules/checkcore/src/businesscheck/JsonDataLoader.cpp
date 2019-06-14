@@ -4,6 +4,7 @@
 
 #include <businesscheck/JsonDataLoader.h>
 #include <util/FileUtil.h>
+#include <storage/JsonDataInput.h>
 #include "parsers/OSMDataParser.hpp"
 
 
@@ -29,7 +30,10 @@ namespace kd {
             error_output_ = errorOutput;
             shared_ptr<ResourceManager> resource_manager = make_shared<ResourceManager>();
             if (LoadJsonData(resource_manager)) {
+                shared_ptr<JsonDataInput> json_data_input = make_shared<JsonDataInput>(map_data_manager_, error_output_,
+                                                                                       "", resource_manager);
 
+                json_data_input->LoadData();
             }
             return false;
         }
@@ -65,6 +69,10 @@ namespace kd {
                 if(!FileUtil::LoadFile(file_path, inputJsonData)){
                     LOG(ERROR) << "inputJsonData is empty";
                     return false;
+                }
+
+                if (inputJsonData.length() < 10) {
+                    continue;
                 }
 
                 int parse_ret = parser.ParseKdsOSMJSONDataFilterByGason(

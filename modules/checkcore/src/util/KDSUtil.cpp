@@ -52,6 +52,21 @@ namespace kd {
             return dc_divider_node;
         }
 
+        shared_ptr<DCDividerAttribute> KDSUtil::CopyFromKDSDA(shared_ptr<KDSDividerAttribute> kds_da) {
+            shared_ptr<DCDividerAttribute> dc_da = nullptr;
+            if (kds_da != nullptr) {
+                dc_da = make_shared<DCDividerAttribute>();
+                dc_da->id_ = to_string(kds_da->ID);
+                dc_da->virtual_ = kds_da->getPropertyLong(KDSDividerAttribute::VIRTUAL);
+                dc_da->color_ = kds_da->getPropertyLong(KDSDividerAttribute::COLOR);
+                dc_da->type_ = kds_da->getPropertyLong(KDSDividerAttribute::TYPE);
+                dc_da->driveRule_ = kds_da->getPropertyLong(KDSDividerAttribute::DRIVE_RULE);
+                dc_da->material_ = kds_da->getPropertyLong(KDSDividerAttribute::MATERIAL);
+                dc_da->width_ = kds_da->getPropertyLong(KDSDividerAttribute::WIDTH);
+            }
+            return dc_da;
+        }
+
         bool KDSUtil::BuildDividerId2DAs(shared_ptr<ResourceManager> resource_manager,
                                          map<long, map<int, shared_ptr<kd::api::KDSDividerAttribute>>> &divId2Das,
                                          bool del_redundancy) {
@@ -116,11 +131,10 @@ namespace kd {
             map<int, shared_ptr<kd::api::KDSDividerAttribute>> da_maps_;
             auto itemit = divider_da_maps_.find(div_id);
             if(itemit != divider_da_maps_.end()){
-                da_maps_ = itemit->second;
+                return itemit->second;
             }
 
             return da_maps_;
         }
-
     }
 }

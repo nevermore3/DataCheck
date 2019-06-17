@@ -28,7 +28,7 @@ namespace kd {
             whiteTypes.insert(pair<long, long>(DA_TYPE_WHITE_RSOLID_LDOT, DA_TYPE_WHITE_RSOLID_LDOT));
             whiteTypes.insert(pair<long, long>(DA_TYPE_BUS_LANE, DA_TYPE_BUS_LANE));
 
-            // 颜色为1时，分割线类型为1、2、3、4、5、6、7、11、14、16、18；
+            // 颜色为1时，分割线类型为1、2、3、4、5、6、7、11、14、16、18、33、34、35、36；
             map<long,long> whiteMaps;
             whiteMaps[DA_TYPE_ROAD_EDGE] = DA_TYPE_ROAD_EDGE;//1：车行道边缘线
             whiteMaps[DA_TYPE_WHITE_DOTTED] = DA_TYPE_WHITE_DOTTED;//2：白虚线
@@ -41,10 +41,14 @@ namespace kd {
             whiteMaps[DA_TYPE_WHITE_LSOLID_RDOT] = DA_TYPE_WHITE_LSOLID_RDOT;//14：白左实右虚线
             whiteMaps[DA_TYPE_WHITE_RSOLID_LDOT] = DA_TYPE_WHITE_RSOLID_LDOT;//16：白右实左虚线
             whiteMaps[DA_TYPE_HOV_LANE] = DA_TYPE_HOV_LANE;//18：HOV专用车道线
+            whiteMaps[DA_TYPE_STATION_MARKING] = DA_TYPE_STATION_MARKING;//33：停靠站标线
+            whiteMaps[DA_TYPE_LEFT_EDGE] = DA_TYPE_LEFT_EDGE;//34：车行道左边缘线
+            whiteMaps[DA_TYPE_RIGHT_EDGE] = DA_TYPE_RIGHT_EDGE;//35：车行道右边缘线
+            whiteMaps[DA_TYPE_EMERGENCE_LANE] = DA_TYPE_EMERGENCE_LANE;//36：应急车道
+
 
             // 颜色为2时，分隔线类型为4、8、9、10、12、13、15、17、11；
             map<long,long> yellowMaps;
-            yellowMaps[DA_TYPE_BUS_LANE] = DA_TYPE_BUS_LANE;//4：公交专用车道线
             yellowMaps[DA_TYPE_TIDAL_LANE] = DA_TYPE_TIDAL_LANE;//8：潮汐车道线
             yellowMaps[DA_TYPE_YELLOW_DOTTED] = DA_TYPE_YELLOW_DOTTED;//9：黄虚线
             yellowMaps[DA_TYPE_YELLOW_SOLID] = DA_TYPE_YELLOW_SOLID;//10：黄实线
@@ -53,10 +57,14 @@ namespace kd {
             yellowMaps[DA_TYPE_DUAL_YELLOW_SOLID] = DA_TYPE_DUAL_YELLOW_SOLID;//13：双黄实线
             yellowMaps[DA_TYPE_YELLOW_RSOLID_LDOT] = DA_TYPE_YELLOW_RSOLID_LDOT;//17：黄右实左虚线
 
+            map<long,long> orangeMaps;
+            orangeMaps[DA_TYPE_BUS_LANE] = DA_TYPE_BUS_LANE;//4：公交专用车道线
+
             colorDividerTypeMaps.insert(pair<long,map<long,long>>(1, whiteMaps));
             colorDividerTypeMaps.insert(pair<long,map<long,long>>(2, yellowMaps));
+            colorDividerTypeMaps.insert(pair<long,map<long,long>>(3, orangeMaps));
 
-            // 通行类型为1，分隔线类型为1、3、4、7、10、11、13、18；
+            // 通行类型为1，分隔线类型为1、3、4、7、10、11、13、18、34、35、36；
             map<long,long> solidMaps;
             solidMaps[DA_TYPE_ROAD_EDGE] = DA_TYPE_ROAD_EDGE;//1：车行道边缘线
             solidMaps[DA_TYPE_WHITE_SOLID] = DA_TYPE_WHITE_SOLID;//3：白实线
@@ -66,8 +74,12 @@ namespace kd {
             solidMaps[DA_TYPE_DECELERATION] = DA_TYPE_DECELERATION;//11：纵向减速标线
             solidMaps[DA_TYPE_DUAL_YELLOW_SOLID] = DA_TYPE_DUAL_YELLOW_SOLID;//13：双黄实线
             solidMaps[DA_TYPE_HOV_LANE] = DA_TYPE_HOV_LANE;//18：HOV专用车道线
+            solidMaps[DA_TYPE_LEFT_EDGE] = DA_TYPE_LEFT_EDGE;//34：车行道左边缘线
+            solidMaps[DA_TYPE_RIGHT_EDGE] = DA_TYPE_RIGHT_EDGE;//35：车行道右边缘线
+            solidMaps[DA_TYPE_EMERGENCE_LANE] = DA_TYPE_EMERGENCE_LANE;//36：应急车道
 
-            // 通行类型为2，分隔线类型为2、4、5、6、8、9、12、18；
+
+            // 通行类型为2，分隔线类型为2、4、5、6、8、9、12、18、33；
             map<long,long> dotMaps;
             dotMaps[DA_TYPE_WHITE_DOTTED] = DA_TYPE_WHITE_DOTTED;//2：白虚线
             dotMaps[DA_TYPE_BUS_LANE] = DA_TYPE_BUS_LANE;//4：公交专用车道线
@@ -77,6 +89,8 @@ namespace kd {
             dotMaps[DA_TYPE_YELLOW_DOTTED] = DA_TYPE_YELLOW_DOTTED;//9：黄虚线
             dotMaps[DA_TYPE_DUAL_YELLOW_DOTTED] = DA_TYPE_DUAL_YELLOW_DOTTED;//12：双黄虚线
             dotMaps[DA_TYPE_HOV_LANE] = DA_TYPE_HOV_LANE;//18：HOV专用车道线
+            dotMaps[DA_TYPE_STATION_MARKING] = DA_TYPE_STATION_MARKING;//33：停靠站标线
+
 
             // 通行类型为3，分隔线类型为14、15；
             map<long,long> lsrdMaps;
@@ -183,24 +197,29 @@ namespace kd {
                 for( auto att : div->atts_){
 
                     //虚拟分隔线（1、2、3）时，分隔线类型为0，颜色类型为0，通行类型为0；
-                    if(att->virtual_ == 1 || att->virtual_ == 2 || att->virtual_ == 3){
-                        if(att->type_ != 0 || att->color_ != 0 || att->driveRule_ != 0){
-                            //车道线没有属性变化点
-                            shared_ptr<DCDividerCheckError> error =
-                                    DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_014, div, att);
-                            error->checkDesc_ = "颜色、类型、通行类型属性冲突检查";
-                            stringstream ss;
-                            ss << "divider:" << div->id_;
-                            ss << ",virtual divider att error. type:" << att->type_ << ",color:";
-                            ss << att->color_ << ",dirveRule:" << att->driveRule_;
-                            error->errorDesc_ = ss.str();
+                    if (att->virtual_ == 1 || att->virtual_ == 2 || att->virtual_ == 3) {
+                        if (att->type_ == 36 && (att->color_ == 0 || att->color_ == 1) &&
+                            (att->driveRule_ == 0 || att->driveRule_ == 1)) {
+                            // true;
+                        } else {
+                            if (att->type_ != 0 || att->color_ != 0 || att->driveRule_ != 0) {
+                                shared_ptr<DCDividerCheckError> error =
+                                        DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_014, div, att);
+                                error->checkDesc_ = "颜色、类型、通行类型属性冲突检查";
+                                stringstream ss;
+                                ss << "divider:" << div->id_;
+                                ss << ",virtual divider att error. type:" << att->type_ << ",color:";
+                                ss << att->color_ << ",dirveRule:" << att->driveRule_;
+                                error->errorDesc_ = ss.str();
 
-                            errorOutput->saveError(error);
+                                errorOutput->saveError(error);
+                            }
                         }
                     }
 
                     // 颜色为1时，分割线类型为1、2、3、4、5、6、7、11、14、16、18；
-                    // 颜色为2时，分隔线类型为4、8、9、10、12、13、15、17、11；
+                    // 颜色为2时，分隔线类型为8、9、10、12、13、15、17、11；
+                    // 颜色为3时，分隔线类型为4；
                     auto colormapit = colorDividerTypeMaps.find(att->color_);
                     if(colormapit != colorDividerTypeMaps.end()){
                         auto dividerTypes = colormapit->second;

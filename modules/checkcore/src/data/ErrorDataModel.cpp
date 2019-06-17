@@ -143,6 +143,92 @@ namespace kd {
             return error;
         }
 
+        shared_ptr<DCDividerCheckError> DCDividerCheckError::createByKXS_01_011(const string &divider_id,
+                                                                      const vector<shared_ptr<NodeCompareError>> &ptr_error_nodes) {
+            shared_ptr<DCDividerCheckError> error = make_shared<DCDividerCheckError>(CHECK_ITEM_KXS_ORG_011);
+            error->checkDesc_ = "车道线不平滑夹角";
+            error->detail_ += "divider:";
+            error->detail_ += divider_id;
+            for (const auto &error_node : ptr_error_nodes) {
+                error->detail_ += ",索引点";
+                error->detail_ += to_string(error_node->current);
+                error->detail_ += ",坐标(";
+                error->detail_ += to_string(error_node->ptr_current_coord->lng_);
+                error->detail_ += ",";
+                error->detail_ += to_string(error_node->ptr_current_coord->lat_);
+                error->detail_ += ",";
+                error->detail_ += to_string(error_node->ptr_current_coord->z_);
+                error->detail_ += ")";
+                error->detail_ += "前后点角度：";
+                error->detail_ += to_string(error_node->angle);
+            }
+            return error;
+        }
+
+        shared_ptr<DCDividerCheckError> DCDividerCheckError::createByKXS_01_012(const string &divider_id,
+                                                                      const vector<shared_ptr<NodeCompareError>> &ptr_error_nodes) {
+            shared_ptr<DCDividerCheckError> error = make_shared<DCDividerCheckError>(CHECK_ITEM_KXS_ORG_012);
+            error->checkDesc_ = "存在长度小于0.2米的弧段";
+            error->detail_ += "divider_id:";
+            error->detail_ += divider_id;
+            for (const auto &error_node : ptr_error_nodes) {
+                error->detail_ += ",索引点";
+                error->detail_ += to_string(error_node->previous);
+                error->detail_ += ",坐标(";
+                error->detail_ += to_string(error_node->ptr_previous_coord->lng_);
+                error->detail_ += ",";
+                error->detail_ += to_string(error_node->ptr_previous_coord->lat_);
+                error->detail_ += ",";
+                error->detail_ += to_string(error_node->ptr_previous_coord->z_);
+                error->detail_ += ")";
+                error->detail_ += "与索引点";
+                error->detail_ += to_string(error_node->current);
+                error->detail_ += ",坐标(";
+                error->detail_ += to_string(error_node->ptr_current_coord->lng_);
+                error->detail_ += ",";
+                error->detail_ += to_string(error_node->ptr_current_coord->lat_);
+                error->detail_ += ",";
+                error->detail_ += to_string(error_node->ptr_current_coord->z_);
+                error->detail_ += ")";
+                error->detail_ += "距离：";
+                error->detail_ += to_string(error_node->distance);
+            }
+            return error;
+        }
+
+        shared_ptr<DCDividerCheckError> DCDividerCheckError::createByKXS_01_013(const string &divider_id,
+                                                                      const vector<shared_ptr<NodeCompareError>> &ptr_error_nodes) {
+            shared_ptr<DCDividerCheckError> error = make_shared<DCDividerCheckError>(CHECK_ITEM_KXS_ORG_013);
+            error->checkDesc_ = "车道线高程突变";
+            error->detail_ += "divider_id:";
+            error->detail_ += divider_id;
+            for (const auto &error_node : ptr_error_nodes) {
+                error->detail_ += ",索引点";
+                error->detail_ += to_string(error_node->previous);
+                error->detail_ += ",坐标(";
+                error->detail_ += to_string(error_node->ptr_previous_coord->lng_);
+                error->detail_ += ",";
+                error->detail_ += to_string(error_node->ptr_previous_coord->lat_);
+                error->detail_ += ",";
+                error->detail_ += to_string(error_node->ptr_previous_coord->z_);
+                error->detail_ += ")";
+                error->detail_ += "与索引点";
+                error->detail_ += to_string(error_node->current);
+                error->detail_ += ",坐标(";
+                error->detail_ += to_string(error_node->ptr_current_coord->lng_);
+                error->detail_ += ",";
+                error->detail_ += to_string(error_node->ptr_current_coord->lat_);
+                error->detail_ += ",";
+                error->detail_ += to_string(error_node->ptr_current_coord->z_);
+                error->detail_ += ")";
+                error->detail_ += ",高度：";
+                error->detail_ += to_string(error_node->height);
+                error->detail_ += ",距离：";
+                error->detail_ += to_string(error_node->distance);
+            }
+            return error;
+        }
+
 
         /////////////////////////////////////////////////////////////////////////////////////////
         // DCLaneCheckError

@@ -5,6 +5,7 @@
 #ifndef AUTOHDMAP_DATACHECK_KDSUTIL_H
 #define AUTOHDMAP_DATACHECK_KDSUTIL_H
 
+#include <storage/CheckErrorOutput.h>
 #include "data/DataManager.h"
 #include "ResourceManager.h"
 
@@ -12,11 +13,13 @@ namespace kd {
     namespace dc {
         class KDSUtil {
         public:
-            static shared_ptr<DCDivider> CopyFromKDSDivider(shared_ptr<KDSDivider> kds_divider);
+            static shared_ptr<DCDivider> CopyFromKDSDivider(shared_ptr<KDSDivider> kds_divider,
+                                                            shared_ptr<CheckErrorOutput> error_output);
 
             static shared_ptr<DCDividerNode> CopyFromKDSDividerNode(shared_ptr<KDSNode> kds_divider_node);
 
-            static shared_ptr<DCDividerAttribute> CopyFromKDSDA(shared_ptr<KDSDividerAttribute> kds_da);
+            static shared_ptr<DCDividerAttribute> CopyFromKDSDA(shared_ptr<KDSDividerAttribute> kds_da,
+                                                                shared_ptr<KDSDivider> kds_divider);
 
             static bool BuildDividerId2DAs(shared_ptr<ResourceManager> resource_manager,
                                            map<long, map<int, shared_ptr<kd::api::KDSDividerAttribute>>> &divId2Das,

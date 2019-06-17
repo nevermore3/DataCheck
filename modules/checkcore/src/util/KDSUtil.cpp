@@ -4,13 +4,15 @@
 
 #include <util/KDSUtil.h>
 #include <util/KdsDataUtil.h>
+#include <data/ErrorDataModel.h>
 
 #include "util/KDSUtil.h"
 namespace kd {
     namespace dc {
 
 
-        shared_ptr<DCDivider> KDSUtil::CopyFromKDSDivider(shared_ptr<KDSDivider> kds_divider) {
+        shared_ptr<DCDivider> KDSUtil::CopyFromKDSDivider(shared_ptr<KDSDivider> kds_divider,
+                                                          shared_ptr<CheckErrorOutput> error_output) {
             shared_ptr<DCDivider> dc_divider = nullptr;
             if (kds_divider != nullptr) {
                 dc_divider = make_shared<DCDivider>();
@@ -21,15 +23,24 @@ namespace kd {
                 dc_divider->tollFlag_ = kds_divider->getPropertyLong(KDSDivider::TOLLFLAG);
 
                 if (kds_divider->nodes.size() > 1) {
-                    dc_divider->fromNodeId_ = kds_divider->nodes.front()->ID;
-                    dc_divider->toNodeId_ = kds_divider->nodes.back()->ID;
+                    dc_divider->fromNodeId_ = to_string(kds_divider->nodes.front()->ID);
+                    dc_divider->toNodeId_ = to_string(kds_divider->nodes.back()->ID);
 
+                    set<long> error_node_index;
                     for (const auto &kds_node : kds_divider->nodes) {
                         shared_ptr<DCDividerNode> dc_node = CopyFromKDSDividerNode(kds_node);
                         if (dc_node) {
                             dc_divider->nodes_.emplace_back(dc_node);
                         } else {
                             // 异常
+                        }
+                    }
+
+                    if (!error_node_index.empty()) {
+                        shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_024("divider", dc_divider->id_,
+                                                                                         error_node_index);
+                        if (error_output) {
+                            error_output->saveError(ptr_error);
                         }
                     }
                 } else {
@@ -52,7 +63,8 @@ namespace kd {
             return dc_divider_node;
         }
 
-        shared_ptr<DCDividerAttribute> KDSUtil::CopyFromKDSDA(shared_ptr<KDSDividerAttribute> kds_da) {
+        shared_ptr<DCDividerAttribute> KDSUtil::CopyFromKDSDA(shared_ptr<KDSDividerAttribute> kds_da,
+                                                              shared_ptr<KDSDivider> kds_divider) {
             shared_ptr<DCDividerAttribute> dc_da = nullptr;
             if (kds_da != nullptr) {
                 dc_da = make_shared<DCDividerAttribute>();
@@ -63,6 +75,27 @@ namespace kd {
                 dc_da->driveRule_ = kds_da->getPropertyLong(KDSDividerAttribute::DRIVE_RULE);
                 dc_da->material_ = kds_da->getPropertyLong(KDSDividerAttribute::MATERIAL);
                 dc_da->width_ = kds_da->getPropertyLong(KDSDividerAttribute::WIDTH);
+
+                long divider_node_id = -1;
+                for (const auto &role : kds_da->vecMemberAndRols) {
+                    if (role.first == DIVIDER_NODE_ID) {
+                        divider_node_id = role.second;
+                    }
+                }
+
+                shared_ptr<DCDividerNode> dc_da_node = nullptr;
+                if (divider_node_id != -1) {
+                    for (const auto &kds_node : kds_divider->nodes) {
+                        if (kds_node->ID == divider_node_id) {
+                            dc_da_node = KDSUtil::CopyFromKDSDividerNode(kds_node);
+                        }
+                    }
+                }
+
+
+                if (dc_da_node) {
+                    dc_da->dividerNode_ = dc_da_node;
+                }
             }
             return dc_da;
         }

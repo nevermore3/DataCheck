@@ -37,7 +37,7 @@ namespace kd {
             DA_TYPE_YELLOW_LSOLID_RDOT = 15, //15：黄左实右虚线
             DA_TYPE_WHITE_RSOLID_LDOT = 16, //16：白右实左虚线
             DA_TYPE_YELLOW_RSOLID_LDOT = 17, //17：黄右实左虚线
-            DA_TYPE_HOV_LANE = 18  //18：HOV专用车道线
+            DA_TYPE_HOV_LANE = 18,  //18：HOV专用车道线
 //#define DA_TYPE_       19：路缘石
 //#define DA_TYPE_        20：墙
 //#define DA_TYPE_       21：隧道墙
@@ -52,6 +52,12 @@ namespace kd {
 //#define DA_TYPE_        30：沟
 //#define DA_TYPE_        31：其他屏障
 //#define DA_TYPE_       32：其他"
+
+            DA_TYPE_STATION_MARKING = 33,  //33：停靠站标线
+            DA_TYPE_LEFT_EDGE = 34,  //34：车行道左边缘线
+            DA_TYPE_RIGHT_EDGE = 35,  //35：车行道右边缘线
+            DA_TYPE_EMERGENCE_LANE = 36  //36：应急车道
+
         };
 
 

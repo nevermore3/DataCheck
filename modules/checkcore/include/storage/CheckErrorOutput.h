@@ -25,7 +25,6 @@ namespace kd {
 
         public:
             explicit CheckErrorOutput(CppSQLite3::Database *pdb);
-
             ~CheckErrorOutput() = default;
 
             /**
@@ -38,7 +37,7 @@ namespace kd {
              * 输出检查信息到sql中
              */
             int saveError();
-
+            int saveJsonError();
             void saveError(shared_ptr<DCError> error);
 
             int countError();
@@ -56,7 +55,7 @@ namespace kd {
             CppSQLite3::Database *m_pdb;
             map<string, vector<ErrorOutPut>> check_model_2_output_maps_;
             set<string> error_check_levels_;
-            JsonLog *jsonLog_;
+
         };
     }
 

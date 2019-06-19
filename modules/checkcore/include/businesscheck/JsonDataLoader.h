@@ -25,6 +25,8 @@ namespace kd {
         private:
             const string id_ = "json_data_loader";
             string json_data_path_;
+            string model_file_;
+            string config_path_;
             shared_ptr<MapDataManager> map_data_manager_;
             shared_ptr<CheckErrorOutput> error_output_;
         };

@@ -62,7 +62,32 @@ namespace kd {
         void CheckErrorOutput::writeInfo(string info, bool bLongString) {
             LOG(ERROR) << info;
         }
+        int CheckErrorOutput::saveJsonError(){
+            int ret = 0;
+            LOG(INFO) << "task [save error] start. ";
+            TimerUtil compilerTimer;
+            try {
+                string taskId = DataCheckConfig::getInstance().getTaskId();
 
+                for (const auto &check_item : check_model_2_output_maps_) {
+                    for (const auto& item : check_item.second) {
+                        string err_type = LEVEL_WARNING;
+                        if (item.level == LEVEL_ERROR) {
+                            err_type = LEVEL_ERROR;
+                            ret = 1;
+                        }
+                        JsonLog::GetInstance().AppendCheckError(item.checkId,item.checkName,item.errDesc,taskId,err_type,"1", nullptr);
+                    }
+                }
+
+            } catch (std::exception &e) {
+                LOG(ERROR) << e.what();
+                ret = 1;
+            }
+
+            LOG(INFO) << "task [save error] end successfully " << " costs : " << compilerTimer.elapsed_message();
+            return ret;
+        }
         int CheckErrorOutput::saveError() {
             int ret = 0;
             LOG(INFO) << "task [save error] start. ";

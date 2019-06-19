@@ -1,0 +1,88 @@
+{
+  "model" : "HD_DIVIDER",
+  "checks" : [
+    {
+       "name":"ID",
+       "func":"ID",
+       "refValue":""
+    }
+  ],
+  "fields" : [
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "FDNODE",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "TDNODE",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "DIVIDER_NO",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "DIRECTION",
+      "type" : "1",
+      "valueLimit" : "1,2,3,4"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "R_LINE",
+      "type" : "1",
+      "valueLimit" : "0,1"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "TOLLFLAG",
+      "type" : "1",
+      "valueLimit" : "0,1"
+    }
+  ],
+  
+  "relation" : [
+    {
+      "member" : "HD_DIVIDER_NODE",
+      "rule" : "FDNODE"
+    },
+    {
+      "member" : "HD_DIVIDER_NODE",
+      "rule" : "TDNODE"
+    }
+  ],
+   "relationcheck" : [
+  ]
+}

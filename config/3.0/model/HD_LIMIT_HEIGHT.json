@@ -1,0 +1,61 @@
+{
+"model" : "HD_LIMIT_HEIGHT",
+  "checks" : [
+    {
+       "name":"ID",
+       "func":"ID",
+       "refValue":""
+    }
+  ],
+  "fields" : [
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "HEIHGT",
+      "type" : "2",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "LANE_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "BRIDGE_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    }
+  ],
+ 
+  "relation" : [
+    {
+      "member" : "HD_BRIDGE",
+      "rule" : "BRIDGE_ID"
+    },
+    {
+      "member" : "HD_LANE",
+      "rule" : "LANE_ID"
+    }
+  ],
+   "relationcheck" : [
+  ]
+}

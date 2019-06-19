@@ -1,0 +1,216 @@
+{
+ "model" : "HD_LANE_ATTRIBUTE",
+  "checks" : [
+    {
+       "name":"ID",
+       "func":"ID",
+       "refValue":""
+    }
+  ],
+  "fields" : [
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "LANE_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "SPIDX",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "LANETYPE",
+      "type" : "1",
+      "valueLimit" : "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,99"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "SUBTYPE",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "DIRECTION",
+      "type" : "1",
+      "valueLimit" : "1,2,3,4"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "WIDTH",
+      "type" : "2",
+      "valueLimit" : "[0~99.999999]"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "MAX_SPEED",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "MIN_SPEED",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "SMTYPE",
+      "type" : "1",
+      "valueLimit" : "-1,0,1,2"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "STATUS",
+      "type" : "1",
+      "valueLimit" : "0,1,2"
+    }
+  ],
+  
+   "relation" : [
+    {
+      "member" : "HD_LANE",
+      "rule" : "LANE_ID"
+    }
+  ],
+   "relationcheck" : [
+     {
+       "src" : [
+         {
+           "table" : "",
+           "field" : "LANETYPE",
+           "value" : "11"
+         }
+       ],
+       "dst" : [
+         {
+           "table" : "",
+           "field" : "SUBTYPE",
+           "value" : "0,1"
+         }
+       ]
+     },
+     {
+       "src" : [
+         {
+           "table" : "",
+           "field" : "LANETYPE",
+           "value" : "9"
+         }
+       ],
+       "dst" : [
+         {
+           "table" : "",
+           "field" : "SUBTYPE",
+           "value" : "0,1"
+         }
+       ]
+     },
+     {
+       "src" : [
+         {
+           "table" : "",
+           "field" : "LANETYPE",
+           "value" : "3"
+         }
+       ],
+       "dst" : [
+         {
+           "table" : "",
+           "field" : "SUBTYPE",
+           "value" : "0"
+         }
+       ]
+     },
+     {
+       "src" : [
+         {
+           "table" : "",
+           "field" : "LANETYPE",
+           "value" : "4"
+         }
+       ],
+       "dst" : [
+         {
+           "table" : "",
+           "field" : "SUBTYPE",
+           "value" : "0"
+         }
+       ]
+     },
+     {
+       "src" : [
+         {
+           "table" : "",
+           "field" : "LANETYPE",
+           "value" : "5"
+         }
+       ],
+       "dst" : [
+         {
+           "table" : "",
+           "field" : "SUBTYPE",
+           "value" : "0"
+         }
+       ]
+     },
+     {
+       "src" : [
+         {
+           "table" : "",
+           "field" : "LANETYPE",
+           "value" : "6"
+         }
+       ],
+       "dst" : [
+         {
+           "table" : "",
+           "field" : "SUBTYPE",
+           "value" : "0,1"
+         }
+       ]
+     }
+  ]
+}

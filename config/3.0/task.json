@@ -1,0 +1,156 @@
+{
+  "taskName": "propcheck",
+  "dataPath": "",
+  "modelPath": "",
+  "tasks": [
+      {
+        "fileName": "C_NODE",
+        "fileType": "point",
+        "modelName": "C_NODE"
+      },
+      {
+        "fileName": "ROAD_NODE",
+        "fileType": "point",
+        "modelName": "ROAD_NODE"
+      },
+      {
+        "fileName": "ROAD",
+        "fileType": "arc",
+        "modelName": "ROAD"
+      },
+      {
+        "fileName": "C_NODECONN",
+        "fileType": "dbf",
+        "modelName": "C_NODECONN"
+      },
+      {
+        "fileName": "NODECONN",
+        "fileType": "dbf",
+        "modelName": "NODECONN"
+      },
+      {
+        "fileName": "NODEINFO",
+        "fileType": "dbf",
+        "modelName": "NODEINFO"
+      },
+      {
+        "fileName": "TRAFFICRULE",
+        "fileType": "dbf",
+        "modelName": "TRAFFICRULE"
+      },
+      {
+        "fileName": "TURN_GUIDANCE",
+        "fileType": "dbf",
+        "modelName": "TURN_GUIDANCE"
+      },
+      {
+        "fileName": "HD_ROAD_ATTRIBUTE",
+        "fileType": "point",
+        "modelName": "HD_ROAD_ATTRIBUTE"
+      },
+      {
+        "fileName": "HD_JUNCTION",
+        "fileType": "point",
+        "modelName": "HD_JUNCTION"
+      },
+
+      {
+        "fileName": "HD_DIVIDER",
+        "fileType": "arc",
+        "modelName": "HD_DIVIDER"
+      },
+      {
+        "fileName": "HD_DIVIDER_NODE",
+        "fileType": "point",
+        "modelName": "HD_DIVIDER_NODE"
+      },
+      {
+        "fileName": "HD_DIVIDER_ATTRIBUTE",
+        "fileType": "dbf",
+        "modelName": "HD_DIVIDER_ATTRIBUTE"
+      },
+
+      {
+        "fileName": "HD_LANE",
+        "fileType": "arc",
+        "modelName": "HD_LANE"
+      },
+      {
+        "fileName": "HD_LANE_ATTRIBUTE",
+        "fileType": "dbf",
+        "modelName": "HD_LANE_ATTRIBUTE"
+      },
+      {
+        "fileName": "HD_LANE_ATTRIBUTE_RESTRICTION",
+        "fileType": "dbf",
+        "modelName": "HD_LANE_ATTRIBUTE_RESTRICTION"
+      },
+      {
+        "fileName": "HD_LANE_GROUP",
+        "fileType": "dbf",
+        "modelName": "HD_LANE_GROUP"
+      },
+      {
+        "fileName": "HD_R_LANE_GROUP",
+        "fileType": "dbf",
+        "modelName": "HD_R_LANE_GROUP"
+      },
+      {
+        "fileName": "HD_LANE_CONNECTIVITY",
+        "fileType": "dbf",
+        "modelName": "HD_LANE_CONNECTIVITY"
+      },
+
+      {
+        "fileName": "HD_POLYGON",
+        "fileType": "polygon",
+        "modelName": "HD_POLYGON"
+      },
+      {
+        "fileName": "HD_POLYLINE",
+        "fileType": "arc",
+        "modelName": "HD_POLYLINE"
+      },
+      {
+        "fileName": "HD_POINT",
+        "fileType": "point",
+        "modelName": "HD_POINT"
+      },
+
+      {
+        "fileName": "HD_TRAFFICSIGN",
+        "fileType": "polygon",
+        "modelName": "HD_TRAFFICSIGN"
+      },
+      {
+        "fileName": "HD_TRAFFIC_LIGHT",
+        "fileType": "polygon",
+        "modelName": "HD_TRAFFIC_LIGHT"
+      },
+      {
+        "fileName": "HD_BRIDGE",
+        "fileType": "arc",
+        "modelName": "HD_BRIDGE"
+      },
+      {
+        "fileName": "HD_LIMIT_HEIGHT",
+        "fileType": "point",
+        "modelName": "HD_LIMIT_HEIGHT"
+      },
+      {
+        "fileName": "HD_TUNNEL",
+        "fileType": "arc",
+        "modelName": "HD_TUNNEL"
+      },
+      {
+        "fileName": "HD_TOLLBOOTH",
+        "fileType": "polygon",
+        "modelName": "HD_TOLLBOOTH"
+      },
+      {
+        "fileName": "DIVIDER",
+        "fileType": "json",
+        "modelName": "DIVIDER"
+      }
+    ]
+}

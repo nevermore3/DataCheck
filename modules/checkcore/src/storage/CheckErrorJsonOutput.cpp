@@ -35,8 +35,8 @@ namespace kd {
                     }
                 }
 
-            } catch (Poco::Exception &e) {
-                LOG(ERROR) << e.errorMessage().c_str();
+            } catch (std::exception &e) {
+                LOG(ERROR) << e.what();
                 ret = 1;
             }
 
@@ -53,10 +53,10 @@ namespace kd {
         void CheckErrorOutput::saveError(shared_ptr<DCError> error) {
             if (error) {
                 ErrorOutPut error_output;
-                error_output.checkModel_ = error->checkModel_;
-                error_output.checkDesc_ = error->checkDesc_;
+                error_output.checkId = error->checkModel_;
+                error_output.checkName = error->checkDesc_;
                 error_output.level = get_error_level(error->checkModel_);
-                error_output.detail = error->toString();
+                error_output.errDesc = error->toString();
                 auto check_model_iter = check_model_2_output_maps_.find(error->checkModel_);
                 if (check_model_iter != check_model_2_output_maps_.end()) {
                     check_model_iter->second.emplace_back(error_output);

@@ -5,6 +5,7 @@
 #include <businesscheck/JsonDataLoader.h>
 #include <util/FileUtil.h>
 #include <storage/JsonDataInput.h>
+#include <storage/CheckTaskInput.h>
 #include "parsers/OSMDataParser.hpp"
 
 
@@ -14,6 +15,8 @@ namespace kd {
     namespace dc {
         JsonDataLoader::JsonDataLoader(){
             json_data_path_ = DataCheckConfig::getInstance().getProperty(DataCheckConfig::JSON_DATA_INPUT);
+            model_file_ = DataCheckConfig::getInstance().getProperty(DataCheckConfig::RESOURCE_FILE);
+            config_path_ = DataCheckConfig::getInstance().getProperty(DataCheckConfig::CONFIG_FILE_PATH);
         }
 
         JsonDataLoader::~JsonDataLoader() {
@@ -26,16 +29,19 @@ namespace kd {
 
         bool JsonDataLoader::execute(shared_ptr<MapDataManager> mapDataManager,
                                      shared_ptr<CheckErrorOutput> errorOutput) {
+            bool ret = true;
             map_data_manager_ = mapDataManager;
             error_output_ = errorOutput;
+            string model_path = config_path_ + model_file_;
             shared_ptr<ResourceManager> resource_manager = make_shared<ResourceManager>();
             if (LoadJsonData(resource_manager)) {
                 shared_ptr<JsonDataInput> json_data_input = make_shared<JsonDataInput>(map_data_manager_, error_output_,
-                                                                                       "", resource_manager);
-
+                                                                                       "", model_path, resource_manager);
+                json_data_input->LoadModel();
                 json_data_input->LoadData();
+                json_data_input->CheckModelField(error_output_);
             }
-            return false;
+            return ret;
         }
 
         bool JsonDataLoader::LoadJsonData(shared_ptr<ResourceManager> resource_manager) {

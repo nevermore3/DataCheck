@@ -87,7 +87,9 @@ namespace kd {
                     dctask->fileName = dataPath + fileName;
                     dctask->fileType = fileType;
                     dctask->modelName = modelPath + modelName;
-                    tasks.insert(make_pair(modelName, dctask));
+                    if (tasks.find(modelName) == tasks.end()) {
+                        tasks.emplace(modelName, dctask);
+                    }
                 }
             }catch (Exception &e) {
                 LOG(ERROR) << e.what();

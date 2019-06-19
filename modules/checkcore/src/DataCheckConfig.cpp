@@ -46,6 +46,9 @@ namespace kd {
 
         const string DataCheckConfig::JSON_DATA_INPUT = "json_data_input";
 
+        const string DataCheckConfig::RESOURCE_FILE_PATH = "resource_file_path";
+        const string DataCheckConfig::RESOURCE_FILE = "resource_file";
+
 
 
         int DataCheckConfig::load(string fileName) {

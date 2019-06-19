@@ -185,7 +185,7 @@ int main(int argc, const char *argv[]) {
 
     CppSQLite3::Database *p_db = nullptr;
     CppSQLite3::Database *p_db_out = nullptr;
-
+    KDSDivider::FLAG;
     try {
         exe_path = argv[0];
         if (argc >= 4) {

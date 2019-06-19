@@ -1,0 +1,39 @@
+{
+"model" : "TURN_GUIDANCE",
+  "checks" : [
+    {
+       "name":"ID",
+       "func":"ID",
+       "refValue":""
+    }
+  ],
+  "fields" : [
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ROAD_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    }
+  ],
+  
+  "relation" : [
+    {
+      "member" : "ROAD",
+      "rule" : "ROAD_ID"
+    }
+  ],
+   "relationcheck" : [
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "model" : "R_Divider_DREF",
+  "checks" : [
+    {
+      "name":"ID",
+      "func":"ID",
+      "refValue":""
+    }
+  ],
+  "fields" : [
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ID",
+      "type" : "1",
+      "valueLimit" : ""
+    }
+  ],
+  "relation" : [
+  ],
+  "relationcheck" : [
+  ]
+}

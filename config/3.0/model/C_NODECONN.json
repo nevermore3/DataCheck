@@ -1,0 +1,75 @@
+{
+"model" : "C_NODECONN",
+  "checks" : [
+    {
+       "name":"ID",
+       "func":"ID",
+       "refValue":""
+    }
+
+  ],
+  "fields" : [
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "EROAD_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "C_NODE_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "QROAD_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "FLAG",
+      "type" : "1",
+      "valueLimit" : "0,1"
+    }
+  ],
+  
+  "relation" : [
+    {
+      "member" : "ROAD",
+      "rule" : "EROAD_ID"
+    },
+    {
+      "member" : "C_NODE",
+      "rule" : "C_NODE_ID"
+    },
+    {
+      "member" : "ROAD",
+      "rule" : "QROAD_ID"
+    }
+  ],
+   "relationcheck" : [
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "taskName": "jsoncheck",
+  "dataPath": "",
+  "modelPath": "./config/3.0/resource/",
+  "tasks": [
+    {
+      "fileName": "DIVIDER",
+      "fileType": "json",
+      "modelName": "DIVIDER"
+    },
+    {
+      "fileName": "R_DIVIDER_DREF",
+      "fileType": "json",
+      "modelName": "R_DIVIDER_DREF"
+    }
+  ]
+}

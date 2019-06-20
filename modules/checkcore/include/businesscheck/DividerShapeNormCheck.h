@@ -36,26 +36,22 @@ namespace kd {
 
         private:
 
-            //存在夹角<135°的弧段
-            void check_JH_C_7(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput);
-
-            //存在长度小于0.2米的弧段; 车道线高程突变>±10厘米/米
-            void check_JH_C_8_AND_JH_C_9(shared_ptr<MapDataManager> mapDataManager,
-                                         shared_ptr<CheckErrorOutput> errorOutput);
-
             /**
+             * KXS-01-011
              * 平滑度检查
              * @param dc_divider
              */
             void SmoothCheck(shared_ptr<DCDivider> dc_divider);
 
             /**
+             * KXS-01-012
              * 结点间距检查
              * @param dc_divider
              */
             void DistanceCheck(shared_ptr<DCDivider> dc_divider);
 
             /**
+             * KXS-01-013
              * 高程检查
              * @param dc_divider
              */

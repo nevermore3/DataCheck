@@ -71,9 +71,9 @@ namespace kd {
 
                 for (const auto &check_item : check_model_2_output_maps_) {
                     for (const auto& item : check_item.second) {
-                        string err_type = LEVEL_WARNING;
+                        string err_type = "E2";
                         if (item.level == LEVEL_ERROR) {
-                            err_type = LEVEL_ERROR;
+                            err_type = "E1";
                             ret = 1;
                         }
                         JsonLog::GetInstance().AppendCheckError(item.checkId,item.checkName,item.errDesc,taskId,err_type,"1", nullptr);

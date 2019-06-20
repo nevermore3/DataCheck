@@ -182,46 +182,14 @@ int main(int argc, const char *argv[]) {
 
     string exe_path;
     string base_path;
-    string ur_path;
-    string db_file_name;
-    string output_path;
-    string task_id;
 
     CppSQLite3::Database *p_db = nullptr;
     CppSQLite3::Database *p_db_out = nullptr;
-
+    KDSDivider::FLAG;
     try {
         exe_path = argv[0];
-        if (argc >= 4) {
-            ur_path = argv[1];
-            base_path = argv[2];
-            db_file_name = argv[3];
-            output_path = argc >= 5 ? argv[4] : ".";
-            output_path = output_path + "/" + ur_path;
-            base_path = base_path + "/" + ur_path;
-            task_id = argc >= 6 ? argv[5] : "";
-            DataCheckConfig::getInstance().setTaskId(task_id);
-        } else {
-            LOG(ERROR) << "usage:" << argv[0] << " <ur> <base_path> <dump_db_file> [<output_path>] [<task_id>]";
-            return 1;
-        }
 
-        // 创建UR路径
-        Poco::File outDir(output_path);
-        if (!outDir.exists()) {
-            if (!outDir.createDirectory()) {
-                LOG(ERROR) << "create ur directory failed!";
-                return 1;
-            }
-        }
-
-        string output_file = output_path + "/data_check.db";
-        Poco::File output(output_file);
-        if (output.exists()) {
-            output.remove();
-        }
-
-        InitGlog(exe_path, output_path);
+        InitGlog(exe_path, "./");
 
         // 加载配置
         ret = DataCheckConfig::getInstance().load("config.properties");
@@ -230,24 +198,26 @@ int main(int argc, const char *argv[]) {
             return ret;
         }
 
-        // 添加UR
-        DataCheckConfig::getInstance().addProperty(DataCheckConfig::UPDATE_REGION, getUpdateRegion(ur_path));
-
         // 创建数据库
-        p_db = new CppSQLite3::Database();
         p_db_out = new CppSQLite3::Database();
 
-        p_db->open(db_file_name);
+        string output_path = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH);
+        string output_file = output_path + "/data_check.db";
+        Poco::File output(output_file);
+        if (output.exists()) {
+            output.remove();
+        }
+
         p_db_out->open(output_file);
 
         shared_ptr<CheckErrorOutput> errorOutput = make_shared<CheckErrorOutput>(p_db_out);
 
         //数据质量检查
-//        ret |= sql_data_check(p_db, errorOutput);
         ret |= dataCheck(base_path, errorOutput);
 
         ret |= errorOutput->saveError();
         ret |= errorOutput->countError();
+        ret |= errorOutput->saveJsonError();
 
         LOG(INFO) << "total task costs: " << compilerTimer.elapsed_message();
     } catch (CppSQLite3::Exception &e) {
@@ -256,12 +226,6 @@ int main(int argc, const char *argv[]) {
     } catch (std::exception &e) {
         LOG(ERROR) << "An exception occurred: " << e.what();
         ret = 1;
-    }
-
-    if (p_db) {
-        p_db->close();
-        delete p_db;
-        p_db = nullptr;
     }
 
     if (p_db_out) {

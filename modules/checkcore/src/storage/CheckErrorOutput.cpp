@@ -62,7 +62,33 @@ namespace kd {
         void CheckErrorOutput::writeInfo(string info, bool bLongString) {
             LOG(ERROR) << info;
         }
+        int CheckErrorOutput::saveJsonError(){
+            int ret = 0;
+            LOG(INFO) << "task [save error] start. ";
+            TimerUtil compilerTimer;
+            try {
+                string taskId = DataCheckConfig::getInstance().getTaskId();
 
+                for (const auto &check_item : check_model_2_output_maps_) {
+                    for (const auto& item : check_item.second) {
+                        string err_type = LEVEL_WARNING;
+                        if (item.level == LEVEL_ERROR) {
+                            err_type = LEVEL_ERROR;
+                            ret = 1;
+                        }
+                        JsonLog::GetInstance().AppendCheckError(item.checkId,item.checkName,item.errDesc,taskId,err_type,"1", nullptr);
+                    }
+                }
+                string errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::ERR_JSON_PATH);
+                JsonLog::GetInstance().WriteToFile(errJsonPath);
+            } catch (std::exception &e) {
+                LOG(ERROR) << e.what();
+                ret = 1;
+            }
+
+            LOG(INFO) << "task [save error] end successfully " << " costs : " << compilerTimer.elapsed_message();
+            return ret;
+        }
         int CheckErrorOutput::saveError() {
             int ret = 0;
             LOG(INFO) << "task [save error] start. ";
@@ -101,9 +127,9 @@ namespace kd {
                         statement.bindNull(count++);
                         statement.bindNull(count++);
                         statement.bindString(count++, item.level);
-                        statement.bindString(count++, item.checkModel_);
-                        statement.bindString(count++, item.checkDesc_);
-                        statement.bindString(count++, item.detail);
+                        statement.bindString(count++, item.checkId);
+                        statement.bindString(count++, item.checkName);
+                        statement.bindString(count++, item.errDesc);
                         statement.execDML();
                         statement.reset();
                     }
@@ -152,10 +178,10 @@ namespace kd {
         void CheckErrorOutput::saveError(shared_ptr<DCError> error) {
             if (error) {
                 ErrorOutPut error_output;
-                error_output.checkModel_ = error->checkModel_;
-                error_output.checkDesc_ = error->checkDesc_;
+                error_output.checkId = error->checkModel_;
+                error_output.checkName = error->checkDesc_;
                 error_output.level = get_error_level(error->checkModel_);
-                error_output.detail = error->toString();
+                error_output.errDesc = error->toString();
                 auto check_model_iter = check_model_2_output_maps_.find(error->checkModel_);
                 if (check_model_iter != check_model_2_output_maps_.end()) {
                     check_model_iter->second.emplace_back(error_output);
@@ -182,7 +208,8 @@ namespace kd {
         void CheckErrorOutput::saveTotalError() {
             try {
                 CppSQLite3::Database *ptr_db = new CppSQLite3::Database();
-                ptr_db->open("./datacheck.db");
+                string output_path = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH);
+                ptr_db->open(output_path + "/datacheck_total.db");
 
                 string task = DataCheckConfig::getInstance().getTaskId();
 
@@ -248,9 +275,9 @@ namespace kd {
                             statement.bindString(count++, task);
                             statement.bindString(count++, item.update_region_id);
                             statement.bindString(count++, item.level);
-                            statement.bindString(count++, item.checkModel_);
-                            statement.bindString(count++, item.checkDesc_);
-                            statement.bindString(count++, item.detail);
+                            statement.bindString(count++, item.checkId);
+                            statement.bindString(count++, item.checkName);
+                            statement.bindString(count++, item.errDesc);
                             statement.execDML();
                             statement.reset();
                         }
@@ -270,6 +297,8 @@ namespace kd {
             }
 
         }
+
+        CheckErrorOutput::CheckErrorOutput() {}
     }
 }
 

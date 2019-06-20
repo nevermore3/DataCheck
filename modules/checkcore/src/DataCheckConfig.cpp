@@ -49,7 +49,7 @@ namespace kd {
         const string DataCheckConfig::RESOURCE_FILE_PATH = "resource_file_path";
         const string DataCheckConfig::RESOURCE_FILE = "resource_file";
 
-
+        const string DataCheckConfig::ERR_JSON_PATH = "err_json_path";
 
         int DataCheckConfig::load(string fileName) {
             int ret = 0;

@@ -7,7 +7,7 @@
 
 #include <DataCheckConfig.h>
 #include "data/ErrorDataModel.h"
-
+#include "JsonDataTypes.h"
 namespace kd {
     namespace dc {
         struct ErrorOutPut{
@@ -15,9 +15,9 @@ namespace kd {
                 update_region_id = DataCheckConfig::getInstance().getProperty(DataCheckConfig::UPDATE_REGION);
             }
             string update_region_id;
-            string checkModel_;// 检测模型
-            string checkDesc_;//检查模型描述信息
-            string detail;//错误详细信息
+            string checkId;// 检测模型
+            string checkName;//检查模型描述信息
+            string errDesc;//错误详细信息
             string level;//错误等级，warn error
         };
 
@@ -25,7 +25,6 @@ namespace kd {
 
         public:
             explicit CheckErrorOutput(CppSQLite3::Database *pdb);
-
             ~CheckErrorOutput() = default;
 
             /**
@@ -38,7 +37,7 @@ namespace kd {
              * 输出检查信息到sql中
              */
             int saveError();
-
+            int saveJsonError();
             void saveError(shared_ptr<DCError> error);
 
             int countError();
@@ -56,8 +55,10 @@ namespace kd {
             CppSQLite3::Database *m_pdb;
             map<string, vector<ErrorOutPut>> check_model_2_output_maps_;
             set<string> error_check_levels_;
+
         };
     }
+
 }
 
 

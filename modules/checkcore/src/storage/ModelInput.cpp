@@ -106,8 +106,8 @@ namespace kd {
 
             for (shared_ptr<DCModelRecord> record : modelData->records) {
 
-                auto valuepair = record->doubleDatas.find(fieldName);
-                if (valuepair == record->doubleDatas.end()) {
+                auto valuepair = record->double_data_maps_.find(fieldName);
+                if (valuepair == record->double_data_maps_.end()) {
                     stringstream ss;
                     ss << task_name << " 没有找到字段" << fieldName << " value.";
                     shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
@@ -115,13 +115,14 @@ namespace kd {
                     continue;
                 }
 
-                double recordValue = valuepair->second;
-                if (!IsValid<double>(fieldDef->valueLimit, recordValue)) {
-                    stringstream ss;
-                    ss << task_name << " 检查double类型 : " << fieldName << "=" << recordValue << " not in '"
-                       << fieldDef->valueLimit << "'";
-                    shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
-                    errorOutput->saveError(ptr_error);
+                for (auto recordValue : valuepair->second) {
+                    if (!IsValid<double>(fieldDef->valueLimit, recordValue)) {
+                        stringstream ss;
+                        ss << task_name << " 检查double类型 : " << fieldName << "=" << recordValue << " not in '"
+                           << fieldDef->valueLimit << "'";
+                        shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
+                        errorOutput->saveError(ptr_error);
+                    }
                 }
             }
         }
@@ -133,8 +134,8 @@ namespace kd {
 
             for (shared_ptr<DCModelRecord> record : modelData->records) {
 
-                auto valuepair = record->longDatas.find(fieldName);
-                if (valuepair == record->longDatas.end()) {
+                auto valuepair = record->long_data_maps_.find(fieldName);
+                if (valuepair == record->long_data_maps_.end()) {
                     stringstream ss;
                     ss << task_name << " 没有找到字段" << fieldName << " value.";
                     shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
@@ -142,13 +143,14 @@ namespace kd {
                     continue;
                 }
 
-                long recordValue = valuepair->second;
-                if (!IsValid<long>(fieldDef->valueLimit, recordValue)) {
-                    stringstream ss;
-                    ss << task_name << "检查long类型 : " << fieldName << "=" << recordValue << " not in '"
-                       << fieldDef->valueLimit << "'";
-                    shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
-                    errorOutput->saveError(ptr_error);
+                for (auto recordValue : valuepair->second) {
+                    if (!IsValid<long>(fieldDef->valueLimit, recordValue)) {
+                        stringstream ss;
+                        ss << task_name << "检查long类型 : " << fieldName << "=" << recordValue << " not in '"
+                           << fieldDef->valueLimit << "'";
+                        shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
+                        errorOutput->saveError(ptr_error);
+                    }
                 }
             }
         }
@@ -160,8 +162,8 @@ namespace kd {
 
             for (shared_ptr<DCModelRecord> record : modelData->records) {
 
-                auto valuepair = record->textDatas.find(fieldName);
-                if (valuepair == record->textDatas.end()) {
+                auto valuepair = record->text_data_maps_.find(fieldName);
+                if (valuepair == record->text_data_maps_.end()) {
                     stringstream ss;
                     ss << task_name << " 没有找到字段 " << fieldName << " value.";
                     shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
@@ -169,32 +171,33 @@ namespace kd {
                     continue;
                 }
 
-                auto recordValue = valuepair->second;
-                int len = recordValue.length();
-                //判断值是否非空
-                if (fieldDef->inputLimit == 1 && len == 0) {
-                    stringstream ss;
-                    ss << task_name << " 检查string类型非空 : " << fieldName << " value should not null.";
-                    shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
-                    errorOutput->saveError(ptr_error);
-                }
+                for (auto recordValue : valuepair->second) {
+                    int len = recordValue.length();
+                    //判断值是否非空
+                    if (fieldDef->inputLimit == 1 && len == 0) {
+                        stringstream ss;
+                        ss << task_name << " 检查string类型非空 : " << fieldName << " value should not null.";
+                        shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
+                        errorOutput->saveError(ptr_error);
+                    }
 
-                //判断值是否超长
-                if (fieldDef->len > 0 && len > fieldDef->len) {
-                    stringstream ss;
-                    ss << task_name << " 检查string类型是否超长 : " << fieldName << " len=" << len << " exceed '"
-                       << fieldDef->len << "'";
-                    shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
-                    errorOutput->saveError(ptr_error);
-                }
+                    //判断值是否超长
+                    if (fieldDef->len > 0 && len > fieldDef->len) {
+                        stringstream ss;
+                        ss << task_name << " 检查string类型是否超长 : " << fieldName << " len=" << len << " exceed '"
+                           << fieldDef->len << "'";
+                        shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
+                        errorOutput->saveError(ptr_error);
+                    }
 
-                //判断值是否超限
-                if (len > 0 && !IsValid<string>(fieldDef->valueLimit, recordValue)) {
-                    stringstream ss;
-                    ss << task_name << "检查string类型 : " << fieldName << "=" << recordValue << " not in '"
-                       << fieldDef->valueLimit << "'";
-                    shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
-                    errorOutput->saveError(ptr_error);
+                    //判断值是否超限
+                    if (len > 0 && !IsValid<string>(fieldDef->valueLimit, recordValue)) {
+                        stringstream ss;
+                        ss << task_name << "检查string类型 : " << fieldName << "=" << recordValue << " not in '"
+                           << fieldDef->valueLimit << "'";
+                        shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
+                        errorOutput->saveError(ptr_error);
+                    }
                 }
             }
         }

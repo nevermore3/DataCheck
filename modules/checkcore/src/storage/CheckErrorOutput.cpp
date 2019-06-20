@@ -296,6 +296,8 @@ namespace kd {
             }
 
         }
+
+        CheckErrorOutput::CheckErrorOutput() {}
     }
 }
 

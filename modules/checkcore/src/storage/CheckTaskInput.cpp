@@ -141,6 +141,24 @@ namespace kd {
                     }
                 }
 
+                {
+                    Poco::JSON::Array::Ptr taskArray = rootobj->getArray("members");
+                    int totalCount = taskArray->size();
+                    for( int i = 0 ; i < totalCount ; i ++){
+                        Dynamic::Var value = taskArray->get(i);
+                        Object::Ptr nodeObj = value.extract<Poco::JSON::Object::Ptr>();
+                        shared_ptr<DCFieldDefine> fieldDefine = make_shared<DCFieldDefine>();
+                        fieldDefine->name = getJSONString(nodeObj, "name");
+                        fieldDefine->type = (DCFieldType)getJSONLong(nodeObj, "type");
+                        fieldDefine->len = getJSONLong(nodeObj, "lenLimit");
+                        fieldDefine->inputType = getJSONString(nodeObj, "inputType");
+                        fieldDefine->defValue = getJSONString(nodeObj, "defaultValue");
+                        fieldDefine->inputLimit = getJSONLong(nodeObj, "inputLimit");
+                        fieldDefine->valueLimit = getJSONString(nodeObj, "valueLimit");
+                        modelDefine->vecMemberAndRols.emplace_back(fieldDefine);
+                    }
+                }
+
                 //解析字段特殊检查项
                 {
                     Poco::JSON::Array::Ptr checkArray = rootobj->getArray("checks");
@@ -176,6 +194,7 @@ namespace kd {
 
                         shared_ptr<DCRelationDefine> reldef = make_shared<DCRelationDefine>();
                         reldef->member = getJSONString(nodeObj, "member");
+                        reldef->model = getJSONString(nodeObj, "model");
                         reldef->rule = getJSONString(nodeObj, "rule");
 
                         modelDefine->vecRelation.emplace_back(reldef);

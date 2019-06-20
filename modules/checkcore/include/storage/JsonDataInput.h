@@ -20,7 +20,11 @@ namespace kd {
 
             bool LoadData() override;
 
-            void CheckModel(string model_name, shared_ptr<KDSData> kds_data);
+            void LoadModelField(string model_name, shared_ptr<KDSData> kds_data);
+
+            void LoadModelRelation(string model_name, shared_ptr<KDSRelation> kds_relation);
+
+            void CheckModelRelation();
 
         private:
             bool LoadDivider();

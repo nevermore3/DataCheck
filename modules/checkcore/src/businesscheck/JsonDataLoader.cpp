@@ -40,6 +40,7 @@ namespace kd {
                 json_data_input->LoadModel();
                 json_data_input->LoadData();
                 json_data_input->CheckModelField(error_output_);
+                json_data_input->CheckModelRelation();
             }
             return ret;
         }

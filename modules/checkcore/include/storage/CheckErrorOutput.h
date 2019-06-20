@@ -24,6 +24,8 @@ namespace kd {
         class CheckErrorOutput{
 
         public:
+            CheckErrorOutput();
+
             explicit CheckErrorOutput(CppSQLite3::Database *pdb);
             ~CheckErrorOutput() = default;
 

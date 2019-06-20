@@ -110,8 +110,8 @@ namespace kd {
         public:
             DCRelationCheckError(string checkModel);
 
-            DCRelationCheckError(string checkModel, string modelName, string fieldName, string refModelName,
-                                 string refFieldName);
+            static shared_ptr<DCRelationCheckError> createByKXS_01_25(string model_name, string field,
+                                                                      string relation_name);
 
             virtual string toString() override;
 
@@ -133,6 +133,9 @@ namespace kd {
 
             //错误描述
             string errorDesc_;
+
+            //错误详细信息描述
+            string detail_;
         };
 
 
@@ -285,6 +288,8 @@ namespace kd {
                                                                         long e_index2, bool is_positive = true);
 
             static shared_ptr<DCLaneGroupCheckError> createByKXS_03_004(string divider_id, set<string> lane_groups);
+
+            static shared_ptr<DCLaneGroupCheckError> createByKXS_03_003(string divider_id);
 
             static shared_ptr<DCLaneGroupCheckError> createByKXS_03_002(string lane_group_id);
 

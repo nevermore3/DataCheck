@@ -17,15 +17,21 @@ namespace kd {
             bool execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) override;
 
         private:
-            /**
-             * 车道组与DIVIDER关系检查
-             */
-            void check_lanegroup_divider();
 
             /**
              * 车道组内的divider检查
              */
-            void check_divider();
+            void check_kxs_03_001();
+
+            /**
+             * 车道线不存在于车道组中
+             */
+            void check_kxs_03_003();
+
+            /**
+             * 车道组与DIVIDER关系检查
+             */
+            void check_kxs_03_004();
 
 
             /**

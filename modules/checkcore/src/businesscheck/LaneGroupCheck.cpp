@@ -23,16 +23,20 @@ namespace kd {
             data_manager_ = data_manager;
             error_output_ = error_output;
 
-            check_lanegroup_divider();
 
-            check_divider();
+            check_kxs_03_001();
+
+            check_kxs_03_003();
+
+            check_kxs_03_004();
+
             return false;
         }
 
-        void LaneGroupCheck::check_lanegroup_divider() {
-            const auto &divider2w_lane_groups = data_manager_->divider2_lane_groups_;
+        void LaneGroupCheck::check_kxs_03_004() {
+            const auto &divider2_lane_groups = data_manager_->divider2_lane_groups_;
             shared_ptr<DCError> ptr_error = nullptr;
-            for (auto div2_lg : divider2w_lane_groups) {
+            for (auto div2_lg : divider2_lane_groups) {
                 bool check = false;
                 if (div2_lg.second.size() == 2) {
                     // divider关联多个车道组
@@ -71,7 +75,19 @@ namespace kd {
             }
         }
 
-        void LaneGroupCheck::check_divider() {
+        void LaneGroupCheck::check_kxs_03_003() {
+            const auto &divider_maps = data_manager_->dividers_;
+            const auto &divider2_lane_groups = data_manager_->divider2_lane_groups_;
+
+            for (const auto &divider : divider_maps) {
+                if (divider2_lane_groups.find(divider.first) == divider2_lane_groups.end()) {
+                    auto ptr_error = DCLaneGroupCheckError::createByKXS_03_003(divider.first);
+                    error_output_->saveError(ptr_error);
+                }
+            }
+        }
+
+        void LaneGroupCheck::check_kxs_03_001() {
             const auto ptr_lane_groups = data_manager_->laneGroups_;
             for (const auto &lane_group : ptr_lane_groups) {
                 auto ptr_dividers = CommonUtil::get_dividers_by_lg(data_manager_, lane_group.first);

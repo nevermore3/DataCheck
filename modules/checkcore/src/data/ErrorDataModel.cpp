@@ -47,21 +47,20 @@ namespace kd {
 
         }
 
-        DCRelationCheckError::DCRelationCheckError(string checkModel, string modelName, string fieldName,
-                                                   string refModelName, string refFieldName) :
-                DCError(checkModel) {
-            modelName_ = modelName;
-            fieldName_ = fieldName;
-            refModelName_ = refModelName;
-            refFieldName_ = refFieldName;
+        string DCRelationCheckError::toString() {
+            return detail_;
         }
 
-        string DCRelationCheckError::toString() {
+        shared_ptr<DCRelationCheckError>
+        DCRelationCheckError::createByKXS_01_25(string model_name, string field,
+                                                string relation_name) {
+            shared_ptr<DCRelationCheckError> error = make_shared<DCRelationCheckError>(CHECK_ITEM_KXS_ORG_025);
+            error->checkDesc_ = "字段关系检查";
             stringstream ss;
-            ss << "\"" << checkModel_ << ":" << checkDesc_ << "\"," << modelName_ << "," << fieldName_ << ","
-               << refModelName_;
-            ss << "," << refFieldName_ << "," << recordValue_ << "," << errorDesc_;
-            return ss.str();
+            ss << model_name << "字段" << field << "在" << relation_name << "不存在";
+            error->detail_ = ss.str();
+
+            return error;
         }
 
 
@@ -432,11 +431,21 @@ namespace kd {
 
         shared_ptr<DCLaneGroupCheckError> DCLaneGroupCheckError::createByKXS_03_027(string lane_group_id) {
             shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>(CHECK_ITEM_KXS_LG_027);
-            error->checkLevel_ = LEVEL_ERROR;
             error->checkDesc_ = "车道组没有打断，不应该存在既是入口又是出口的组";
             error->detail += "lane_group_id:";
             error->detail += lane_group_id;
             error->detail += "车道组没有打断";
+
+            return error;
+        }
+
+        shared_ptr<DCLaneGroupCheckError>
+        DCLaneGroupCheckError::createByKXS_03_003(string divider_id) {
+            shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>(CHECK_ITEM_KXS_LG_003);
+            error->checkDesc_ = "车道线不存在于车道组中";
+            error->detail += "divider_id:";
+            error->detail += divider_id;
+            error->detail += "是孤立的";
 
             return error;
         }

@@ -227,81 +227,37 @@ namespace kd {
             for (auto model_define : model_data_manager_->modelDefines_) {
                 string model_name = model_define.first;
                 shared_ptr<DCModelDefine> model = model_define.second;
-                    for (auto relation : model->vecRelation) {
-                        string member = relation->member;
-                        string rel_model_name = relation->model;
-                        string rule = relation->rule;
-                        shared_ptr<DCFieldDefine> field = model->getFieldDefine(rule);
-                        if (nullptr == field) {
-                            continue;
-                        }
+                for (auto relation : model->vecRelation) {
+                    string member = relation->member;
+                    string rel_model_name = relation->model;
+                    string rule = relation->rule;
+                    shared_ptr<DCFieldDefine> field = model->getFieldDefine(rule);
+                    if (nullptr == field) {
+                        continue;
+                    }
 
-                        shared_ptr<DCModalData> model_data = GetModelData(model_name);
-                        if (model_data == nullptr) {
-                            break;
-                        }
-                        for (auto record : model_data->records) {
-                            if (field->type == DC_FIELD_TYPE_LONG || field->type == DC_RELATION_TYPE_LONG) {
-                                auto rel_iter = record->long_data_maps_.find(rule);
-                                if (rel_iter == record->long_data_maps_.end()) {
-                                    stringstream ss;
-                                    ss << "[Error] Relation Check model name :" << member << ", rule: " << rule
-                                       << "  is not exist";
-                                    error_output_->writeInfo(ss.str());
-                                    continue;
-                                }
-
+                    shared_ptr<DCModalData> model_data = GetModelData(model_name);
+                    if (model_data == nullptr) {
+                        break;
+                    }
+                    for (auto record : model_data->records) {
+                        if (field->type == DC_FIELD_TYPE_LONG || field->type == DC_RELATION_TYPE_LONG) {
+                            auto rel_iter = record->long_data_maps_.find(rule);
+                            if (rel_iter != record->long_data_maps_.end()) {
                                 for (auto value : rel_iter->second) {
                                     auto kds_data = resource_manager_->getKdsData(rel_model_name, value);
-                                    if (kds_data != nullptr) {
-                                        int k = 0;
-                                    } else {
-                                        int k = 0;
+                                    if (kds_data == nullptr) {
+                                        // 关系不存在
+                                        auto ptr_error = DCRelationCheckError::createByKXS_01_25(model_name, rule,
+                                                                                                 rel_model_name);
+
+                                        error_output_->saveError(ptr_error);
                                     }
                                 }
                             }
                         }
-
-//                        for (auto record : model_data->records) {
-//                            if (type == DC_FIELD_TYPE_LONG) {
-//                                bool ischeck = false;
-//                                auto reliter = record->longDatas.find(rule);
-//                                if (reliter == modelrec->longDatas.end()) {
-//                                    stringstream ss;
-//                                    ss << "[Error] Relation Check model name :" << member << ", rule: " << rule
-//                                       << "  is not exist";
-//                                    errorOutput->writeInfo(ss.str());
-//                                    continue;
-//                                }
-//                                string fieldname = reliter->first;
-//                                long value = reliter->second;
-//                                shared_ptr<DCModalData> relmodeldata = modelDataManager->getModelData(member);
-//                                if (relmodeldata == nullptr) {
-//                                    stringstream ss;
-//                                    ss << "[Error] Relation Check model name :" << member << "  is not exist";
-//                                    errorOutput->writeInfo(ss.str());
-//                                    break;
-//                                }
-//                                for (int k = 0; k < relmodeldata->records.size(); k++) {
-//                                    shared_ptr<DCModelRecord> relmodelrec = relmodeldata->records[k];
-//                                    auto reliter = relmodelrec->longDatas.find("ID");
-//                                    if (value == reliter->second) {
-//                                        ischeck = true;
-//                                        break;
-//                                    }
-//                                }
-//                                if (!ischeck) {
-//                                    stringstream ss;
-//                                    ss << "[Error] Relation Check model is :" << modelname
-//                                       << " field is :" << field->name << " th " << j
-//                                       << " records is not exist";
-//                                    errorOutput->writeInfo(ss.str());
-//                                }
-//                            } else {
-//                                errorOutput->writeInfo("field type is error !");
-//                            }
-//                        }
                     }
+                }
             }
         }
     }

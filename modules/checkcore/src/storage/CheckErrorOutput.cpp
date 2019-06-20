@@ -20,6 +20,7 @@ namespace kd {
             error_check_levels_.insert(CHECK_ITEM_KXS_ORG_022);
             error_check_levels_.insert(CHECK_ITEM_KXS_ORG_023);
             error_check_levels_.insert(CHECK_ITEM_KXS_ORG_024);
+            error_check_levels_.insert(CHECK_ITEM_KXS_ORG_025);
 
             error_check_levels_.insert(CHECK_ITEM_KXS_LG_002);
             error_check_levels_.insert(CHECK_ITEM_KXS_LG_004);
@@ -214,7 +215,8 @@ namespace kd {
         void CheckErrorOutput::saveTotalError() {
             try {
                 CppSQLite3::Database *ptr_db = new CppSQLite3::Database();
-                ptr_db->open("./datacheck.db");
+                string output_path = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH);
+                ptr_db->open(output_path + "/datacheck_total.db");
 
                 string task = DataCheckConfig::getInstance().getTaskId();
 

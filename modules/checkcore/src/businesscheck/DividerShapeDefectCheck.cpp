@@ -91,7 +91,7 @@ namespace kd {
             if (divAtt->type_ == DA_TYPE_WHITE_DOTTED) {
                 //需求编号：JH_C_1
                 double distLimit = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::DOTLINE_DEFECT_LEN);
-                string checkModel = CHECK_ITEM_KXS_LANE_004;
+                string checkModel = CHECK_ITEM_KXS_ORG_004;
                 checkShapeDefect(checkModel, distLimit, div, divAtt, beginNodexIdx, endNodeIdx, nodeDirection,
                                  errorOutput);
 
@@ -99,7 +99,7 @@ namespace kd {
                 //需求编号：JH_C_2
                 double distLimit = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::BUSELINE_DEFECT_LEN);
 
-                string checkModel = CHECK_ITEM_KXS_LANE_005;
+                string checkModel = CHECK_ITEM_KXS_ORG_005;
                 checkShapeDefect(checkModel, distLimit, div, divAtt, beginNodexIdx, endNodeIdx, nodeDirection,
                                  errorOutput);
             }

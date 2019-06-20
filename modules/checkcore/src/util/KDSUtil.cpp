@@ -56,9 +56,10 @@ namespace kd {
                 dc_divider_node = make_shared<DCDividerNode>();
                 dc_divider_node->id_ = to_string(kds_divider_node->ID);
                 dc_divider_node->dashType_ = kds_divider_node->getPropertyLong(KDSDividerNode::DASHTYPE);
-                dc_divider_node->coord_.lng_ = kds_divider_node->x;
-                dc_divider_node->coord_.lat_ = kds_divider_node->y;
-                dc_divider_node->coord_.z_ = kds_divider_node->z;
+                dc_divider_node->coord_ = make_shared<DCCoord>();
+                dc_divider_node->coord_->lng_ = kds_divider_node->x;
+                dc_divider_node->coord_->lat_ = kds_divider_node->y;
+                dc_divider_node->coord_->z_ = kds_divider_node->z;
             }
             return dc_divider_node;
         }

@@ -90,15 +90,13 @@ namespace kd {
             if (att != nullptr) {
                 error->nodeId_ = att->dividerNode_->id_;
                 error->attId_ = att->id_;
-                error->lng_ = att->dividerNode_->coord_.lng_;
-                error->lat_ = att->dividerNode_->coord_.lat_;
-                error->z_ = att->dividerNode_->coord_.z_;
+                error->coord = att->dividerNode_->coord_;
             } else {
                 error->nodeId_ = "";
                 error->attId_ = "";
-                error->lng_ = 0.0;
-                error->lat_ = 0.0;
-                error->z_ = 0.0;
+                error->coord->lng_=0;
+                error->coord->lat_=0;
+                error->coord->z_=0;
             }
 
             return error;
@@ -116,15 +114,13 @@ namespace kd {
             if (node != nullptr) {
                 error->nodeId_ = node->id_;
                 error->attId_ = "";
-                error->lng_ = node->coord_.lng_;
-                error->lat_ = node->coord_.lat_;
-                error->z_ = node->coord_.z_;
+                error->coord = node->coord_;
             } else {
                 error->nodeId_ = "";
                 error->attId_ = "";
-                error->lng_ = 0.0;
-                error->lat_ = 0.0;
-                error->z_ = 0.0;
+                error->coord->lng_=0;
+                error->coord->lat_=0;
+                error->coord->z_=0;
             }
 
             return error;
@@ -265,15 +261,13 @@ namespace kd {
             if (att != nullptr) {
                 error->nodeId_ = att->dividerNode_->id_;
                 error->attId_ = att->id_;
-                error->lng_ = att->dividerNode_->coord_.lng_;
-                error->lat_ = att->dividerNode_->coord_.lat_;
-                error->z_ = att->dividerNode_->coord_.z_;
+                error->coord = att->dividerNode_->coord_;
             } else {
                 error->nodeId_ = "";
                 error->attId_ = "";
-                error->lng_ = 0.0;
-                error->lat_ = 0.0;
-                error->z_ = 0.0;
+                error->coord->lng_=0;
+                error->coord->lat_=0;
+                error->coord->z_=0;
             }
 
             return error;
@@ -299,15 +293,13 @@ namespace kd {
             if (node != nullptr) {
                 error->nodeId_ = node->id_;
                 error->attId_ = "";
-                error->lng_ = node->coord_.lng_;
-                error->lat_ = node->coord_.lat_;
-                error->z_ = node->coord_.z_;
+                error->coord = node->coord_;
             } else {
                 error->nodeId_ = "";
                 error->attId_ = "";
-                error->lng_ = 0.0;
-                error->lat_ = 0.0;
-                error->z_ = 0.0;
+                error->coord->lng_=0;
+                error->coord->lat_=0;
+                error->coord->z_=0;
             }
 
             return error;

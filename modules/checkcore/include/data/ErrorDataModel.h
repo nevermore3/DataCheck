@@ -65,15 +65,26 @@ namespace kd {
             //检测模型
             string checkModel_;
 
-        public:
             //设置检查模型描述信息
             string checkDesc_;
+
             //错误详细信息描述
             string detail_;
 
-        public:
             // 错误级别
             string checkLevel_;
+
+            //任务号
+            string taskId_;
+
+            //融合任务框号
+            string boundId_;
+            //数据KEY
+            string dataKey_;
+
+            string flag;
+
+            shared_ptr<DCCoord> coord;
         };
 
         /**

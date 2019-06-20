@@ -67,8 +67,8 @@ namespace kd {
 
                 //通过左车道分割线方向获取同行方向起始终止点坐标
                 string lId = leftDiv->fromNodeId_;
-                DCCoord lscoord = leftDiv->nodes_[0]->coord_;//通行方向起点
-                DCCoord lecoord = leftDiv->nodes_[leftDiv->nodes_.size() - 1]->coord_;//通行方向终点
+                shared_ptr<DCCoord>  lscoord = leftDiv->nodes_[0]->coord_;//通行方向起点
+                shared_ptr<DCCoord>  lecoord = leftDiv->nodes_[leftDiv->nodes_.size() - 1]->coord_;//通行方向终点
                 if (leftDiv->direction_ == 3) {
                     lscoord = leftDiv->nodes_[leftDiv->nodes_.size() - 1]->coord_;
                     lecoord = leftDiv->nodes_[0]->coord_;
@@ -79,8 +79,8 @@ namespace kd {
 
                 //通过右车道分割线方向获取同行方向起始终止点坐标
                 string rId = rightDiv->fromNodeId_;
-                DCCoord rscoord = rightDiv->nodes_[0]->coord_;//通行方向起点
-                DCCoord recoord = rightDiv->nodes_[rightDiv->nodes_.size() - 1]->coord_;//通行方向终点
+                shared_ptr<DCCoord> rscoord = rightDiv->nodes_[0]->coord_;//通行方向起点
+                shared_ptr<DCCoord>  recoord = rightDiv->nodes_[rightDiv->nodes_.size() - 1]->coord_;//通行方向终点
                 if (rightDiv->direction_ == 3) {
                     rscoord = rightDiv->nodes_[rightDiv->nodes_.size() - 1]->coord_;
                     recoord = rightDiv->nodes_[0]->coord_;
@@ -90,8 +90,8 @@ namespace kd {
                 }
 
                 //检查矢量化方向是否相同，两条车道分割线的首尾连线夹角是否为锐角
-                double leftAngle = geo_util::calcAngle(lscoord.lng_, lscoord.lat_, lecoord.lng_, lecoord.lat_);
-                double rightAngle = geo_util::calcAngle(rscoord.lng_, rscoord.lat_, recoord.lng_, recoord.lat_);
+                double leftAngle = geo_util::calcAngle(lscoord->lng_, lscoord->lat_, lecoord->lng_, lecoord->lat_);
+                double rightAngle = geo_util::calcAngle(rscoord->lng_, rscoord->lat_, recoord->lng_, recoord->lat_);
                 double fAngle = fabs(leftAngle - rightAngle);
                 if (fAngle > limitAngle) {
                     shared_ptr<DCLaneCheckError> error =
@@ -197,8 +197,8 @@ namespace kd {
 
                     auto node1 = la1->dividerNode_;
                     auto node2 = la2->dividerNode_;
-                    double distance = KDGeoUtil::distanceLL(node1->coord_.lng_, node1->coord_.lat_, node2->coord_.lng_,
-                                                            node2->coord_.lat_);
+                    double distance = KDGeoUtil::distanceLL(node1->coord_->lng_, node1->coord_->lat_, node2->coord_->lng_,
+                                                            node2->coord_->lat_);
 
                     if (distance < laSpaceLen) {
                         shared_ptr<DCLaneCheckError> error =

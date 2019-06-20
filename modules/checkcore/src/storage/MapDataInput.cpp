@@ -23,7 +23,7 @@ namespace kd {
             //由于divider引用dividernode,因此先读取dividernode
 
             //读取节点信息
-            map<DCCoord, string> divNodeCoords;
+            map<shared_ptr<DCCoord>, string> divNodeCoords;
             map<string, shared_ptr<DCDividerNode>> commonNodeInfos; //所有共用的节点
 
             string dividerNodeFile = base_path_ + "/HD_DIVIDER_NODE";
@@ -50,9 +50,9 @@ namespace kd {
                         //读取坐标信息
                         int nVertices = shpObject->nVertices;
                         if (nVertices == 1) {
-                            divNode->coord_.lng_ = shpObject->padfX[0];
-                            divNode->coord_.lat_ = shpObject->padfY[0];
-                            divNode->coord_.z_ = shpObject->padfZ[0];
+                            divNode->coord_->lng_ = shpObject->padfX[0];
+                            divNode->coord_->lat_ = shpObject->padfY[0];
+                            divNode->coord_->z_ = shpObject->padfZ[0];
                             commonNodeInfos.insert(make_pair(divNode->id_, divNode));
                             divNodeCoords.insert(make_pair(divNode->coord_, divNode->id_));
                         }
@@ -113,10 +113,10 @@ namespace kd {
                     set<long> error_node_index;
 
                     for (int i = 0; i < nVertices; i++) {
-                        DCCoord coord;
-                        coord.lng_ = shpObject->padfX[i];
-                        coord.lat_ = shpObject->padfY[i];
-                        coord.z_ = shpObject->padfZ[i];
+                        shared_ptr<DCCoord> coord;
+                        coord->lng_ = shpObject->padfX[i];
+                        coord->lat_ = shpObject->padfY[i];
+                        coord->z_ = shpObject->padfZ[i];
                         if (divNodeCoords.find(coord) != divNodeCoords.end()) {
                             divider->nodes_.emplace_back(commonNodeInfos[divNodeCoords[coord]]);
                         } else {
@@ -266,9 +266,9 @@ namespace kd {
 
                 //判断是否与第一个节点坐标相同
                 shared_ptr<DCDividerNode> firstNode = div->nodes_[0];
-                if (firstNode->coord_.lng_ == nodeObj->coord_.lng_ &&
-                    firstNode->coord_.lat_ == nodeObj->coord_.lat_ &&
-                    firstNode->coord_.z_ == nodeObj->coord_.z_) {
+                if (firstNode->coord_->lng_ == nodeObj->coord_->lng_ &&
+                    firstNode->coord_->lat_ == nodeObj->coord_->lat_ &&
+                    firstNode->coord_->z_ == nodeObj->coord_->z_) {
                     firstNode->id_ = nodeObj->id_;
                     firstNode->dashType_ = nodeObj->dashType_;
                     return true;
@@ -276,9 +276,9 @@ namespace kd {
 
                 //判断是否与最后一个节点坐标相同
                 shared_ptr<DCDividerNode> lastNode = div->nodes_[div->nodes_.size() - 1];
-                if (lastNode->coord_.lng_ == nodeObj->coord_.lng_ &&
-                    lastNode->coord_.lat_ == nodeObj->coord_.lat_ &&
-                    lastNode->coord_.z_ == nodeObj->coord_.z_) {
+                if (lastNode->coord_->lng_ == nodeObj->coord_->lng_ &&
+                    lastNode->coord_->lat_ == nodeObj->coord_->lat_ &&
+                    lastNode->coord_->z_ == nodeObj->coord_->z_) {
                     lastNode->id_ = nodeObj->id_;
                     lastNode->dashType_ = nodeObj->dashType_;
                     return true;

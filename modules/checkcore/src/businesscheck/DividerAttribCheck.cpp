@@ -205,12 +205,17 @@ namespace kd {
                             if (att->type_ != 0 || att->color_ != 0 || att->driveRule_ != 0) {
                                 shared_ptr<DCDividerCheckError> error =
                                         DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_014, div, att);
-                                error->checkDesc_ = "颜色、类型、通行类型属性冲突检查";
                                 stringstream ss;
                                 ss << "divider:" << div->id_;
                                 ss << ",virtual divider att error. type:" << att->type_ << ",color:";
                                 ss << att->color_ << ",dirveRule:" << att->driveRule_;
+                                error->checkDesc_ = "颜色、类型、通行类型属性冲突检查";
                                 error->errorDesc_ = ss.str();
+                                error->coord = att->dividerNode_->coord_;
+                                error->taskId_ = div->task_id_;
+                                error->boundId_= DataCheckConfig::getInstance().getProperty(div->task_id_);
+                                error->flag = div->flag_;
+
 
                                 errorOutput->saveError(error);
                             }
@@ -426,23 +431,25 @@ namespace kd {
                 for( int i = begin ; i < end ; i ++ ){
                     auto node1 = div->nodes_[i];
                     auto node2 = div->nodes_[i+1];
-                    double distTemp = KDGeoUtil::distanceLL(node1->coord_.lng_, node1->coord_.lat_,
-                                                            node2->coord_.lng_, node2->coord_.lat_);
+                    double distTemp = KDGeoUtil::distanceLL(node1->coord_->lng_, node1->coord_->lat_,
+                                                            node2->coord_->lng_, node2->coord_->lat_);
                     distTotal += distTemp;
                 }
             }else{
                 for( int i = begin ; i > end ; i -- ){
                     auto node1 = div->nodes_[i];
                     auto node2 = div->nodes_[i-1];
-                    double distTemp = KDGeoUtil::distanceLL(node1->coord_.lng_, node1->coord_.lat_,
-                                                            node2->coord_.lng_, node2->coord_.lat_);
+                    double distTemp = KDGeoUtil::distanceLL(node1->coord_->lng_, node1->coord_->lat_,
+                                                            node2->coord_->lng_, node2->coord_->lat_);
                     distTotal += distTemp;
                 }
             }
 
             return distTotal;
         }
+        void DividerAttribCheck::saveError(DCModel dcModel,const string& errorDesc,shared_ptr<DCCoord> coord,shared_ptr<ErrorOutPut> errorOutPut){
 
+        }
 
         bool DividerAttribCheck::execute(shared_ptr<MapDataManager> mapDataManager,
                                          shared_ptr<CheckErrorOutput> errorOutput) {

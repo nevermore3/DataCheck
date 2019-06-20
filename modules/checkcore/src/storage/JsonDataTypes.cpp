@@ -16,12 +16,12 @@ void JsonLog::SetGeometry(double x, double y, double z) {
 }
 
 
-void JsonLog::SetGeometry(shared_ptr<KDSNode> node) {
+void JsonLog::SetGeometry(shared_ptr<DCCoord> node) {
     Poco::JSON::Array ja_coordinates;
     if (node) {
-        ja_coordinates.add(node->x);
-        ja_coordinates.add(node->y);
-        ja_coordinates.add(node->z);
+        ja_coordinates.add(node->lng_);
+        ja_coordinates.add(node->lat_);
+        ja_coordinates.add(node->z_);
     } else {
         ja_coordinates.add(0);
         ja_coordinates.add(0);
@@ -80,7 +80,7 @@ void JsonLog::AppendCheckError(
         const string& task_id,
         const string& err_type,
         const string& flag,
-        shared_ptr<KDSNode> node) {
+        shared_ptr<DCCoord> node) {
     LogProperty log_property;
     log_property.flag = flag;
     if (log_property.flag.empty()) {
@@ -99,8 +99,10 @@ void JsonLog::AppendCheckError(
     AppendCheckError(log_property, node);
 }
 
-void JsonLog::AppendCheckError(LogProperty &log_propert, shared_ptr<KDSNode> node) {
-//    SetGeometry(node);
+void JsonLog::AppendCheckError(LogProperty &log_propert, shared_ptr<DCCoord> node) {
+    if(node != nullptr){
+        SetGeometry(node);
+    }
     SetProperties(log_propert);
     json_array_element_.set("geometry", geometry_jobj_);
     json_array_element_.set("type", "Feature");

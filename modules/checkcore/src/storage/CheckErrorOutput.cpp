@@ -76,7 +76,7 @@ namespace kd {
                             err_type = "E1";
                             ret = 1;
                         }
-                        JsonLog::GetInstance().AppendCheckError(item.checkId,item.checkName,item.errDesc,taskId,err_type,"1", nullptr);
+                        JsonLog::GetInstance().AppendCheckError(item.checkId,item.checkName,item.errDesc,taskId,err_type,"1", item.coord);
                     }
                 }
                 string errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::ERR_JSON_PATH);
@@ -178,10 +178,16 @@ namespace kd {
         void CheckErrorOutput::saveError(shared_ptr<DCError> error) {
             if (error) {
                 ErrorOutPut error_output;
+
                 error_output.checkId = error->checkModel_;
                 error_output.checkName = error->checkDesc_;
                 error_output.level = get_error_level(error->checkModel_);
                 error_output.errDesc = error->toString();
+                error_output.taskId = error->taskId_;
+                error_output.boundId = error->boundId_;
+                error_output.dataKey = error->dataKey_;
+                error_output.coord = error->coord;
+
                 auto check_model_iter = check_model_2_output_maps_.find(error->checkModel_);
                 if (check_model_iter != check_model_2_output_maps_.end()) {
                     check_model_iter->second.emplace_back(error_output);

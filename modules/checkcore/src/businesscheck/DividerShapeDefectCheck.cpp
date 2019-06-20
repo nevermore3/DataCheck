@@ -66,8 +66,8 @@ namespace kd {
                 shared_ptr<DCDividerNode> node1 = div->nodes_[oneseg.first];
                 shared_ptr<DCDividerNode> node2 = div->nodes_[oneseg.second];
 
-                double distance = KDGeoUtil::distanceLL(node1->coord_.lng_, node1->coord_.lat_, node2->coord_.lng_,
-                                                        node2->coord_.lat_);
+                double distance = KDGeoUtil::distanceLL(node1->coord_->lng_, node1->coord_->lat_, node2->coord_->lng_,
+                                                        node2->coord_->lat_);
 
                 if (distance > distLimit) {
                     shared_ptr<DCDividerCheckError> error =

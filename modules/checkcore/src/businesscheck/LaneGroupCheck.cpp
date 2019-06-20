@@ -92,8 +92,8 @@ namespace kd {
                 vector<shared_ptr<DCCoord>> divider_f_node_vecs;
                 vector<shared_ptr<DCCoord>> divider_t_node_vecs;
                 for (const auto &div : ptr_dividers) {
-                    divider_f_node_vecs.emplace_back(make_shared<DCCoord>(div->nodes_.front()->coord_));
-                    divider_t_node_vecs.emplace_back(make_shared<DCCoord>(div->nodes_.back()->coord_));
+                    divider_f_node_vecs.emplace_back(div->nodes_.front()->coord_);
+                    divider_t_node_vecs.emplace_back(div->nodes_.back()->coord_);
                 }
                 double temp_f_length = GeosObjUtil::get_length_of_coords(divider_f_node_vecs);
                 double temp_t_length = GeosObjUtil::get_length_of_coords(divider_t_node_vecs);

@@ -7,9 +7,10 @@
 #include <Poco/JSON/Object.h>
 #include <mutex>
 #include <api/KDSServiceModel.h>
-
+#include "data/DividerGeomModel.h"
 using namespace std;
 using namespace kd::api;
+using namespace kd::dc;
 const static string JSONLOG_GEOMETRY_POINT = "Point";
 
 struct LogProperty {
@@ -79,9 +80,9 @@ public:
                           const string& task_id,
                           const string& err_type,
                           const string& flag,
-                          shared_ptr<KDSNode> node);
+                          shared_ptr<DCCoord> node);
 
-    void AppendCheckError(LogProperty &log_propert, shared_ptr<KDSNode> node);
+    void AppendCheckError(LogProperty &log_propert, shared_ptr<DCCoord> node);
 
     void Stringify(ostream& out);
 
@@ -90,7 +91,7 @@ public:
     std::string GetKeyByTask(const std::string& task_id, OriginTypeEnum type);
 private:
     void SetGeometry(double x, double y, double z);
-    void SetGeometry(shared_ptr<KDSNode> node);
+    void SetGeometry(shared_ptr<DCCoord> node);
     void SetProperties(LogProperty &log_property);
     bool RecursivelyCreateDir(const std::string &path, int mode = 0755);
 

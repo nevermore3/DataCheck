@@ -57,6 +57,10 @@ namespace kd {
 
                 LoadModelField(MODEL_NAME_DIVIDER, kds_divider);
 
+                string taskid = kds_divider->getProperty(KDSDivider::TASKID);
+                string flag = kds_divider->getProperty(KDSDivider::FLAG);
+                string bound_id = DataCheckConfig::getInstance().getProperty(taskid);
+                string data_key = "lane_"+taskid;
                 auto divider_iter = dividers.find(to_string(kds_divider->ID));
                 if (divider_iter == dividers.end()) {
                     shared_ptr<DCDivider> dc_divider = KDSUtil::CopyFromKDSDivider(kds_divider, error_output_);
@@ -79,7 +83,10 @@ namespace kd {
                                 int k = 0;
                             }
                         }
-
+                        dc_divider->task_id_ = taskid;
+                        dc_divider->flag_ = flag;
+                        dc_divider->bound_id_ = bound_id;
+                        dc_divider->data_key_ = data_key;
                         dividers.emplace(dc_divider->id_, dc_divider);
                     }
                 } else {

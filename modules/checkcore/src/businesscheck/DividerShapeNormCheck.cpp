@@ -47,10 +47,10 @@ namespace kd {
                     auto node2 = div->nodes_[i - 1];
                     auto node3 = div->nodes_[i];
 
-                    double angle1 = geo_util::calcAngle(node1->coord_.lng_, node1->coord_.lat_, node2->coord_.lng_,
-                                                        node2->coord_.lat_);
-                    double angle2 = geo_util::calcAngle(node2->coord_.lng_, node2->coord_.lat_, node3->coord_.lng_,
-                                                        node3->coord_.lat_);
+                    double angle1 = geo_util::calcAngle(node1->coord_->lng_, node1->coord_->lat_, node2->coord_->lng_,
+                                                        node2->coord_->lat_);
+                    double angle2 = geo_util::calcAngle(node2->coord_->lng_, node2->coord_->lat_, node3->coord_->lng_,
+                                                        node3->coord_->lat_);
 
                     double dAngle = fabs(angle1 - angle2);
                     if (dAngle > 180)
@@ -95,8 +95,8 @@ namespace kd {
                     auto node2 = div->nodes_[i];
 
                     //间距判断
-                    double distance = KDGeoUtil::distanceLL(node1->coord_.lng_, node1->coord_.lat_, node2->coord_.lng_,
-                                                            node2->coord_.lat_);
+                    double distance = KDGeoUtil::distanceLL(node1->coord_->lng_, node1->coord_->lat_, node2->coord_->lng_,
+                                                            node2->coord_->lat_);
                     if (distance < nodespace) {
                         shared_ptr<DCDividerCheckError> error =
                                 DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_012, div, node1);
@@ -111,7 +111,7 @@ namespace kd {
 
                     //坡度判断
                     double slopLimit = distance * heightchange;
-                    double realDeltaZ = node1->coord_.z_ - node2->coord_.z_;
+                    double realDeltaZ = node1->coord_->z_ - node2->coord_->z_;
                     if (fabs(realDeltaZ) > slopLimit) {
                         shared_ptr<DCDividerCheckError> error =
                                 DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_013, div, node1);

@@ -182,13 +182,14 @@ int main(int argc, const char *argv[]) {
 
     string exe_path;
     string base_path;
-    string output_path;
-    string task_id;
 
+    CppSQLite3::Database *p_db = nullptr;
+    CppSQLite3::Database *p_db_out = nullptr;
+    KDSDivider::FLAG;
     try {
         exe_path = argv[0];
 
-        InitGlog(exe_path, output_path);
+        InitGlog(exe_path, "./");
 
         // 加载配置
         ret = DataCheckConfig::getInstance().load("config.properties");
@@ -197,17 +198,41 @@ int main(int argc, const char *argv[]) {
             return ret;
         }
 
-        shared_ptr<CheckErrorOutput> errorOutput = make_shared<CheckErrorOutput>();
+        // 创建数据库
+        p_db_out = new CppSQLite3::Database();
 
+        string output_path = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH);
+        string output_file = output_path + "/data_check.db";
+        Poco::File output(output_file);
+        if (output.exists()) {
+            output.remove();
+        }
+
+        p_db_out->open(output_file);
+
+        shared_ptr<CheckErrorOutput> errorOutput = make_shared<CheckErrorOutput>(p_db_out);
+
+        //数据质量检查
         ret |= dataCheck(base_path, errorOutput);
+
+        ret |= errorOutput->saveError();
+        ret |= errorOutput->countError();
         ret |= errorOutput->saveJsonError();
 
         LOG(INFO) << "total task costs: " << compilerTimer.elapsed_message();
+    } catch (CppSQLite3::Exception &e) {
+        LOG(ERROR) << "An exception occurred: " << e.errorMessage().c_str();
+        ret = 1;
     } catch (std::exception &e) {
         LOG(ERROR) << "An exception occurred: " << e.what();
         ret = 1;
     }
 
+    if (p_db_out) {
+        p_db_out->close();
+        delete p_db_out;
+        p_db_out = nullptr;
+    }
 
     google::ShutdownGoogleLogging();
 

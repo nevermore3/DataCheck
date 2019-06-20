@@ -47,6 +47,7 @@ namespace kd {
             const static string RESOURCE_FILE_PATH;
             const static string RESOURCE_FILE;
             const static string ERR_JSON_PATH;
+            const static string OUTPUT_PATH;
 
         public:
             static DataCheckConfig & getInstance() {

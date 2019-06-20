@@ -208,7 +208,8 @@ namespace kd {
         void CheckErrorOutput::saveTotalError() {
             try {
                 CppSQLite3::Database *ptr_db = new CppSQLite3::Database();
-                ptr_db->open("./datacheck.db");
+                string output_path = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH);
+                ptr_db->open(output_path + "/datacheck_total.db");
 
                 string task = DataCheckConfig::getInstance().getTaskId();
 

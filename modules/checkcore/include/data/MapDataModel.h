@@ -32,6 +32,9 @@ namespace kd {
             //字段定义信息
             vector<shared_ptr<DCFieldDefine>> vecFieldDefines;
 
+            //关系信息
+            vector<shared_ptr<DCFieldDefine>> vecMemberAndRols;
+
             //字段特殊检查项
             vector<shared_ptr<DCFieldCheckDefine>> vecFieldChecks;
 
@@ -48,7 +51,8 @@ namespace kd {
             DC_FIELD_TYPE_VARCHAR = 0,
             DC_FIELD_TYPE_LONG = 1,
             DC_FIELD_TYPE_DOUBLE = 2,
-            DC_FIELD_TYPE_TEXT = 3
+            DC_FIELD_TYPE_TEXT = 3,
+            DC_RELATION_TYPE_LONG = 4
         };
 
         class DCFieldDefine{
@@ -119,12 +123,53 @@ namespace kd {
             map<string,double> doubleDatas;
 
             map<string,long> longDatas;
+
+            map<string, vector<string>> text_data_maps_;
+
+            map<string, vector<double>> double_data_maps_;
+
+            map<string, vector<long>> long_data_maps_;
+
+            void insert_text_data(string field, string text) {
+                auto text_iter = text_data_maps_.find(field);
+                if (text_iter != text_data_maps_.end()) {
+                    text_iter->second.emplace_back(text);
+                } else {
+                    vector<string> text_vector;
+                    text_vector.emplace_back(text);
+                    text_data_maps_.emplace(field, text_vector);
+                }
+            }
+
+            void insert_double_data(string field, double value) {
+                auto text_iter = double_data_maps_.find(field);
+                if (text_iter != double_data_maps_.end()) {
+                    text_iter->second.emplace_back(value);
+                } else {
+                    vector<double> double_vector;
+                    double_vector.emplace_back(value);
+                    double_data_maps_.emplace(field, double_vector);
+                }
+            }
+
+            void insert_long_data(string field, long value) {
+                auto text_iter = long_data_maps_.find(field);
+                if (text_iter != long_data_maps_.end()) {
+                    text_iter->second.emplace_back(value);
+                } else {
+                    vector<long> long_vector;
+                    long_vector.emplace_back(value);
+                    long_data_maps_.emplace(field, long_vector);
+                }
+            }
         };
 
         class DCRelationDefine{
         public:
 
             string member;
+
+            string model;
 
             string rule;
         };

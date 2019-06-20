@@ -442,7 +442,7 @@ namespace kd {
         }
 
         bool CommonUtil::CheckCoordAngle(shared_ptr<DCCoord> ptr_coord1, shared_ptr<DCCoord> ptr_coord2,
-                                         shared_ptr<DCCoord> ptr_coord3) {
+                                         shared_ptr<DCCoord> ptr_coord3, double angle_threthold, double &angle) {
             char zone[8] = {0};
             auto ptr_utm_coord1 = GeosObjUtil::create_coordinate(ptr_coord1, zone);
             auto ptr_utm_coord2 = GeosObjUtil::create_coordinate(ptr_coord2, zone);
@@ -452,14 +452,14 @@ namespace kd {
                                                         ptr_utm_coord2,
                                                         ptr_utm_coord3);
 
-            double road_node_angle = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::ROAD_NODE_ANGLE);
 
-            if (fabs(road_node_angle) < 0.001) {
-                road_node_angle = kd::automap::PI / 2;
+            if (fabs(angle_threthold) < 0.001) {
+                angle_threthold = kd::automap::PI / 2;
             } else {
-                road_node_angle = kd::automap::PI * road_node_angle / 180;
+                angle_threthold = kd::automap::PI * angle_threthold / 180;
             }
-            if (fabs(diff_angle) > road_node_angle) {
+            if (fabs(diff_angle) > angle_threthold) {
+                angle = diff_angle;
                 return false;
             }
             return true;

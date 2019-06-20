@@ -1,200 +1,48 @@
 //
-// Created by zhangxingang on 19-1-17.
+// Created by zhangxingang on 19-6-17.
 //
 
-#include <businesscheck/LaneGroupCheck.h>
 #include <util/CommonUtil.h>
 #include <util/GeosObjUtil.h>
-
 #include "businesscheck/LaneGroupCheck.h"
-
 namespace kd {
     namespace dc {
 
         static const double DIVIDER_NODE_LENGTH = 10;
 
+        LaneGroupCheck::~LaneGroupCheck() {
+
+        }
+
         string LaneGroupCheck::getId() {
-            return id;
+            return id_;
         }
 
-        bool LaneGroupCheck::execute(shared_ptr<MapDataManager> mapDataManager,
-                                     shared_ptr<CheckErrorOutput> errorOutput) {
-            check_lanegroup_road(mapDataManager, errorOutput);
+        bool LaneGroupCheck::execute(shared_ptr<MapDataManager> data_manager,
+                                     shared_ptr<CheckErrorOutput> error_output) {
+            data_manager_ = data_manager;
+            error_output_ = error_output;
 
-            check_lanegroup_divider(mapDataManager, errorOutput);
+            check_lanegroup_divider();
 
-            check_divider(mapDataManager, errorOutput);
-
-            release(mapDataManager);
-
-            return true;
+            check_divider();
+            return false;
         }
 
-        void LaneGroupCheck::check_lanegroup_road(shared_ptr<MapDataManager> mapDataManager,
-                                                  shared_ptr<CheckErrorOutput> errorOutput) {
-            const auto &road2LaneGroup2NodeIdxs = mapDataManager->road2LaneGroup2NodeIdxs_;
-            const auto &roads = mapDataManager->roads_;
-            for (const auto &road2_lg_idx:road2LaneGroup2NodeIdxs) {
-                shared_ptr<DCRoad> ptr_road = CommonUtil::get_road(mapDataManager, road2_lg_idx.first);
-                const auto &lg_idx = road2_lg_idx.second;
-                vector<LGNodeIndex> pos_dir_lg_vec;
-                vector<LGNodeIndex> neg_dir_lg_vec;
-                for (const auto &node_idx : lg_idx) {
-                    const string &lane_group_id = node_idx.first;
-                    bool lg_dir = true;
-                    auto lang_group = CommonUtil::get_lane_group(mapDataManager, lane_group_id);
-                    if (lang_group) {
-                        if (lang_group->direction_ != 1) {
-                            lg_dir = false;
-                        }
-                    } else {
-                        LOG(ERROR) << "get_lane_group failed! lane groud:" << lane_group_id;
-                    }
-                    const pair<long, long> &ft_node_pair = node_idx.second;
-                    LGNodeIndex lg_node_index(lane_group_id, road2_lg_idx.first, ft_node_pair.first,
-                                              ft_node_pair.second);
-                    if (lg_dir) {
-                        pos_dir_lg_vec.emplace_back(lg_node_index);
-                    } else {
-                        neg_dir_lg_vec.emplace_back(lg_node_index);
-                    }
-                }
-                if (!pos_dir_lg_vec.empty()) {
-                    check_road_node_index(pos_dir_lg_vec, ptr_road, true, mapDataManager, errorOutput);
-                } else {
-                    //
-                    LOG(ERROR) << "lanegroup关联road索引缺失";
-                }
-                if (ptr_road) {
-                    // 双向道路
-                    if (ptr_road->direction_ == 1) {
-                        if (!neg_dir_lg_vec.empty()) {
-                            check_road_node_index(neg_dir_lg_vec, ptr_road, false, mapDataManager, errorOutput);
-                        } else {
-                            //
-                            LOG(ERROR) << "lanegroup关联road索引缺失";
-                        }
-                    }
-                } else {
-                    LOG(ERROR) << "ptr_road failed! road:" << road2_lg_idx.first;
-                }
-            }
-        }
-
-        void LaneGroupCheck::check_road_node_index(vector<LGNodeIndex> lg_node_index_vec, shared_ptr<DCRoad> ptr_road,
-                                                   bool is_positive, shared_ptr<MapDataManager> mapDataManager,
-                                                   shared_ptr<CheckErrorOutput> errorOutput) {
-            // 检查是否存在交叉
-            if (is_positive) {
-                sort(lg_node_index_vec.begin(), lg_node_index_vec.end(), [](const LGNodeIndex &lg_node_idx1,
-                                                                            const LGNodeIndex &lg_node_idx2) {
-                    return lg_node_idx1.f_idx < lg_node_idx2.f_idx;
-                });
-            } else {
-                sort(lg_node_index_vec.begin(), lg_node_index_vec.end(), [](const LGNodeIndex &lg_node_idx1,
-                                                                            const LGNodeIndex &lg_node_idx2) {
-                    return lg_node_idx1.f_idx > lg_node_idx2.f_idx;
-                });
-            }
-            shared_ptr<DCError> ptr_error;
-            if (ptr_road) {
-                // 检查索引点是否铺满
-                check_index_fill_all(lg_node_index_vec, ptr_road, is_positive, errorOutput);
-            }
-
-            auto pre_iter = lg_node_index_vec.begin();
-            auto lat_iter = ++lg_node_index_vec.begin();
-
-            while (lat_iter != lg_node_index_vec.end()) {
-                if (lat_iter->f_idx > pre_iter->t_idx) {
-                    if (!is_positive) {
-                        auto ptr_lane_group = CommonUtil::get_lane_group(mapDataManager, lat_iter->lanegroup_id);
-                        if (ptr_lane_group && ptr_lane_group->is_virtual_ != 1) {
-                            ptr_error = DCLaneGroupCheckError::createByKXS_03_006(pre_iter->road_id, pre_iter->lanegroup_id,
-                                                                                  pre_iter->f_idx, pre_iter->t_idx,
-                                                                                  lat_iter->lanegroup_id, lat_iter->f_idx,
-                                                                                  lat_iter->t_idx, is_positive);
-                        }
-                    }
-
-                    errorOutput->saveError(ptr_error);
-                } else if (lat_iter->f_idx < pre_iter->t_idx) {
-                    if (is_positive) {
-                        // 出现交叉
-                        auto ptr_lane_group = CommonUtil::get_lane_group(mapDataManager, lat_iter->lanegroup_id);
-                        if (ptr_lane_group && ptr_lane_group->is_virtual_ != 1) {
-                            ptr_error = DCLaneGroupCheckError::createByKXS_03_006(pre_iter->road_id,
-                                                                                  pre_iter->lanegroup_id,
-                                                                                  pre_iter->f_idx, pre_iter->t_idx,
-                                                                                  lat_iter->lanegroup_id,
-                                                                                  lat_iter->f_idx,
-                                                                                  lat_iter->t_idx, is_positive);
-                        }
-                    }
-
-                    errorOutput->saveError(ptr_error);
-                } else {
-                    // 正常
-                }
-                pre_iter = lat_iter;
-                lat_iter++;
-            }
-        }
-
-        void LaneGroupCheck::check_index_fill_all(vector<LGNodeIndex> lg_node_index_vec, shared_ptr<DCRoad> ptr_road,
-                                                  bool is_positive, shared_ptr<CheckErrorOutput> errorOutput) {
-            shared_ptr<DCError> ptr_error;
-            int min_index = 0;
-            int max_index = 0;
-
-            int *road_index = new int[sizeof(int) * ptr_road->nodes_.size()];
-            if (road_index != nullptr) {
-                memset(road_index, 0, sizeof(int) * ptr_road->nodes_.size());
-                for (const auto &node_index : lg_node_index_vec) {
-                    if (is_positive) {
-                        min_index = node_index.f_idx;
-                        max_index = node_index.t_idx;
-                    } else {
-                        min_index = node_index.t_idx;
-                        max_index = node_index.f_idx;
-                    }
-                    for (int i = min_index; i <= max_index; i++) {
-                        if (0 <= i && i < ptr_road->nodes_.size()) {
-                            if (road_index[i] == 0) {
-                                road_index[i] = 1;
-                            }
-                        }
-                    }
-                }
-                for (int i = 0; i < ptr_road->nodes_.size(); i++) {
-                    if (road_index[i] == 0) {
-                        ptr_error = DCLaneGroupCheckError::createByKXS_03_005(ptr_road->id_, i, is_positive);
-                        errorOutput->saveError(ptr_error);
-                    }
-                }
-            }
-
-            if (road_index != nullptr) {
-                delete[] road_index;
-                road_index = nullptr;
-            }
-        }
-
-        void LaneGroupCheck::check_lanegroup_divider(shared_ptr<MapDataManager> mapDataManager,
-                                                     shared_ptr<CheckErrorOutput> errorOutput) {
-            const auto &divider2w_lane_groups = mapDataManager->divider2_lane_groups_;
+        void LaneGroupCheck::check_lanegroup_divider() {
+            const auto &divider2w_lane_groups = data_manager_->divider2_lane_groups_;
             shared_ptr<DCError> ptr_error = nullptr;
             for (auto div2_lg : divider2w_lane_groups) {
                 bool check = false;
                 if (div2_lg.second.size() == 2) {
                     // divider关联多个车道组
-                    auto ptr_divider = CommonUtil::get_divider(mapDataManager, div2_lg.first);
+                    auto ptr_divider = CommonUtil::get_divider(data_manager_, div2_lg.first);
                     if (ptr_divider) {
                         // 如果是参考线
                         if (ptr_divider->dividerNo_ == 0) {
                             for (const auto &lg : div2_lg.second) {
                                 auto ptr_road =
-                                        CommonUtil::get_road_by_lg(mapDataManager, lg);
+                                        CommonUtil::get_road_by_lg(data_manager_, lg);
                                 if (ptr_road) {
                                     // 不是双向的
                                     if (ptr_road->direction_ != 1) {
@@ -218,30 +66,25 @@ namespace kd {
                 // 错误
                 if (check) {
                     ptr_error = DCLaneGroupCheckError::createByKXS_03_004(div2_lg.first, div2_lg.second);
-                    errorOutput->saveError(ptr_error);
+                    error_output_->saveError(ptr_error);
                 }
             }
         }
 
-        void LaneGroupCheck::release(shared_ptr<MapDataManager> mapDataManager) {
-            mapDataManager->road2LaneGroup2NodeIdxs_.clear();
-        }
-
-        void LaneGroupCheck::check_divider(shared_ptr<MapDataManager> mapDataManager,
-                                           shared_ptr<CheckErrorOutput> errorOutput) {
-            const auto ptr_lane_groups = mapDataManager->laneGroups_;
+        void LaneGroupCheck::check_divider() {
+            const auto ptr_lane_groups = data_manager_->laneGroups_;
             for (const auto &lane_group : ptr_lane_groups) {
-                auto ptr_dividers = CommonUtil::get_dividers_by_lg(mapDataManager, lane_group.first);
+                auto ptr_dividers = CommonUtil::get_dividers_by_lg(data_manager_, lane_group.first);
                 if (!ptr_dividers.empty()) {
 //                    check_divider_no(mapDataManager, errorOutput, lane_group.first, ptr_dividers);
-                    check_divider_length(mapDataManager, errorOutput, lane_group.first, ptr_dividers);
+                    check_divider_length(lane_group.first, ptr_dividers);
                 }
             }
         }
 
         void LaneGroupCheck::check_divider_no(shared_ptr<MapDataManager> mapDataManager,
-                                              shared_ptr<CheckErrorOutput> errorOutput, const string &lane_group,
-                                              const vector<shared_ptr<DCDivider>> &ptr_dividers) {
+                                                      shared_ptr<CheckErrorOutput> errorOutput, const string &lane_group,
+                                                      const vector<shared_ptr<DCDivider>> &ptr_dividers) {
             bool is_check = false;
 
             auto ptr_lane_group = CommonUtil::get_lane_group(mapDataManager, lane_group);
@@ -280,13 +123,13 @@ namespace kd {
         }
 
         bool LaneGroupCheck::check_divider_no(const vector<shared_ptr<DCDivider>> &ptr_dividers,
-                                              bool is_front, bool direction) {
+                                                      bool is_front, bool direction) {
             bool is_check = false;
 
             // 获取节点
             auto ptr_left_divider = ptr_dividers.front();
             auto ptr_left_divider_node = (is_front & direction) ? ptr_left_divider->nodes_.front()
-                                                              : ptr_left_divider->nodes_.back();
+                                                                : ptr_left_divider->nodes_.back();
 
             auto ptr_left_dis_node = CommonUtil::get_distance_node(ptr_left_divider, DIVIDER_NODE_LENGTH,
                                                                    (is_front & direction));
@@ -344,8 +187,7 @@ namespace kd {
             return is_check;
         }
 
-        void LaneGroupCheck::check_divider_length(shared_ptr<MapDataManager> mapDataManager,
-                                                  shared_ptr<CheckErrorOutput> errorOutput, const string &lane_group,
+        void LaneGroupCheck::check_divider_length(const string &lane_group,
                                                   const vector<shared_ptr<DCDivider>> &ptr_dividers) {
             bool check = false;
             vector<string> check_dividers;
@@ -370,7 +212,7 @@ namespace kd {
 
             if (check) {
                 shared_ptr<DCError> ptr_error = DCLaneGroupCheckError::createByKXS_03_001(lane_group, check_dividers);
-                errorOutput->saveError(ptr_error);
+                error_output_->saveError(ptr_error);
             }
         }
     }

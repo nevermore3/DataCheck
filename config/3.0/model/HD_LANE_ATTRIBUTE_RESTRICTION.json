@@ -1,0 +1,75 @@
+{
+  "model" : "HD_LANE_ATTRIBUTE_RESTRICTION",
+  "checks" : [
+    {
+       "name":"ID",
+       "func":"ID",
+       "refValue":""
+    }
+  ],
+  "fields" : [
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "LA_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "TYPE",
+      "type" : "1",
+      "valueLimit" : "1,2,3,4,5,6,7"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "64",
+      "name" : "TIME",
+      "type" : "0",
+      "valueLimit" : "0123456789Mywdflthmsz{}[]()*+-"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "64",
+      "name" : "VEHICLE",
+      "type" : "0",
+      "valueLimit" : "0,1,2,3,4,5,6"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "64",
+      "name" : "WEATHER",
+      "type" : "0",
+      "valueLimit" : "1,2,3,4,5,6"
+    }
+  ],
+  
+  "relation" : [
+    {
+      "member" : "HD_LANE_ATTRIBUTE",
+      "rule" : "LA_ID"
+    }
+  ],
+   "relationcheck" : [
+  ]
+}

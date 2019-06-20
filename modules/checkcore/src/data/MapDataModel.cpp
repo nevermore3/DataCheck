@@ -13,6 +13,13 @@ namespace kd {
                     return fieldDefine;
                 }
             }
+
+            for(shared_ptr<DCFieldDefine> fieldDefine : vecMemberAndRols ){
+
+                if(fieldDefine != nullptr && fieldDefine->name == fieldName){
+                    return fieldDefine;
+                }
+            }
             return nullptr;
         }
     }

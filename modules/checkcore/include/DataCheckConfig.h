@@ -43,6 +43,10 @@ namespace kd {
             const static string ROAD_NODE_ANGLE;
             const static string ROAD_NODE_DISTANCE;
 
+            const static string JSON_DATA_INPUT;
+            const static string RESOURCE_FILE_PATH;
+            const static string RESOURCE_FILE;
+
 
         public:
             static DataCheckConfig & getInstance() {

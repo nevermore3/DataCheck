@@ -98,5 +98,9 @@ const static std::string CHECK_ITEM_KXS_LM_002 = "KXS-06-002";
 const static std::string CHECK_ITEM_KXS_ADAS_001 = "KXS-07-001";
 const static std::string CHECK_ITEM_KXS_ADAS_002 = "KXS-07-002";
 
+const static std::string ID = "ID";
+const static std::string DIVIDER_ID = "DIVIDER_ID";
+const static std::string DIVIDER_NODE_ID = "DIVIDER_NODE_ID";
+
 
 #endif //AUTOHDMAP_DATACHECK_COMMONDEFINE_H

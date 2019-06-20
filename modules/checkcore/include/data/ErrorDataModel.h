@@ -23,6 +23,20 @@ namespace kd {
             shared_ptr<DCCoord> ptr_coord;
         };
 
+        struct NodeCompareError {
+            // 索引
+            long previous;
+            long current;
+            long next;
+            // 结点坐标
+            shared_ptr<DCCoord> ptr_previous_coord;
+            shared_ptr<DCCoord> ptr_current_coord;
+            shared_ptr<DCCoord> ptr_next_coord;
+            double distance;
+            double angle;
+            double height;
+        };
+
         // 结点高度错误
         struct NodeCheck {
             // 前一点索引
@@ -54,6 +68,8 @@ namespace kd {
         public:
             //设置检查模型描述信息
             string checkDesc_;
+            //错误详细信息描述
+            string detail_;
 
         public:
             // 错误级别
@@ -135,6 +151,15 @@ namespace kd {
 
             static shared_ptr<DCDividerCheckError>
             createByNode(string checkModel, string nodeId, double lng, double lat, double z);
+
+            static shared_ptr<DCDividerCheckError> createByKXS_01_011(const string &divider_id,
+                                                                      const vector<shared_ptr<NodeCompareError>> &ptr_error_nodes);
+
+            static shared_ptr<DCDividerCheckError> createByKXS_01_012(const string &divider_id,
+                                                                      const vector<shared_ptr<NodeCompareError>> &ptr_error_nodes);
+
+            static shared_ptr<DCDividerCheckError> createByKXS_01_013(const string &divider_id,
+                                                                      const vector<shared_ptr<NodeCompareError>> &ptr_error_nodes);
 
         public:
             virtual string toString() override;
@@ -316,10 +341,10 @@ namespace kd {
                                                                    const vector<shared_ptr<NodeError>> &ptr_error_nodes);
 
             static shared_ptr<DCRoadCheckError> createByKXS_04_007(const string &road_id,
-                                                                   const vector<shared_ptr<NodeError>> &ptr_error_nodes);
+                                                                   const vector<shared_ptr<NodeCompareError>> &ptr_error_nodes);
 
             static shared_ptr<DCRoadCheckError> createByKXS_04_008(const string &road_id,
-                                                                   const vector<shared_ptr<NodeError>> &ptr_error_nodes);
+                                                                   const vector<shared_ptr<NodeCompareError>> &ptr_error_nodes);
         public:
 
             //错误详细信息描述

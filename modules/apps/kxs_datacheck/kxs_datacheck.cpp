@@ -1,8 +1,3 @@
-
-//third party
-
-#include "util/TimerUtil.h"
-
 //module
 #include "data/DataManager.h"
 #include "storage/CheckTaskInput.h"
@@ -16,6 +11,7 @@
 #include "process/ModelBussCheck.h"
 #include "process/ModelRelationCheck.h"
 #include "process/ModelSqlCheck.h"
+#include "process/TaskLoader.h"
 
 #include "MapProcessManager.h"
 #include "businesscheck/MapDataLoader.h"
@@ -23,14 +19,18 @@
 #include "businesscheck/DividerShapeNormCheck.h"
 #include "businesscheck/DividerShapeDefectCheck.h"
 #include "businesscheck/DividerTopoCheck.h"
+#include "businesscheck/LaneGroupCheck.h"
 #include "businesscheck/LaneAttribCheck.h"
 #include "businesscheck/LaneShapeNormCheck.h"
 #include "businesscheck/LaneTopoCheck.h"
-#include "businesscheck/LaneGroupCheck.h"
+#include "businesscheck/LaneGroupRelationCheck.h"
 #include "businesscheck/LaneGroupTopoCheck.h"
 #include "businesscheck/RoadCheck.h"
 #include "businesscheck/LaneCheck.h"
 #include "businesscheck/AdasCheck.h"
+#include "businesscheck/JsonDataLoader.h"
+
+#include "util/TimerUtil.h"
 
 using namespace kd::dc;
 
@@ -57,20 +57,25 @@ int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) 
 //        modelProcessManager->registerProcessor(modelRelationCheck);
 
         //执行已注册检查项
-        shared_ptr<ModelDataManager> modelDataManager = make_shared<ModelDataManager>();
-        if (!modelProcessManager->execute(modelDataManager, errorOutput)) {
-            LOG(ERROR) << "modelDataManager execute error!";
-            ret = 1;
-        }
+//        shared_ptr<ModelDataManager> modelDataManager = make_shared<ModelDataManager>();
+//        if (!modelProcessManager->execute(modelDataManager, errorOutput)) {
+//            LOG(ERROR) << "modelDataManager execute error!";
+//            ret = 1;
+//        }
     }
 
     //交换格式逻辑检查
     {
         shared_ptr<MapProcessManager> mapProcessManager = make_shared<MapProcessManager>("mapCheck");
 
+        shared_ptr<JsonDataLoader> json_data_loader = make_shared<JsonDataLoader>();
+        mapProcessManager->registerProcessor(json_data_loader);
+
+
+
         //加载数据
-        shared_ptr<MapDataLoader> loader = make_shared<MapDataLoader>(basePath);
-        mapProcessManager->registerProcessor(loader);
+//        shared_ptr<MapDataLoader> loader = make_shared<MapDataLoader>(basePath);
+//        mapProcessManager->registerProcessor(loader);
 
         //车道线属性检查
         shared_ptr<DividerAttribCheck> divAttCheck = make_shared<DividerAttribCheck>();
@@ -84,36 +89,39 @@ int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) 
         shared_ptr<DividerShapeDefectCheck> divShpDefCheck = make_shared<DividerShapeDefectCheck>();
         mapProcessManager->registerProcessor(divShpDefCheck);
 
-        //车道线拓扑检查
-        shared_ptr<DividerTopoCheck> divTopoCheck = make_shared<DividerTopoCheck>();
-        mapProcessManager->registerProcessor(divTopoCheck);
+        shared_ptr<LaneGroupCheck> lane_group_check = make_shared<LaneGroupCheck>();
+        mapProcessManager->registerProcessor(lane_group_check);
 
-        //车道属性检查
-        shared_ptr<LaneAttribCheck> laneAttCheck = make_shared<LaneAttribCheck>();
-        mapProcessManager->registerProcessor(laneAttCheck);
-
-        //车道几何形状检查
-        shared_ptr<LaneShapeNormCheck> laneShpCheck = make_shared<LaneShapeNormCheck>();
-        mapProcessManager->registerProcessor(laneShpCheck);
-
-        //车道拓扑检查
-        shared_ptr<LaneTopoCheck> laneTopoCheck = make_shared<LaneTopoCheck>();
-        mapProcessManager->registerProcessor(laneTopoCheck);
-
-        shared_ptr<LaneCheck> lane_check = make_shared<LaneCheck>();
-        mapProcessManager->registerProcessor(lane_check);
-
-        shared_ptr<RoadCheck> road_check = make_shared<RoadCheck>();
-        mapProcessManager->registerProcessor(road_check);
-
-        shared_ptr<LaneGroupCheck> lanegroup_check = make_shared<LaneGroupCheck>();
-        mapProcessManager->registerProcessor(lanegroup_check);
-
-        shared_ptr<LaneGroupTopoCheck> lanegroup_topo_check = make_shared<LaneGroupTopoCheck>();
-        mapProcessManager->registerProcessor(lanegroup_topo_check);
-
-        shared_ptr<AdasCheck> adas_check = make_shared<AdasCheck>(basePath);
-        mapProcessManager->registerProcessor(adas_check);
+//        //车道线拓扑检查
+//        shared_ptr<DividerTopoCheck> divTopoCheck = make_shared<DividerTopoCheck>();
+//        mapProcessManager->registerProcessor(divTopoCheck);
+//
+//        //车道属性检查
+//        shared_ptr<LaneAttribCheck> laneAttCheck = make_shared<LaneAttribCheck>();
+//        mapProcessManager->registerProcessor(laneAttCheck);
+//
+//        //车道几何形状检查
+//        shared_ptr<LaneShapeNormCheck> laneShpCheck = make_shared<LaneShapeNormCheck>();
+//        mapProcessManager->registerProcessor(laneShpCheck);
+//
+//        //车道拓扑检查
+//        shared_ptr<LaneTopoCheck> laneTopoCheck = make_shared<LaneTopoCheck>();
+//        mapProcessManager->registerProcessor(laneTopoCheck);
+//
+//        shared_ptr<LaneCheck> lane_check = make_shared<LaneCheck>();
+//        mapProcessManager->registerProcessor(lane_check);
+//
+//        shared_ptr<RoadCheck> road_check = make_shared<RoadCheck>();
+//        mapProcessManager->registerProcessor(road_check);
+//
+//        shared_ptr<LaneGroupRelationCheck> lanegroup_rel_check = make_shared<LaneGroupRelationCheck>();
+//        mapProcessManager->registerProcessor(lanegroup_rel_check);
+//
+//        shared_ptr<LaneGroupTopoCheck> lanegroup_topo_check = make_shared<LaneGroupTopoCheck>();
+//        mapProcessManager->registerProcessor(lanegroup_topo_check);
+//
+//        shared_ptr<AdasCheck> adas_check = make_shared<AdasCheck>(basePath);
+//        mapProcessManager->registerProcessor(adas_check);
 
         //执行已注册检查项
         shared_ptr<MapDataManager> mapDataManager = make_shared<MapDataManager>();
@@ -235,7 +243,7 @@ int main(int argc, const char *argv[]) {
         shared_ptr<CheckErrorOutput> errorOutput = make_shared<CheckErrorOutput>(p_db_out);
 
         //数据质量检查
-        ret |= sql_data_check(p_db, errorOutput);
+//        ret |= sql_data_check(p_db, errorOutput);
         ret |= dataCheck(base_path, errorOutput);
 
         ret |= errorOutput->saveError();

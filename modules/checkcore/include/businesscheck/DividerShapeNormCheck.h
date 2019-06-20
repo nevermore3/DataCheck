@@ -35,6 +35,7 @@ namespace kd {
 
 
         private:
+
             //存在夹角<135°的弧段
             void check_JH_C_7(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput);
 
@@ -42,10 +43,30 @@ namespace kd {
             void check_JH_C_8_AND_JH_C_9(shared_ptr<MapDataManager> mapDataManager,
                                          shared_ptr<CheckErrorOutput> errorOutput);
 
+            /**
+             * 平滑度检查
+             * @param dc_divider
+             */
+            void SmoothCheck(shared_ptr<DCDivider> dc_divider);
+
+            /**
+             * 结点间距检查
+             * @param dc_divider
+             */
+            void DistanceCheck(shared_ptr<DCDivider> dc_divider);
+
+            /**
+             * 高程检查
+             * @param dc_divider
+             */
+            void HeightCheck(shared_ptr<DCDivider> dc_divider);
 
         private:
 
             const string id = "divider_shape_norm_check";
+
+            shared_ptr<MapDataManager> data_manager_;
+            shared_ptr<CheckErrorOutput> error_output_;
         };
     }
 }

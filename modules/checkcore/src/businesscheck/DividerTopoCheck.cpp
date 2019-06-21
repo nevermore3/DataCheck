@@ -121,7 +121,7 @@ namespace kd {
             if(!findConnectEdge(fromNodeId, true, topoNodes, quadtree, mapDataManager)){
                 shared_ptr<DCDividerCheckError> error =
                         DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_008, div, nullptr);
-                error->checkDesc_ = "车行道边缘线在非停止线/出入口标线的地方断开";
+                error->checkName = "车行道边缘线在非停止线/出入口标线的地方断开";
                 stringstream ss;
                 ss << "divider:" << div->id_ << ",from node_id:" << fromNodeId << "断开.";
                 error->errorDesc_ = ss.str();
@@ -133,7 +133,7 @@ namespace kd {
             if(!findConnectEdge(toNodeId, false, topoNodes, quadtree, mapDataManager)){
                 shared_ptr<DCDividerCheckError> error =
                         DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_008, div, nullptr);
-                error->checkDesc_ = "车行道边缘线在非停止线/出入口标线的地方断开";
+                error->checkName = "车行道边缘线在非停止线/出入口标线的地方断开";
                 stringstream ss;
                 ss << "divider:" << div->id_ << ",from node_id:" << fromNodeId << "断开.";
                 error->errorDesc_ = ss.str();
@@ -226,7 +226,7 @@ namespace kd {
                 if(divRelIds.find(divid) == divRelIds.end()){
                     shared_ptr<DCDividerCheckError> error =
                             DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_009, div, nullptr);
-                    error->checkDesc_ = "非路口虚拟线的车道线未构成车道";
+                    error->checkName = "非路口虚拟线的车道线未构成车道";
                     error->errorDesc_ = "divider:";
                     error->errorDesc_ += div->id_;
                     error->errorDesc_ += "没有构成车道";
@@ -257,18 +257,20 @@ namespace kd {
                 if(topoNode->startRels_.size() == 0){
                     shared_ptr<DCDividerCheckError> error =
                             DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_010, topoNode->nodeId_, topoNode->lng_, topoNode->lat_, topoNode->z_);
-                    error->checkDesc_ = "共点的车道线通行方向冲突";
+                    error->checkName = "共点的车道线通行方向冲突";
                     stringstream ss;
                     ss << "divider_node:" << topoNode->nodeId_ << " has no FDNODE relation.";
                     error->errorDesc_ = ss.str();
-
+//                    error->taskId_ = div->task_id_;
+//                    error->flag = div->flag_;
+//                    error->dataKey_ = DATA_TYPE_LANE+div->task_id_+DATA_TYPE_LAST_NUM;
                     errorOutput->saveError(error);
                 }
 
                 if(topoNode->endRels_.size() == 0){
                     shared_ptr<DCDividerCheckError> error =
                             DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_010, topoNode->nodeId_, topoNode->lng_, topoNode->lat_, topoNode->z_);
-                    error->checkDesc_ = "共点的车道线通行方向冲突";
+                    error->checkName = "共点的车道线通行方向冲突";
                     stringstream ss;
                     ss << "divider_node:" << topoNode->nodeId_ << " has no TDNODE relation.";
                     error->errorDesc_ = ss.str();
@@ -297,14 +299,14 @@ namespace kd {
                         shared_ptr<DCDividerTopoNode> topoNode = make_shared<DCDividerTopoNode>();
                         topoNode->nodeId_ = fromNodeId;
                         if(fromNodeId == div->nodes_[0]->id_){
-                            topoNode->lng_ = div->nodes_[0]->coord_.lng_;
-                            topoNode->lat_ = div->nodes_[0]->coord_.lat_;
-                            topoNode->z_ = div->nodes_[0]->coord_.z_;
+                            topoNode->lng_ = div->nodes_[0]->coord_->lng_;
+                            topoNode->lat_ = div->nodes_[0]->coord_->lat_;
+                            topoNode->z_ = div->nodes_[0]->coord_->z_;
 
                         }else{
-                            topoNode->lng_ = div->nodes_[div->nodes_.size()-1]->coord_.lng_;
-                            topoNode->lat_ = div->nodes_[div->nodes_.size()-1]->coord_.lat_;
-                            topoNode->z_ = div->nodes_[div->nodes_.size()-1]->coord_.z_;
+                            topoNode->lng_ = div->nodes_[div->nodes_.size()-1]->coord_->lng_;
+                            topoNode->lat_ = div->nodes_[div->nodes_.size()-1]->coord_->lat_;
+                            topoNode->z_ = div->nodes_[div->nodes_.size()-1]->coord_->z_;
                         }
                         topoNode->startRels_.insert(pair<string,string>(div->id_, div->id_));
                         topoNodes.insert(pair<string, shared_ptr<DCDividerTopoNode>>(fromNodeId, topoNode));
@@ -323,14 +325,14 @@ namespace kd {
                         topoNode->nodeId_ = toNodeId;
 
                         if(toNodeId == div->nodes_[0]->id_){
-                            topoNode->lng_ = div->nodes_[0]->coord_.lng_;
-                            topoNode->lat_ = div->nodes_[0]->coord_.lat_;
-                            topoNode->z_ = div->nodes_[0]->coord_.z_;
+                            topoNode->lng_ = div->nodes_[0]->coord_->lng_;
+                            topoNode->lat_ = div->nodes_[0]->coord_->lat_;
+                            topoNode->z_ = div->nodes_[0]->coord_->z_;
 
                         }else{
-                            topoNode->lng_ = div->nodes_[div->nodes_.size()-1]->coord_.lng_;
-                            topoNode->lat_ = div->nodes_[div->nodes_.size()-1]->coord_.lat_;
-                            topoNode->z_ = div->nodes_[div->nodes_.size()-1]->coord_.z_;
+                            topoNode->lng_ = div->nodes_[div->nodes_.size()-1]->coord_->lng_;
+                            topoNode->lat_ = div->nodes_[div->nodes_.size()-1]->coord_->lat_;
+                            topoNode->z_ = div->nodes_[div->nodes_.size()-1]->coord_->z_;
                         }
 
                         topoNode->endRels_.insert(pair<string,string>(div->id_, div->id_));

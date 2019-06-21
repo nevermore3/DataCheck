@@ -138,7 +138,7 @@ namespace kd {
                                 //找到非同类属性数据
                                 shared_ptr<DCDividerCheckError> error =
                                         DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_007, div, div->atts_[j]);
-                                error->checkDesc_ = "车道分割线黄白线变化不一致";
+                                error->checkName = "车道分割线黄白线变化不一致";
                                 error->checkLevel_ = LEVEL_WARNING;
                                 stringstream ss;
                                 ss << "divider:" << div->id_;
@@ -159,7 +159,7 @@ namespace kd {
                                     //找到非同类属性数据
                                     shared_ptr<DCDividerCheckError> error =
                                             DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_007, div, div->atts_[j]);
-                                    error->checkDesc_ = "车道分割线黄白线变化不一致";
+                                    error->checkName = "车道分割线黄白线变化不一致";
                                     error->checkLevel_ = LEVEL_WARNING;
                                     stringstream ss;
                                     ss << "divider:" << div->id_;
@@ -205,11 +205,11 @@ namespace kd {
                             if (att->type_ != 0 || att->color_ != 0 || att->driveRule_ != 0) {
                                 shared_ptr<DCDividerCheckError> error =
                                         DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_014, div, att);
-                                error->checkDesc_ = "颜色、类型、通行类型属性冲突检查";
                                 stringstream ss;
                                 ss << "divider:" << div->id_;
                                 ss << ",virtual divider att error. type:" << att->type_ << ",color:";
                                 ss << att->color_ << ",dirveRule:" << att->driveRule_;
+                                error->checkName = "颜色、类型、通行类型属性冲突检查";
                                 error->errorDesc_ = ss.str();
 
                                 errorOutput->saveError(error);
@@ -228,7 +228,7 @@ namespace kd {
                             //颜色和车道线线型不匹配
                             shared_ptr<DCDividerCheckError> error =
                                     DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_014, div, att);
-                            error->checkDesc_ = "颜色和车道线线型不匹配";
+                            error->checkName = "颜色和车道线线型不匹配";
                             stringstream ss;
                             ss << "divider:" << div->id_;
                             ss << ",divider color & type not match. color:" << att->color_ << ",type:";
@@ -252,7 +252,7 @@ namespace kd {
                             //通行类型和车道线线型不匹配
                             shared_ptr<DCDividerCheckError> error =
                                     DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_014, div, att);
-                            error->checkDesc_ = "通行类型和车道线线型不匹配";
+                            error->checkName = "通行类型和车道线线型不匹配";
                             stringstream ss;
                             ss << "divider:" << div->id_;
                             ss << "divider driverule & type not match. driveRule:" << att->driveRule_ << ",type:";
@@ -285,7 +285,7 @@ namespace kd {
                             DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_015, div, nullptr);
                     error->errorDesc_ = "divider:";
                     error->errorDesc_ += div->id_;
-                    error->checkDesc_ = "车道线没有属性变化点";
+                    error->checkName = "车道线没有属性变化点";
                     errorOutput->saveError(error);
                     continue;
                 }
@@ -310,7 +310,7 @@ namespace kd {
                                 DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_015, div, nullptr);
                         error->errorDesc_ = "divider:";
                         error->errorDesc_ += div->id_;
-                        error->checkDesc_ = "车道线起点没有属性变化点";
+                        error->checkName = "车道线起点没有属性变化点";
                         errorOutput->saveError(error);
                         continue;
                     }
@@ -329,7 +329,7 @@ namespace kd {
                                 DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_015, div, nullptr);
                         error->errorDesc_ = "divider:";
                         error->errorDesc_ += div->id_;
-                        error->checkDesc_ = "车道线起点和终点都有属性变化点";
+                        error->checkName = "车道线起点和终点都有属性变化点";
                         errorOutput->saveError(error);
                         continue;
                     }
@@ -357,7 +357,7 @@ namespace kd {
                     if(da1 != nullptr && da1->typeSame(da2)){
                         shared_ptr<DCDividerCheckError> error =
                                 DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_016, div, da1);
-                        error->checkDesc_ = "同一个divider上相邻两个DA属性完全相同";
+                        error->checkName = "同一个divider上相邻两个DA属性完全相同";
                         stringstream ss;
                         ss << "divider:" << div->id_;
                         ss << ",da_id:"<< da1->id_ << "与da_id:" << da2->id_ << "属性相同";
@@ -408,7 +408,7 @@ namespace kd {
                     if(distance < daSpaceLen){
                         shared_ptr<DCDividerCheckError> error =
                                 DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_017, div, da1);
-                        error->checkDesc_ = "同一个divider上相邻两个DA距离<1米";
+                        error->checkName = "同一个divider上相邻两个DA距离<1米";
                         stringstream ss;
                         ss << "divider:" << div->id_;
                         ss << ",da_id:"<< da1->id_ << "与da_id:" << da2->id_ << "距离" << distance << "米";
@@ -426,23 +426,22 @@ namespace kd {
                 for( int i = begin ; i < end ; i ++ ){
                     auto node1 = div->nodes_[i];
                     auto node2 = div->nodes_[i+1];
-                    double distTemp = KDGeoUtil::distanceLL(node1->coord_.lng_, node1->coord_.lat_,
-                                                            node2->coord_.lng_, node2->coord_.lat_);
+                    double distTemp = KDGeoUtil::distanceLL(node1->coord_->lng_, node1->coord_->lat_,
+                                                            node2->coord_->lng_, node2->coord_->lat_);
                     distTotal += distTemp;
                 }
             }else{
                 for( int i = begin ; i > end ; i -- ){
                     auto node1 = div->nodes_[i];
                     auto node2 = div->nodes_[i-1];
-                    double distTemp = KDGeoUtil::distanceLL(node1->coord_.lng_, node1->coord_.lat_,
-                                                            node2->coord_.lng_, node2->coord_.lat_);
+                    double distTemp = KDGeoUtil::distanceLL(node1->coord_->lng_, node1->coord_->lat_,
+                                                            node2->coord_->lng_, node2->coord_->lat_);
                     distTotal += distTemp;
                 }
             }
 
             return distTotal;
         }
-
 
         bool DividerAttribCheck::execute(shared_ptr<MapDataManager> mapDataManager,
                                          shared_ptr<CheckErrorOutput> errorOutput) {

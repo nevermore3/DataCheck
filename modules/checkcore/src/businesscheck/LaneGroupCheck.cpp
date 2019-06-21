@@ -36,6 +36,7 @@ namespace kd {
         void LaneGroupCheck::check_kxs_03_004() {
             const auto &divider2_lane_groups = data_manager_->divider2_lane_groups_;
             shared_ptr<DCError> ptr_error = nullptr;
+            string taskid,flag,dataKey;
             for (auto div2_lg : divider2_lane_groups) {
                 bool check = false;
                 if (div2_lg.second.size() == 2) {
@@ -50,6 +51,10 @@ namespace kd {
                                 if (ptr_road) {
                                     // 不是双向的
                                     if (ptr_road->direction_ != 1) {
+
+                                        taskid = ptr_road->task_id_;
+                                        flag = ptr_road->flag_;
+                                        dataKey = DATA_TYPE_LANE + taskid + DATA_TYPE_LAST_NUM;
                                         check = true;
                                         break;
                                     }
@@ -70,6 +75,11 @@ namespace kd {
                 // 错误
                 if (check) {
                     ptr_error = DCLaneGroupCheckError::createByKXS_03_004(div2_lg.first, div2_lg.second);
+
+                    ptr_error->flag = flag;
+                    ptr_error->dataKey_ = dataKey;
+                    ptr_error->taskId_ = taskid;
+                    ptr_error->coord = nullptr;
                     error_output_->saveError(ptr_error);
                 }
             }
@@ -80,8 +90,9 @@ namespace kd {
             const auto &divider2_lane_groups = data_manager_->divider2_lane_groups_;
 
             for (const auto &divider : divider_maps) {
+
                 if (divider2_lane_groups.find(divider.first) == divider2_lane_groups.end()) {
-                    auto ptr_error = DCLaneGroupCheckError::createByKXS_03_003(divider.first);
+                    auto ptr_error = DCLaneGroupCheckError::createByKXS_03_003(divider.second);
                     error_output_->saveError(ptr_error);
                 }
             }
@@ -102,14 +113,22 @@ namespace kd {
                                                       shared_ptr<CheckErrorOutput> errorOutput, const string &lane_group,
                                                       const vector<shared_ptr<DCDivider>> &ptr_dividers) {
             bool is_check = false;
+            string taskId;
+            string flag;
+            string dataKey;
+            if(ptr_dividers.size()>0){
+                taskId = ptr_dividers[0]->task_id_;
+                flag = ptr_dividers[0]->flag_;
+                dataKey = DATA_TYPE_LANE + taskId + DATA_TYPE_LAST_NUM;
+            }
 
             auto ptr_lane_group = CommonUtil::get_lane_group(mapDataManager, lane_group);
             if (!ptr_lane_group->is_virtual_) {
                 vector<shared_ptr<DCCoord>> divider_f_node_vecs;
                 vector<shared_ptr<DCCoord>> divider_t_node_vecs;
                 for (const auto &div : ptr_dividers) {
-                    divider_f_node_vecs.emplace_back(make_shared<DCCoord>(div->nodes_.front()->coord_));
-                    divider_t_node_vecs.emplace_back(make_shared<DCCoord>(div->nodes_.back()->coord_));
+                    divider_f_node_vecs.emplace_back(div->nodes_.front()->coord_);
+                    divider_t_node_vecs.emplace_back(div->nodes_.back()->coord_);
                 }
                 double temp_f_length = GeosObjUtil::get_length_of_coords(divider_f_node_vecs);
                 double temp_t_length = GeosObjUtil::get_length_of_coords(divider_t_node_vecs);
@@ -133,6 +152,11 @@ namespace kd {
 
             if (is_check) {
                 shared_ptr<DCError> ptr_error = DCLaneGroupCheckError::createByKXS_03_002(lane_group);
+
+                ptr_error->taskId_ = taskId;
+                ptr_error->flag = flag;
+                ptr_error->dataKey_ = dataKey;
+                ptr_error->coord = nullptr;
                 errorOutput->saveError(ptr_error);
             }
 
@@ -207,6 +231,15 @@ namespace kd {
                                                   const vector<shared_ptr<DCDivider>> &ptr_dividers) {
             bool check = false;
             vector<string> check_dividers;
+
+            string taskId;
+            string flag;
+            string dataKey;
+            if(ptr_dividers.size()>0){
+                taskId = ptr_dividers[0]->task_id_;
+                flag = ptr_dividers[0]->flag_;
+                dataKey = DATA_TYPE_LANE + taskId + DATA_TYPE_LAST_NUM;
+            }
             // 读取配置
             double divider_length_ratio = DataCheckConfig::getInstance().getPropertyD(
                     DataCheckConfig::DIVIDER_LENGTH_RATIO);
@@ -228,6 +261,10 @@ namespace kd {
 
             if (check) {
                 shared_ptr<DCError> ptr_error = DCLaneGroupCheckError::createByKXS_03_001(lane_group, check_dividers);
+                ptr_error->taskId_ = taskId;
+                ptr_error->flag = flag;
+                ptr_error->dataKey_ = dataKey;
+                ptr_error->coord = nullptr;
                 error_output_->saveError(ptr_error);
             }
         }

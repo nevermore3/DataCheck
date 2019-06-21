@@ -39,8 +39,7 @@ namespace kd {
         CommonCheck::DistanceCheck(const vector<shared_ptr<DCDividerNode>> &dc_node_vec, double dis_threshold) {
             vector<shared_ptr<DCCoord>> dc_coord_vec;
             for (auto node : dc_node_vec) {
-                shared_ptr<DCCoord> dc_coord = make_shared<DCCoord>(node->coord_);
-                dc_coord_vec.emplace_back(dc_coord);
+                dc_coord_vec.emplace_back(node->coord_);
             }
 
             return DistanceCheck(dc_coord_vec, dis_threshold);
@@ -85,8 +84,7 @@ namespace kd {
         CommonCheck::AngleCheck(const vector<shared_ptr<DCDividerNode>> &dc_node_vec, double angle_threshold) {
             vector<shared_ptr<DCCoord>> dc_coord_vec;
             for (auto node : dc_node_vec) {
-                shared_ptr<DCCoord> dc_coord = make_shared<DCCoord>(node->coord_);
-                dc_coord_vec.emplace_back(dc_coord);
+                dc_coord_vec.emplace_back(node->coord_);
             }
 
             return AngleCheck(dc_coord_vec, angle_threshold);
@@ -132,8 +130,7 @@ namespace kd {
         CommonCheck::NodeHeightCheck(const vector<shared_ptr<DCDividerNode>> &dc_node_vec, double height_threshold) {
             vector<shared_ptr<DCCoord>> dc_coord_vec;
             for (auto node : dc_node_vec) {
-                shared_ptr<DCCoord> dc_coord = make_shared<DCCoord>(node->coord_);
-                dc_coord_vec.emplace_back(dc_coord);
+                dc_coord_vec.emplace_back(node->coord_);
             }
 
             return NodeHeightCheck(dc_coord_vec, height_threshold);

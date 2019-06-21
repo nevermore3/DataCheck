@@ -30,7 +30,7 @@ namespace kd {
                         if (GetCheckResults(dcItem.ID, dcItem.Sql, mFieldNameIndex, mCheckResults, details)) {
                             for (const auto& detail : details) {
                                 shared_ptr<DCSqlCheckError> sql_check_error = make_shared<DCSqlCheckError>(dcItem.ID);
-                                sql_check_error->checkDesc_ = dcItem.Info;
+                                sql_check_error->checkName = dcItem.Info;
                                 sql_check_error->checkLevel_ = dcItem.Level;
                                 sql_check_error->detail = detail;
                                 errorOutput->saveError(sql_check_error);

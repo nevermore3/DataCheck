@@ -145,6 +145,7 @@ namespace kd {
 
             int *road_index = new int[sizeof(int) * ptr_road->nodes_.size()];
             if (road_index != nullptr) {
+
                 memset(road_index, 0, sizeof(int) * ptr_road->nodes_.size());
                 for (const auto &node_index : lg_node_index_vec) {
                     if (is_positive) {
@@ -162,9 +163,13 @@ namespace kd {
                         }
                     }
                 }
+
                 for (int i = 0; i < ptr_road->nodes_.size(); i++) {
                     if (road_index[i] == 0) {
                         ptr_error = DCLaneGroupCheckError::createByKXS_03_005(ptr_road->id_, i, is_positive);
+                        ptr_error->taskId_ = ptr_road->task_id_;
+                        ptr_error->flag = ptr_road->flag_;
+                        ptr_error->dataKey_ = DATA_TYPE_LANE + ptr_road->task_id_ + DATA_TYPE_LAST_NUM;
                         errorOutput->saveError(ptr_error);
                     }
                 }

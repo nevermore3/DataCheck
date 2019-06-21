@@ -3,7 +3,7 @@
 //
 
 #include <data/ErrorDataModel.h>
-
+#include "data/DataManager.h"
 #include "DataCheckConfig.h"
 
 #include "data/ErrorDataModel.h"
@@ -16,7 +16,7 @@ namespace kd {
         /////////////////////////////////////////////////////////////////////////////////////////
 
         DCError::DCError(string checkModel) {
-            checkModel_ = checkModel;
+            checkId = checkModel;
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ namespace kd {
 
         string DCAttCheckError::toString() {
             stringstream ss;
-            ss << "\"" << checkModel_ << ":" << checkDesc_ << "\"," << modelName_ << "," << fieldName_ << ","
+            ss << "\"" << checkId << ":" << checkName << "\"," << modelName_ << "," << fieldName_ << ","
                << recordId_ << "," << errorDesc_;
             return ss.str();
         }
@@ -55,7 +55,7 @@ namespace kd {
         DCRelationCheckError::createByKXS_01_25(string model_name, string field,
                                                 string relation_name) {
             shared_ptr<DCRelationCheckError> error = make_shared<DCRelationCheckError>(CHECK_ITEM_KXS_ORG_025);
-            error->checkDesc_ = "字段关系检查";
+            error->checkName = "字段关系检查";
             stringstream ss;
             ss << model_name << "字段" << field << "在" << relation_name << "不存在";
             error->detail_ = ss.str();
@@ -89,17 +89,18 @@ namespace kd {
             if (att != nullptr) {
                 error->nodeId_ = att->dividerNode_->id_;
                 error->attId_ = att->id_;
-                error->lng_ = att->dividerNode_->coord_.lng_;
-                error->lat_ = att->dividerNode_->coord_.lat_;
-                error->z_ = att->dividerNode_->coord_.z_;
+                error->coord = att->dividerNode_->coord_;
             } else {
                 error->nodeId_ = "";
                 error->attId_ = "";
-                error->lng_ = 0.0;
-                error->lat_ = 0.0;
-                error->z_ = 0.0;
+                error->coord = make_shared<DCCoord>();
+                error->coord->lng_=0;
+                error->coord->lat_=0;
+                error->coord->z_=0;
             }
-
+            error->taskId_ = div->task_id_;
+            error->flag = div->flag_;
+            error->dataKey_ = DATA_TYPE_LANE+div->task_id_+DATA_TYPE_LAST_NUM;
             return error;
         }
 
@@ -115,17 +116,18 @@ namespace kd {
             if (node != nullptr) {
                 error->nodeId_ = node->id_;
                 error->attId_ = "";
-                error->lng_ = node->coord_.lng_;
-                error->lat_ = node->coord_.lat_;
-                error->z_ = node->coord_.z_;
+                error->coord = node->coord_;
             } else {
                 error->nodeId_ = "";
                 error->attId_ = "";
-                error->lng_ = 0.0;
-                error->lat_ = 0.0;
-                error->z_ = 0.0;
+                error->coord = make_shared<DCCoord>();
+                error->coord->lng_=0;
+                error->coord->lat_=0;
+                error->coord->z_=0;
             }
-
+            error->taskId_ = div->task_id_;
+            error->flag = div->flag_;
+            error->dataKey_ = DATA_TYPE_LANE+div->task_id_+DATA_TYPE_LAST_NUM;
             return error;
         }
 
@@ -135,9 +137,10 @@ namespace kd {
             error->dividerId_ = "";
             error->nodeId_ = nodeId;
             error->attId_ = "";
-            error->lng_ = lng;
-            error->lat_ = lat;
-            error->z_ = z;
+            error->coord = make_shared<DCCoord>();
+            error->coord->lng_ = lng;
+            error->coord->lat_ = lat;
+            error->coord->z_ = z;
 
             return error;
         }
@@ -145,7 +148,7 @@ namespace kd {
         shared_ptr<DCDividerCheckError> DCDividerCheckError::createByKXS_01_011(const string &divider_id,
                                                                       const vector<shared_ptr<NodeCompareError>> &ptr_error_nodes) {
             shared_ptr<DCDividerCheckError> error = make_shared<DCDividerCheckError>(CHECK_ITEM_KXS_ORG_011);
-            error->checkDesc_ = "车道线不平滑夹角";
+            error->checkName = "车道线不平滑夹角";
             error->detail_ += "divider:";
             error->detail_ += divider_id;
             for (const auto &error_node : ptr_error_nodes) {
@@ -167,7 +170,7 @@ namespace kd {
         shared_ptr<DCDividerCheckError> DCDividerCheckError::createByKXS_01_012(const string &divider_id,
                                                                       const vector<shared_ptr<NodeCompareError>> &ptr_error_nodes) {
             shared_ptr<DCDividerCheckError> error = make_shared<DCDividerCheckError>(CHECK_ITEM_KXS_ORG_012);
-            error->checkDesc_ = "存在长度小于0.2米的弧段";
+            error->checkName = "存在长度小于0.2米的弧段";
             error->detail_ += "divider_id:";
             error->detail_ += divider_id;
             for (const auto &error_node : ptr_error_nodes) {
@@ -192,13 +195,14 @@ namespace kd {
                 error->detail_ += "距离：";
                 error->detail_ += to_string(error_node->distance);
             }
+
             return error;
         }
 
         shared_ptr<DCDividerCheckError> DCDividerCheckError::createByKXS_01_013(const string &divider_id,
                                                                       const vector<shared_ptr<NodeCompareError>> &ptr_error_nodes) {
             shared_ptr<DCDividerCheckError> error = make_shared<DCDividerCheckError>(CHECK_ITEM_KXS_ORG_013);
-            error->checkDesc_ = "车道线高程突变";
+            error->checkName = "车道线高程突变";
             error->detail_ += "divider_id:";
             error->detail_ += divider_id;
             for (const auto &error_node : ptr_error_nodes) {
@@ -264,16 +268,19 @@ namespace kd {
             if (att != nullptr) {
                 error->nodeId_ = att->dividerNode_->id_;
                 error->attId_ = att->id_;
-                error->lng_ = att->dividerNode_->coord_.lng_;
-                error->lat_ = att->dividerNode_->coord_.lat_;
-                error->z_ = att->dividerNode_->coord_.z_;
+                error->coord = att->dividerNode_->coord_;
             } else {
                 error->nodeId_ = "";
                 error->attId_ = "";
-                error->lng_ = 0.0;
-                error->lat_ = 0.0;
-                error->z_ = 0.0;
+                error->coord = make_shared<DCCoord>();
+                error->coord->lng_=0;
+                error->coord->lat_=0;
+                error->coord->z_=0;
             }
+
+            error->taskId_ = lane->task_id_;
+            error->flag = lane->flag_;
+            error->dataKey_ = DATA_TYPE_LANE+lane->task_id_+DATA_TYPE_LAST_NUM;
 
             return error;
         }
@@ -298,15 +305,14 @@ namespace kd {
             if (node != nullptr) {
                 error->nodeId_ = node->id_;
                 error->attId_ = "";
-                error->lng_ = node->coord_.lng_;
-                error->lat_ = node->coord_.lat_;
-                error->z_ = node->coord_.z_;
+                error->coord = node->coord_;
             } else {
                 error->nodeId_ = "";
                 error->attId_ = "";
-                error->lng_ = 0.0;
-                error->lat_ = 0.0;
-                error->z_ = 0.0;
+                error->coord = make_shared<DCCoord>();
+                error->coord->lng_=0;
+                error->coord->lat_=0;
+                error->coord->z_=0;
             }
 
             return error;
@@ -349,7 +355,7 @@ namespace kd {
         DCLaneGroupCheckError::createByKXS_03_005(string road_id, long s_index, long e_index, bool is_positive) {
             shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>(CHECK_ITEM_KXS_LG_005);
             error->checkLevel_ = LEVEL_WARNING;
-            error->checkDesc_ = "自动生成二维路网时，车道组要对道路全覆盖";
+            error->checkName = "自动生成二维路网时，车道组要对道路全覆盖";
             error->detail = "roadid:" + road_id + "未全被车道组覆盖.未覆盖的范围是" +
                             to_string(s_index) + "," + to_string(e_index) + "," +
                             "lane group direction " + to_string(is_positive);
@@ -361,7 +367,7 @@ namespace kd {
         DCLaneGroupCheckError::createByKXS_03_005(string road_id, long index, bool is_positive) {
             shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>(CHECK_ITEM_KXS_LG_005);
             error->checkLevel_ = LEVEL_WARNING;
-            error->checkDesc_ = "自动生成二维路网时，车道组要对道路全覆盖";
+            error->checkName = "自动生成二维路网时，车道组要对道路全覆盖";
             error->detail = "roadid:" + road_id + "未全被车道组覆盖.未覆盖的节点" +
                             to_string(index) + "," + "lane group direction " + to_string(is_positive);
 
@@ -374,7 +380,7 @@ namespace kd {
                                                                                     long e_index2, bool is_positive) {
             shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>(CHECK_ITEM_KXS_LG_006);
             error->checkLevel_ = LEVEL_ERROR;
-            error->checkDesc_ = "ValidityRange之间不重叠或交叉";
+            error->checkName = "ValidityRange之间不重叠或交叉";
             error->detail = "roadid:" + road_id + "上的车道组关联关系有交叉." +
                             lg1 + ":" + to_string(s_index1) + "," + to_string(e_index1) + "," +
                             lg2 + ":" + to_string(s_index2) + "," + to_string(e_index2) + "," +
@@ -387,7 +393,7 @@ namespace kd {
                                                                                     set<string> lane_groups) {
             shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>(CHECK_ITEM_KXS_LG_004);
             error->checkLevel_ = LEVEL_ERROR;
-            error->checkDesc_ = "一条普通车道线存在于多个车道组中。两个车道组共用的双向车道线除外";
+            error->checkName = "一条普通车道线存在于多个车道组中。两个车道组共用的双向车道线除外";
             error->detail += "divider_id:";
             error->detail += divider_id;
             error->detail += "存在于分组";
@@ -402,7 +408,7 @@ namespace kd {
         shared_ptr<DCLaneGroupCheckError> DCLaneGroupCheckError::createByKXS_03_002(string lane_group_id) {
             shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>(CHECK_ITEM_KXS_LG_002);
             error->checkLevel_ = LEVEL_ERROR;
-            error->checkDesc_ = "分组中车道编号从零开始，从内向外递增。编号连续，不缺失，不重复。";
+            error->checkName = "分组中车道编号从零开始，从内向外递增。编号连续，不缺失，不重复。";
             error->detail += "lane_group_id:";
             error->detail += lane_group_id;
             error->detail += "车道编号异常";
@@ -414,10 +420,10 @@ namespace kd {
         DCLaneGroupCheckError::createByKXS_03_001(string lane_group_id, const vector<string> &dividers) {
             shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>(CHECK_ITEM_KXS_LG_001);
             error->checkLevel_ = LEVEL_WARNING;
-            error->checkDesc_ = "同一个车道组内，单根车道线的长度同组内车道线平均长度不应该偏差超过";
-            error->checkDesc_ += to_string((int) (DataCheckConfig::getInstance().getPropertyD(
+            error->checkName = "同一个车道组内，单根车道线的长度同组内车道线平均长度不应该偏差超过";
+            error->checkName += to_string((int) (DataCheckConfig::getInstance().getPropertyD(
                     DataCheckConfig::DIVIDER_LENGTH_RATIO) * 100));
-            error->checkDesc_ += "%以上。";
+            error->checkName += "%以上。";
             error->detail += "lane_group_id:";
             error->detail += lane_group_id;
             error->detail += "的divider长度异常：";
@@ -431,7 +437,7 @@ namespace kd {
 
         shared_ptr<DCLaneGroupCheckError> DCLaneGroupCheckError::createByKXS_03_027(string lane_group_id) {
             shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>(CHECK_ITEM_KXS_LG_027);
-            error->checkDesc_ = "车道组没有打断，不应该存在既是入口又是出口的组";
+            error->checkName = "车道组没有打断，不应该存在既是入口又是出口的组";
             error->detail += "lane_group_id:";
             error->detail += lane_group_id;
             error->detail += "车道组没有打断";
@@ -440,13 +446,20 @@ namespace kd {
         }
 
         shared_ptr<DCLaneGroupCheckError>
-        DCLaneGroupCheckError::createByKXS_03_003(string divider_id) {
+        DCLaneGroupCheckError::createByKXS_03_003( shared_ptr<DCDivider> div) {
             shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>(CHECK_ITEM_KXS_LG_003);
-            error->checkDesc_ = "车道线不存在于车道组中";
+            error->checkName = "车道线不存在于车道组中";
             error->detail += "divider_id:";
-            error->detail += divider_id;
+            error->detail += div->dividerNo_;
             error->detail += "是孤立的";
-
+            error->taskId_ = div->task_id_;
+            error->flag = div->flag_;
+            error->dataKey_ = DATA_TYPE_LANE+div->task_id_+DATA_TYPE_LAST_NUM;
+            error->coord = make_shared<DCCoord>();
+            error->coord->lng_ = 0;
+            error->coord->lat_ = 0;
+            error->coord->z_ = 0;
+            error->coord = nullptr;
             return error;
         }
 
@@ -468,7 +481,7 @@ namespace kd {
             shared_ptr<DCLaneGroupTopoCheckError> error = make_shared<DCLaneGroupTopoCheckError>(
                     CHECK_ITEM_KXS_ROAD_001);
             error->checkLevel_ = LEVEL_ERROR;
-            error->checkDesc_ = "若车道组之间连通，则其内部的道路必然连通。";
+            error->checkName = "若车道组之间连通，则其内部的道路必然连通。";
             error->detail += "lane group id:";
             error->detail += lg_id1;
             error->detail += ",lane group id:";
@@ -483,7 +496,7 @@ namespace kd {
             shared_ptr<DCLaneGroupTopoCheckError> error = make_shared<DCLaneGroupTopoCheckError>(
                     CHECK_ITEM_KXS_LANE_001);
             error->checkLevel_ = LEVEL_ERROR;
-            error->checkDesc_ = "如果车道组之间是“封闭”的，则车道组之间的车道不会存在孤立的车道。";
+            error->checkName = "如果车道组之间是“封闭”的，则车道组之间的车道不会存在孤立的车道。";
             error->detail += "lane group id:";
             error->detail += lg_id1;
             error->detail += ",lane group id:";
@@ -510,7 +523,7 @@ namespace kd {
                                                                           const string &lane_group_id) {
             shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_002);
             error->checkLevel_ = LEVEL_ERROR;
-            error->checkDesc_ = "道路与车道组的两个车道边缘线无交叉点。双向道路除外。";
+            error->checkName = "道路与车道组的两个车道边缘线无交叉点。双向道路除外。";
             error->detail += "road_id:";
             error->detail += road_id;
             error->detail += ",lane group id:";
@@ -523,7 +536,7 @@ namespace kd {
         shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_003(const string &road_id,
                                                                           vector<NodeCheck> &error_index_pair) {
             shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_003);
-            error->checkDesc_ = "道路高程突变>±10厘米/米。";
+            error->checkName = "道路高程突变>±10厘米/米。";
             error->detail += "road_id:";
             error->detail += road_id;
             error->detail += ",结点索引:";
@@ -546,7 +559,7 @@ namespace kd {
                                              const vector<shared_ptr<NodeError>> &ptr_error_nodes) {
             shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_006);
             error->checkLevel_ = LEVEL_ERROR;
-            error->checkDesc_ = "道路前后结点重复,前后点xy坐标相同（z值可能相同）";
+            error->checkName = "道路前后结点重复,前后点xy坐标相同（z值可能相同）";
             error->detail += "road_id:";
             error->detail += road_id;
             for (const auto &error_node : ptr_error_nodes) {
@@ -568,7 +581,7 @@ namespace kd {
         shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_007(const string &road_id,
                                                                           const vector<shared_ptr<NodeCompareError>> &ptr_error_nodes) {
             shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_007);
-            error->checkDesc_ = "道路结点出现拐点，或者角度过大";
+            error->checkName = "道路结点出现拐点，或者角度过大";
             error->detail += "road_id:";
             error->detail += road_id;
             for (const auto &error_node : ptr_error_nodes) {
@@ -591,7 +604,7 @@ namespace kd {
         shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_008(const string &road_id,
                                                                           const vector<shared_ptr<NodeCompareError>> &ptr_error_nodes) {
             shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_008);
-            error->checkDesc_ = "道路形态点间距过近";
+            error->checkName = "道路形态点间距过近";
             error->detail += "road_id:";
             error->detail += road_id;
             for (const auto &error_node : ptr_error_nodes) {
@@ -638,7 +651,7 @@ namespace kd {
                                                                 const string &divider_id) {
             shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_002);
             error->checkLevel_ = LEVEL_WARNING;
-            error->checkDesc_ = "车道中心线与车道线在5米内不能存在两个交点（只检查组内车道线有共点的做检查）。";
+            error->checkName = "车道中心线与车道线在5米内不能存在两个交点（只检查组内车道线有共点的做检查）。";
             error->detail += "lane_id:";
             error->detail += lane_id;
             error->detail += ",divider_id:";
@@ -655,7 +668,7 @@ namespace kd {
                                                                 const string &divider_id) {
             shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_003);
             error->checkLevel_ = LEVEL_ERROR;
-            error->checkDesc_ = "车道中心线与本组的车道边缘线无交叉点。";
+            error->checkName = "车道中心线与本组的车道边缘线无交叉点。";
             error->detail += "lane_id:";
             error->detail += lane_id;
             error->detail += ",divider_id:";
@@ -668,7 +681,7 @@ namespace kd {
         shared_ptr<DCLaneError> DCLaneError::createByKXS_05_015(const string &lane_id1, const string &lane_id2) {
             shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_015);
             error->checkLevel_ = LEVEL_ERROR;
-            error->checkDesc_ = "检查同组内中心线与中心线是否存在交叉问题（组内有共点的中心线做检查）。";
+            error->checkName = "检查同组内中心线与中心线是否存在交叉问题（组内有共点的中心线做检查）。";
             error->detail += "lane_id:";
             error->detail += lane_id1;
             error->detail += ",lane_id:";
@@ -682,7 +695,7 @@ namespace kd {
                                                                 const vector<shared_ptr<NodeError>> &ptr_error_nodes) {
             shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_016);
             error->checkLevel_ = LEVEL_ERROR;
-            error->checkDesc_ = "车道中心线前后结点重复,前后点xy坐标相同（z值可能相同）";
+            error->checkName = "车道中心线前后结点重复,前后点xy坐标相同（z值可能相同）";
             error->detail += "lane_id:";
             error->detail += lane_id;
             for (const auto &error_node : ptr_error_nodes) {
@@ -708,7 +721,7 @@ namespace kd {
         shared_ptr<DCAdasError> DCAdasError::createByKXS_07_001(long road_id, string f_adas_node_id,
                                                                 string t_adas_node_id, double distance) {
             shared_ptr<DCAdasError> error = make_shared<DCAdasError>(CHECK_ITEM_KXS_ADAS_001);
-            error->checkDesc_ = "相邻属性点间的距离不等于1米，除去与终点距离可能小于1米。";
+            error->checkName = "相邻属性点间的距离不等于1米，除去与终点距离可能小于1米。";
             error->detail += "road_id:";
             error->detail += std::to_string(road_id);
             error->detail += ",属性点adas_node_id:";
@@ -726,7 +739,7 @@ namespace kd {
         shared_ptr<DCAdasError> DCAdasError::createByKXS_07_002(long road_id, const shared_ptr<DCCoord> &ptr_coord,
                                                                 long index, double distance) {
             shared_ptr<DCAdasError> error = make_shared<DCAdasError>(CHECK_ITEM_KXS_ADAS_002);
-            error->checkDesc_ = "属性点与拟合曲线属性点的距离不大于10厘米。";
+            error->checkName = "属性点与拟合曲线属性点的距离不大于10厘米。";
             error->detail += "road_id:";
             error->detail += std::to_string(road_id);
             error->detail += ",属性点索引:";
@@ -758,7 +771,7 @@ namespace kd {
 
         shared_ptr<DCFieldError> DCFieldError::createByKXS_01_019(const string &detail) {
             shared_ptr<DCFieldError> error = make_shared<DCFieldError>(CHECK_ITEM_KXS_ORG_019);
-            error->checkDesc_ = "字段范围检查";
+            error->checkName = "字段范围检查";
             error->detail = detail;
 
             return error;
@@ -766,7 +779,7 @@ namespace kd {
 
         shared_ptr<DCFieldError> DCFieldError::createByKXS_01_020(const string &file) {
             shared_ptr<DCFieldError> error = make_shared<DCFieldError>(CHECK_ITEM_KXS_ORG_020);
-            error->checkDesc_ = "缺少数据文件，或者数据为空";
+            error->checkName = "缺少数据文件，或者数据为空";
             error->detail = file;
 
             return error;
@@ -782,7 +795,7 @@ namespace kd {
         shared_ptr<DCFieldError> DCFieldError::createByKXS_01_024(const string &type,
                                                                   const string &id, const set<long> &index) {
             shared_ptr<DCFieldError> error = make_shared<DCFieldError>(CHECK_ITEM_KXS_ORG_024);
-            error->checkDesc_ = "结点坐标有效性检查";
+            error->checkName = "结点坐标有效性检查";
             error->detail = type;
             error->detail += ":";
             error->detail += id;

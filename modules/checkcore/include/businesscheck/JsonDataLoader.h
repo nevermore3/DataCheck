@@ -22,6 +22,8 @@ namespace kd {
 
         private:
             bool LoadJsonData(shared_ptr<ResourceManager> resource_manager);
+            void GetFileTaskId(const string& file_path, int file_name_mode, string& task_id,
+                               string& task_bound_id , string& data_key);
         private:
             const string id_ = "json_data_loader";
             string json_data_path_;

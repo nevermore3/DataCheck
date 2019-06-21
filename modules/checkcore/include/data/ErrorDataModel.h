@@ -78,7 +78,7 @@ namespace kd {
             string taskId_;
 
             //融合任务框号
-            string boundId_;
+//            string boundId_;
             //数据KEY
             string dataKey_;
 
@@ -188,15 +188,6 @@ namespace kd {
             //节点id
             string nodeId_;
 
-            //节点、属性变化点对应的经度
-            double lng_;
-
-            //节点、属性变化点对应的纬度
-            double lat_;
-
-            //节点、属性变化点对应的高度
-            double z_;
-
             //错误描述
             string errorDesc_;
         };
@@ -300,7 +291,7 @@ namespace kd {
 
             static shared_ptr<DCLaneGroupCheckError> createByKXS_03_004(string divider_id, set<string> lane_groups);
 
-            static shared_ptr<DCLaneGroupCheckError> createByKXS_03_003(string divider_id);
+            static shared_ptr<DCLaneGroupCheckError> createByKXS_03_003(shared_ptr<DCDivider> div);
 
             static shared_ptr<DCLaneGroupCheckError> createByKXS_03_002(string lane_group_id);
 

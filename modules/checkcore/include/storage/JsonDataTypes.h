@@ -79,6 +79,8 @@ public:
                           const string& error_desc,
                           const string& task_id,
                           const string& err_type,
+                          const string& data_key,
+                          const string& bound_id,
                           const string& flag,
                           shared_ptr<DCCoord> node);
 

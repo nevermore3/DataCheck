@@ -79,6 +79,8 @@ void JsonLog::AppendCheckError(
         const string& error_desc,
         const string& task_id,
         const string& err_type,
+        const string& data_key,
+        const string& bound_id,
         const string& flag,
         shared_ptr<DCCoord> node) {
     LogProperty log_property;
@@ -92,9 +94,9 @@ void JsonLog::AppendCheckError(
 
     log_property.task_id = task_id;
     log_property.err_type = err_type;
-    log_property.data_key =
-            GetKeyByTask(task_id, ORIGIN_TYPE_LANE);
-    log_property.frame_id = "";//TaskInfoManager::GetInstance().GetBoundIdByTask(task_id);
+    log_property.data_key =data_key;
+//            GetKeyByTask(task_id, ORIGIN_TYPE_LANE);
+    log_property.frame_id = bound_id;//TaskInfoManager::GetInstance().GetBoundIdByTask(task_id);
 
     AppendCheckError(log_property, node);
 }

@@ -261,7 +261,9 @@ namespace kd {
                     stringstream ss;
                     ss << "divider_node:" << topoNode->nodeId_ << " has no FDNODE relation.";
                     error->errorDesc_ = ss.str();
-
+//                    error->taskId_ = div->task_id_;
+//                    error->flag = div->flag_;
+//                    error->dataKey_ = DATA_TYPE_LANE+div->task_id_+DATA_TYPE_LAST_NUM;
                     errorOutput->saveError(error);
                 }
 

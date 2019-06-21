@@ -100,9 +100,6 @@ namespace kd {
 
             string flag_;
 
-            string bound_id_;
-
-            string data_key_;
         };
 
 

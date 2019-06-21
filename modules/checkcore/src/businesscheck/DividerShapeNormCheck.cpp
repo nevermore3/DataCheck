@@ -49,6 +49,11 @@ namespace kd {
 
             if (ptr_error_nodes.size() > 1) {
                 auto ptr_error = DCDividerCheckError::createByKXS_01_011(dc_divider->id_, ptr_error_nodes);
+
+                ptr_error->taskId_ = dc_divider->task_id_;
+                ptr_error->flag = dc_divider->flag_;
+                ptr_error->dataKey_ = DATA_TYPE_LANE+dc_divider->task_id_+DATA_TYPE_LAST_NUM;
+
                 error_output_->saveError(ptr_error);
             }
 
@@ -61,6 +66,10 @@ namespace kd {
 
             if (ptr_error_nodes.size() > 1) {
                 auto ptr_error = DCDividerCheckError::createByKXS_01_012(dc_divider->id_, ptr_error_nodes);
+                ptr_error->taskId_ = dc_divider->task_id_;
+                ptr_error->flag = dc_divider->flag_;
+                ptr_error->dataKey_ = DATA_TYPE_LANE+dc_divider->task_id_+DATA_TYPE_LAST_NUM;
+
                 error_output_->saveError(ptr_error);
             }
         }
@@ -72,6 +81,9 @@ namespace kd {
 
             if (ptr_error_nodes.size() > 1) {
                 auto ptr_error = DCDividerCheckError::createByKXS_01_013(dc_divider->id_, ptr_error_nodes);
+                ptr_error->taskId_ = dc_divider->task_id_;
+                ptr_error->flag = dc_divider->flag_;
+                ptr_error->dataKey_ = DATA_TYPE_LANE+dc_divider->task_id_+DATA_TYPE_LAST_NUM;
                 error_output_->saveError(ptr_error);
             }
         }

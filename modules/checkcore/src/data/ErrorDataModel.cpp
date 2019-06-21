@@ -99,7 +99,6 @@ namespace kd {
                 error->coord->z_=0;
             }
             error->taskId_ = div->task_id_;
-            error->boundId_= DataCheckConfig::getInstance().getProperty(div->task_id_);
             error->flag = div->flag_;
             error->dataKey_ = DATA_TYPE_LANE+div->task_id_+DATA_TYPE_LAST_NUM;
             return error;
@@ -126,7 +125,9 @@ namespace kd {
                 error->coord->lat_=0;
                 error->coord->z_=0;
             }
-
+            error->taskId_ = div->task_id_;
+            error->flag = div->flag_;
+            error->dataKey_ = DATA_TYPE_LANE+div->task_id_+DATA_TYPE_LAST_NUM;
             return error;
         }
 
@@ -136,9 +137,10 @@ namespace kd {
             error->dividerId_ = "";
             error->nodeId_ = nodeId;
             error->attId_ = "";
-            error->lng_ = lng;
-            error->lat_ = lat;
-            error->z_ = z;
+            error->coord = make_shared<DCCoord>();
+            error->coord->lng_ = lng;
+            error->coord->lat_ = lat;
+            error->coord->z_ = z;
 
             return error;
         }
@@ -193,6 +195,7 @@ namespace kd {
                 error->detail_ += "距离：";
                 error->detail_ += to_string(error_node->distance);
             }
+
             return error;
         }
 
@@ -274,6 +277,10 @@ namespace kd {
                 error->coord->lat_=0;
                 error->coord->z_=0;
             }
+
+            error->taskId_ = lane->task_id_;
+            error->flag = lane->flag_;
+            error->dataKey_ = DATA_TYPE_LANE+lane->task_id_+DATA_TYPE_LAST_NUM;
 
             return error;
         }
@@ -439,13 +446,20 @@ namespace kd {
         }
 
         shared_ptr<DCLaneGroupCheckError>
-        DCLaneGroupCheckError::createByKXS_03_003(string divider_id) {
+        DCLaneGroupCheckError::createByKXS_03_003( shared_ptr<DCDivider> div) {
             shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>(CHECK_ITEM_KXS_LG_003);
             error->checkName = "车道线不存在于车道组中";
             error->detail += "divider_id:";
-            error->detail += divider_id;
+            error->detail += div->dividerNo_;
             error->detail += "是孤立的";
-
+            error->taskId_ = div->task_id_;
+            error->flag = div->flag_;
+            error->dataKey_ = DATA_TYPE_LANE+div->task_id_+DATA_TYPE_LAST_NUM;
+            error->coord = make_shared<DCCoord>();
+            error->coord->lng_ = 0;
+            error->coord->lat_ = 0;
+            error->coord->z_ = 0;
+            error->coord = nullptr;
             return error;
         }
 

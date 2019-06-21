@@ -276,6 +276,10 @@ namespace kd {
                         shared_ptr<DCError> ptr_error = DCAdasError::createByKXS_07_001(road_id, f_adas_node_id,
                                                                                         t_adas_node_id, distance);
                         if (ptr_error) {
+                            ptr_error->flag = adas_node_iter->second->flag_;
+                            ptr_error->taskId_ = adas_node_iter->second->task_id_;
+                            ptr_error->dataKey_ = DATA_TYPE_LANE+ptr_error->taskId_+DATA_TYPE_LAST_NUM;
+                            ptr_error->coord = adas_node_iter->second->coord_;
                             error_output->saveError(ptr_error);
                         }
                     }

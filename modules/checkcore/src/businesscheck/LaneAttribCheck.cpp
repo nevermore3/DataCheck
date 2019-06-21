@@ -55,7 +55,7 @@ namespace kd {
                     || (leftDiv->direction_ == 4 && leftDiv->direction_ != 4)) {
                     shared_ptr<DCLaneCheckError> error =
                             DCLaneCheckError::createByAtt(CHECK_ITEM_KXS_LANE_008, lane, nullptr);
-                    error->checkDesc_ = "车道线方向冲突";
+                    error->checkName = "车道线方向冲突";
                     stringstream ss;
                     ss << "divider:" << leftDiv->id_;
                     ss << "与divider:" << rightDiv->id_ << "方向冲突";
@@ -96,7 +96,7 @@ namespace kd {
                 if (fAngle > limitAngle) {
                     shared_ptr<DCLaneCheckError> error =
                             DCLaneCheckError::createByAtt(CHECK_ITEM_KXS_LANE_008, lane, nullptr);
-                    error->checkDesc_ = "车道线方向冲突";
+                    error->checkName = "车道线方向冲突";
                     stringstream ss;
                     ss << "divider:" << leftDiv->id_;
                     ss << "与divider:" << rightDiv->id_ << "方向冲突";
@@ -118,7 +118,7 @@ namespace kd {
                     //车道线没有属性变化点
                     shared_ptr<DCLaneCheckError> error =
                             DCLaneCheckError::createByAtt(CHECK_ITEM_KXS_LANE_010, lane, nullptr);
-                    error->checkDesc_ = "车道右侧车道线起点没有LA";
+                    error->checkName = "车道右侧车道线起点没有LA";
                     error->errorDesc_ = "lane_id:";
                     error->errorDesc_ += lane->id_;
 
@@ -131,7 +131,7 @@ namespace kd {
                     //车道线起点没有属性变化点
                     shared_ptr<DCLaneCheckError> error =
                             DCLaneCheckError::createByAtt(CHECK_ITEM_KXS_LANE_010, lane, nullptr);
-                    error->checkDesc_ = "车道线起点没有属性变化点";
+                    error->checkName = "车道线起点没有属性变化点";
                     error->errorDesc_ = "lane_id:";
                     error->errorDesc_ += lane->id_;
 
@@ -161,7 +161,7 @@ namespace kd {
                     if (la1 != nullptr && la1->typeSame(la2)) {
                         shared_ptr<DCLaneCheckError> error =
                                 DCLaneCheckError::createByAtt(CHECK_ITEM_KXS_LANE_011, lane, la1);
-                        error->checkDesc_ = "同一Divider上相邻两个LA属性完全相同";
+                        error->checkName = "同一Divider上相邻两个LA属性完全相同";
                         stringstream ss;
                         ss << "la_id:" << la1->id_ << "与la_id:" << la2->id_ << "属性相同";
                         error->errorDesc_ = ss.str();
@@ -203,7 +203,7 @@ namespace kd {
                     if (distance < laSpaceLen) {
                         shared_ptr<DCLaneCheckError> error =
                                 DCLaneCheckError::createByAtt(CHECK_ITEM_KXS_LANE_011, lane, la1);
-                        error->checkDesc_ = "同一Divider上相邻两个LA距离<1米";
+                        error->checkName = "同一Divider上相邻两个LA距离<1米";
                         stringstream ss;
                         ss << "la_id:" << la1->id_ << "与la_id：" << la2->id_ << "相距" << distance << "米";
                         error->errorDesc_ = ss.str();

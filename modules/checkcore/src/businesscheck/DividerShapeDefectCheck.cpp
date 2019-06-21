@@ -72,7 +72,7 @@ namespace kd {
                 if (distance > distLimit) {
                     shared_ptr<DCDividerCheckError> error =
                             DCDividerCheckError::createByNode(checkModel, div, node1);
-                    error->checkDesc_ = "检查车道线节点间距判定是否中间有虚线丢失";
+                    error->checkName = "检查车道线节点间距判定是否中间有虚线丢失";
                     stringstream ss;
                     ss << "node_id:" << node1->id_ << "与node_id:" << node2->id_ << "距离" << distance << "米";
                     error->errorDesc_ = ss.str();

@@ -77,7 +77,7 @@ namespace kd {
                             err_type = "E1";
                             ret = 1;
                         }
-                        JsonLog::GetInstance().AppendCheckError(item.checkId,item.checkName,item.errDesc,taskId,err_type,"1", item.coord);
+                        JsonLog::GetInstance().AppendCheckError(item.checkId,item.checkName,item.errDesc,taskId,err_type,item.flag, item.coord);
                     }
                 }
                 string errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::ERR_JSON_PATH);
@@ -180,22 +180,23 @@ namespace kd {
             if (error) {
                 ErrorOutPut error_output;
 
-                error_output.checkId = error->checkModel_;
-                error_output.checkName = error->checkDesc_;
-                error_output.level = get_error_level(error->checkModel_);
+                error_output.checkId = error->checkId;
+                error_output.checkName = error->checkName;
+                error_output.level = get_error_level(error->checkId);
                 error_output.errDesc = error->toString();
                 error_output.taskId = error->taskId_;
                 error_output.boundId = error->boundId_;
                 error_output.dataKey = error->dataKey_;
+                error_output.flag = error->flag;
                 error_output.coord = error->coord;
 
-                auto check_model_iter = check_model_2_output_maps_.find(error->checkModel_);
+                auto check_model_iter = check_model_2_output_maps_.find(error->checkId);
                 if (check_model_iter != check_model_2_output_maps_.end()) {
                     check_model_iter->second.emplace_back(error_output);
                 } else {
                     vector<ErrorOutPut> error_output_vec;
                     error_output_vec.emplace_back(error_output);
-                    check_model_2_output_maps_.insert(make_pair(error->checkModel_, error_output_vec));
+                    check_model_2_output_maps_.insert(make_pair(error->checkId, error_output_vec));
                 }
             } else {
                 LOG(ERROR) << "saveError error is null!";

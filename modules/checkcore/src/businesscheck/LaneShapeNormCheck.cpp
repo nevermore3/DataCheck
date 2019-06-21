@@ -167,7 +167,7 @@ namespace kd {
                         if (area > overlapArea) {
                             shared_ptr<DCLaneCheckError> error = DCLaneCheckError::createByAtt(CHECK_ITEM_KXS_LANE_006,
                                                                                                curLane, nullptr);
-                            error->checkDesc_ = "车道面和其他车道面相交";
+                            error->checkName = "车道面和其他车道面相交";
                             stringstream ss;
                             ss << "lane_id:" << curLane->id_ << "与lane_id:" << nxtLane->id_ << "相交";
                             error->errorDesc_ = ss.str();
@@ -280,7 +280,7 @@ namespace kd {
                 if (bError) {
                     shared_ptr<DCLaneCheckError> error = DCLaneCheckError::createByAtt(CHECK_ITEM_KXS_LANE_007, lane,
                                                                                        nullptr);
-                    error->checkDesc_ = "车道面的4个角点构成夹角<45°或者>135°";
+                    error->checkName = "车道面的4个角点构成夹角<45°或者>135°";
                     stringstream ss;
                     ss << "lane_id:" << lane->id_ << ",left_divider:" << lane->leftDivider_->id_ << ",right_divider:"
                        << lane->rightDivider_->id_;
@@ -342,7 +342,7 @@ namespace kd {
                                 shared_ptr<DCLaneCheckError> error =
                                         DCLaneCheckError::createByNode(CHECK_ITEM_KXS_LANE_009, lane,
                                                                        rightDiv->nodes_[i]);
-                                error->checkDesc_ = "车道宽度最窄处不能<2.5米";
+                                error->checkName = "车道宽度最窄处不能<2.5米";
                                 stringstream ss;
                                 ss << "divider:" << rightDiv->id_ << ",nodeid:" << dcNode->id_ << "与divider:"
                                    << leftDiv->id_ << "距离" << length;
@@ -381,7 +381,7 @@ namespace kd {
                                 shared_ptr<DCLaneCheckError> error =
                                         DCLaneCheckError::createByNode(CHECK_ITEM_KXS_LANE_009, lane,
                                                                        rightDiv->nodes_[i]);
-                                error->checkDesc_ = "车道宽度最大不能>7米";
+                                error->checkName = "车道宽度最大不能>7米";
                                 stringstream ss;
                                 ss << "divider:" << rightDiv->id_ << "，nodeid:" << dcNode->id_ << "与divider:"
                                    << leftDiv->id_ << "距离" << length;

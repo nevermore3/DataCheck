@@ -22,6 +22,7 @@ namespace kd {
             string taskId;//任务号
             string boundId;//任务框号
             string dataKey;//数据KEY
+            string flag;
             shared_ptr<DCCoord> coord;
         };
 

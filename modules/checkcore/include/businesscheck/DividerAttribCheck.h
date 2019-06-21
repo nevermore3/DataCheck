@@ -68,8 +68,6 @@ namespace kd {
              */
             double calLength(shared_ptr<DCDivider> div, int begin, int end, bool direction);
 
-            void saveError(DCModel dcModel,const string& errorDesc,shared_ptr<DCCoord> coord,shared_ptr<ErrorOutPut> errorOutPut);
-
         private:
 
             const string id = "divider_attrib_check";

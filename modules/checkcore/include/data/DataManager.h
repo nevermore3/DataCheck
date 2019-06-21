@@ -14,6 +14,12 @@
 namespace kd {
    namespace dc {
 
+       static const string DATA_TYPE_LANE = "lane_";
+       static const string DATA_TYPE_SIGN = "sign_";
+       static const string DATA_TYPE_GROUND = "ground_";
+       static const string DATA_TYPE_POLE = "pole_";
+       static const string DATA_TYPE_LAST_NUM = "_1";
+
         /**
          * 内存数据管理
          */

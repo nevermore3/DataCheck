@@ -140,7 +140,7 @@ namespace kd {
                         divider->fromNodeId_ != divider->nodes_.back()->id_) {
                         shared_ptr<DCDividerCheckError> error =
                                 DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_018, divider, nullptr);
-                        error->checkDesc_ = "DIVIDER的FDNODE与TDNODE应该是实际的首尾点";
+                        error->checkName = "DIVIDER的FDNODE与TDNODE应该是实际的首尾点";
                         stringstream ss;
                         ss << "divider:" << divider->id_ << ",from node_id:" << divider->fromNodeId_ << "标记错误";
                         error->errorDesc_ = ss.str();
@@ -151,7 +151,7 @@ namespace kd {
                         divider->toNodeId_ != divider->nodes_.back()->id_) {
                         shared_ptr<DCDividerCheckError> error =
                                 DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_018, divider, nullptr);
-                        error->checkDesc_ = "DIVIDER的FDNODE与TDNODE应该是实际的首尾点";
+                        error->checkName = "DIVIDER的FDNODE与TDNODE应该是实际的首尾点";
                         stringstream ss;
                         ss << "divider:" << divider->id_ << ",to node_id:" << divider->fromNodeId_ << "标记错误";
                         error->errorDesc_ = ss.str();

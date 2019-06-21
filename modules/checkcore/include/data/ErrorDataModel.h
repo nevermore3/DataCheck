@@ -63,10 +63,10 @@ namespace kd {
 
         public:
             //检测模型
-            string checkModel_;
+            string checkId;
 
             //设置检查模型描述信息
-            string checkDesc_;
+            string checkName;
 
             //错误详细信息描述
             string detail_;

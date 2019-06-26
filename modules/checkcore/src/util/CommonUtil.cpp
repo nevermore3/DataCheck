@@ -240,8 +240,8 @@ namespace kd {
                                                             const shared_ptr<DCDividerNode> &divider_node2) {
             vector<shared_ptr<DCCoord>> ptr_coords;
             if (divider_node1 && divider_node2) {
-                shared_ptr<DCCoord> ptr_coord1 = make_shared<DCCoord>(divider_node1->coord_);
-                shared_ptr<DCCoord> ptr_coord2 = make_shared<DCCoord>(divider_node2->coord_);
+                shared_ptr<DCCoord> ptr_coord1 = divider_node1->coord_;
+                shared_ptr<DCCoord> ptr_coord2 = divider_node2->coord_;
 
                 ptr_coords.emplace_back(ptr_coord1);
                 ptr_coords.emplace_back(ptr_coord2);
@@ -285,9 +285,9 @@ namespace kd {
                 double X0, Y0;
                 char zone0[8] = {0};
 
-                Coordinates::ll2utm(node->coord_.lat_, node->coord_.lng_, X0, Y0, zone0);
+                Coordinates::ll2utm(node->coord_->lat_, node->coord_->lng_, X0, Y0, zone0);
 
-                cl->add(geos::geom::Coordinate(X0, Y0, node->coord_.z_));
+                cl->add(geos::geom::Coordinate(X0, Y0, node->coord_->z_));
             }
 
             if (cl->size() >= 2) {
@@ -305,10 +305,10 @@ namespace kd {
                                                        const shared_ptr<DCDivider> &right_divider) {
             auto first_ptr_node = left_divider->nodes_;
             auto second_ptr_node = right_divider->nodes_;
-            if (calLaneSameDir(first_ptr_node[0]->coord_.lng_, first_ptr_node[0]->coord_.lat_,
-                               first_ptr_node[1]->coord_.lng_, first_ptr_node[1]->coord_.lat_,
-                               second_ptr_node[0]->coord_.lng_, second_ptr_node[0]->coord_.lat_,
-                               second_ptr_node[1]->coord_.lng_, second_ptr_node[1]->coord_.lat_)) {
+            if (calLaneSameDir(first_ptr_node[0]->coord_->lng_, first_ptr_node[0]->coord_->lat_,
+                               first_ptr_node[1]->coord_->lng_, first_ptr_node[1]->coord_->lat_,
+                               second_ptr_node[0]->coord_->lng_, second_ptr_node[0]->coord_->lat_,
+                               second_ptr_node[1]->coord_->lng_, second_ptr_node[1]->coord_->lat_)) {
                 return true;
             }
             return false;
@@ -373,9 +373,9 @@ namespace kd {
                 vector<shared_ptr<DCCoord>> divider_node_vecs;
                 if (is_front) {
                     ret_ptr_node = ptr_divider->nodes_.back();
-                    divider_node_vecs.emplace_back(make_shared<DCCoord>(ptr_divider->nodes_.front()->coord_));
+                    divider_node_vecs.emplace_back(ptr_divider->nodes_.front()->coord_);
                     for (int i = 1; i < ptr_divider->nodes_.size(); i++) {
-                        divider_node_vecs.emplace_back(make_shared<DCCoord>(ptr_divider->nodes_[i]->coord_));
+                        divider_node_vecs.emplace_back(ptr_divider->nodes_[i]->coord_);
                         double temp_length = GeosObjUtil::get_length_of_coords(divider_node_vecs);
                         if (temp_length > length) {
                             ret_ptr_node = ptr_divider->nodes_[i];
@@ -384,9 +384,9 @@ namespace kd {
                     }
                 } else {
                     ret_ptr_node = ptr_divider->nodes_.front();
-                    divider_node_vecs.emplace_back(make_shared<DCCoord>(ptr_divider->nodes_.back()->coord_));
+                    divider_node_vecs.emplace_back(ptr_divider->nodes_.back()->coord_);
                     for (int i = static_cast<int>(ptr_divider->nodes_.size() - 2); i >= 0; i--) {
-                        divider_node_vecs.emplace_back(make_shared<DCCoord>(ptr_divider->nodes_[i]->coord_));
+                        divider_node_vecs.emplace_back(ptr_divider->nodes_[i]->coord_);
                         double temp_length = GeosObjUtil::get_length_of_coords(divider_node_vecs);
                         if (temp_length > length) {
                             ret_ptr_node = ptr_divider->nodes_[i];

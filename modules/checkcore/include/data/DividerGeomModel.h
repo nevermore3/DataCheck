@@ -95,6 +95,11 @@ namespace kd {
 
             //对象是否有效，默认true代表有效，当删除时，可将本变量置为false来实现逻辑删除
             bool valid_;
+
+            string task_id_;
+
+            string flag_;
+
         };
 
 
@@ -152,7 +157,7 @@ namespace kd {
 
         public:
             //坐标信息
-            DCCoord coord_;
+            shared_ptr<DCCoord> coord_;
 
             //虚线起终点类型: "0：实线, 1：虚线起点, 2：虚线终点, 3：虚线中间点"
             long dashType_;

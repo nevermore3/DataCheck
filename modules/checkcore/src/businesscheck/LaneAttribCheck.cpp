@@ -55,7 +55,7 @@ namespace kd {
                     || (leftDiv->direction_ == 4 && leftDiv->direction_ != 4)) {
                     shared_ptr<DCLaneCheckError> error =
                             DCLaneCheckError::createByAtt(CHECK_ITEM_KXS_LANE_008, lane, nullptr);
-                    error->checkDesc_ = "车道线方向冲突";
+                    error->checkName = "车道线方向冲突";
                     stringstream ss;
                     ss << "divider:" << leftDiv->id_;
                     ss << "与divider:" << rightDiv->id_ << "方向冲突";
@@ -67,8 +67,8 @@ namespace kd {
 
                 //通过左车道分割线方向获取同行方向起始终止点坐标
                 string lId = leftDiv->fromNodeId_;
-                DCCoord lscoord = leftDiv->nodes_[0]->coord_;//通行方向起点
-                DCCoord lecoord = leftDiv->nodes_[leftDiv->nodes_.size() - 1]->coord_;//通行方向终点
+                shared_ptr<DCCoord>  lscoord = leftDiv->nodes_[0]->coord_;//通行方向起点
+                shared_ptr<DCCoord>  lecoord = leftDiv->nodes_[leftDiv->nodes_.size() - 1]->coord_;//通行方向终点
                 if (leftDiv->direction_ == 3) {
                     lscoord = leftDiv->nodes_[leftDiv->nodes_.size() - 1]->coord_;
                     lecoord = leftDiv->nodes_[0]->coord_;
@@ -79,8 +79,8 @@ namespace kd {
 
                 //通过右车道分割线方向获取同行方向起始终止点坐标
                 string rId = rightDiv->fromNodeId_;
-                DCCoord rscoord = rightDiv->nodes_[0]->coord_;//通行方向起点
-                DCCoord recoord = rightDiv->nodes_[rightDiv->nodes_.size() - 1]->coord_;//通行方向终点
+                shared_ptr<DCCoord> rscoord = rightDiv->nodes_[0]->coord_;//通行方向起点
+                shared_ptr<DCCoord>  recoord = rightDiv->nodes_[rightDiv->nodes_.size() - 1]->coord_;//通行方向终点
                 if (rightDiv->direction_ == 3) {
                     rscoord = rightDiv->nodes_[rightDiv->nodes_.size() - 1]->coord_;
                     recoord = rightDiv->nodes_[0]->coord_;
@@ -90,13 +90,13 @@ namespace kd {
                 }
 
                 //检查矢量化方向是否相同，两条车道分割线的首尾连线夹角是否为锐角
-                double leftAngle = geo_util::calcAngle(lscoord.lng_, lscoord.lat_, lecoord.lng_, lecoord.lat_);
-                double rightAngle = geo_util::calcAngle(rscoord.lng_, rscoord.lat_, recoord.lng_, recoord.lat_);
+                double leftAngle = geo_util::calcAngle(lscoord->lng_, lscoord->lat_, lecoord->lng_, lecoord->lat_);
+                double rightAngle = geo_util::calcAngle(rscoord->lng_, rscoord->lat_, recoord->lng_, recoord->lat_);
                 double fAngle = fabs(leftAngle - rightAngle);
                 if (fAngle > limitAngle) {
                     shared_ptr<DCLaneCheckError> error =
                             DCLaneCheckError::createByAtt(CHECK_ITEM_KXS_LANE_008, lane, nullptr);
-                    error->checkDesc_ = "车道线方向冲突";
+                    error->checkName = "车道线方向冲突";
                     stringstream ss;
                     ss << "divider:" << leftDiv->id_;
                     ss << "与divider:" << rightDiv->id_ << "方向冲突";
@@ -118,7 +118,7 @@ namespace kd {
                     //车道线没有属性变化点
                     shared_ptr<DCLaneCheckError> error =
                             DCLaneCheckError::createByAtt(CHECK_ITEM_KXS_LANE_010, lane, nullptr);
-                    error->checkDesc_ = "车道右侧车道线起点没有LA";
+                    error->checkName = "车道右侧车道线起点没有LA";
                     error->errorDesc_ = "lane_id:";
                     error->errorDesc_ += lane->id_;
 
@@ -131,7 +131,7 @@ namespace kd {
                     //车道线起点没有属性变化点
                     shared_ptr<DCLaneCheckError> error =
                             DCLaneCheckError::createByAtt(CHECK_ITEM_KXS_LANE_010, lane, nullptr);
-                    error->checkDesc_ = "车道线起点没有属性变化点";
+                    error->checkName = "车道线起点没有属性变化点";
                     error->errorDesc_ = "lane_id:";
                     error->errorDesc_ += lane->id_;
 
@@ -161,7 +161,7 @@ namespace kd {
                     if (la1 != nullptr && la1->typeSame(la2)) {
                         shared_ptr<DCLaneCheckError> error =
                                 DCLaneCheckError::createByAtt(CHECK_ITEM_KXS_LANE_011, lane, la1);
-                        error->checkDesc_ = "同一Divider上相邻两个LA属性完全相同";
+                        error->checkName = "同一Divider上相邻两个LA属性完全相同";
                         stringstream ss;
                         ss << "la_id:" << la1->id_ << "与la_id:" << la2->id_ << "属性相同";
                         error->errorDesc_ = ss.str();
@@ -197,13 +197,13 @@ namespace kd {
 
                     auto node1 = la1->dividerNode_;
                     auto node2 = la2->dividerNode_;
-                    double distance = KDGeoUtil::distanceLL(node1->coord_.lng_, node1->coord_.lat_, node2->coord_.lng_,
-                                                            node2->coord_.lat_);
+                    double distance = KDGeoUtil::distanceLL(node1->coord_->lng_, node1->coord_->lat_, node2->coord_->lng_,
+                                                            node2->coord_->lat_);
 
                     if (distance < laSpaceLen) {
                         shared_ptr<DCLaneCheckError> error =
                                 DCLaneCheckError::createByAtt(CHECK_ITEM_KXS_LANE_011, lane, la1);
-                        error->checkDesc_ = "同一Divider上相邻两个LA距离<1米";
+                        error->checkName = "同一Divider上相邻两个LA距离<1米";
                         stringstream ss;
                         ss << "la_id:" << la1->id_ << "与la_id：" << la2->id_ << "相距" << distance << "米";
                         error->errorDesc_ = ss.str();

@@ -49,10 +49,20 @@ namespace kd {
 
                         if (lane_divider_intersect(mapDataManager, ptr_lane, left_ptr_divider)) {
                             ptr_error = DCLaneError::createByKXS_05_003(ptr_lane->id_, left_ptr_divider->id_);
+
+                            ptr_error->taskId_ = ptr_lane->task_id_;
+                            ptr_error->flag = ptr_lane->flag_;
+                            ptr_error->dataKey_ = DATA_TYPE_LANE+ptr_lane->task_id_+DATA_TYPE_LAST_NUM;
+
                             errorOutput->saveError(ptr_error);
                         }
                         if (lane_divider_intersect(mapDataManager, ptr_lane, right_ptr_divider)) {
                             ptr_error = DCLaneError::createByKXS_05_003(ptr_lane->id_, right_ptr_divider->id_);
+
+                            ptr_error->taskId_ = ptr_lane->task_id_;
+                            ptr_error->flag = ptr_lane->flag_;
+                            ptr_error->dataKey_ = DATA_TYPE_LANE+ptr_lane->task_id_+DATA_TYPE_LAST_NUM;
+
                             errorOutput->saveError(ptr_error);
                         }
 
@@ -74,12 +84,22 @@ namespace kd {
                         if (is_depart_or_merge) {
                             if (lane_divider_intersects(mapDataManager, ptr_lane, ptr_lane->leftDivider_)) {
                                 ptr_error = DCLaneError::createByKXS_05_002(ptr_lane->id_, ptr_lane->leftDivider_->id_);
+
+                                ptr_error->taskId_ = ptr_lane->task_id_;
+                                ptr_error->flag = ptr_lane->flag_;
+                                ptr_error->dataKey_ = DATA_TYPE_LANE+ptr_lane->task_id_+DATA_TYPE_LAST_NUM;
+
                                 errorOutput->saveError(ptr_error);
                             }
 
                             if (lane_divider_intersects(mapDataManager, ptr_lane, ptr_lane->rightDivider_)) {
                                 ptr_error = DCLaneError::createByKXS_05_002(ptr_lane->id_,
                                                                             ptr_lane->rightDivider_->id_);
+
+                                ptr_error->taskId_ = ptr_lane->task_id_;
+                                ptr_error->flag = ptr_lane->flag_;
+                                ptr_error->dataKey_ = DATA_TYPE_LANE+ptr_lane->task_id_+DATA_TYPE_LAST_NUM;
+
                                 errorOutput->saveError(ptr_error);
                             }
                         }
@@ -207,6 +227,11 @@ namespace kd {
                             if (!GeosObjUtil::is_same_coord(*ptr_f_coord.get(), ptr_intersect_coords->getAt(k)) &&
                                 !GeosObjUtil::is_same_coord(*ptr_t_coord.get(), ptr_intersect_coords->getAt(k))) {
                                 auto ptr_error = DCLaneError::createByKXS_05_015(ptr_lanes[i]->id_, ptr_lanes[j]->id_);
+
+                                ptr_error->taskId_ = ptr_lanes[i]->task_id_;
+                                ptr_error->flag = ptr_lanes[i]->flag_;
+                                ptr_error->dataKey_ = DATA_TYPE_LANE+ptr_lanes[i]->task_id_+DATA_TYPE_LAST_NUM;
+
                                 errorOutput->saveError(ptr_error);
                             }
                         }
@@ -236,6 +261,11 @@ namespace kd {
                     } else {
                         if (ptr_error_nodes.size() > 1) {
                             auto ptr_error = DCLaneError::createByKXS_05_016(ptr_lane->id_, ptr_error_nodes);
+
+                            ptr_error->taskId_ = ptr_lane->task_id_;
+                            ptr_error->flag = ptr_lane->flag_;
+                            ptr_error->dataKey_ = DATA_TYPE_LANE+ptr_lane->task_id_+DATA_TYPE_LAST_NUM;
+
                             errorOutput->saveError(ptr_error);
                         }
                         ptr_error_nodes.clear();

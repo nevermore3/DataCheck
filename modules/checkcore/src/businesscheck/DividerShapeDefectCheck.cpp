@@ -66,13 +66,13 @@ namespace kd {
                 shared_ptr<DCDividerNode> node1 = div->nodes_[oneseg.first];
                 shared_ptr<DCDividerNode> node2 = div->nodes_[oneseg.second];
 
-                double distance = KDGeoUtil::distanceLL(node1->coord_.lng_, node1->coord_.lat_, node2->coord_.lng_,
-                                                        node2->coord_.lat_);
+                double distance = KDGeoUtil::distanceLL(node1->coord_->lng_, node1->coord_->lat_, node2->coord_->lng_,
+                                                        node2->coord_->lat_);
 
                 if (distance > distLimit) {
                     shared_ptr<DCDividerCheckError> error =
                             DCDividerCheckError::createByNode(checkModel, div, node1);
-                    error->checkDesc_ = "检查车道线节点间距判定是否中间有虚线丢失";
+                    error->checkName = "检查车道线节点间距判定是否中间有虚线丢失";
                     stringstream ss;
                     ss << "node_id:" << node1->id_ << "与node_id:" << node2->id_ << "距离" << distance << "米";
                     error->errorDesc_ = ss.str();

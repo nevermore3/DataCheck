@@ -167,7 +167,7 @@ namespace kd {
                         if (area > overlapArea) {
                             shared_ptr<DCLaneCheckError> error = DCLaneCheckError::createByAtt(CHECK_ITEM_KXS_LANE_006,
                                                                                                curLane, nullptr);
-                            error->checkDesc_ = "车道面和其他车道面相交";
+                            error->checkName = "车道面和其他车道面相交";
                             stringstream ss;
                             ss << "lane_id:" << curLane->id_ << "与lane_id:" << nxtLane->id_ << "相交";
                             error->errorDesc_ = ss.str();
@@ -237,20 +237,20 @@ namespace kd {
                     re1 = lane->rightDivider_->nodes_[1]->coord_;
                 }
 
-                double ltAngle = fabs(calcAngle(ls0.lng_, ls0.lat_, ls1.lng_, ls1.lat_)
-                                      - calcAngle(ls0.lng_, ls0.lat_, rs0.lng_, rs0.lat_));
+                double ltAngle = fabs(calcAngle(ls0->lng_, ls0->lat_, ls1->lng_, ls1->lat_)
+                                      - calcAngle(ls0->lng_, ls0->lat_, rs0->lng_, rs0->lat_));
                 ltAngle = (ltAngle > 180) ? (360 - ltAngle) : ltAngle;
 
-                double lbAngle = fabs(calcAngle(rs0.lng_, rs0.lat_, rs1.lng_, rs1.lat_)
-                                      - calcAngle(rs0.lng_, rs0.lat_, ls0.lng_, ls0.lat_));
+                double lbAngle = fabs(calcAngle(rs0->lng_, rs0->lat_, rs1->lng_, rs1->lat_)
+                                      - calcAngle(rs0->lng_, rs0->lat_, ls0->lng_, ls0->lat_));
                 lbAngle = (lbAngle > 180) ? (360 - lbAngle) : lbAngle;
 
-                double rtAngle = fabs(calcAngle(le0.lng_, le0.lat_, le1.lng_, le1.lat_)
-                                      - calcAngle(le0.lng_, le0.lat_, re0.lng_, re0.lat_));
+                double rtAngle = fabs(calcAngle(le0->lng_, le0->lat_, le1->lng_, le1->lat_)
+                                      - calcAngle(le0->lng_, le0->lat_, re0->lng_, re0->lat_));
                 rtAngle = (rtAngle > 180) ? (360 - rtAngle) : rtAngle;
 
-                double rbAngle = fabs(calcAngle(re0.lng_, re0.lat_, le0.lng_, le0.lat_)
-                                      - calcAngle(re0.lng_, re0.lat_, re1.lng_, re1.lat_));
+                double rbAngle = fabs(calcAngle(re0->lng_, re0->lat_, le0->lng_, le0->lat_)
+                                      - calcAngle(re0->lng_, re0->lat_, re1->lng_, re1->lat_));
                 rbAngle = (rbAngle > 180) ? (360 - rbAngle) : rbAngle;
 
                 double angle = 0.0;
@@ -280,7 +280,7 @@ namespace kd {
                 if (bError) {
                     shared_ptr<DCLaneCheckError> error = DCLaneCheckError::createByAtt(CHECK_ITEM_KXS_LANE_007, lane,
                                                                                        nullptr);
-                    error->checkDesc_ = "车道面的4个角点构成夹角<45°或者>135°";
+                    error->checkName = "车道面的4个角点构成夹角<45°或者>135°";
                     stringstream ss;
                     ss << "lane_id:" << lane->id_ << ",left_divider:" << lane->leftDivider_->id_ << ",right_divider:"
                        << lane->rightDivider_->id_;
@@ -330,8 +330,8 @@ namespace kd {
                             //计算距离
                             shared_ptr<DCDividerNode> dcNode = rightDiv->nodes_[i];
                             double PtA[2];
-                            PtA[0] = dcNode->coord_.lng_;
-                            PtA[1] = dcNode->coord_.lat_;
+                            PtA[0] = dcNode->coord_->lng_;
+                            PtA[1] = dcNode->coord_->lat_;
                             double PtB[2] = {0.0, 0.0};
                             double PtC[4] = {0.0, 0.0, 0.0, 0.0};
                             int index;
@@ -342,7 +342,7 @@ namespace kd {
                                 shared_ptr<DCLaneCheckError> error =
                                         DCLaneCheckError::createByNode(CHECK_ITEM_KXS_LANE_009, lane,
                                                                        rightDiv->nodes_[i]);
-                                error->checkDesc_ = "车道宽度最窄处不能<2.5米";
+                                error->checkName = "车道宽度最窄处不能<2.5米";
                                 stringstream ss;
                                 ss << "divider:" << rightDiv->id_ << ",nodeid:" << dcNode->id_ << "与divider:"
                                    << leftDiv->id_ << "距离" << length;
@@ -369,8 +369,8 @@ namespace kd {
                             //计算距离
                             shared_ptr<DCDividerNode> dcNode = rightDiv->nodes_[i];
                             double PtA[2];
-                            PtA[0] = dcNode->coord_.lng_;
-                            PtA[1] = dcNode->coord_.lat_;
+                            PtA[0] = dcNode->coord_->lng_;
+                            PtA[1] = dcNode->coord_->lat_;
                             double PtB[2] = {0.0, 0.0};
                             double PtC[4] = {0.0, 0.0, 0.0, 0.0};
                             int index;
@@ -381,7 +381,7 @@ namespace kd {
                                 shared_ptr<DCLaneCheckError> error =
                                         DCLaneCheckError::createByNode(CHECK_ITEM_KXS_LANE_009, lane,
                                                                        rightDiv->nodes_[i]);
-                                error->checkDesc_ = "车道宽度最大不能>7米";
+                                error->checkName = "车道宽度最大不能>7米";
                                 stringstream ss;
                                 ss << "divider:" << rightDiv->id_ << "，nodeid:" << dcNode->id_ << "与divider:"
                                    << leftDiv->id_ << "距离" << length;

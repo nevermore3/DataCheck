@@ -18,9 +18,9 @@ namespace kd {
                                                                          char *zone0, bool is_z) {
             shared_ptr<geos::geom::Coordinate> ret = nullptr;
             double X0, Y0;
-            double x = ptr_node->coord_.lng_;
-            double y = ptr_node->coord_.lat_;
-            double z = ptr_node->coord_.z_;
+            double x = ptr_node->coord_->lng_;
+            double y = ptr_node->coord_->lat_;
+            double z = ptr_node->coord_->z_;
             kd::automap::Coordinates::ll2utm(y, x, X0, Y0, zone0);
             if (is_z) {
                 ret = make_shared<geos::geom::Coordinate>(X0, Y0);

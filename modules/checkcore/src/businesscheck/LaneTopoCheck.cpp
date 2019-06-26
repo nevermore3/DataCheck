@@ -77,7 +77,7 @@ namespace kd {
                                         error->errorDesc_ = "lane_id:";
                                         error->errorDesc_ += lane->id_;
                                         error->errorDesc_ += "没有退出车道连接";
-                                        error->checkDesc_ = "没有退出车道,divider拓扑存在,检查lane_connectivity是否正确";
+                                        error->checkName = "没有退出车道,divider拓扑存在,检查lane_connectivity是否正确";
                                         errorOutput->saveError(error);
                                     }
                                 }
@@ -106,7 +106,7 @@ namespace kd {
                                         error->errorDesc_ = "lane_id:";
                                         error->errorDesc_ += lane->id_;
                                         error->errorDesc_ += "没有进入车道连接";
-                                        error->checkDesc_ = "没有进入车道,divider拓扑存在,检查lane_connectivity是否正确";
+                                        error->checkName = "没有进入车道,divider拓扑存在,检查lane_connectivity是否正确";
                                         errorOutput->saveError(error);
                                     }
                                 }
@@ -133,7 +133,7 @@ namespace kd {
                                 error->errorDesc_ = "lane_id:";
                                 error->errorDesc_ += lane->id_;
                                 error->errorDesc_ += "孤立车道,没有进入车道和退出车道";
-                                error->checkDesc_ = "孤立车道,没有进入和退出车道连接,并且没有标注应急车道属性";
+                                error->checkName = "孤立车道,没有进入和退出车道连接,并且没有标注应急车道属性";
                                 errorOutput->saveError(error);
                             }
                         }

@@ -19,6 +19,11 @@ namespace kd {
             string checkName;//检查模型描述信息
             string errDesc;//错误详细信息
             string level;//错误等级，warn error
+            string taskId;//任务号
+            string boundId;//任务框号
+            string dataKey;//数据KEY
+            string flag;
+            shared_ptr<DCCoord> coord;
         };
 
         class CheckErrorOutput{

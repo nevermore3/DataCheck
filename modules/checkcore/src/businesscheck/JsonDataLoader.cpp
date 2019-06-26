@@ -6,6 +6,7 @@
 #include <util/FileUtil.h>
 #include <storage/JsonDataInput.h>
 #include <storage/CheckTaskInput.h>
+#include <util/StringUtil.h>
 #include "parsers/OSMDataParser.hpp"
 
 
@@ -60,7 +61,11 @@ namespace kd {
             bool load_file_status = true;
             int file_count = file_list.size();
             const std::string config_file = "config.json";
+
             for (int i = 0; i < file_count; i++) {
+                string taskid = "";
+                string bound_id = "";
+                string data_key = "";
 
                 OSMDataParser parser(resource_manager);
 
@@ -73,6 +78,10 @@ namespace kd {
 
                 //load file
                 LOG(INFO) << "load file " << (i + 1) << "/" << file_count << " " << file_path;
+
+                GetFileTaskId(file_path,2,taskid,bound_id,data_key);
+                DataCheckConfig::getInstance().addProperty(taskid,bound_id);
+
                 if(!FileUtil::LoadFile(file_path, inputJsonData)){
                     LOG(ERROR) << "inputJsonData is empty";
                     return false;
@@ -82,8 +91,9 @@ namespace kd {
                     continue;
                 }
 
+
                 int parse_ret = parser.ParseKdsOSMJSONDataFilterByGason(
-                        inputJsonData, "", filterNodes, filterWays, filterRels);
+                        inputJsonData, taskid, filterNodes, filterWays, filterRels);
 
                 if(parse_ret != 0){
                     LOG(ERROR) << "Parse data error, retvalue is " << parse_ret;
@@ -100,6 +110,47 @@ namespace kd {
             resource_manager->filterKdsData();
 
             return load_file_status;
+        }
+
+        //通过文件名获取任务id和框id
+        void JsonDataLoader::GetFileTaskId(const string& file_path, int file_name_mode, string& task_id,
+                           string& task_bound_id , string& data_key) {
+            if (1 != file_name_mode && 2 != file_name_mode) {
+                LOG(ERROR) << "invalid fileNameMode value : " << file_name_mode;
+                return;
+            }
+
+            string file_path_noext = file_path.substr(0, file_path.find(".json"));
+            string file_name = file_path_noext.substr(file_path_noext.find_last_of("/")+1);
+
+            if (1 == file_name_mode) {
+                // taskFrameId_taskId.json
+                int pos = file_name.find("_");
+                if (file_name.find("_") != string::npos) {
+                    task_id = file_name.substr(file_name.find_last_of("_") + 1);
+                    task_bound_id = file_name.substr(0, file_name.find_last_of("_"));
+                } else {
+                    task_id = file_name;
+                    task_bound_id = "";
+                }
+            } else {
+                // taskFrameId-objectType_taskId_seqNumber.json
+                int pos = file_name.find("-");
+                if (pos != string::npos) {
+                    task_bound_id = file_name.substr(0, pos);
+                    data_key = file_name.substr(pos + 1,file_name.length());
+                    std::string sub_str = file_name.substr(pos + 1);
+
+                    int f_pos = sub_str.find("_");
+                    int l_pos = sub_str.find_last_of("_");
+                    if (f_pos != string::npos && l_pos != string::npos) {
+                        task_id = sub_str.substr(f_pos + 1, l_pos - f_pos - 1);
+                    }
+                } else {
+                    task_id = file_name;
+                    task_bound_id = "";
+                }
+            }
         }
 
 

@@ -63,17 +63,28 @@ namespace kd {
 
         public:
             //检测模型
-            string checkModel_;
+            string checkId;
 
-        public:
             //设置检查模型描述信息
-            string checkDesc_;
+            string checkName;
+
             //错误详细信息描述
             string detail_;
 
-        public:
             // 错误级别
             string checkLevel_;
+
+            //任务号
+            string taskId_;
+
+            //融合任务框号
+//            string boundId_;
+            //数据KEY
+            string dataKey_;
+
+            string flag;
+
+            shared_ptr<DCCoord> coord;
         };
 
         /**
@@ -110,8 +121,8 @@ namespace kd {
         public:
             DCRelationCheckError(string checkModel);
 
-            DCRelationCheckError(string checkModel, string modelName, string fieldName, string refModelName,
-                                 string refFieldName);
+            static shared_ptr<DCRelationCheckError> createByKXS_01_25(string model_name, string field,
+                                                                      string relation_name);
 
             virtual string toString() override;
 
@@ -133,6 +144,9 @@ namespace kd {
 
             //错误描述
             string errorDesc_;
+
+            //错误详细信息描述
+            string detail_;
         };
 
 
@@ -173,15 +187,6 @@ namespace kd {
 
             //节点id
             string nodeId_;
-
-            //节点、属性变化点对应的经度
-            double lng_;
-
-            //节点、属性变化点对应的纬度
-            double lat_;
-
-            //节点、属性变化点对应的高度
-            double z_;
 
             //错误描述
             string errorDesc_;
@@ -285,6 +290,8 @@ namespace kd {
                                                                         long e_index2, bool is_positive = true);
 
             static shared_ptr<DCLaneGroupCheckError> createByKXS_03_004(string divider_id, set<string> lane_groups);
+
+            static shared_ptr<DCLaneGroupCheckError> createByKXS_03_003(shared_ptr<DCDivider> div);
 
             static shared_ptr<DCLaneGroupCheckError> createByKXS_03_002(string lane_group_id);
 

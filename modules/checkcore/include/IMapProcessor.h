@@ -8,6 +8,7 @@
 #include "CommonInclude.h"
 #include "data/DataManager.h"
 #include "storage/CheckErrorOutput.h"
+#include "util/check_list_config.h"
 
 namespace kd {
     namespace dc {
@@ -28,10 +29,31 @@ namespace kd {
              * @param mapDataManager 地图数据
              * @return 操作是否成功
              */
-            virtual bool execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) = 0;
+            virtual bool execute(shared_ptr<MapDataManager> data_manager,
+                                 shared_ptr<CheckErrorOutput> error_output) = 0;
 
+            void set_data_manager(shared_ptr<MapDataManager> data_manager) {
+                data_manager_ = data_manager;
+            }
+            shared_ptr<MapDataManager> data_manager() {
+                return data_manager_;
+            }
+
+            void set_error_output(shared_ptr<CheckErrorOutput> error_output) {
+                error_output_ = error_output;
+            }
+            shared_ptr<CheckErrorOutput> error_output() {
+                return error_output_;
+            }
+
+            bool CheckItemValid(const std::string& check_item) {
+                return CheckListConfig::getInstance().IsNeedCheck(check_item);
+            }
+
+        private:
+            shared_ptr<MapDataManager> data_manager_;
+            shared_ptr<CheckErrorOutput> error_output_;
         };
-
     }
 }
 #endif //AUTOHDMAP_DATACHECK_IMAPPROCESSOR_H

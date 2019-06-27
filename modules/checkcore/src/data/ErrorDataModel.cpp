@@ -450,7 +450,7 @@ namespace kd {
             shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>(CHECK_ITEM_KXS_LG_003);
             error->checkName = "车道线不存在于车道组中";
             error->detail += "divider_id:";
-            error->detail += div->dividerNo_;
+            error->detail += std::to_string(div->dividerNo_);
             error->detail += "是孤立的";
             error->taskId_ = div->task_id_;
             error->flag = div->flag_;

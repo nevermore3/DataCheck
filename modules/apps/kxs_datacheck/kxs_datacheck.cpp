@@ -31,8 +31,11 @@
 #include "businesscheck/JsonDataLoader.h"
 
 #include "util/TimerUtil.h"
+#include "util/check_list_config.h"
 
 using namespace kd::dc;
+
+const char kCheckListFile[] = "check_list.json";
 
 int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) {
     int ret = 0;
@@ -168,6 +171,10 @@ string getUpdateRegion(string ur_path) {
     return ur_path;
 }
 
+std::string GetConfigProperty(const std::string& key) {
+    return DataCheckConfig::getInstance().getProperty(key);
+}
+
 /**
  * 数据下载示例
  * @param argc
@@ -201,7 +208,7 @@ int main(int argc, const char *argv[]) {
         // 创建数据库
         p_db_out = new CppSQLite3::Database();
 
-        string output_path = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH);
+        string output_path = GetConfigProperty(DataCheckConfig::OUTPUT_PATH);
         string output_file = output_path + "/data_check.db";
         Poco::File output(output_file);
         if (output.exists()) {
@@ -210,14 +217,24 @@ int main(int argc, const char *argv[]) {
 
         p_db_out->open(output_file);
 
-        shared_ptr<CheckErrorOutput> errorOutput = make_shared<CheckErrorOutput>(p_db_out);
+        // 检查项配置管理初始化
+        std::string check_file = (std::string)"./" + kCheckListFile;
+        Poco::File in_dir(check_file);
+        if (!in_dir.exists()) {
+            LOG(ERROR) << check_file << " is not exists!";
+            return 1;
+        } else {
+            CheckListConfig::getInstance().Load(check_file);
+        }
+
+        auto error_output = make_shared<CheckErrorOutput>(p_db_out);
 
         //数据质量检查
-        ret |= dataCheck(base_path, errorOutput);
+        ret |= dataCheck(base_path, error_output);
 
-        ret |= errorOutput->saveError();
-        ret |= errorOutput->countError();
-        ret |= errorOutput->saveJsonError();
+        ret |= error_output->saveError();
+        ret |= error_output->countError();
+        ret |= error_output->saveJsonError();
 
         LOG(INFO) << "total task costs: " << compilerTimer.elapsed_message();
     } catch (CppSQLite3::Exception &e) {

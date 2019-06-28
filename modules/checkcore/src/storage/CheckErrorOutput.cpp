@@ -8,8 +8,7 @@
 namespace kd {
     namespace dc {
 
-        CheckErrorOutput::CheckErrorOutput(CppSQLite3::Database *pdb) {
-            m_pdb = pdb;
+        CheckErrorOutput::CheckErrorOutput() {
             error_check_levels_.insert(CHECK_ITEM_KXS_ORG_002);
             error_check_levels_.insert(CHECK_ITEM_KXS_ORG_003);
             error_check_levels_.insert(CHECK_ITEM_KXS_ORG_004);
@@ -89,91 +88,6 @@ namespace kd {
             LOG(INFO) << "task [save error] end successfully " << " costs : " << compilerTimer.elapsed_message();
             return ret;
         }
-        int CheckErrorOutput::saveError() {
-            int ret = 0;
-            LOG(INFO) << "task [save error] start. ";
-            TimerUtil compilerTimer;
-
-            try {
-                string create_table_sql = "CREATE TABLE IF NOT EXISTS dataCheckResultTable(   \
-                                        sequenceId INTEGER PRIMARY KEY AUTOINCREMENT,\
-                                        productGroupId INTEGER,\
-                                        productId INTEGER,\
-                                        updateRegionId INTEGER,\
-                                        updateAreaId INTEGER,\
-                                        buildingBlockId INTEGER,\
-                                        name TEXT,\
-                                        level TEXT,\
-                                        testId TEXT NOT NULL,\
-                                        testName TEXT NOT NULL,\
-                                        details TEXT NOT NULL)";
-                m_pdb->execDML(create_table_sql);
-
-                string insert_sql = "INSERT INTO dataCheckResultTable VALUES(?,?,?,?,?,?,?,?,?,?,?);";
-                auto statement = m_pdb->compileStatement(insert_sql);
-                m_pdb->execDML("BEGIN;");
-
-                for (const auto &check_item : check_model_2_output_maps_) {
-                    for (const auto& item : check_item.second) {
-                        if (item.level == LEVEL_ERROR) {
-                            ret = 1;
-                        }
-                        int count = 1;
-                        statement.bindNull(count++);
-                        statement.bindNull(count++);
-                        statement.bindNull(count++);
-                        statement.bindString(count++, item.update_region_id);
-                        statement.bindNull(count++);
-                        statement.bindNull(count++);
-                        statement.bindNull(count++);
-                        statement.bindString(count++, item.level);
-                        statement.bindString(count++, item.checkId);
-                        statement.bindString(count++, item.checkName);
-                        statement.bindString(count++, item.errDesc);
-                        statement.execDML();
-                        statement.reset();
-                    }
-                }
-                statement.finalize();
-                m_pdb->execDML("COMMIT;");
-
-            } catch (CppSQLite3::Exception &e) {
-                LOG(ERROR) << e.errorMessage().c_str();
-                ret = 1;
-            }
-
-            LOG(INFO) << "task [save error] end successfully " << " costs : " << compilerTimer.elapsed_message();
-            return ret;
-        }
-
-        int CheckErrorOutput::countError() {
-            int ret = 0;
-            LOG(INFO) << "task [save error] start. ";
-            TimerUtil compilerTimer;
-
-            try {
-                string create_table_sql = "CREATE TABLE IF NOT EXISTS dataCheckCountTable(   \
-                                        sequenceId INTEGER PRIMARY KEY AUTOINCREMENT,\
-                                        level TEXT,\
-                                        testId TEXT NOT NULL,\
-                                        testName TEXT NOT NULL,\
-                                        count INTEGER NOT NULL)";
-                m_pdb->execDML(create_table_sql);
-
-                string insert_sql = "INSERT INTO dataCheckCountTable (level,testId,testName,count) \
-                                    select level,testId,testName,count(*) from \
-                                    dataCheckResultTable group by level , testId, testName;";
-                m_pdb->execDML(insert_sql);
-
-
-            } catch (CppSQLite3::Exception &e) {
-                LOG(ERROR) << e.errorMessage().c_str();
-                ret = 1;
-            }
-            saveTotalError();
-            LOG(INFO) << "task [save error] end successfully " << " costs : " << compilerTimer.elapsed_message();
-            return ret;
-        }
 
         void CheckErrorOutput::saveError(shared_ptr<DCError> error) {
             if (error) {
@@ -211,101 +125,6 @@ namespace kd {
 
             return ret;
         }
-
-        void CheckErrorOutput::saveTotalError() {
-            try {
-                CppSQLite3::Database *ptr_db = new CppSQLite3::Database();
-                string output_path = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH);
-                ptr_db->open(output_path + "/datacheck_total.db");
-
-                string task = DataCheckConfig::getInstance().getTaskId();
-
-                string create_table_sql = "CREATE TABLE IF NOT EXISTS dataCheckTotalTable(   \
-                                        sequenceId INTEGER PRIMARY KEY AUTOINCREMENT,\
-                                        task TEXT,\
-                                        level TEXT,\
-                                        testId TEXT NOT NULL,\
-                                        testName TEXT NOT NULL,\
-                                        count INTEGER NOT NULL)";
-                ptr_db->execDML(create_table_sql);
-
-                create_table_sql = "CREATE TABLE IF NOT EXISTS dataCheckResultTable(   \
-                                        sequenceId INTEGER PRIMARY KEY AUTOINCREMENT,\
-                                        task TEXT,\
-                                        updateRegionId INTEGER,\
-                                        level TEXT,\
-                                        testId TEXT NOT NULL,\
-                                        testName TEXT NOT NULL,\
-                                        details TEXT NOT NULL)";
-                ptr_db->execDML(create_table_sql);
-
-                std::string insertIntoTable = "INSERT INTO dataCheckTotalTable (task, level,testId,testName,count) VALUES(?,?,?,?,?);";
-
-                CppSQLite3::Statement stmtLmObjPoints = ptr_db->compileStatement(insertIntoTable);
-
-
-
-                string select_sql = "select level,testId,testName,count from \
-                                    dataCheckCountTable where level='error';";
-
-                CppSQLite3::Query query = m_pdb->execQuery(select_sql);
-                ptr_db->execDML("BEGIN;");
-
-                while (!query.eof()) {
-                    int count = 0;
-                    string level = query.getStringField(count++);
-                    string testId = query.getStringField(count++);
-                    string testName = query.getStringField(count++);
-                    int e_count = query.getIntField(count++);
-
-                    count = 1;
-                    stmtLmObjPoints.bindString(count++, task);
-                    stmtLmObjPoints.bindString(count++, level);
-                    stmtLmObjPoints.bindString(count++, testId);
-                    stmtLmObjPoints.bindString(count++, testName);
-                    stmtLmObjPoints.bindInt(count++, e_count);
-                    stmtLmObjPoints.execDML();
-                    stmtLmObjPoints.reset();
-
-                    query.nextRow();
-                }
-                stmtLmObjPoints.finalize();
-
-                string insert_sql = "INSERT INTO dataCheckResultTable VALUES(?,?,?,?,?,?,?);";
-                auto statement = ptr_db->compileStatement(insert_sql);
-
-                for (const auto &check_item : check_model_2_output_maps_) {
-                    for (const auto& item : check_item.second) {
-                        if (item.level == LEVEL_ERROR) {
-                            int count = 1;
-                            statement.bindNull(count++);
-                            statement.bindString(count++, task);
-                            statement.bindString(count++, item.update_region_id);
-                            statement.bindString(count++, item.level);
-                            statement.bindString(count++, item.checkId);
-                            statement.bindString(count++, item.checkName);
-                            statement.bindString(count++, item.errDesc);
-                            statement.execDML();
-                            statement.reset();
-                        }
-                    }
-                }
-                statement.finalize();
-                ptr_db->execDML("COMMIT;");
-
-                if (ptr_db) {
-                    ptr_db->close();
-                    delete ptr_db;
-                    ptr_db = nullptr;
-                }
-
-            } catch (CppSQLite3::Exception &e) {
-                LOG(ERROR) << e.errorMessage().c_str();
-            }
-
-        }
-
-        CheckErrorOutput::CheckErrorOutput() {}
     }
 }
 

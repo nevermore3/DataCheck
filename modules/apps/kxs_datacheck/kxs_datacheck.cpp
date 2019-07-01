@@ -10,7 +10,6 @@
 #include "process/ModelFieldCheck.h"
 #include "process/ModelBussCheck.h"
 #include "process/ModelRelationCheck.h"
-#include "process/ModelSqlCheck.h"
 #include "process/TaskLoader.h"
 
 #include "MapProcessManager.h"
@@ -31,8 +30,11 @@
 #include "businesscheck/JsonDataLoader.h"
 
 #include "util/TimerUtil.h"
+#include "util/check_list_config.h"
 
 using namespace kd::dc;
+
+const char kCheckListFile[] = "check_list.json";
 
 int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) {
     int ret = 0;
@@ -134,20 +136,6 @@ int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) 
     return ret;
 }
 
-int sql_data_check(CppSQLite3::Database *p_db, const shared_ptr<CheckErrorOutput> &errorOutput) {
-    int ret = 0;
-    shared_ptr<ProcessManager> process_manager = make_shared<ProcessManager>("sql_data_check");
-    //加载数据
-    shared_ptr<ModelSqlCheck> model_sql_check = make_shared<ModelSqlCheck>(p_db);
-    process_manager->registerProcessor(model_sql_check);
-
-    if (!process_manager->execute(errorOutput)){
-        LOG(ERROR) << "ProcessManager execute error!";
-        ret = 1;
-    }
-    return ret;
-}
-
 void InitGlog(const string &exe_path, const string &ur_path) {
     google::InitGoogleLogging(exe_path.c_str());
     google::LogToStderr();
@@ -166,6 +154,10 @@ string getUpdateRegion(string ur_path) {
         return ur_path.substr(0, 4);
     }
     return ur_path;
+}
+
+std::string GetConfigProperty(const std::string& key) {
+    return DataCheckConfig::getInstance().getProperty(key);
 }
 
 /**
@@ -198,40 +190,34 @@ int main(int argc, const char *argv[]) {
             return ret;
         }
 
-        // 创建数据库
-        p_db_out = new CppSQLite3::Database();
-
-        string output_path = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH);
+        string output_path = GetConfigProperty(DataCheckConfig::OUTPUT_PATH);
         string output_file = output_path + "/data_check.db";
         Poco::File output(output_file);
         if (output.exists()) {
             output.remove();
         }
 
-        p_db_out->open(output_file);
+        // 检查项配置管理初始化
+        std::string check_file = (std::string)"./" + kCheckListFile;
+        Poco::File in_dir(check_file);
+        if (!in_dir.exists()) {
+            LOG(ERROR) << check_file << " is not exists!";
+            return 1;
+        } else {
+            CheckListConfig::getInstance().Load(check_file);
+        }
 
-        shared_ptr<CheckErrorOutput> errorOutput = make_shared<CheckErrorOutput>(p_db_out);
+        auto error_output = make_shared<CheckErrorOutput>();
 
         //数据质量检查
-        ret |= dataCheck(base_path, errorOutput);
+        ret |= dataCheck(base_path, error_output);
 
-        ret |= errorOutput->saveError();
-        ret |= errorOutput->countError();
-        ret |= errorOutput->saveJsonError();
+        ret |= error_output->saveJsonError();
 
         LOG(INFO) << "total task costs: " << compilerTimer.elapsed_message();
-    } catch (CppSQLite3::Exception &e) {
-        LOG(ERROR) << "An exception occurred: " << e.errorMessage().c_str();
-        ret = 1;
     } catch (std::exception &e) {
         LOG(ERROR) << "An exception occurred: " << e.what();
         ret = 1;
-    }
-
-    if (p_db_out) {
-        p_db_out->close();
-        delete p_db_out;
-        p_db_out = nullptr;
     }
 
     google::ShutdownGoogleLogging();

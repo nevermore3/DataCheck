@@ -29,48 +29,49 @@ namespace kd {
         }
 
 
-        double calAngle(shared_ptr<DCDivider> leftDiv, bool leftStart, shared_ptr<DCDivider> rightDiv, bool rightStart){
+        double
+        calAngle(shared_ptr<DCDivider> leftDiv, bool leftStart, shared_ptr<DCDivider> rightDiv, bool rightStart) {
             return 0.0;
         }
 
         //计算线段的角度
-        double calcAngle(double sLng, double sLat, double eLng, double eLat){
+        double calcAngle(double sLng, double sLat, double eLng, double eLat) {
             double y = eLat - sLat;
             double x = eLng - sLng;
-            return (0 == x) ? 90.0 : (atan(y/x)*180/3.1415926);
+            return (0 == x) ? 90.0 : (atan(y / x) * 180 / 3.1415926);
         }
 
         //构建多边形
         shared_ptr<geos::geom::Polygon> createPolygon(const shared_ptr<geos::geom::LineString> leftline,
-                                                      const shared_ptr<geos::geom::LineString> rightline){
+                                                      const shared_ptr<geos::geom::LineString> rightline) {
 
-            geos::geom::CoordinateSequence* csLeft = leftline->getCoordinates();
-            geos::geom::CoordinateSequence* csRight = rightline->getCoordinates();
+            geos::geom::CoordinateSequence *csLeft = leftline->getCoordinates();
+            geos::geom::CoordinateSequence *csRight = rightline->getCoordinates();
 
             //判断左右分割线的构建多边形是否存在自相交
             geos::geom::Coordinate lsCoord = csLeft->getAt(0);
-            geos::geom::Coordinate leCoord = csLeft->getAt(csLeft->getSize()-1);
+            geos::geom::Coordinate leCoord = csLeft->getAt(csLeft->getSize() - 1);
             geos::geom::Coordinate rsCoord = csRight->getAt(0);
-            geos::geom::Coordinate reCoord = csRight->getAt(csRight->getSize()-1);
+            geos::geom::Coordinate reCoord = csRight->getAt(csRight->getSize() - 1);
             double LineA[] = {lsCoord.x, lsCoord.y, rsCoord.x, rsCoord.y};
             double LineB[] = {leCoord.x, leCoord.y, reCoord.x, reCoord.y};
             bool bReverse = false;
-            if (geo::geo_util::isLineSegmentCross(LineA, LineB)){
+            if (geo::geo_util::isLineSegmentCross(LineA, LineB)) {
                 bReverse = true;
             }
 
             //构建多边形点序列
-            geos::geom::CoordinateSequence * cs = new geos::geom::CoordinateArraySequence();
+            geos::geom::CoordinateSequence *cs = new geos::geom::CoordinateArraySequence();
             for (int i = 0; i < csLeft->getSize(); ++i) {
                 cs->add(csLeft->getAt(i));
             }
 
-            if (bReverse){
+            if (bReverse) {
                 for (int j = 0; j < csRight->getSize(); ++j) {
                     cs->add(csRight->getAt(j));
                 }
-            }else{
-                for (int j = csRight->getSize()-1; j >= 0; --j) {
+            } else {
+                for (int j = csRight->getSize() - 1; j >= 0; --j) {
                     cs->add(csRight->getAt(j));
                 }
             }
@@ -78,7 +79,7 @@ namespace kd {
 
             //构建geos多边形对象
             const geos::geom::GeometryFactory *gf = geos::geom::GeometryFactory::getDefaultInstance();
-            geos::geom::LinearRing* lr = gf->createLinearRing(cs);
+            geos::geom::LinearRing *lr = gf->createLinearRing(cs);
             shared_ptr<geos::geom::Polygon> poly(gf->createPolygon(lr, NULL));
             //const geos::geom::Envelope* env = poly->getEnvelopeInternal();//不调用此接口返回智能指针后面在调用getEnvelopeInternal就会异常
             return poly;
@@ -86,18 +87,19 @@ namespace kd {
 
         //缓冲范围内查找车道
         bool findPloygons(const shared_ptr<geos::geom::Polygon> poly, double bufferLen,
-                          const shared_ptr<geos::index::quadtree::Quadtree> & quadtree, vector<shared_ptr<DCLane>>& rtnLanes){
+                          const shared_ptr<geos::index::quadtree::Quadtree> &quadtree,
+                          vector<shared_ptr<DCLane>> &rtnLanes) {
 
             const GeometryFactory *gf = GeometryFactory::getDefaultInstance();
-            const geos::geom::Envelope* envelope = poly->getEnvelopeInternal();
+            const geos::geom::Envelope *envelope = poly->getEnvelopeInternal();
             shared_ptr<geos::geom::Geometry> geoEnv(gf->toGeometry(envelope));
             shared_ptr<geos::geom::Geometry> geoEnvBuffer(geoEnv->buffer(bufferLen));
-            vector<void*> lanes;
+            vector<void *> lanes;
             quadtree->query(geoEnvBuffer->getEnvelopeInternal(), lanes);
             for (auto lane : lanes) {
-                rtnLanes.push_back(make_shared<DCLane>(*((DCLane*)lane)));
+                rtnLanes.push_back(make_shared<DCLane>(*((DCLane *) lane)));
             }
-            return (rtnLanes.size()>0)?true:false;
+            return (rtnLanes.size() > 0) ? true : false;
         }
 
         //车道面和其他车道面相交
@@ -113,22 +115,22 @@ namespace kd {
                 if (!lane->valid_)
                     continue;
 
-                if(lane->leftDivider_ == nullptr || lane->leftDivider_->nodes_.size() < 2 ||
-                   lane->rightDivider_ == nullptr || lane->rightDivider_->nodes_.size() < 2)
-                {
+                if (lane->leftDivider_ == nullptr || lane->leftDivider_->nodes_.size() < 2 ||
+                    lane->rightDivider_ == nullptr || lane->rightDivider_->nodes_.size() < 2) {
                     stringstream ss;
                     ss << "[Error] lane divider info error.";
                     errorOutput->writeInfo(ss.str());
                     continue;
                 }
 
-                shared_ptr<geos::geom::Polygon> poly = createPolygon(lane->leftDivider_->line_, lane->rightDivider_->line_);
+                shared_ptr<geos::geom::Polygon> poly = createPolygon(lane->leftDivider_->line_,
+                                                                     lane->rightDivider_->line_);
                 mLanePoly.emplace(make_pair(lane, poly));
             }
 
             //构建空间索引存储车道面信息
             shared_ptr<geos::index::quadtree::Quadtree> quadtree = make_shared<geos::index::quadtree::Quadtree>();
-            for (auto itPoly : mLanePoly){
+            for (auto itPoly : mLanePoly) {
                 quadtree->insert(itPoly.second->getEnvelopeInternal(), itPoly.first.get());
             }
 
@@ -138,8 +140,8 @@ namespace kd {
                 shared_ptr<geos::geom::Polygon> curPoly = itPoly.second;
 
                 vector<shared_ptr<DCLane>> vlanes;
-                if (findPloygons(curPoly, bufferLen, quadtree, vlanes)){
-                    for (auto itLane : vlanes){
+                if (findPloygons(curPoly, bufferLen, quadtree, vlanes)) {
+                    for (auto itLane : vlanes) {
                         shared_ptr<DCLane> nxtLane = itLane;
                         auto itNxtLane = mLanePoly.find(nxtLane);
                         if (nxtLane == curLane || itNxtLane == mLanePoly.end())
@@ -162,8 +164,9 @@ namespace kd {
 
                         //判断重叠面积是否超过限制
                         double area = geo->getArea();
-                        if (area > overlapArea){
-                            shared_ptr<DCLaneCheckError> error = DCLaneCheckError::createByAtt("KXS-05-006", curLane, nullptr);
+                        if (area > overlapArea) {
+                            shared_ptr<DCLaneCheckError> error = DCLaneCheckError::createByAtt(CHECK_ITEM_KXS_LANE_006,
+                                                                                               curLane, nullptr);
                             error->checkDesc_ = "车道面和其他车道面相交";
                             stringstream ss;
                             ss << "lane_id:" << curLane->id_ << "与lane_id:" << nxtLane->id_ << "相交";
@@ -178,7 +181,7 @@ namespace kd {
 
         //车道面的4个夹角<45°或者>135°
         void LaneShapeNormCheck::check_JH_C_15(shared_ptr<MapDataManager> mapDataManager,
-                                                 shared_ptr<CheckErrorOutput> errorOutput) {
+                                               shared_ptr<CheckErrorOutput> errorOutput) {
             double edgeMaxAngle = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::LANE_EDGE_MAX_ANGLE);
             double edgeMinAngle = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::LANE_EDGE_MIN_ANGLE);
 
@@ -188,12 +191,19 @@ namespace kd {
                 if (!lane->valid_)
                     continue;
 
-                if(lane->leftDivider_ == nullptr || lane->leftDivider_->nodes_.size() < 2 ||
-                        lane->rightDivider_ == nullptr || lane->rightDivider_->nodes_.size() < 2)
-                {
+                if (lane->leftDivider_ == nullptr || lane->leftDivider_->nodes_.size() < 2 ||
+                    lane->rightDivider_ == nullptr || lane->rightDivider_->nodes_.size() < 2) {
                     stringstream ss;
                     ss << "[Error] lane divider info error.";
                     errorOutput->writeInfo(ss.str());
+                    continue;
+                }
+
+                // 过滤分离以及合并的车道组
+                if (lane->leftDivider_->nodes_.front()->id_ == lane->rightDivider_->nodes_.front()->id_ ||
+                    lane->leftDivider_->nodes_.front()->id_ == lane->rightDivider_->nodes_.back()->id_ ||
+                    lane->leftDivider_->nodes_.back()->id_ == lane->rightDivider_->nodes_.front()->id_ ||
+                    lane->leftDivider_->nodes_.back()->id_ == lane->rightDivider_->nodes_.back()->id_) {
                     continue;
                 }
 
@@ -207,11 +217,11 @@ namespace kd {
                 auto ls1 = leNode->coord_;
                 auto le1 = lsNode->coord_;
                 auto le0 = leNode->coord_;
-                if (lsNode->id_ == lane->leftDivider_->nodes_[0]->id_){
+                if (lsNode->id_ == lane->leftDivider_->nodes_[0]->id_) {
                     ls1 = lane->leftDivider_->nodes_[1]->coord_;
-                    le1 = lane->leftDivider_->nodes_[lane->leftDivider_->nodes_.size()-2]->coord_;
-                }else{
-                    ls1 = lane->leftDivider_->nodes_[lane->leftDivider_->nodes_.size()-2]->coord_;
+                    le1 = lane->leftDivider_->nodes_[lane->leftDivider_->nodes_.size() - 2]->coord_;
+                } else {
+                    ls1 = lane->leftDivider_->nodes_[lane->leftDivider_->nodes_.size() - 2]->coord_;
                     le1 = lane->leftDivider_->nodes_[1]->coord_;
                 }
 
@@ -219,56 +229,57 @@ namespace kd {
                 auto rs1 = reNode->coord_;
                 auto re1 = rsNode->coord_;
                 auto re0 = reNode->coord_;
-                if (rsNode->id_ == lane->rightDivider_->nodes_[0]->id_){
+                if (rsNode->id_ == lane->rightDivider_->nodes_[0]->id_) {
                     rs1 = lane->rightDivider_->nodes_[1]->coord_;
-                    re1 = lane->rightDivider_->nodes_[lane->rightDivider_->nodes_.size()-2]->coord_;
-                }else{
-                    rs1 = lane->rightDivider_->nodes_[lane->rightDivider_->nodes_.size()-2]->coord_;
+                    re1 = lane->rightDivider_->nodes_[lane->rightDivider_->nodes_.size() - 2]->coord_;
+                } else {
+                    rs1 = lane->rightDivider_->nodes_[lane->rightDivider_->nodes_.size() - 2]->coord_;
                     re1 = lane->rightDivider_->nodes_[1]->coord_;
                 }
 
                 double ltAngle = fabs(calcAngle(ls0.lng_, ls0.lat_, ls1.lng_, ls1.lat_)
                                       - calcAngle(ls0.lng_, ls0.lat_, rs0.lng_, rs0.lat_));
-                ltAngle =  (ltAngle > 180)? (360 - ltAngle) : ltAngle;
+                ltAngle = (ltAngle > 180) ? (360 - ltAngle) : ltAngle;
 
                 double lbAngle = fabs(calcAngle(rs0.lng_, rs0.lat_, rs1.lng_, rs1.lat_)
                                       - calcAngle(rs0.lng_, rs0.lat_, ls0.lng_, ls0.lat_));
-                lbAngle =  (lbAngle > 180)? (360 - lbAngle) : lbAngle;
+                lbAngle = (lbAngle > 180) ? (360 - lbAngle) : lbAngle;
 
                 double rtAngle = fabs(calcAngle(le0.lng_, le0.lat_, le1.lng_, le1.lat_)
                                       - calcAngle(le0.lng_, le0.lat_, re0.lng_, re0.lat_));
-                rtAngle =  (rtAngle > 180)? (360 - rtAngle) : rtAngle;
+                rtAngle = (rtAngle > 180) ? (360 - rtAngle) : rtAngle;
 
                 double rbAngle = fabs(calcAngle(re0.lng_, re0.lat_, le0.lng_, le0.lat_)
                                       - calcAngle(re0.lng_, re0.lat_, re1.lng_, re1.lat_));
-                rbAngle =  (rbAngle > 180)? (360 - rbAngle) : rbAngle;
+                rbAngle = (rbAngle > 180) ? (360 - rbAngle) : rbAngle;
 
                 double angle = 0.0;
                 string corner = "";
                 string nodeId = "";
                 bool bError = true;
-                if (ltAngle < edgeMinAngle || ltAngle > edgeMaxAngle){
+                if (ltAngle < edgeMinAngle || ltAngle > edgeMaxAngle) {
                     angle = ltAngle;
                     corner = "left_start";
                     nodeId = lsNode->id_;
-                }else if (lbAngle < edgeMinAngle || lbAngle > edgeMaxAngle){
+                } else if (lbAngle < edgeMinAngle || lbAngle > edgeMaxAngle) {
                     angle = lbAngle;
                     corner = "left_end";
                     nodeId = leNode->id_;
-                }else if (rtAngle < edgeMinAngle || rtAngle > edgeMaxAngle){
+                } else if (rtAngle < edgeMinAngle || rtAngle > edgeMaxAngle) {
                     angle = rtAngle;
                     corner = "right_start";
                     nodeId = rsNode->id_;
-                }else if (rbAngle < edgeMinAngle || rbAngle > edgeMaxAngle) {
+                } else if (rbAngle < edgeMinAngle || rbAngle > edgeMaxAngle) {
                     angle = rbAngle;
                     corner = "right_end";
                     nodeId = reNode->id_;
-                }else {
+                } else {
                     bError = false;
                 }
 
-                if (bError){
-                    shared_ptr<DCLaneCheckError> error = DCLaneCheckError::createByAtt("KXS-05-007", lane, nullptr);
+                if (bError) {
+                    shared_ptr<DCLaneCheckError> error = DCLaneCheckError::createByAtt(CHECK_ITEM_KXS_LANE_007, lane,
+                                                                                       nullptr);
                     error->checkDesc_ = "车道面的4个角点构成夹角<45°或者>135°";
                     stringstream ss;
                     ss << "lane_id:" << lane->id_ << ",left_divider:" << lane->leftDivider_->id_ << ",right_divider:"
@@ -283,12 +294,12 @@ namespace kd {
 
         //车道宽度最窄处不能<2.5米，最大不能>7米
         void LaneShapeNormCheck::check_JH_C_17(shared_ptr<MapDataManager> mapDataManager,
-                                                            shared_ptr<CheckErrorOutput> errorOutput) {
+                                               shared_ptr<CheckErrorOutput> errorOutput) {
 
             double laneWidthMax = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::LANE_WIDTH_MAX);
             double laneWidthMin = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::LANE_WIDTH_MIN);
 
-            const GeometryFactory * gf = GeometryFactory::getDefaultInstance();
+            const GeometryFactory *gf = GeometryFactory::getDefaultInstance();
 
             for (auto recordit : mapDataManager->lanes_) {
                 shared_ptr<DCLane> lane = recordit.second;
@@ -298,7 +309,8 @@ namespace kd {
                 shared_ptr<DCDivider> leftDiv = lane->leftDivider_;
                 shared_ptr<DCDivider> rightDiv = lane->rightDivider_;
 
-                if(leftDiv == nullptr || leftDiv->line_ == nullptr || rightDiv == nullptr || rightDiv->line_ == nullptr){
+                if (leftDiv == nullptr || leftDiv->line_ == nullptr || rightDiv == nullptr ||
+                    rightDiv->line_ == nullptr) {
                     stringstream ss;
                     ss << "[Error] divider no spatial info.";
                     errorOutput->writeInfo(ss.str());
@@ -328,7 +340,8 @@ namespace kd {
                                                                    index);
                             if (length < laneWidthMin) {
                                 shared_ptr<DCLaneCheckError> error =
-                                        DCLaneCheckError::createByNode("KXS-05-009", lane, rightDiv->nodes_[i]);
+                                        DCLaneCheckError::createByNode(CHECK_ITEM_KXS_LANE_009, lane,
+                                                                       rightDiv->nodes_[i]);
                                 error->checkDesc_ = "车道宽度最窄处不能<2.5米";
                                 stringstream ss;
                                 ss << "divider:" << rightDiv->id_ << ",nodeid:" << dcNode->id_ << "与divider:"
@@ -366,7 +379,8 @@ namespace kd {
                                                                    index);
                             if (length > laneWidthMax) {
                                 shared_ptr<DCLaneCheckError> error =
-                                        DCLaneCheckError::createByNode("KXS-05-009", lane, rightDiv->nodes_[i]);
+                                        DCLaneCheckError::createByNode(CHECK_ITEM_KXS_LANE_009, lane,
+                                                                       rightDiv->nodes_[i]);
                                 error->checkDesc_ = "车道宽度最大不能>7米";
                                 stringstream ss;
                                 ss << "divider:" << rightDiv->id_ << "，nodeid:" << dcNode->id_ << "与divider:"
@@ -383,7 +397,7 @@ namespace kd {
         }
 
         bool LaneShapeNormCheck::execute(shared_ptr<MapDataManager> mapDataManager,
-                                            shared_ptr<CheckErrorOutput> errorOutput) {
+                                         shared_ptr<CheckErrorOutput> errorOutput) {
             if (mapDataManager == nullptr)
                 return false;
 

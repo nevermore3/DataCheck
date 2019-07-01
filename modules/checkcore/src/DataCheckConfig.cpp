@@ -41,6 +41,8 @@ namespace kd {
         const string DataCheckConfig::ADAS_NODE_DISTANCE = "adas_node_distance";
         const string DataCheckConfig::ADAS_NODE_DISTANCE_ACCURACY = "adas_node_distance_accuracy";
         const string DataCheckConfig::ADAS_NODE_CURVATURE_DISTANCE = "adas_node_curvature_distance";
+        const string DataCheckConfig::ROAD_NODE_ANGLE = "road_node_angle";
+        const string DataCheckConfig::ROAD_NODE_DISTANCE = "road_node_distance";
 
 
 
@@ -115,6 +117,14 @@ namespace kd {
 
         void DataCheckConfig::addProperty(string key, string value) {
             m_properties.insert(make_pair(key, value));
+        }
+
+        string DataCheckConfig::getTaskId() {
+            return task_id;
+        }
+
+        void DataCheckConfig::setTaskId(string id) {
+            task_id = id;
         }
 
     }

@@ -40,6 +40,9 @@ namespace kd {
             const static string ADAS_NODE_DISTANCE_ACCURACY;
             const static string ADAS_NODE_CURVATURE_DISTANCE;
 
+            const static string ROAD_NODE_ANGLE;
+            const static string ROAD_NODE_DISTANCE;
+
 
         public:
             static DataCheckConfig & getInstance() {
@@ -76,10 +79,14 @@ namespace kd {
 
             void addProperty(string key, string value);
 
+            string getTaskId();
+
+            void setTaskId(string id);
 
         private:
             //所有配置属性
             map<string, string> m_properties;
+            string task_id;
 
         };
     }

@@ -41,6 +41,23 @@ namespace kd {
              */
             void check_lane_divider_intersect(shared_ptr<MapDataManager> mapDataManager,
                                               shared_ptr<CheckErrorOutput> errorOutput);
+
+            /**
+             * 车道中心线交叉检查,检查同组内中心线与中心线是否存在交叉问题
+             * @param mapDataManager
+             * @param errorOutput
+             */
+            void check_lane_lane_intersect(shared_ptr<MapDataManager> mapDataManager,
+                                           shared_ptr<CheckErrorOutput> errorOutput);
+
+            /**
+             * 车道中心线结点重复，前后点xy坐标相同（z值可能相同）
+             * @param mapDataManager
+             * @param errorOutput
+             */
+            void check_lane_node(shared_ptr<MapDataManager> mapDataManager,
+                                 shared_ptr<CheckErrorOutput> errorOutput,
+                                 shared_ptr<DCLaneGroup> ptr_lane_group);
         private:
             /**
              * lane与divider是否相交
@@ -63,9 +80,20 @@ namespace kd {
             bool lane_divider_intersects(const shared_ptr<MapDataManager> &mapDataManager,
                                         const shared_ptr<DCLane> &ptr_lane,
                                         const shared_ptr<DCDivider> &ptr_divider);
+
+            /**
+             * lane之间是否存在交点
+             * @param mapDataManager
+             * @param errorOutput
+             * @param ptr_lanes 结点相同的车道集合
+             * @param is_front 是否是首点相同
+             */
+            void lane_intersects(const shared_ptr<MapDataManager> &mapDataManager,
+                                 const shared_ptr<CheckErrorOutput> &errorOutput,
+                                 const vector<shared_ptr<DCLane>> &ptr_lanes);
         private:
 
-            const string id = "lane_topo_check";
+            const string id = "lane_check";
 
         };
     }

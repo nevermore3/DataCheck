@@ -77,7 +77,11 @@ namespace kd {
              * @param errorOutput
              */
             void check_road_node_index(vector<LGNodeIndex> lg_node_index_vec, shared_ptr<DCRoad> ptr_road,
-                                       bool is_positive, shared_ptr<CheckErrorOutput> errorOutput);
+                                       bool is_positive, shared_ptr<MapDataManager> mapDataManager,
+                                       shared_ptr<CheckErrorOutput> errorOutput);
+
+            void check_index_fill_all(vector<LGNodeIndex> lg_node_index_vec, shared_ptr<DCRoad> ptr_road,
+                                      bool is_positive, shared_ptr<CheckErrorOutput> errorOutput);
 
             /**
              * 车道组编号检查
@@ -88,6 +92,8 @@ namespace kd {
              */
             void check_divider_no(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput,
                                   const string &lane_group, const vector<shared_ptr<DCDivider>> &ptr_dividers);
+
+            bool check_divider_no(const vector<shared_ptr<DCDivider>> &ptr_dividers, bool is_front, bool direction);
 
             /**
              * 车道组内divider长度的检查

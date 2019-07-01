@@ -83,8 +83,10 @@ namespace kd {
              * @param is_front 是否是当前首点连接
              * @return
              */
-            static set<string> get_ref_conn_divider(const shared_ptr<MapDataManager> &mapDataManager, const string &lg,
-                                                const shared_ptr<DCDivider> &ptr_divider, bool is_front);
+            static set<shared_ptr<DCDivider>> get_ref_conn_divider(const shared_ptr<MapDataManager> &mapDataManager,
+                                                                   const string &lg,
+                                                                   const shared_ptr<DCDivider> &ptr_divider,
+                                                                   bool is_front);
 
             /**
              * 获取lane group组内lane集合，已排序
@@ -147,6 +149,36 @@ namespace kd {
              */
             static double get_min_distance_from_divider(const shared_ptr<DCDividerNode> &divider_node,
                                                         const shared_ptr<DCDivider> &divider);
+
+            static long GetMaxDividerNo(const shared_ptr<MapDataManager> &mapDataManager, const string &lane_group);
+
+            /**
+             * 获取距离divider首尾点一定距离的divider node
+             * @param ptr_divider
+             * @param length
+             * @param is_front 是否从首点开始
+             * @return
+             */
+            static shared_ptr<DCDividerNode> get_distance_node(shared_ptr<DCDivider> ptr_divider,
+                                                               double length, bool is_front = true);
+
+            /**
+             * 计算点在线的左侧还是右侧
+             * @param f_ptr_node
+             * @param t_ptr_node
+             * @param ptr_node
+             * @return 返回值为1则在左侧，0为在线段上，-1为右侧, -2参数错误
+             */
+            static int NodeOrentationOfDivider(shared_ptr<DCDividerNode> f_ptr_node,
+                                               shared_ptr<DCDividerNode> t_ptr_node,
+                                               shared_ptr<DCDividerNode> ptr_node);
+
+            static bool CheckCoordValid(DCCoord coord);
+
+            static bool CheckCoordValid(shared_ptr<DCCoord> coord);
+
+            static bool CheckCoordAngle(shared_ptr<DCCoord> ptr_coord1, shared_ptr<DCCoord> ptr_coord2,
+                                        shared_ptr<DCCoord> ptr_coord3, double angle_threthold, double &angle);
 
         private:
 

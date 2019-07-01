@@ -99,6 +99,8 @@ namespace kd {
                     dbfFieldNames.push_back(itDefFld.first);
                 }
             }
+
+            return true;
         }
 
         bool ModelDataInput::loadPointFile(const string &fileName,

@@ -10,7 +10,9 @@
 #include "geos/geom/Point.h"
 #include <geom/geo_util.h>
 #include <geos/geom/Point.h>
+#include <DataCheckConfig.h>
 #include "util/GeosObjUtil.h"
+#include "util/KDGeoUtil.hpp"
 
 using namespace geos::geom;
 using namespace kd::automap;
@@ -77,9 +79,11 @@ namespace kd {
         }
 
 
-        set<string> CommonUtil::get_ref_conn_divider(const shared_ptr<MapDataManager> &mapDataManager, const string &lg,
-                                                     const shared_ptr<DCDivider> &ptr_divider, bool is_front) {
-            set<string> ret_divider_ids;
+        set<shared_ptr<DCDivider>> CommonUtil::get_ref_conn_divider(const shared_ptr<MapDataManager> &mapDataManager,
+                                                                    const string &lg,
+                                                                    const shared_ptr<DCDivider> &ptr_divider,
+                                                                    bool is_front) {
+            set<shared_ptr<DCDivider>> ret_dividers;
             const auto &node_id2_dividers_maps_ = mapDataManager->node_id2_dividers_maps_;
             string node_id = is_front ? ptr_divider->nodes_.front()->id_ : ptr_divider->nodes_.back()->id_;
             auto node_iter = node_id2_dividers_maps_.find(node_id);
@@ -91,11 +95,11 @@ namespace kd {
                         if (lane_groups.size() == 1 && *lane_groups.begin() == lg) {
                             continue;
                         }
-                        ret_divider_ids.insert(ptr_div->id_);
+                        ret_dividers.insert(ptr_div);
                     }
                 }
             }
-            return ret_divider_ids;
+            return ret_dividers;
         }
 
         set<string> CommonUtil::get_lane_groups_by_divider(shared_ptr<MapDataManager> mapDataManager,
@@ -347,6 +351,118 @@ namespace kd {
             double dis = geo::geo_util::pt2LineDist(Line, static_cast<int>(divider->nodes_.size() * 2),
                                                     PtA, PtB, PtC, index);
             return dis;
+        }
+
+        long CommonUtil::GetMaxDividerNo(const shared_ptr<MapDataManager> &mapDataManager, const string &lane_group) {
+            map<int, shared_ptr<DCDivider>> dividerNo2Divder;
+            auto dividers = get_dividers_by_lg(mapDataManager, lane_group);
+            long max_no = 0;
+            for (const auto &div : dividers) {
+                auto no = div->dividerNo_;
+                if (no > max_no) {
+                    max_no = no;
+                }
+            }
+            return max_no;
+        }
+
+        shared_ptr<DCDividerNode> CommonUtil::get_distance_node(shared_ptr<DCDivider> ptr_divider,
+                                                                double length, bool is_front) {
+            shared_ptr<DCDividerNode> ret_ptr_node = nullptr;
+            if (ptr_divider && !ptr_divider->nodes_.empty()) {
+                vector<shared_ptr<DCCoord>> divider_node_vecs;
+                if (is_front) {
+                    ret_ptr_node = ptr_divider->nodes_.back();
+                    divider_node_vecs.emplace_back(make_shared<DCCoord>(ptr_divider->nodes_.front()->coord_));
+                    for (int i = 1; i < ptr_divider->nodes_.size(); i++) {
+                        divider_node_vecs.emplace_back(make_shared<DCCoord>(ptr_divider->nodes_[i]->coord_));
+                        double temp_length = GeosObjUtil::get_length_of_coords(divider_node_vecs);
+                        if (temp_length > length) {
+                            ret_ptr_node = ptr_divider->nodes_[i];
+                            break;
+                        }
+                    }
+                } else {
+                    ret_ptr_node = ptr_divider->nodes_.front();
+                    divider_node_vecs.emplace_back(make_shared<DCCoord>(ptr_divider->nodes_.back()->coord_));
+                    for (int i = static_cast<int>(ptr_divider->nodes_.size() - 2); i >= 0; i--) {
+                        divider_node_vecs.emplace_back(make_shared<DCCoord>(ptr_divider->nodes_[i]->coord_));
+                        double temp_length = GeosObjUtil::get_length_of_coords(divider_node_vecs);
+                        if (temp_length > length) {
+                            ret_ptr_node = ptr_divider->nodes_[i];
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return ret_ptr_node;
+        }
+
+        int CommonUtil::NodeOrentationOfDivider(shared_ptr<DCDividerNode> f_ptr_node,
+                                                shared_ptr<DCDividerNode> t_ptr_node,
+                                                shared_ptr<DCDividerNode> ptr_node) {
+            if (f_ptr_node == nullptr || t_ptr_node == nullptr || ptr_node == nullptr) {
+                return -2;
+            }
+            char zone[8] = {0};
+            auto f_coord = GeosObjUtil::create_coordinate(f_ptr_node, zone);
+            auto t_coord = GeosObjUtil::create_coordinate(t_ptr_node, zone);
+            auto coord = GeosObjUtil::create_coordinate(ptr_node, zone);
+
+            return KDGeoUtil::calPTOrentationOfLine(f_coord->x, f_coord->y, t_coord->x, t_coord->y, coord->x, coord->y);
+        }
+
+        bool CommonUtil::CheckCoordValid(DCCoord coord) {
+            bool ret = true;
+            if (__isnan(coord.lat_) || __isnan(coord.lng_) || __isnan(coord.z_)) {
+                ret = false;
+            }
+            if (-180 > coord.lng_ || coord.lat_ > 180) {
+                ret = false;
+            }
+            if (-90 > coord.lat_ || coord.lat_ > 90) {
+                ret = false;
+            }
+            return ret;
+        }
+
+        bool CommonUtil::CheckCoordValid(shared_ptr<DCCoord> coord) {
+            bool ret = true;
+            if (__isnan(coord->lat_) || __isnan(coord->lng_) || __isnan(coord->z_)) {
+                ret = false;
+            }
+            if (-180 > coord->lng_ || coord->lat_ > 180) {
+                ret = false;
+            }
+            if (-90 > coord->lat_ || coord->lat_ > 90) {
+                ret = false;
+            }
+            return ret;
+        }
+
+        bool CommonUtil::CheckCoordAngle(shared_ptr<DCCoord> ptr_coord1, shared_ptr<DCCoord> ptr_coord2,
+                                         shared_ptr<DCCoord> ptr_coord3, double angle_threthold, double &angle) {
+            char zone[8] = {0};
+            auto ptr_utm_coord1 = GeosObjUtil::create_coordinate(ptr_coord1, zone);
+            auto ptr_utm_coord2 = GeosObjUtil::create_coordinate(ptr_coord2, zone);
+            auto ptr_utm_coord3 = GeosObjUtil::create_coordinate(ptr_coord3, zone);
+            double diff_angle = KDGeoUtil::getAngleDiff(ptr_utm_coord1,
+                                                        ptr_utm_coord2,
+                                                        ptr_utm_coord2,
+                                                        ptr_utm_coord3);
+
+
+            if (fabs(angle_threthold) < 0.001) {
+                angle_threthold = kd::automap::PI / 2;
+            } else {
+                angle_threthold = kd::automap::PI * angle_threthold / 180;
+            }
+            if (fabs(diff_angle) > angle_threthold) {
+                angle = diff_angle;
+                return false;
+            }
+            return true;
         }
     }
 }

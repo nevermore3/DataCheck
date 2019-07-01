@@ -3,6 +3,7 @@
 //
 
 #include "storage/MapDataInput.h"
+#include "util/CommonUtil.h"
 
 //thirdparty
 #include <shp/shapefil.h>
@@ -39,7 +40,7 @@ namespace kd {
                     long spIdx = shpNodeData.readIntField(i, "SPIDX");
                     long dashType = shpNodeData.readIntField(i, "DASHTYPE");
 
-                    if(dividerId == -1 && spIdx == -1){
+                    if (dividerId == -1 && spIdx == -1) {
                         shared_ptr<DCDividerNode> divNode = make_shared<DCDividerNode>();
                         //确定属性信息
                         divNode->id_ = to_string(id);
@@ -47,17 +48,16 @@ namespace kd {
 
                         //读取坐标信息
                         int nVertices = shpObject->nVertices;
-                        if(nVertices == 1){
+                        if (nVertices == 1) {
                             divNode->coord_.lng_ = shpObject->padfX[0];
                             divNode->coord_.lat_ = shpObject->padfY[0];
-                            divNode->coord_.z_   = shpObject->padfZ[0];
+                            divNode->coord_.z_ = shpObject->padfZ[0];
                             commonNodeInfos.insert(make_pair(divNode->id_, divNode));
                             divNodeCoords.insert(make_pair(divNode->coord_, divNode->id_));
                         }
-                    }
-                    else{
+                    } else {
                         auto divit = dividers.find(to_string(dividerId));
-                        if(divit == dividers.end()){
+                        if (divit == dividers.end()) {
                             stringstream ss;
                             ss << "[Error] divider node not find ref divider.[dividerId:"
                                << dividerId << "][nodeIdx:" << spIdx << "]";
@@ -66,7 +66,7 @@ namespace kd {
                         }
 
                         shared_ptr<DCDivider> div = divit->second;
-                        if(spIdx < 0 || spIdx >= div->nodes_.size()){
+                        if (spIdx < 0 || spIdx >= div->nodes_.size()) {
                             stringstream ss;
                             ss << "[Error] divider node idx invalid. [dividerId:"
                                << dividerId << "][nodeIdx:" << spIdx << "]";
@@ -80,7 +80,7 @@ namespace kd {
                         div->nodes_[spIdx]->dashType_ = dashType;
                     }
                 }
-            }else{
+            } else {
                 stringstream ss;
                 ss << "[Error] open divider node file error. fileName " << dividerNodeFile;
                 errorOutput->writeInfo(ss.str());
@@ -109,23 +109,36 @@ namespace kd {
 
                     //读取空间信息
                     int nVertices = shpObject->nVertices;
-                    for( int i = 0 ; i < nVertices ; i ++ ){
+                    set<long> error_node_index;
+
+                    for (int i = 0; i < nVertices; i++) {
                         DCCoord coord;
                         coord.lng_ = shpObject->padfX[i];
                         coord.lat_ = shpObject->padfY[i];
-                        coord.z_   = shpObject->padfZ[i];
-                        if (divNodeCoords.find(coord) != divNodeCoords.end()){
+                        coord.z_ = shpObject->padfZ[i];
+                        if (divNodeCoords.find(coord) != divNodeCoords.end()) {
                             divider->nodes_.emplace_back(commonNodeInfos[divNodeCoords[coord]]);
                         } else {
                             shared_ptr<DCDividerNode> divNode = make_shared<DCDividerNode>();
                             divNode->coord_ = coord;
                             divider->nodes_.emplace_back(divNode);
                         }
+
+                        if (!CommonUtil::CheckCoordValid(coord)) {
+                            error_node_index.emplace(i);
+                        }
                     }
+
+                    if (!error_node_index.empty()) {
+                        shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_024("divider", divider->id_,
+                                                                                         error_node_index);
+                        errorOutput->saveError(ptr_error);
+                    }
+
                     if (divider->fromNodeId_ != divider->nodes_.front()->id_ &&
                         divider->fromNodeId_ != divider->nodes_.back()->id_) {
                         shared_ptr<DCDividerCheckError> error =
-                                DCDividerCheckError::createByNode("KXS-01-018", divider, nullptr);
+                                DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_018, divider, nullptr);
                         error->checkDesc_ = "DIVIDER的FDNODE与TDNODE应该是实际的首尾点";
                         stringstream ss;
                         ss << "divider:" << divider->id_ << ",from node_id:" << divider->fromNodeId_ << "标记错误";
@@ -136,7 +149,7 @@ namespace kd {
                     if (divider->toNodeId_ != divider->nodes_.front()->id_ &&
                         divider->toNodeId_ != divider->nodes_.back()->id_) {
                         shared_ptr<DCDividerCheckError> error =
-                                DCDividerCheckError::createByNode("KXS-01-018", divider, nullptr);
+                                DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_018, divider, nullptr);
                         error->checkDesc_ = "DIVIDER的FDNODE与TDNODE应该是实际的首尾点";
                         stringstream ss;
                         ss << "divider:" << divider->id_ << ",to node_id:" << divider->fromNodeId_ << "标记错误";
@@ -145,7 +158,7 @@ namespace kd {
                     }
                     dividers.insert(make_pair(divider->id_, divider));
                 }
-            }else{
+            } else {
                 stringstream ss;
                 ss << "[Error] open divider file error. fileName " << dividerFile;
                 errorOutput->writeInfo(ss.str());
@@ -153,12 +166,12 @@ namespace kd {
             }
 
             //补充divider首末点的node信息
-            for( auto divit : dividers ){
+            for (auto divit : dividers) {
                 shared_ptr<DCDivider> div = divit.second;
-                if(!div->valid_)
+                if (!div->valid_)
                     continue;
 
-                if(!setDividerNode(div, div->fromNodeId_, commonNodeInfos)){
+                if (!setDividerNode(div, div->fromNodeId_, commonNodeInfos)) {
                     stringstream ss;
                     ss << "[Error] div" << div->id_ << " not find fromNode " << div->fromNodeId_ << " info.";
                     errorOutput->writeInfo(ss.str());
@@ -170,7 +183,7 @@ namespace kd {
                 mapDataManager->insert_fnode_id2_dividers(div->fromNodeId_, div);
                 mapDataManager->insert_node_id2_dividers(div->fromNodeId_, div);
 
-                if(!setDividerNode(div, div->toNodeId_, commonNodeInfos)){
+                if (!setDividerNode(div, div->toNodeId_, commonNodeInfos)) {
                     stringstream ss;
                     ss << "[Error] div" << div->id_ << " not find toNode " << div->toNodeId_ << " info.";
                     errorOutput->writeInfo(ss.str());
@@ -203,25 +216,25 @@ namespace kd {
                     long spIdx = attDbfData.readIntField(i, "SPIDX");
 
                     auto divit = dividers.find(to_string(dividerId));
-                    if(divit == dividers.end()){
+                    if (divit == dividers.end()) {
                         stringstream ss;
                         ss << "[Error] divider att not find ref divider.[dividerId:"
-                              << dividerId << "][nodeIdx:" << spIdx << "]";
+                           << dividerId << "][nodeIdx:" << spIdx << "]";
                         errorOutput->writeInfo(ss.str());
                         continue;
                     }
 
                     shared_ptr<DCDivider> div = divit->second;
-                    if(spIdx < 0 || spIdx >= div->nodes_.size()){
+                    if (spIdx < 0 || spIdx >= div->nodes_.size()) {
                         stringstream ss;
                         ss << "[Error] divider att ref node idx invalid. [dividerId:"
-                              << dividerId << "][nodeIdx:" << spIdx << "]";
+                           << dividerId << "][nodeIdx:" << spIdx << "]";
                         errorOutput->writeInfo(ss.str());
                         continue;
                     }
 
                     //赋予节点关联: spidx是相对于FNode->TNode而言,而非矢量化
-                    if (div->nodes_[0]->id_ == div->fromNodeId_){
+                    if (div->nodes_[0]->id_ == div->fromNodeId_) {
                         divAtt->dividerNode_ = div->nodes_[spIdx];
                     } else {
                         divAtt->dividerNode_ = div->nodes_[spIdx];
@@ -233,7 +246,7 @@ namespace kd {
 
                     div->atts_.emplace_back(divAtt);
                 }
-            }else{
+            } else {
                 stringstream ss;
                 ss << "[Error] open divider att file error. fileName " << dividerAttFile;
                 errorOutput->writeInfo(ss.str());
@@ -244,27 +257,27 @@ namespace kd {
         }
 
         bool MapDataInput::setDividerNode(shared_ptr<DCDivider> div, string nodeId,
-                                          map<string, shared_ptr<DCDividerNode>> & commonNodeInfos){
+                                          map<string, shared_ptr<DCDividerNode>> &commonNodeInfos) {
 
             auto nodeit = commonNodeInfos.find(nodeId);
-            if(nodeit != commonNodeInfos.end()){
+            if (nodeit != commonNodeInfos.end()) {
                 auto nodeObj = nodeit->second;
 
                 //判断是否与第一个节点坐标相同
                 shared_ptr<DCDividerNode> firstNode = div->nodes_[0];
-                if(firstNode->coord_.lng_ == nodeObj->coord_.lng_ &&
-                        firstNode->coord_.lat_ == nodeObj->coord_.lat_ &&
-                        firstNode->coord_.z_ == nodeObj->coord_.z_){
+                if (firstNode->coord_.lng_ == nodeObj->coord_.lng_ &&
+                    firstNode->coord_.lat_ == nodeObj->coord_.lat_ &&
+                    firstNode->coord_.z_ == nodeObj->coord_.z_) {
                     firstNode->id_ = nodeObj->id_;
                     firstNode->dashType_ = nodeObj->dashType_;
                     return true;
                 }
 
                 //判断是否与最后一个节点坐标相同
-                shared_ptr<DCDividerNode> lastNode = div->nodes_[div->nodes_.size()-1];
-                if(lastNode->coord_.lng_ == nodeObj->coord_.lng_ &&
-                        lastNode->coord_.lat_ == nodeObj->coord_.lat_ &&
-                        lastNode->coord_.z_ == nodeObj->coord_.z_){
+                shared_ptr<DCDividerNode> lastNode = div->nodes_[div->nodes_.size() - 1];
+                if (lastNode->coord_.lng_ == nodeObj->coord_.lng_ &&
+                    lastNode->coord_.lat_ == nodeObj->coord_.lat_ &&
+                    lastNode->coord_.z_ == nodeObj->coord_.z_) {
                     lastNode->id_ = nodeObj->id_;
                     lastNode->dashType_ = nodeObj->dashType_;
                     return true;
@@ -275,7 +288,7 @@ namespace kd {
         }
 
         bool MapDataInput::loadLane(string basePath, const map<string, shared_ptr<DCDivider>> &dividers,
-                                    map<string, shared_ptr<DCLane>> & lanes, shared_ptr<CheckErrorOutput> errorOutput){
+                                    map<string, shared_ptr<DCLane>> &lanes, shared_ptr<CheckErrorOutput> errorOutput) {
             //读取车道数据
             string laneFile = basePath + "/HD_LANE";
             ShpData shpData(laneFile);
@@ -299,17 +312,17 @@ namespace kd {
 
                     //获取车道左分割线
                     auto itLeftDivider = dividers.find(to_string(iLeftDivider));
-                    if (itLeftDivider != dividers.end()){
-                        shared_ptr<DCDivider> leftDiv =itLeftDivider->second;
+                    if (itLeftDivider != dividers.end()) {
+                        shared_ptr<DCDivider> leftDiv = itLeftDivider->second;
                         if (nullptr != leftDiv) {
                             dcLane->leftDivider_ = leftDiv;
-                        }else{
+                        } else {
                             stringstream ss;
                             ss << "[Error] lane's left divider is null.[laneId:" << dcLane->id_
                                << "][dividerId:" << iLeftDivider << "]";
                             errorOutput->writeInfo(ss.str());
                         }
-                    }else{
+                    } else {
                         stringstream ss;
                         ss << "[Error] lane not find ref left divider.[laneId:" << dcLane->id_
                            << "][dividerId:" << iLeftDivider << "]";
@@ -318,17 +331,17 @@ namespace kd {
 
                     //获取车道右分割线
                     auto itRightDivider = dividers.find(to_string(iRightDivider));
-                    if (itRightDivider != dividers.end()){
-                        shared_ptr<DCDivider> rightDiv =itRightDivider->second;
+                    if (itRightDivider != dividers.end()) {
+                        shared_ptr<DCDivider> rightDiv = itRightDivider->second;
                         if (nullptr != rightDiv) {
                             dcLane->rightDivider_ = rightDiv;
-                        }else{
+                        } else {
                             stringstream ss;
                             ss << "[Error] lane's right divider is null.[laneId:" << dcLane->id_
                                << "][dividerId:" << iRightDivider << "]";
                             errorOutput->writeInfo(ss.str());
                         }
-                    }else{
+                    } else {
                         stringstream ss;
                         ss << "[Error] lane not find ref right divider.[laneId:" << dcLane->id_
                            << "][dividerId:" << iRightDivider << "]";
@@ -337,16 +350,28 @@ namespace kd {
 
                     //读取空间信息
                     int nVertices = shpObject->nVertices;
-                    for( int i = 0 ; i < nVertices ; i ++ ){
+                    set<long> error_node_index;
+
+                    for (int i = 0; i < nVertices; i++) {
                         shared_ptr<DCCoord> coord = make_shared<DCCoord>();
                         coord->lng_ = shpObject->padfX[i];
                         coord->lat_ = shpObject->padfY[i];
                         coord->z_ = shpObject->padfZ[i];
                         dcLane->coords_.emplace_back(coord);
+
+                        if (!CommonUtil::CheckCoordValid(coord)) {
+                            error_node_index.emplace(i);
+                        }
+                    }
+
+                    if (!error_node_index.empty()) {
+                        shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_024("lane", dcLane->id_,
+                                                                                         error_node_index);
+                        errorOutput->saveError(ptr_error);
                     }
                     lanes.insert(make_pair(dcLane->id_, dcLane));
                 }
-            }else{
+            } else {
                 stringstream ss;
                 ss << "[Error] open lane file error. fileName " << laneFile;
                 errorOutput->writeInfo(ss.str());
@@ -373,38 +398,38 @@ namespace kd {
                     laneAtt->status_ = attDbfData.readIntField(i, "STATUS");
 
                     auto itLane = lanes.find(to_string(laneId));
-                    if(itLane == lanes.end()){
+                    if (itLane == lanes.end()) {
                         stringstream ss;
                         ss << "[Error] lane att not find lane.[lane attrId:"
-                              << laneAtt->id_ << "],[laneId:" << laneId << "]";
+                           << laneAtt->id_ << "],[laneId:" << laneId << "]";
                         errorOutput->writeInfo(ss.str());
                         continue;
                     }
 
                     shared_ptr<DCLane> lane = itLane->second;
-                    if (lane == nullptr){
+                    if (lane == nullptr) {
                         stringstream ss;
                         ss << "[Error] lane is null when get lane attr.[lane attrId:"
-                              << laneAtt->id_ << "],[laneId:" << laneId << "]";
+                           << laneAtt->id_ << "],[laneId:" << laneId << "]";
                         errorOutput->writeInfo(ss.str());
                         continue;
                     }
 
                     //赋予Divider节点对象
                     shared_ptr<DCDivider> rDivider = lane->rightDivider_;
-                    if (spIdx < 0 || spIdx >= rDivider->nodes_.size()){
+                    if (spIdx < 0 || spIdx >= rDivider->nodes_.size()) {
                         stringstream ss;
                         ss << "[Error] divider att ref node idx invalid. [dividerId:"
-                              << rDivider->id_ << "][nodeIdx:" << spIdx << "]";
+                           << rDivider->id_ << "][nodeIdx:" << spIdx << "]";
                         errorOutput->writeInfo(ss.str());
                         continue;
-                    }else{
+                    } else {
                         laneAtt->dividerNode_ = rDivider->nodes_[spIdx];
                     }
 
                     lane->atts_.emplace_back(laneAtt);
                 }
-            }else{
+            } else {
                 stringstream ss;
                 ss << "[Error] open lane att file error. fileName " << laneAttFile;
                 errorOutput->writeInfo(ss.str());
@@ -415,7 +440,8 @@ namespace kd {
         }
 
 
-        bool MapDataInput::loadLaneGroup(string basePath, shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput){
+        bool MapDataInput::loadLaneGroup(string basePath, shared_ptr<MapDataManager> mapDataManager,
+                                         shared_ptr<CheckErrorOutput> errorOutput) {
             const auto &lanes = mapDataManager->lanes_;
             const auto &roads = mapDataManager->roads_;
             auto &laneGroups = mapDataManager->laneGroups_;
@@ -461,13 +487,13 @@ namespace kd {
                     string laneId = to_string(rlgDbfData.readIntField(i, "LANE_ID"));
 
                     auto lgit = laneGroups.find(lgId);
-                    if(lgit == laneGroups.end()){
+                    if (lgit == laneGroups.end()) {
                         LOG(ERROR) << "HD_R_LANE_GROUP has not exist lanegroup " << lgId;
                         continue;
                     }
 
                     auto laneit = lanes.find(laneId);
-                    if(laneit == lanes.end()){
+                    if (laneit == lanes.end()) {
                         LOG(ERROR) << "HD_R_LANE_GROUP not find lane " << laneId;
                         continue;
                     }
@@ -483,7 +509,7 @@ namespace kd {
 
                     lgit->second->lanes_.emplace_back(laneit->second);
                 }
-            }else{
+            } else {
                 stringstream ss;
                 ss << "[Error] open lane group ralation file error. fileName " << lgFileName;
                 errorOutput->writeInfo(ss.str());
@@ -494,8 +520,8 @@ namespace kd {
         }
 
         bool MapDataInput::loadLaneConnectivity(string basePath,
-                                                map<string, shared_ptr<DCLaneConnectivity>> & laneConnectivitys,
-                                                shared_ptr<CheckErrorOutput> errorOutput){
+                                                map<string, shared_ptr<DCLaneConnectivity>> &laneConnectivitys,
+                                                shared_ptr<CheckErrorOutput> errorOutput) {
             //读取拓扑信息
             string dbfFileName = basePath + "/HD_LANE_CONNECTIVITY";
             DbfData dbfData(dbfFileName);
@@ -513,7 +539,7 @@ namespace kd {
 
                     laneConnectivitys.insert(make_pair(laneConn->id_, laneConn));
                 }
-            }else{
+            } else {
                 stringstream ss;
                 ss << "[Error] open lane connectivity file error. fileName " << dbfFileName;
                 errorOutput->writeInfo(ss.str());
@@ -523,8 +549,8 @@ namespace kd {
         }
 
 
-        bool MapDataInput::loadObjectLine(string basePath, map<string, shared_ptr<DCObjectPL>> & objectPLs,
-                                          shared_ptr<CheckErrorOutput> errorOutput){
+        bool MapDataInput::loadObjectLine(string basePath, map<string, shared_ptr<DCObjectPL>> &objectPLs,
+                                          shared_ptr<CheckErrorOutput> errorOutput) {
             //读取线对象信息
             string objLineFileName = basePath + "/HD_OBJECT_PL";
             ShpData objLineData(objLineFileName);
@@ -545,16 +571,16 @@ namespace kd {
 
                     //读取空间信息
                     int nVertices = shpObject->nVertices;
-                    for( int idx = 0 ; idx < nVertices ; idx ++ ){
+                    for (int idx = 0; idx < nVertices; idx++) {
                         shared_ptr<DCCoord> coord = make_shared<DCCoord>();
                         coord->lng_ = shpObject->padfX[idx];
                         coord->lat_ = shpObject->padfY[idx];
-                        coord->z_   = shpObject->padfZ[idx];
+                        coord->z_ = shpObject->padfZ[idx];
                         objPL->coords_.emplace_back(coord);
                     }
                     objectPLs.insert(make_pair(objPL->id_, objPL));
                 }
-            }else{
+            } else {
                 stringstream ss;
                 ss << "[Error] open object line file error. fileName " << objLineFileName;
                 errorOutput->writeInfo(ss.str());
@@ -570,7 +596,7 @@ namespace kd {
             DbfData lg_road_index_data(lg_road_index_file);
             if (lg_road_index_data.isInit()) {
                 mapDataManager->is_auto_road = true;
-                auto& road2LaneGroup2NodeIdxs = mapDataManager->road2LaneGroup2NodeIdxs_;
+                auto &road2LaneGroup2NodeIdxs = mapDataManager->road2LaneGroup2NodeIdxs_;
 
                 int record_nums = lg_road_index_data.getRecords();
                 for (int i = 0; i < record_nums; i++) {
@@ -584,7 +610,7 @@ namespace kd {
                     if (iter != road2LaneGroup2NodeIdxs.end()) {
                         iter->second.insert(make_pair(lane_group_id, make_pair(f_index, t_index)));
                     } else {
-                        unordered_map<string, std::pair<long,long>> lanegroup2_node_index_map;
+                        unordered_map<string, std::pair<long, long>> lanegroup2_node_index_map;
                         lanegroup2_node_index_map[lane_group_id] = std::make_pair(f_index, t_index);
                         road2LaneGroup2NodeIdxs.insert(make_pair(road_id, lanegroup2_node_index_map));
                     }
@@ -599,13 +625,14 @@ namespace kd {
             return bRet;
         }
 
-        bool MapDataInput::loadRoad(string basePath, shared_ptr<MapDataManager> mapDataManager) {
+        bool MapDataInput::loadRoad(string basePath, shared_ptr<MapDataManager> mapDataManager,
+                                    shared_ptr<CheckErrorOutput> errorOutput) {
             bool bRet = true;
             // 读取车道组与道路的关联索引点
             string lg_road__file = basePath + "/ROAD";
             ShpData lg_road_data(lg_road__file);
             if (lg_road_data.isInit()) {
-                auto& roads = mapDataManager->roads_;
+                auto &roads = mapDataManager->roads_;
 
                 int record_nums = lg_road_data.getRecords();
                 for (int i = 0; i < record_nums; i++) {
@@ -622,13 +649,26 @@ namespace kd {
 
                     //读取空间信息
                     int nVertices = shp_object->nVertices;
+                    set<long> error_node_index;
                     for (int idx = 0; idx < nVertices; idx++) {
                         shared_ptr<DCCoord> coord = make_shared<DCCoord>();
                         coord->lng_ = shp_object->padfX[idx];
                         coord->lat_ = shp_object->padfY[idx];
                         coord->z_ = shp_object->padfZ[idx];
+
+                        if (!CommonUtil::CheckCoordValid(coord)) {
+                            error_node_index.emplace(idx);
+                        }
+
                         ptr_road->nodes_.emplace_back(coord);
                     }
+
+                    if (!error_node_index.empty()) {
+                        shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_024("road", ptr_road->id_,
+                                                                                         error_node_index);
+                        errorOutput->saveError(ptr_error);
+                    }
+
 
                     roads.insert(make_pair(ptr_road->id_, ptr_road));
                     SHPDestroyObject(shp_object);

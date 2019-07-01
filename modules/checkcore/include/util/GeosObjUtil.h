@@ -38,12 +38,26 @@ namespace kd {
             static double get_length_of_coords(const vector<shared_ptr<geos::geom::Coordinate>> &ptr_coords);
 
             /**
+             * 获取结点长度
+             */
+            static double get_length_of_node(shared_ptr<DCCoord> node1, shared_ptr<DCCoord> node2);
+
+            /**
              * 判断是否是相同点
              * @param coord1
              * @param coord2
              * @return
              */
             static bool is_same_coord(Coordinate coord1, Coordinate coord2, double precise = 0.0001);
+
+            /**
+             * 判断是否是相同点
+             * @param coord1
+             * @param coord2
+             * @return
+             */
+            static bool is_same_coord(const shared_ptr<DCCoord> &coord1, const shared_ptr<DCCoord> &coord2,
+                                      double precise = 0.0000001);
         };
     }
 }

@@ -24,7 +24,7 @@
       "lenLimit" : "0",
       "name" : "DASHTYPE",
       "type" : "1",
-      "valueLimit" : "0,1,2,3,4,5"
+      "valueLimit" : "0,1,2,3,4,5,9"
     },
     {
       "defaultValue" : "",

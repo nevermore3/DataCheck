@@ -15,6 +15,39 @@ namespace kd {
         static const string LEVEL_WARNING = "warning";
         static const string LEVEL_ERROR = "error";
 
+        // 结点错误信息
+        struct NodeError {
+            // 索引
+            long index;
+            // 结点坐标
+            shared_ptr<DCCoord> ptr_coord;
+        };
+
+        struct NodeCompareError {
+            // 索引
+            long previous;
+            long current;
+            long next;
+            // 结点坐标
+            shared_ptr<DCCoord> ptr_previous_coord;
+            shared_ptr<DCCoord> ptr_current_coord;
+            shared_ptr<DCCoord> ptr_next_coord;
+            double distance;
+            double angle;
+        };
+
+        // 结点高度错误
+        struct NodeCheck {
+            // 前一点索引
+            int pre_index;
+            // 当前索引
+            int index;
+            // 实际高度差
+            double diff_height;
+            // 实际距离
+            double distance;
+        };
+
         class DCError {
         public:
 
@@ -290,8 +323,16 @@ namespace kd {
                                                                    const string &lane_group_id);
 
             static shared_ptr<DCRoadCheckError> createByKXS_04_003(const string &road_id,
-                                                                   vector<pair<int, int>> &error_index_pair);
+                                                                   vector<NodeCheck> &error_index_pair);
 
+            static shared_ptr<DCRoadCheckError> createByKXS_04_006(const string &road_id,
+                                                                   const vector<shared_ptr<NodeError>> &ptr_error_nodes);
+
+            static shared_ptr<DCRoadCheckError> createByKXS_04_007(const string &road_id,
+                                                                   const vector<shared_ptr<NodeCompareError>> &ptr_error_nodes);
+
+            static shared_ptr<DCRoadCheckError> createByKXS_04_008(const string &road_id,
+                                                                   const vector<shared_ptr<NodeCompareError>> &ptr_error_nodes);
         public:
 
             //错误详细信息描述
@@ -299,7 +340,7 @@ namespace kd {
         };
 
         /**
-        * 道路检查错误
+        * 中心线检查错误
         */
         class DCLaneError : public DCError {
         public:
@@ -314,6 +355,12 @@ namespace kd {
 
             static shared_ptr<DCLaneError> createByKXS_05_003(const string &lane_id,
                                                               const string &divider_id);
+
+            static shared_ptr<DCLaneError> createByKXS_05_015(const string &lane_id1,
+                                                              const string &lane_id2);
+
+            static shared_ptr<DCLaneError> createByKXS_05_016(const string &lane_id,
+                                                              const vector<shared_ptr<NodeError>> &ptr_error_nodes);
 
         public:
 
@@ -358,6 +405,10 @@ namespace kd {
             static shared_ptr<DCFieldError> createByKXS_01_019(const string &detail);
 
             static shared_ptr<DCFieldError> createByKXS_01_020(const string &file);
+
+            static shared_ptr<DCFieldError> createByKXS_01_024(const string &type, const string &id,
+                                                               const set<long> &index);
+
         public:
             bool check_file(const string &file);
 

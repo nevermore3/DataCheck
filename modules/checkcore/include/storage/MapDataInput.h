@@ -73,7 +73,7 @@ namespace kd {
              * @param mapDataManager
              * @return
              */
-            bool loadRoad(string basePath, shared_ptr<MapDataManager> mapDataManager);
+            bool loadRoad(string basePath, shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput);
 
             /**
              * 加载lanegroup相关逻辑关系表

@@ -37,7 +37,32 @@ namespace kd {
             void check_road_node_height(shared_ptr<MapDataManager> mapDataManager,
                                         shared_ptr<CheckErrorOutput> errorOutput);
 
+            void check_road_node(shared_ptr<MapDataManager> mapDataManager,
+                                 shared_ptr<CheckErrorOutput> errorOutput);
+
+
         private:
+            /**
+             * 结点重复
+             * @param errorOutput
+             * @param ptr_road
+             */
+            void check_road_node_repeat(shared_ptr<CheckErrorOutput> errorOutput, shared_ptr<DCRoad> ptr_road);
+
+            /**
+             * 结点间角度过大
+             * @param errorOutput
+             * @param ptr_road
+             */
+            void check_road_node_angle(shared_ptr<CheckErrorOutput> errorOutput, shared_ptr<DCRoad> ptr_road);
+
+            /**
+             * 结点间距过小
+             * @param errorOutput
+             * @param ptr_road
+             */
+            void check_road_node_distance(shared_ptr<CheckErrorOutput> errorOutput, shared_ptr<DCRoad> ptr_road);
+
             shared_ptr<geos::geom::LineString> get_road_line_string(const shared_ptr<MapDataManager> &mapDataManager,
                                                                     const shared_ptr<DCRoad> &ptr_road,
                                                                     const string &lane_group_id);

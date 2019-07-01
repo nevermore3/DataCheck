@@ -6,6 +6,7 @@
 #include "util/CommonUtil.h"
 #include <util/KDGeoUtil.hpp>
 #include <util/GeosObjUtil.h>
+#include <util/CommonCheck.h>
 
 
 namespace kd {
@@ -17,6 +18,7 @@ namespace kd {
         bool RoadCheck::execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) {
             check_road_divider_intersect(mapDataManager, errorOutput);
             check_road_node_height(mapDataManager, errorOutput);
+            check_road_node(mapDataManager, errorOutput);
             return true;
         }
 
@@ -143,7 +145,7 @@ namespace kd {
                 if (nodeCount < 2)
                     continue;
 
-                vector<pair<int, int>> error_index_pair;
+                vector<NodeCheck> error_index_pair;
                 bool check = false;
 
                 for (int i = 1; i < nodeCount; i++) {
@@ -160,7 +162,12 @@ namespace kd {
                     double realDeltaZ = node1->z_ - node2->z_;
                     if (fabs(realDeltaZ) > slopLimit) {
                         check = true;
-                        error_index_pair.emplace_back(make_pair(i - 1, i));
+                        NodeCheck node_check{};
+                        node_check.pre_index = i - 1;
+                        node_check.index = i;
+                        node_check.diff_height = realDeltaZ;
+                        node_check.distance = distance;
+                        error_index_pair.emplace_back(node_check);
                     }
                 }
                 if (check) {
@@ -168,6 +175,79 @@ namespace kd {
                             DCRoadCheckError::createByKXS_04_003(ptr_road->id_, error_index_pair);
                     errorOutput->saveError(error);
                 }
+            }
+        }
+
+        void RoadCheck::check_road_node(shared_ptr<MapDataManager> mapDataManager,
+                                        shared_ptr<CheckErrorOutput> errorOutput) {
+            for (auto road_iter : mapDataManager->roads_) {
+                auto ptr_road = road_iter.second;
+                if (ptr_road) {
+                    // 检查结点是否重复
+                    check_road_node_repeat(errorOutput, ptr_road);
+
+                    // 检查结点间角度是否过大出现拐点
+                    check_road_node_angle(errorOutput, ptr_road);
+
+                    // 结点间距检查
+                    check_road_node_distance(errorOutput, ptr_road);
+                }
+            }
+        }
+
+        void RoadCheck::check_road_node_repeat(shared_ptr<CheckErrorOutput> errorOutput, shared_ptr<DCRoad> ptr_road) {
+            vector<shared_ptr<NodeError>> ptr_error_nodes;
+            auto first_node = ptr_road->nodes_.front();
+            shared_ptr<NodeError> ptr_e_node = make_shared<NodeError>();
+            ptr_e_node->index = 0;
+            ptr_e_node->ptr_coord = first_node;
+            ptr_error_nodes.emplace_back(ptr_e_node);
+            for (int i = 1; i < ptr_road->nodes_.size(); i++) {
+                if (first_node->lng_ == ptr_road->nodes_.at(i)->lng_ &&
+                    first_node->lat_ == ptr_road->nodes_.at(i)->lat_) {
+                    shared_ptr<NodeError> ptr_cur_e_node = make_shared<NodeError>();
+                    ptr_cur_e_node->index = i;
+                    ptr_cur_e_node->ptr_coord = ptr_road->nodes_.at(i);
+                    ptr_error_nodes.emplace_back(ptr_cur_e_node);
+                } else {
+                    if (ptr_error_nodes.size() > 1) {
+                        auto ptr_error = DCRoadCheckError::createByKXS_04_006(ptr_road->id_, ptr_error_nodes);
+                        errorOutput->saveError(ptr_error);
+                    }
+                    ptr_error_nodes.clear();
+                    first_node = ptr_road->nodes_.at(i);
+                    shared_ptr<NodeError> ptr_cur_e_node = make_shared<NodeError>();
+                    ptr_cur_e_node->index = i;
+                    ptr_cur_e_node->ptr_coord = first_node;
+                    ptr_error_nodes.emplace_back(ptr_cur_e_node);
+                }
+            }
+
+            if (ptr_error_nodes.size() > 1) {
+                auto ptr_error = DCRoadCheckError::createByKXS_04_006(ptr_road->id_, ptr_error_nodes);
+                errorOutput->saveError(ptr_error);
+            }
+            ptr_error_nodes.clear();
+        }
+
+        void RoadCheck::check_road_node_angle(shared_ptr<CheckErrorOutput> errorOutput, shared_ptr<DCRoad> ptr_road) {
+            double road_node_angle = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::ROAD_NODE_ANGLE);
+            auto ptr_error_nodes = CommonCheck::AngleCheck(ptr_road->nodes_, road_node_angle);
+
+            if (ptr_error_nodes.size() > 1) {
+                auto ptr_error = DCRoadCheckError::createByKXS_04_007(ptr_road->id_, ptr_error_nodes);
+                errorOutput->saveError(ptr_error);
+            }
+        }
+
+        void RoadCheck::check_road_node_distance(shared_ptr<CheckErrorOutput> errorOutput,
+                                                 shared_ptr<DCRoad> ptr_road) {
+            double road_node_dis = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::ROAD_NODE_DISTANCE);
+            auto ptr_error_nodes = CommonCheck::DistanceCheck(ptr_road->nodes_, road_node_dis);
+
+            if (ptr_error_nodes.size() > 1) {
+                auto ptr_error = DCRoadCheckError::createByKXS_04_008(ptr_road->id_, ptr_error_nodes);
+                errorOutput->saveError(ptr_error);
             }
         }
     }

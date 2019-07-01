@@ -52,13 +52,13 @@ namespace kd {
                     double dAngle = fabs(angle1 - angle2);
                     if (dAngle > 180)
                         dAngle = 360 - dAngle;
-                    if (dAngle > (180-edgeAngle)) {
+                    if (dAngle > (180 - edgeAngle)) {
                         shared_ptr<DCDividerCheckError> error =
-                                DCDividerCheckError::createByNode("KXS-01-011", div, node1);
+                                DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_011, div, node1);
                         error->checkDesc_ = "车道线不平滑夹角<135";
                         stringstream ss;
                         ss << "divider:" << div->id_ << ",node_id1:" << node1->id_ << ",node_id2:" << node2->id_
-                        << ",node_id3:" << node3->id_ << "夹角：" << dAngle << "度";
+                           << ",node_id3:" << node3->id_ << "夹角：" << dAngle << "度";
                         error->errorDesc_ = ss.str();
                         error->checkLevel_ = LEVEL_WARNING;
 
@@ -74,7 +74,8 @@ namespace kd {
                                                             shared_ptr<CheckErrorOutput> errorOutput) {
 
             double nodespace = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::DIVIDER_NODE_SPACE_LEN);
-            double heightchange = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::DIVIDER_HEIGHT_CHANGE_PER_METER);
+            double heightchange = DataCheckConfig::getInstance().getPropertyD(
+                    DataCheckConfig::DIVIDER_HEIGHT_CHANGE_PER_METER);
 
             for (auto recordit : mapDataManager->dividers_) {
                 shared_ptr<DCDivider> div = recordit.second;
@@ -91,10 +92,11 @@ namespace kd {
                     auto node2 = div->nodes_[i];
 
                     //间距判断
-                    double distance = KDGeoUtil::distanceLL(node1->coord_.lng_, node1->coord_.lat_, node2->coord_.lng_, node2->coord_.lat_);
-                    if(distance < nodespace){
+                    double distance = KDGeoUtil::distanceLL(node1->coord_.lng_, node1->coord_.lat_, node2->coord_.lng_,
+                                                            node2->coord_.lat_);
+                    if (distance < nodespace) {
                         shared_ptr<DCDividerCheckError> error =
-                                DCDividerCheckError::createByNode("KXS-01-012", div, node1);
+                                DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_012, div, node1);
                         error->checkDesc_ = "车道线两个节点长度<0.2米";
                         stringstream ss;
                         ss << "divider:" << div->id_ << ",node_id:" << node1->id_ << "与node_id:" << node2->id_
@@ -107,12 +109,13 @@ namespace kd {
                     //坡度判断
                     double slopLimit = distance * heightchange;
                     double realDeltaZ = node1->coord_.z_ - node2->coord_.z_;
-                    if(fabs(realDeltaZ) > slopLimit ){
+                    if (fabs(realDeltaZ) > slopLimit) {
                         shared_ptr<DCDividerCheckError> error =
-                                DCDividerCheckError::createByNode("KXS-01-013", div, node1);
+                                DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_013, div, node1);
                         error->checkDesc_ = "车道线高程突变>±10厘米";
                         stringstream ss;
-                        ss << "divider:" << div->id_ << ",node_id:" << node1->id_ << ",node_id:" << node2->id_;
+                        ss << "divider:" << div->id_ << ",node_id:" << node1->id_ << ",node_id:" << node2->id_
+                           << ",高度差:" << realDeltaZ << ",距离:" << distance;
                         error->errorDesc_ = ss.str();
 
                         errorOutput->saveError(error);

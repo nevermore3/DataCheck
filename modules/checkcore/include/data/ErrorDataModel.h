@@ -109,6 +109,7 @@ namespace kd {
 
             shared_ptr<DCCoord> coord;
             vector<shared_ptr<ErrNodeInfo>> errNodeInfo;
+            string sourceId;
         };
 
         /**

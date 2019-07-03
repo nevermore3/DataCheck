@@ -85,6 +85,7 @@ namespace kd {
             if (div == nullptr)
                 return error;
             error->dividerId_ = div->id_;
+            error->sourceId = div->id_;
             if (att != nullptr) {
                 error->nodeId_ = att->dividerNode_->id_;
                 error->attId_ = att->id_;
@@ -101,6 +102,10 @@ namespace kd {
                 error->coord->lng_=0;
                 error->coord->lat_=0;
                 error->coord->z_=0;
+                shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(error->coord);
+                errNodeInfo->dataLayer = MODEL_NAME_DIVIDER;
+                errNodeInfo -> dataType = DATA_TYPE_WAY;
+                error->errNodeInfo.emplace_back(errNodeInfo);
             }
             error->taskId_ = div->task_id_;
             error->flag = div->flag_;
@@ -157,6 +162,7 @@ namespace kd {
             error->coord = ptr_error_nodes[0]->ptr_current_coord;
             error->detail_ += "divider:";
             error->detail_ += divider_id;
+            error->sourceId = divider_id;
             for (const auto &error_node : ptr_error_nodes) {
                 shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>();
                 errNodeInfo->lng_ = error_node->ptr_current_coord->lng_;
@@ -189,6 +195,7 @@ namespace kd {
             error->detail_ += "divider_id:";
             error->detail_ += divider_id;
             error->coord = ptr_error_nodes[0]->ptr_current_coord;
+            error->sourceId = divider_id;
             for (const auto &error_node : ptr_error_nodes) {
                 shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>();
                 errNodeInfo->lng_ = error_node->ptr_current_coord->lng_;
@@ -230,6 +237,7 @@ namespace kd {
             error->detail_ += "divider_id:";
             error->detail_ += divider_id;
             error->coord = ptr_error_nodes[0]->ptr_current_coord;
+            error->sourceId = divider_id;
             for (const auto &error_node : ptr_error_nodes) {
                 shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>();
                 errNodeInfo->lng_ = error_node->ptr_current_coord->lng_;

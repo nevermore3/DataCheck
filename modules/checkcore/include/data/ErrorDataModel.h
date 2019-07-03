@@ -5,16 +5,20 @@
 #ifndef AUTOHDMAP_DATACHECK_ERRORDATAMODEL_H
 #define AUTOHDMAP_DATACHECK_ERRORDATAMODEL_H
 
+#include <api/KDSServiceModel.h>
 #include "CommonInclude.h"
 
 #include "DividerGeomModel.h"
-
+using namespace kd::api;
 
 namespace kd {
     namespace dc {
         static const string LEVEL_WARNING = "warning";
         static const string LEVEL_ERROR = "error";
 
+        static const string DATA_TYPE_NODE = "node";
+        static const string DATA_TYPE_WAY = "way";
+        static const string DATA_TYPE_RELATION = "relation";
         // 结点错误信息
         struct NodeError {
             // 索引
@@ -35,6 +39,7 @@ namespace kd {
             double distance;
             double angle;
             double height;
+            string id;
         };
 
         // 结点高度错误
@@ -48,7 +53,25 @@ namespace kd {
             // 实际距离
             double distance;
         };
+        /**
+         * 错误点信息
+         */
+        class ErrNodeInfo : public DCCoord{
+        public:
+            ErrNodeInfo(){};
+            ErrNodeInfo(shared_ptr<DCCoord> coord){
+                 lng_ = coord->lng_;
+                 lat_ = coord->lat_;
+                 z_ = coord->z_;
+            };
+            //数据ID
+            string dataId;
+            //所在图层
+            string dataLayer;
+            //数据类型：node,way
+            string dataType;
 
+        };
         class DCError {
         public:
 
@@ -85,6 +108,7 @@ namespace kd {
             string flag;
 
             shared_ptr<DCCoord> coord;
+            vector<shared_ptr<ErrNodeInfo>> errNodeInfo;
         };
 
         /**

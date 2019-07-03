@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <fstream>
+
 void JsonLog::SetGeometry(double x, double y, double z) {
     Poco::JSON::Array ja_coordinates;
     ja_coordinates.add(x);

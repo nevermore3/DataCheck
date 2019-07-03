@@ -41,7 +41,7 @@ private:
 
     void checkShapeDefect(string checkModel, double distLimit,
                           shared_ptr<DCDivider> div, int beginNodexIdx,
-                          int endNodeIdx, bool nodeDirection);
+                          int endNodeIdx, bool nodeDirection,int &subTotal);
 
     void getComparePair(shared_ptr<DCDivider> div, int begin, int end,
                         bool direction, vector<pair<int,int>> & pairs);

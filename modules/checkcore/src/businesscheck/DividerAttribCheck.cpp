@@ -147,18 +147,24 @@ bool DividerAttribCheck::execute(shared_ptr<MapDataManager> data_manager,
 //黄（虚线、实线、双虚线、双实线、左实右虚、左虚右实）变其他，
 //白（虚线、实线、双虚线、双实线、左实右虚、左虚右实）变其他，都可以变公交专用车道
 void DividerAttribCheck::Check_kxs_01_007() {
-    for (auto recordit : data_manager()->dividers_) {
-        shared_ptr<DCDivider> div = recordit.second;
-        if (!div->valid_)
-            continue;
+        int total=0;
+        shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+        checkItemInfo->checkId = CHECK_ITEM_KXS_ORG_007;
+        for (auto recordit : data_manager()->dividers_) {
+            shared_ptr<DCDivider> div = recordit.second;
+            if (!div->valid_)
+                continue;
 
-        if (div->atts_.size() <= 1)
-            continue;
+            if (div->atts_.size() <= 1)
+                continue;
+            int total_t=0, total_f=0;
+            CheckDivCompatibility(div, true, total_t);
 
-        CheckDivCompatibility(div, true);
-
-        CheckDivCompatibility(div, false);
-    }
+            CheckDivCompatibility(div, false, total_f);
+            total = total + total_f + total_t;
+        }
+        checkItemInfo->totalNum = total;
+        error_output()->addCheckItemInfo(checkItemInfo);
 }
 
 //字段匹配关系：车道分隔线颜色、类型、通行类型属性冲突
@@ -170,6 +176,10 @@ void DividerAttribCheck::Check_kxs_01_007() {
 // 通行类型为3，分隔线类型为14、15；
 // 通行类型为4，分隔线类型为16、17；
 void DividerAttribCheck::Check_kxs_01_014(){
+    shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+    checkItemInfo->checkId = CHECK_ITEM_KXS_ORG_014;
+    int total=0;
+
     for (auto recordit : data_manager()->dividers_) {
         shared_ptr<DCDivider> div = recordit.second;
         if (!div->valid_)
@@ -178,6 +188,7 @@ void DividerAttribCheck::Check_kxs_01_014(){
             continue;
 
         for( auto att : div->atts_){
+            total++;
             //虚拟分隔线（1、2、3）时，分隔线类型为0，颜色类型为0，通行类型为0；
             if (att->virtual_ == 1 || att->virtual_ == 2 || att->virtual_ == 3) {
                 if (att->type_ == 36 && (att->color_ == 0 || att->color_ == 1) &&
@@ -240,12 +251,14 @@ void DividerAttribCheck::Check_kxs_01_014(){
                     ss << "divider driverule & type not match. driveRule:" << att->driveRule_ << ",type:";
                     ss << att->type_;
                     error->errorDesc_ = ss.str();
-
                     error_output()->saveError(error);
                 }
             }
         }
     }
+
+    checkItemInfo->totalNum = total;
+    error_output()->addCheckItemInfo(checkItemInfo);
 }
 
 
@@ -423,15 +436,16 @@ double DividerAttribCheck::calLength(shared_ptr<DCDivider> div, int begin, int e
 }
 
 void DividerAttribCheck::CheckDivCompatibility(shared_ptr<DCDivider> div,
-                                               bool white_or_yellow) {
+                                               bool white_or_yellow,int & subTotal) {
     auto& check_types = white_or_yellow ? whiteTypes : yellowTypes;
-
+    int sub_size ;
     for (int i = 0; i < div->atts_.size(); i++) {
         long ref_type = div->atts_[i]->type_;
 
         auto it = check_types.find(ref_type);
         if (it != check_types.end()) {
             //校验白色车道线兼容性
+            sub_size += div->atts_.size();
             for (int j = i + 1; j < div->atts_.size(); j++) {
                 long checkType = div->atts_[j]->type_;
                 if (check_types.find(checkType) == check_types.end()) {
@@ -447,11 +461,25 @@ void DividerAttribCheck::CheckDivCompatibility(shared_ptr<DCDivider> div,
                     ss << "第二个属性索引点：" << j << ",type: "
                        << div->atts_[j]->type_;
                     error->errorDesc_ = ss.str();
+                    error->coord = div->atts_[j-1]->dividerNode_->coord_;
+                    shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(div->atts_[j-1]->dividerNode_->coord_);
+                    errNodeInfo->dataId = div->atts_[j-1]->dividerNode_->id_;
+                    errNodeInfo->dataType = DATA_TYPE_WAY;
+                    errNodeInfo->dataLayer = MODEL_NAME_DIVIDER;
+
+                    shared_ptr<ErrNodeInfo> errNodeInfo1 = make_shared<ErrNodeInfo>(div->atts_[j]->dividerNode_->coord_);
+                    errNodeInfo1->dataId = div->atts_[j]->dividerNode_->id_;
+                    errNodeInfo1->dataType = DATA_TYPE_WAY;
+                    errNodeInfo1->dataLayer = MODEL_NAME_DIVIDER;
+
+                    error->errNodeInfo.emplace_back(errNodeInfo);
+                    error->errNodeInfo.emplace_back(errNodeInfo1);
                     error_output()->saveError(error);
                 }
             }
         }
     }
+    subTotal = sub_size;
 }
 
 }

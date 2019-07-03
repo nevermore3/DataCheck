@@ -62,7 +62,7 @@ namespace kd {
         void CheckErrorOutput::writeInfo(string info, bool bLongString) {
             LOG(ERROR) << info;
         }
-        int CheckErrorOutput::saveErrorReport(){
+        int CheckErrorOutput::saveErrorReport(string err_file_name){
             int ret = 0;
             LOG(INFO) << "task [save error] start. ";
             TimerUtil compilerTimer;
@@ -98,7 +98,7 @@ namespace kd {
                     checkItem.checkItemCode = checkItemInfo->checkId;
                     ReportJsonLog::GetInstance().AppendCheckItemTotal(checkItem);
                 }
-                string errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::ERR_JSON_PATH);
+                string errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH)+err_file_name;
                 ReportJsonLog::GetInstance().WriteToFile(errJsonPath);
             } catch (std::exception &e) {
                 LOG(ERROR) << e.what();

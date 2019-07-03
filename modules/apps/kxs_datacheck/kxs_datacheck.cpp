@@ -35,7 +35,7 @@
 using namespace kd::dc;
 
 const char kCheckListFile[] = "check_list.json";
-
+const char checkresult[] = "checkresult.json";
 int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) {
     int ret = 0;
     //交换格式基本属性检查
@@ -213,6 +213,8 @@ int main(int argc, const char *argv[]) {
         ret |= dataCheck(base_path, error_output);
 
         ret |= error_output->saveJsonError();
+
+        ret |= error_output->saveErrorReport(checkresult);
 
         LOG(INFO) << "total task costs: " << compilerTimer.elapsed_message();
     } catch (std::exception &e) {

@@ -53,7 +53,7 @@ namespace kd {
              * 输出错误报表
              * @return
              */
-            int saveErrorReport();
+            int saveErrorReport(string err_file_name);
             /**
              * 输出检查信息到sql中
              */

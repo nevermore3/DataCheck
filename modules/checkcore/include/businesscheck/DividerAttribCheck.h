@@ -69,7 +69,7 @@ private:
      */
     double calLength(shared_ptr<DCDivider> div, int begin, int end, bool direction);
 
-    void CheckDivCompatibility(shared_ptr<DCDivider> div, bool white_or_yellow);
+    void CheckDivCompatibility(shared_ptr<DCDivider> div, bool white_or_yellow , int & subTotal);
 
 private:
     const string id = "divider_attrib_check";

@@ -75,10 +75,10 @@ void DividerShapeDefectCheck::getComparePair(
 
 void DividerShapeDefectCheck::checkShapeDefect(
         string checkModel, double distLimit, shared_ptr<DCDivider> div,
-        int beginNodexIdx, int endNodeIdx, bool nodeDirection) {
+        int beginNodexIdx, int endNodeIdx, bool nodeDirection,int &subTotal) {
     vector<pair<int, int>> nodeSegs;
     getComparePair(div, beginNodexIdx, endNodeIdx, nodeDirection, nodeSegs);
-
+    subTotal = nodeSegs.size();
     for (pair<int, int> oneseg : nodeSegs) {
         shared_ptr<DCDividerNode> node1 = div->nodes_[oneseg.first];
         shared_ptr<DCDividerNode> node2 = div->nodes_[oneseg.second];
@@ -118,6 +118,9 @@ void DividerShapeDefectCheck::check_kxs(
         EnumDividerAttributeType div_attr_type) {
     double dist_dimit =
             DataCheckConfig::getInstance().getPropertyD(limit_key);
+    shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+    checkItemInfo->checkId = check_model;
+    int total=0;
     for (const auto& recordit : data_manager()->dividers_) {
         shared_ptr<DCDivider> div = recordit.second;
         if (!div->valid_)
@@ -144,13 +147,16 @@ void DividerShapeDefectCheck::check_kxs(
                 auto& div_att_end = div->atts_.at(i + 1);
                 node_index = div->getAttNodeIndex(div_att_end->dividerNode_);
             }
-
+            int subTotal=0;
             if (div_att->type_ == div_attr_type) {
                 checkShapeDefect(check_model, dist_dimit, div,
-                                 begin_index, node_index, direction);
+                                 begin_index, node_index, direction,subTotal);
             }
+            total +=subTotal;
         }
     }
+    checkItemInfo->totalNum = total;
+    error_output()->addCheckItemInfo(checkItemInfo);
 }
 
 }

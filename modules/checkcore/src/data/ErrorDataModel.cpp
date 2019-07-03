@@ -84,12 +84,16 @@ namespace kd {
             shared_ptr<DCDividerCheckError> error = make_shared<DCDividerCheckError>(checkModel);
             if (div == nullptr)
                 return error;
-
             error->dividerId_ = div->id_;
             if (att != nullptr) {
                 error->nodeId_ = att->dividerNode_->id_;
                 error->attId_ = att->id_;
                 error->coord = att->dividerNode_->coord_;
+                shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(att->dividerNode_->coord_);
+                errNodeInfo->dataId = att->id_;
+                errNodeInfo->dataLayer = MODEL_NAME_DIVIDER;
+                errNodeInfo -> dataType = DATA_TYPE_WAY;
+                error->errNodeInfo.emplace_back(errNodeInfo);
             } else {
                 error->nodeId_ = "";
                 error->attId_ = "";
@@ -149,9 +153,19 @@ namespace kd {
                                                                       const vector<shared_ptr<NodeCompareError>> &ptr_error_nodes) {
             shared_ptr<DCDividerCheckError> error = make_shared<DCDividerCheckError>(CHECK_ITEM_KXS_ORG_011);
             error->checkName = "车道线不平滑夹角";
+//            error->coord = make_shared<DCCoord>();
+            error->coord = ptr_error_nodes[0]->ptr_current_coord;
             error->detail_ += "divider:";
             error->detail_ += divider_id;
             for (const auto &error_node : ptr_error_nodes) {
+                shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>();
+                errNodeInfo->lng_ = error_node->ptr_current_coord->lng_;
+                errNodeInfo->lat_ = error_node->ptr_current_coord->lat_;
+                errNodeInfo->z_ = error_node->ptr_current_coord->z_;
+                errNodeInfo->dataId = error_node->id;
+                errNodeInfo->dataType = DATA_TYPE_WAY;
+                errNodeInfo->dataLayer = MODEL_NAME_DIVIDER;
+                error->errNodeInfo.emplace_back(errNodeInfo);
                 error->detail_ += ",索引点";
                 error->detail_ += to_string(error_node->current);
                 error->detail_ += ",坐标(";
@@ -164,6 +178,7 @@ namespace kd {
                 error->detail_ += "前后点角度：";
                 error->detail_ += to_string(error_node->angle);
             }
+
             return error;
         }
 
@@ -173,7 +188,16 @@ namespace kd {
             error->checkName = "存在长度小于0.2米的弧段";
             error->detail_ += "divider_id:";
             error->detail_ += divider_id;
+            error->coord = ptr_error_nodes[0]->ptr_current_coord;
             for (const auto &error_node : ptr_error_nodes) {
+                shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>();
+                errNodeInfo->lng_ = error_node->ptr_current_coord->lng_;
+                errNodeInfo->lat_ = error_node->ptr_current_coord->lat_;
+                errNodeInfo->z_ = error_node->ptr_current_coord->z_;
+                errNodeInfo->dataId = error_node->id;
+                errNodeInfo->dataType = DATA_TYPE_WAY;
+                errNodeInfo->dataLayer = MODEL_NAME_DIVIDER;
+                error->errNodeInfo.emplace_back(errNodeInfo);
                 error->detail_ += ",索引点";
                 error->detail_ += to_string(error_node->previous);
                 error->detail_ += ",坐标(";
@@ -205,7 +229,16 @@ namespace kd {
             error->checkName = "车道线高程突变";
             error->detail_ += "divider_id:";
             error->detail_ += divider_id;
+            error->coord = ptr_error_nodes[0]->ptr_current_coord;
             for (const auto &error_node : ptr_error_nodes) {
+                shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>();
+                errNodeInfo->lng_ = error_node->ptr_current_coord->lng_;
+                errNodeInfo->lat_ = error_node->ptr_current_coord->lat_;
+                errNodeInfo->z_ = error_node->ptr_current_coord->z_;
+                errNodeInfo->dataId = error_node->id;
+                errNodeInfo->dataType = DATA_TYPE_WAY;
+                errNodeInfo->dataLayer = MODEL_NAME_DIVIDER;
+                error->errNodeInfo.emplace_back(errNodeInfo);
                 error->detail_ += ",索引点";
                 error->detail_ += to_string(error_node->previous);
                 error->detail_ += ",坐标(";

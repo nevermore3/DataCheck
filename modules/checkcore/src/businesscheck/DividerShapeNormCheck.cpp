@@ -53,11 +53,14 @@ void DividerShapeNormCheck::Check_kxs_01_011() {
     double divider_node_angle =
             DataCheckConfig::getInstance().getPropertyD(
                     DataCheckConfig::DIVIDER_EDGE_ANGLE);
+    shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+    checkItemInfo->checkId = CHECK_ITEM_KXS_ORG_011;
+    int total = 0;
     for (auto& it : data_manager()->dividers_) {
         shared_ptr<DCDivider> div = it.second;
         auto ptr_error_nodes = CommonCheck::AngleCheck(
                 div->nodes_, divider_node_angle);
-
+        total += div->nodes_.size();
         if (ptr_error_nodes.size() > 1) {
             auto ptr_error = DCDividerCheckError::createByKXS_01_011(
                     div->id_, ptr_error_nodes);
@@ -69,17 +72,22 @@ void DividerShapeNormCheck::Check_kxs_01_011() {
             error_output()->saveError(ptr_error);
         }
     }
+    checkItemInfo->totalNum = total;
+    error_output()->addCheckItemInfo(checkItemInfo);
 }
 
 void DividerShapeNormCheck::Check_kxs_01_012() {
     double divider_node_len =
             DataCheckConfig::getInstance().getPropertyD(
                     DataCheckConfig::DIVIDER_NODE_SPACE_LEN);
+    shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+    checkItemInfo->checkId = CHECK_ITEM_KXS_ORG_012;
+    int total = 0;
     for (auto& it : data_manager()->dividers_) {
         shared_ptr<DCDivider> div = it.second;
         auto ptr_error_nodes = CommonCheck::DistanceCheck(
                 div->nodes_, divider_node_len);
-
+        total += div->nodes_.size();
         if (ptr_error_nodes.size() > 1) {
             auto ptr_error = DCDividerCheckError::createByKXS_01_012(
                     div->id_, ptr_error_nodes);
@@ -90,16 +98,21 @@ void DividerShapeNormCheck::Check_kxs_01_012() {
             error_output()->saveError(ptr_error);
         }
     }
+    checkItemInfo->totalNum = total;
+    error_output()->addCheckItemInfo(checkItemInfo);
 }
 
 void DividerShapeNormCheck::Check_kxs_01_013() {
     double divider_height = DataCheckConfig::getInstance().getPropertyD(
             DataCheckConfig::DIVIDER_HEIGHT_CHANGE_PER_METER);
+    shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+    checkItemInfo->checkId = CHECK_ITEM_KXS_ORG_013;
+    int total = 0;
     for (auto& it : data_manager()->dividers_) {
         shared_ptr<DCDivider> div = it.second;
         auto ptr_error_nodes = CommonCheck::NodeHeightCheck(
                 div->nodes_, divider_height);
-
+        total += div->nodes_.size();
         if (ptr_error_nodes.size() > 1) {
             auto ptr_error = DCDividerCheckError::createByKXS_01_013(
                     div->id_, ptr_error_nodes);
@@ -110,6 +123,8 @@ void DividerShapeNormCheck::Check_kxs_01_013() {
             error_output()->saveError(ptr_error);
         }
     }
+    checkItemInfo->totalNum = total;
+    error_output()->addCheckItemInfo(checkItemInfo);
 }
 
 }

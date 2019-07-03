@@ -62,6 +62,52 @@ namespace kd {
         void CheckErrorOutput::writeInfo(string info, bool bLongString) {
             LOG(ERROR) << info;
         }
+        int CheckErrorOutput::saveErrorReport(){
+            int ret = 0;
+            LOG(INFO) << "task [save error] start. ";
+            TimerUtil compilerTimer;
+            try {
+
+                for (const auto check_item : check_total) {
+                    ReportLogTotal checkItem;
+                    string errCode = check_item.first;
+                    shared_ptr<CheckItemInfo> checkItemInfo = check_item.second;
+                    vector<ErrorOutPut> errs_v = check_model_2_output_maps_[errCode];
+                    int size = errs_v.size();
+                    int failNum = 0;
+                    if(size == 0){
+                        checkItemInfo->successNum = checkItemInfo->totalNum;
+                        checkItemInfo->failNum = 0;
+
+                    }else{
+                       for(const auto errCase : errs_v){
+                           failNum++;
+                           ReportLogItem reportLogItem;
+                           reportLogItem.task_id = errCase.taskId;
+                           reportLogItem.err_desc = errCase.errDesc;
+                           reportLogItem.node = errCase.coord;
+                           reportLogItem.errNodeInfo = errCase.errNodeInfo;
+                           ReportJsonLog::GetInstance().AppendErrorCase(reportLogItem);
+                       }
+                        checkItemInfo->failNum = failNum;
+                        checkItemInfo->successNum = checkItemInfo->totalNum - failNum;
+                    }
+                    checkItem.totalNum = checkItemInfo->totalNum;
+                    checkItem.successNum = checkItemInfo->successNum;
+                    checkItem.failNum = checkItemInfo->failNum;
+                    checkItem.checkItemCode = checkItemInfo->checkId;
+                    ReportJsonLog::GetInstance().AppendCheckItemTotal(checkItem);
+                }
+                string errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::ERR_JSON_PATH);
+                ReportJsonLog::GetInstance().WriteToFile(errJsonPath);
+            } catch (std::exception &e) {
+                LOG(ERROR) << e.what();
+                ret = 1;
+            }
+
+            LOG(INFO) << "task [save error] end successfully " << " costs : " << compilerTimer.elapsed_message();
+            return ret;
+        }
         int CheckErrorOutput::saveJsonError(){
             int ret = 0;
             LOG(INFO) << "task [save error] start. ";
@@ -89,6 +135,7 @@ namespace kd {
             return ret;
         }
 
+
         void CheckErrorOutput::saveError(shared_ptr<DCError> error) {
             if (error) {
                 ErrorOutPut error_output;
@@ -102,6 +149,7 @@ namespace kd {
                 error_output.dataKey = error->dataKey_;
                 error_output.flag = error->flag;
                 error_output.coord = error->coord;
+                error_output.errNodeInfo = error->errNodeInfo;
 
                 auto check_model_iter = check_model_2_output_maps_.find(error->checkId);
                 if (check_model_iter != check_model_2_output_maps_.end()) {
@@ -114,6 +162,15 @@ namespace kd {
             } else {
                 LOG(ERROR) << "saveError error is null!";
             }
+        }
+        void CheckErrorOutput::addCheckItemInfo(shared_ptr<CheckItemInfo> &checkItemInfo){
+            if(checkItemInfo){
+                check_total[checkItemInfo->checkId]=checkItemInfo;
+                LOG(ERROR) <<"totalNum:"<<checkItemInfo->totalNum;
+            } else {
+                LOG(ERROR) << "saveError error is null!";
+            }
+
         }
 
         string CheckErrorOutput::get_error_level(string check_model) {

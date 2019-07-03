@@ -175,8 +175,6 @@ int main(int argc, const char *argv[]) {
     string exe_path;
     string base_path;
 
-    CppSQLite3::Database *p_db = nullptr;
-    CppSQLite3::Database *p_db_out = nullptr;
     KDSDivider::FLAG;
     try {
         exe_path = argv[0];
@@ -188,13 +186,6 @@ int main(int argc, const char *argv[]) {
         if (ret != 0) {
             LOG(ERROR) << "读取配置文件config.properties失败,程序退出!";
             return ret;
-        }
-
-        string output_path = GetConfigProperty(DataCheckConfig::OUTPUT_PATH);
-        string output_file = output_path + "/data_check.db";
-        Poco::File output(output_file);
-        if (output.exists()) {
-            output.remove();
         }
 
         // 检查项配置管理初始化

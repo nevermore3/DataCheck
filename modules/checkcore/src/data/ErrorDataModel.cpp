@@ -850,6 +850,7 @@ namespace kd {
             error->detail = type;
             error->detail += ":";
             error->detail += id;
+            error->sourceId = id;
             for (auto idx : index) {
                 error->detail += ",索引点";
                 error->detail += to_string(idx);

@@ -448,11 +448,19 @@ namespace kd {
             error->detail += "divider_id:";
             error->detail += divider_id;
             error->detail += "存在于分组";
+            error->sourceId = divider_id;
             for (const auto &lg : lane_groups) {
                 error->detail += lg;
                 error->detail += " ";
             }
-
+            shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>();
+            errNodeInfo->lng_ = 0;
+            errNodeInfo->lat_ = 0;
+            errNodeInfo->z_ = 0;
+            errNodeInfo->dataId = "";
+            errNodeInfo->dataType = DATA_TYPE_WAY;
+            errNodeInfo->dataLayer = MODEL_NAME_DIVIDER;
+            error->errNodeInfo.emplace_back(errNodeInfo);
             return error;
         }
 

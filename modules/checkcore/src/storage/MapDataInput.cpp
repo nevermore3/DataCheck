@@ -93,6 +93,7 @@ namespace kd {
             ShpData shpData(dividerFile);
             if (shpData.isInit()) {
                 int record_nums = shpData.getRecords();
+                int total=0;
                 for (int i = 0; i < record_nums; i++) {
                     SHPObject *shpObject = shpData.readShpObject(i);
                     if (!shpObject || shpObject->nSHPType != SHPT_ARCZ)
@@ -111,7 +112,7 @@ namespace kd {
                     //读取空间信息
                     int nVertices = shpObject->nVertices;
                     set<long> error_node_index;
-
+                    total += nVertices;
                     for (int i = 0; i < nVertices; i++) {
                         shared_ptr<DCCoord> coord;
                         coord->lng_ = shpObject->padfX[i];

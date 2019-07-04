@@ -166,8 +166,13 @@ namespace kd {
         }
         void CheckErrorOutput::addCheckItemInfo(shared_ptr<CheckItemInfo> &checkItemInfo){
             if(checkItemInfo){
-                check_total[checkItemInfo->checkId]=checkItemInfo;
-                LOG(ERROR) <<"totalNum:"<<checkItemInfo->totalNum;
+                auto check_id_iter = check_total.find(checkItemInfo->checkId);
+                if (check_id_iter != check_total.end()) {
+                    check_id_iter->second->totalNum +=checkItemInfo->totalNum;
+                }else{
+                    LOG(ERROR) << "totalNum:" << checkItemInfo->totalNum;
+                    check_total[checkItemInfo->checkId] = checkItemInfo;
+                }
             } else {
                 LOG(ERROR) << "saveError error is null!";
             }

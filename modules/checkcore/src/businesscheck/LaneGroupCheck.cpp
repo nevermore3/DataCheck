@@ -106,12 +106,12 @@ void LaneGroupCheck::Check_kxs_03_003() {
 }
 
 void LaneGroupCheck::Check_kxs_03_001() {
-    int total = 0;
+
     const auto& ptr_lane_groups = data_manager()->laneGroups_;
     for (const auto &lane_group : ptr_lane_groups) {
         auto ptr_dividers = CommonUtil::get_dividers_by_lg(data_manager(), lane_group.first);
         if (!ptr_dividers.empty()) {
-            total += ptr_dividers.size();
+
 //                    check_divider_no(mapDataManager, errorOutput, lane_group.first, ptr_dividers);
             check_divider_length(lane_group.first, ptr_dividers);
         }
@@ -119,7 +119,7 @@ void LaneGroupCheck::Check_kxs_03_001() {
 
     shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
     checkItemInfo->checkId = CHECK_ITEM_KXS_LG_001;
-    checkItemInfo->totalNum = total;
+    checkItemInfo->totalNum = data_manager()->laneGroups_.size();
     error_output()->addCheckItemInfo(checkItemInfo);
 }
 

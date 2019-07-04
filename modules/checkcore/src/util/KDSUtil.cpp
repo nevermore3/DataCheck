@@ -5,8 +5,10 @@
 #include <util/KDSUtil.h>
 #include <util/KdsDataUtil.h>
 #include <data/ErrorDataModel.h>
-
+#include <util/FileUtil.h>
 #include "util/KDSUtil.h"
+#include <Poco/StringTokenizer.h>
+
 namespace kd {
     namespace dc {
 
@@ -169,6 +171,77 @@ namespace kd {
             }
 
             return da_maps_;
+        }
+
+        void KDSUtil::getResourceData(const string & file_type,const string & taskId,const string & data_type,const string & data_id,Object::Ptr & entity){
+            string input_path  = DataCheckConfig::getInstance().getProperty(DataCheckConfig::JSON_DATA_INPUT);
+            vector<string> file_list;
+            std::string suffix = ".json";
+            FileUtil::getFileNames(input_path, file_list, suffix);
+
+            if (file_list.empty()) {
+                LOG(ERROR) << "inputFileName is empty";
+                return ;
+            }
+            int file_count = file_list.size();
+
+            for (int i = 0; i < file_count; i++) {
+
+                string inputJsonData;
+                const string &file_path = file_list[i];
+
+                if(file_path.find(taskId) == std::string::npos){
+                    continue;
+                }
+                if(file_path.find(file_type) == std::string::npos){
+                    continue;
+                }
+                if(!FileUtil::LoadFile(file_path, inputJsonData)){
+                    LOG(ERROR) << "getResourceData inputJsonData is empty";
+                    return ;
+                }
+
+                if (inputJsonData.length() < 10) {
+                    continue;
+                }
+                if(!getEntityData(inputJsonData,data_type,data_id,entity)){
+                    LOG(ERROR) << "getResourceData not find,taskId:"<<taskId<<" data_type:"<<data_type<<" , data_id :"<<data_id;
+                }
+            }
+        }
+        bool KDSUtil::getEntityData(const string &inputJson, const string &data_type,const string data_id ,Object::Ptr & entity){
+            try {
+
+                // get inner
+                Poco::JSON::Parser parser;
+                Poco::Dynamic::Var jsonResult = parser.parse(inputJson);
+
+                Poco::JSON::Object::Ptr obj;
+                if (jsonResult.type() == typeid(Poco::JSON::Object::Ptr))
+                    obj = jsonResult.extract<Poco::JSON::Object::Ptr>();
+
+                if(obj ->has(data_type)) {
+                    Poco::JSON::Array::Ptr dataArray = obj->getArray(data_type);
+
+                    int totalCount = dataArray->size();
+
+                    for (long i = 0; i < totalCount; i++) {
+                        Object::Ptr item = dataArray->getObject(i);
+                        int id = item->getValue<int>("id");
+                        if(to_string(id) == data_id){
+                            entity = item;
+//                            std::stringstream jsnString;
+//                            item->stringify(jsnString);
+//                            entity = jsnString.str();
+                            return true;
+                        }
+                    }
+                }
+
+            } catch (Exception &e) {
+                cout << e.what() << endl;
+            }
+            return false;
         }
     }
 }

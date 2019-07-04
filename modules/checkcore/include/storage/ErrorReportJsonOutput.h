@@ -21,6 +21,8 @@ struct ReportLogItem {
     string task_id;///
     // project info
     string project_id;
+
+    string sourceId;//源数据ID
     shared_ptr<DCCoord> node;////
     vector<shared_ptr<ErrNodeInfo>> errNodeInfo;/////
     // 默认值

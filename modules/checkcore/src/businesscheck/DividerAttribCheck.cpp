@@ -474,6 +474,7 @@ void DividerAttribCheck::CheckDivCompatibility(shared_ptr<DCDivider> div,
 
                     error->errNodeInfo.emplace_back(errNodeInfo);
                     error->errNodeInfo.emplace_back(errNodeInfo1);
+                    error->sourceId = div->id_;
                     error_output()->saveError(error);
                 }
             }

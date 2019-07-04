@@ -87,6 +87,7 @@ namespace kd {
                            reportLogItem.err_desc = errCase.errDesc;
                            reportLogItem.node = errCase.coord;
                            reportLogItem.errNodeInfo = errCase.errNodeInfo;
+                           reportLogItem.sourceId = errCase.sourceId;
                            ReportJsonLog::GetInstance().AppendErrorCase(reportLogItem);
                        }
                         checkItemInfo->failNum = failNum;
@@ -150,7 +151,7 @@ namespace kd {
                 error_output.flag = error->flag;
                 error_output.coord = error->coord;
                 error_output.errNodeInfo = error->errNodeInfo;
-
+                error_output.sourceId = error->sourceId;
                 auto check_model_iter = check_model_2_output_maps_.find(error->checkId);
                 if (check_model_iter != check_model_2_output_maps_.end()) {
                     check_model_iter->second.emplace_back(error_output);

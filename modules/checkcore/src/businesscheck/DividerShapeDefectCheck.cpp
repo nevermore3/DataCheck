@@ -96,6 +96,7 @@ void DividerShapeDefectCheck::checkShapeDefect(
                << "距离" << distance << "米";
             error->errorDesc_ = ss.str();
             error->checkLevel_ = LEVEL_WARNING;
+            error->coord = node2->coord_;
 
             error_output()->saveError(error);
         }

@@ -8,7 +8,9 @@
 #include <storage/CheckErrorOutput.h>
 #include "data/DataManager.h"
 #include "ResourceManager.h"
-
+#include <Poco/JSON/Parser.h>
+using namespace Poco;
+using namespace Poco::JSON;
 namespace kd {
     namespace dc {
         class KDSUtil {
@@ -30,6 +32,18 @@ namespace kd {
 
             static map<int, shared_ptr<kd::api::KDSDividerAttribute>>
             &GetDividerDAs(long div_id, map<long, map<int, shared_ptr<kd::api::KDSDividerAttribute>>> &divider_da_maps_);
+            /**
+             * 根据data_id查找源数据
+             * @param file_type lane,ground,pole,sign
+             * @param taskId 任务号
+             * @param data_type node,relation,way
+             * @param data_id 数据ID
+             * @param entity 查询结果
+             */
+            static void getResourceData(const string & file_type,const string &taskId,const string &data_type,const string & data_id,Object::Ptr & entity);
+
+        private:
+            static bool getEntityData(const string &inputJson, const string &data_type,const string data_id ,Object::Ptr & entity);
 
 
         };

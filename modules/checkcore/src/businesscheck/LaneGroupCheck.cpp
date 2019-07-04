@@ -106,14 +106,21 @@ void LaneGroupCheck::Check_kxs_03_003() {
 }
 
 void LaneGroupCheck::Check_kxs_03_001() {
+    int total = 0;
     const auto& ptr_lane_groups = data_manager()->laneGroups_;
     for (const auto &lane_group : ptr_lane_groups) {
         auto ptr_dividers = CommonUtil::get_dividers_by_lg(data_manager(), lane_group.first);
         if (!ptr_dividers.empty()) {
+            total += ptr_dividers.size();
 //                    check_divider_no(mapDataManager, errorOutput, lane_group.first, ptr_dividers);
             check_divider_length(lane_group.first, ptr_dividers);
         }
     }
+
+    shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+    checkItemInfo->checkId = CHECK_ITEM_KXS_LG_001;
+    checkItemInfo->totalNum = total;
+    error_output()->addCheckItemInfo(checkItemInfo);
 }
 
 void LaneGroupCheck::check_divider_no(shared_ptr<MapDataManager> mapDataManager,
@@ -268,7 +275,10 @@ void LaneGroupCheck::check_divider_length(const string &lane_group,
         ptr_error->taskId_ = taskId;
         ptr_error->flag = flag;
         ptr_error->dataKey_ = dataKey;
-        ptr_error->coord = nullptr;
+        ptr_error->coord = make_shared<DCCoord>();
+        ptr_error->coord->lat_=0;
+        ptr_error->coord->lng_=0;
+        ptr_error->coord->z_=0;
         error_output()->saveError(ptr_error);
     }
 }

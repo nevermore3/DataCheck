@@ -481,7 +481,18 @@ namespace kd {
             for (const auto &div : dividers) {
                 error->detail += div;
                 error->detail += " ";
+
+                shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>();
+                errNodeInfo->lng_ = 0;
+                errNodeInfo->lat_ = 0;
+                errNodeInfo->z_ = 0;
+                errNodeInfo->dataId = div;
+                errNodeInfo->dataType = DATA_TYPE_RELATION;
+                errNodeInfo->dataLayer = MODEL_NAME_R_DIVIDER_DREF;
+                error->errNodeInfo.emplace_back(errNodeInfo);
+
             }
+            error->sourceId = lane_group_id;
 
             return error;
         }

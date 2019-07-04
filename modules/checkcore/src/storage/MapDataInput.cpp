@@ -93,7 +93,6 @@ namespace kd {
             ShpData shpData(dividerFile);
             if (shpData.isInit()) {
                 int record_nums = shpData.getRecords();
-                int total=0;
                 for (int i = 0; i < record_nums; i++) {
                     SHPObject *shpObject = shpData.readShpObject(i);
                     if (!shpObject || shpObject->nSHPType != SHPT_ARCZ)
@@ -112,7 +111,6 @@ namespace kd {
                     //读取空间信息
                     int nVertices = shpObject->nVertices;
                     set<long> error_node_index;
-                    total += nVertices;
                     for (int i = 0; i < nVertices; i++) {
                         shared_ptr<DCCoord> coord;
                         coord->lng_ = shpObject->padfX[i];
@@ -160,11 +158,6 @@ namespace kd {
                     }
                     dividers.insert(make_pair(divider->id_, divider));
                 }
-
-                shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
-                checkItemInfo->checkId = CHECK_ITEM_KXS_ORG_024;
-                checkItemInfo->totalNum = total;
-                error_output_->addCheckItemInfo(checkItemInfo);
 
             } else {
                 stringstream ss;
@@ -301,7 +294,6 @@ namespace kd {
             ShpData shpData(laneFile);
             if (shpData.isInit()) {
                 int record_nums = shpData.getRecords();
-                int total = 0;
                 for (int i = 0; i < record_nums; i++) {
                     SHPObject *shpObject = shpData.readShpObject(i);
                     if (!shpObject || shpObject->nSHPType != SHPT_ARCZ)
@@ -359,7 +351,6 @@ namespace kd {
                     //读取空间信息
                     int nVertices = shpObject->nVertices;
                     set<long> error_node_index;
-                    total += nVertices;
                     for (int i = 0; i < nVertices; i++) {
                         shared_ptr<DCCoord> coord = make_shared<DCCoord>();
                         coord->lng_ = shpObject->padfX[i];
@@ -380,10 +371,6 @@ namespace kd {
                     map_data_manager_->lanes_.insert(make_pair(dcLane->id_, dcLane));
                 }
 
-                shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
-                checkItemInfo->checkId = CHECK_ITEM_KXS_ORG_024;
-                checkItemInfo->totalNum = total;
-                error_output_->addCheckItemInfo(checkItemInfo);
             } else {
                 stringstream ss;
                 ss << "[Error] open lane file error. fileName " << laneFile;
@@ -640,7 +627,6 @@ namespace kd {
             ShpData lg_road_data(lg_road__file);
             if (lg_road_data.isInit()) {
                 auto &roads = map_data_manager_->roads_;
-                int total=0;
                 int record_nums = lg_road_data.getRecords();
                 for (int i = 0; i < record_nums; i++) {
                     SHPObject *shp_object = lg_road_data.readShpObject(i);
@@ -657,7 +643,6 @@ namespace kd {
                     //读取空间信息
                     int nVertices = shp_object->nVertices;
                     set<long> error_node_index;
-                    total += nVertices;
                     for (int idx = 0; idx < nVertices; idx++) {
                         shared_ptr<DCCoord> coord = make_shared<DCCoord>();
                         coord->lng_ = shp_object->padfX[idx];
@@ -682,10 +667,6 @@ namespace kd {
                     SHPDestroyObject(shp_object);
                 }
 
-                shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
-                checkItemInfo->checkId = CHECK_ITEM_KXS_ORG_024;
-                checkItemInfo->totalNum = total;
-                error_output_->addCheckItemInfo(checkItemInfo);
             } else {
                 LOG(ERROR) << "open LG_ROADNODE_INDEX failed! ";
                 bRet = false;

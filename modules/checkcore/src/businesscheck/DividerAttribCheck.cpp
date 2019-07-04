@@ -264,69 +264,72 @@ void DividerAttribCheck::Check_kxs_01_014(){
 
 //起点没有有DA
 void DividerAttribCheck::Check_kxs_01_015() {
-    for (auto recordit : data_manager()->dividers_) {
-        shared_ptr<DCDivider> div = recordit.second;
-        if (!div->valid_)
-            continue;
+        shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+        checkItemInfo->checkId = CHECK_ITEM_KXS_ORG_015;
+        checkItemInfo->totalNum = data_manager()->dividers_.size();
+        for (auto recordit : data_manager()->dividers_) {
+            shared_ptr<DCDivider> div = recordit.second;
+            if (!div->valid_)
+                continue;
 
-        int daCount = div->atts_.size();
-        //没有DA的情况
-        if ( daCount == 0){
-            //车道线没有属性变化点
-            shared_ptr<DCDividerCheckError> error =
-                    DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_015, div, nullptr);
-            error->errorDesc_ = "divider:";
-            error->errorDesc_ += div->id_;
-            error->checkName = "车道线没有属性变化点";
-            error_output()->saveError(error);
-            continue;
-        }
-
-        //判断属性变化点的控制方向
-        bool nodeDirection = true; //默认是正向
-        if(div->nodes_[0]->id_ == div->toNodeId_){
-            nodeDirection = false;
-        }
-
-        //起点没有DA的情况
-        {
-            string startAttNodeId;
-            if(nodeDirection)
-                startAttNodeId = div->atts_[0]->dividerNode_->id_; //正向第一个
-            else
-                startAttNodeId = div->atts_[daCount-1]->dividerNode_->id_; //反向第一个
-
-            if(startAttNodeId != div->fromNodeId_){
-                //车道线起点没有属性变化点
+            int daCount = div->atts_.size();
+            //没有DA的情况
+            if (daCount == 0) {
+                //车道线没有属性变化点
                 shared_ptr<DCDividerCheckError> error =
                         DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_015, div, nullptr);
                 error->errorDesc_ = "divider:";
                 error->errorDesc_ += div->id_;
-                error->checkName = "车道线起点没有属性变化点";
+                error->checkName = "车道线没有属性变化点";
                 error_output()->saveError(error);
                 continue;
             }
-        }
 
-        //判断起点和终点都有属性变化点的情形
-        if(daCount > 1)
-        {
-            string startAttNodeId = div->atts_[0]->dividerNode_->id_;
-            string endAttNodeId = div->atts_[daCount-1]->dividerNode_->id_;
+            //判断属性变化点的控制方向
+            bool nodeDirection = true; //默认是正向
+            if (div->nodes_[0]->id_ == div->toNodeId_) {
+                nodeDirection = false;
+            }
 
-            if( (startAttNodeId == div->fromNodeId_ && endAttNodeId == div->toNodeId_) ||
-                (startAttNodeId == div->toNodeId_ && endAttNodeId == div->fromNodeId_) ){
-                //车道线起点和终点都有属性变化点
-                shared_ptr<DCDividerCheckError> error =
-                        DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_015, div, nullptr);
-                error->errorDesc_ = "divider:";
-                error->errorDesc_ += div->id_;
-                error->checkName = "车道线起点和终点都有属性变化点";
-                error_output()->saveError(error);
-                continue;
+            //起点没有DA的情况
+            {
+                string startAttNodeId;
+                if (nodeDirection)
+                    startAttNodeId = div->atts_[0]->dividerNode_->id_; //正向第一个
+                else
+                    startAttNodeId = div->atts_[daCount - 1]->dividerNode_->id_; //反向第一个
+
+                if (startAttNodeId != div->fromNodeId_) {
+                    //车道线起点没有属性变化点
+                    shared_ptr<DCDividerCheckError> error =
+                            DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_015, div, nullptr);
+                    error->errorDesc_ = "divider:";
+                    error->errorDesc_ += div->id_;
+                    error->checkName = "车道线起点没有属性变化点";
+                    error_output()->saveError(error);
+                    continue;
+                }
+            }
+
+            //判断起点和终点都有属性变化点的情形
+            if (daCount > 1) {
+                string startAttNodeId = div->atts_[0]->dividerNode_->id_;
+                string endAttNodeId = div->atts_[daCount - 1]->dividerNode_->id_;
+
+                if ((startAttNodeId == div->fromNodeId_ && endAttNodeId == div->toNodeId_) ||
+                    (startAttNodeId == div->toNodeId_ && endAttNodeId == div->fromNodeId_)) {
+                    //车道线起点和终点都有属性变化点
+                    shared_ptr<DCDividerCheckError> error =
+                            DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_015, div, nullptr);
+                    error->errorDesc_ = "divider:";
+                    error->errorDesc_ += div->id_;
+                    error->checkName = "车道线起点和终点都有属性变化点";
+                    error_output()->saveError(error);
+                    continue;
+                }
             }
         }
-    }
+        error_output()->addCheckItemInfo(checkItemInfo);
 }
 
 //同一个divider上相邻两个DA属性完全一样

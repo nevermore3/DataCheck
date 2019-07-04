@@ -103,6 +103,11 @@ void LaneGroupCheck::Check_kxs_03_003() {
             error_output()->saveError(ptr_error);
         }
     }
+
+    shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+    checkItemInfo->checkId = CHECK_ITEM_KXS_LG_003;
+    checkItemInfo->totalNum = data_manager()->dividers_.size();
+    error_output()->addCheckItemInfo(checkItemInfo);
 }
 
 void LaneGroupCheck::Check_kxs_03_001() {

@@ -106,9 +106,11 @@ namespace kd {
             string dataKey_;
 
             string flag;
-
+            //参考坐标
             shared_ptr<DCCoord> coord;
+            //参考点信息
             vector<shared_ptr<ErrNodeInfo>> errNodeInfo;
+            //错误所在数据源ID，node、way、relation数据ID
             string sourceId;
         };
 

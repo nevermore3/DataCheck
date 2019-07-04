@@ -334,6 +334,9 @@ void DividerAttribCheck::Check_kxs_01_015() {
 
 //同一个divider上相邻两个DA属性完全一样
 void DividerAttribCheck::Check_kxs_01_016(){
+    shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+    checkItemInfo->checkId = CHECK_ITEM_KXS_ORG_016;
+    int total = 0;
     for (auto recordit : data_manager()->dividers_) {
         shared_ptr<DCDivider> div = recordit.second;
         if (!div->valid_)
@@ -342,7 +345,7 @@ void DividerAttribCheck::Check_kxs_01_016(){
         if(div->atts_.size() <= 1){
             continue;
         }
-
+        total += div->atts_.size();
         for( int i = 1 ; i < div->atts_.size() ; i ++ ){
 
             shared_ptr<DCDividerAttribute> da1 = div->atts_[i-1];
@@ -360,6 +363,8 @@ void DividerAttribCheck::Check_kxs_01_016(){
             }
         }
     }
+    checkItemInfo->totalNum = total;
+    error_output()->addCheckItemInfo(checkItemInfo);
 }
 
 //同一个divider上相邻两个DA距离<1米

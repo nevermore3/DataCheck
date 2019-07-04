@@ -371,7 +371,7 @@ void DividerAttribCheck::Check_kxs_01_016(){
 void DividerAttribCheck::Check_kxs_01_017(){
     double daSpaceLen = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::DA_SPACE_LEN);
     shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
-    checkItemInfo->checkId = CHECK_ITEM_KXS_ORG_016;
+    checkItemInfo->checkId = CHECK_ITEM_KXS_ORG_017;
     int total = 0;
     for (auto recordit : data_manager()->dividers_) {
         shared_ptr<DCDivider> div = recordit.second;

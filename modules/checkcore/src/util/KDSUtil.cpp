@@ -8,7 +8,7 @@
 #include <util/FileUtil.h>
 #include "util/KDSUtil.h"
 #include <Poco/StringTokenizer.h>
-
+#include <util/CommonUtil.h>
 namespace kd {
     namespace dc {
 
@@ -29,22 +29,45 @@ namespace kd {
                     dc_divider->toNodeId_ = to_string(kds_divider->nodes.back()->ID);
 
                     set<long> error_node_index;
+                    int i = 0;
                     for (const auto &kds_node : kds_divider->nodes) {
                         shared_ptr<DCDividerNode> dc_node = CopyFromKDSDividerNode(kds_node);
                         if (dc_node) {
                             dc_divider->nodes_.emplace_back(dc_node);
+                            if(!CommonUtil::CheckCoordValid(dc_node->coord_)){
+                                error_node_index.emplace(i);
+                            }
                         } else {
                             // 异常
                         }
+                        i++;
                     }
 
                     if (!error_node_index.empty()) {
                         shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_024("divider", dc_divider->id_,
                                                                                          error_node_index);
+                        for(auto node_index:error_node_index){
+                            shared_ptr<KDSNode> node = kds_divider->nodes[node_index];
+                            shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>();
+                            errNodeInfo->lng_ = node->x;
+                            errNodeInfo->lat_ = node->y;
+                            errNodeInfo->z_ = node->z;
+                            errNodeInfo->dataId = to_string(node->ID);
+                            errNodeInfo->dataType = DATA_TYPE_NODE;
+                            errNodeInfo->dataLayer = MODEL_NAME_DIVIDER_NODE;
+                            ptr_error->errNodeInfo.emplace_back(errNodeInfo);
+                        }
+
                         if (error_output) {
                             error_output->saveError(ptr_error);
                         }
                     }
+
+                    shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+                    checkItemInfo->checkId = CHECK_ITEM_KXS_ORG_024;
+                    checkItemInfo->totalNum = kds_divider->nodes.size();
+                    error_output->addCheckItemInfo(checkItemInfo);
+
                 } else {
                     // 异常
                 }

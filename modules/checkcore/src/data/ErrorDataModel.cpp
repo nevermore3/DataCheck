@@ -448,11 +448,19 @@ namespace kd {
             error->detail += "divider_id:";
             error->detail += divider_id;
             error->detail += "存在于分组";
+            error->sourceId = divider_id;
             for (const auto &lg : lane_groups) {
                 error->detail += lg;
                 error->detail += " ";
             }
-
+            shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>();
+            errNodeInfo->lng_ = 0;
+            errNodeInfo->lat_ = 0;
+            errNodeInfo->z_ = 0;
+            errNodeInfo->dataId = "";
+            errNodeInfo->dataType = DATA_TYPE_WAY;
+            errNodeInfo->dataLayer = MODEL_NAME_DIVIDER;
+            error->errNodeInfo.emplace_back(errNodeInfo);
             return error;
         }
 
@@ -481,7 +489,18 @@ namespace kd {
             for (const auto &div : dividers) {
                 error->detail += div;
                 error->detail += " ";
+
+                shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>();
+                errNodeInfo->lng_ = 0;
+                errNodeInfo->lat_ = 0;
+                errNodeInfo->z_ = 0;
+                errNodeInfo->dataId = div;
+                errNodeInfo->dataType = DATA_TYPE_RELATION;
+                errNodeInfo->dataLayer = MODEL_NAME_R_DIVIDER_DREF;
+                error->errNodeInfo.emplace_back(errNodeInfo);
+
             }
+            error->sourceId = lane_group_id;
 
             return error;
         }
@@ -499,6 +518,9 @@ namespace kd {
         shared_ptr<DCLaneGroupCheckError>
         DCLaneGroupCheckError::createByKXS_03_003( shared_ptr<DCDivider> div) {
             shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>(CHECK_ITEM_KXS_LG_003);
+            shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(error->coord);
+            errNodeInfo->dataType = DATA_TYPE_WAY;
+            errNodeInfo->dataLayer = MODEL_NAME_DIVIDER;
             error->checkName = "车道线不存在于车道组中";
             error->detail += "divider_id:";
             error->detail += std::to_string(div->dividerNo_);
@@ -507,10 +529,18 @@ namespace kd {
             error->flag = div->flag_;
             error->dataKey_ = DATA_TYPE_LANE+div->task_id_+DATA_TYPE_LAST_NUM;
             error->coord = make_shared<DCCoord>();
-            error->coord->lng_ = 0;
-            error->coord->lat_ = 0;
-            error->coord->z_ = 0;
-            error->coord = nullptr;
+            error->sourceId = div->id_;
+            if(div->nodes_.size()>0) {
+                error->coord = div->nodes_[0]->coord_;
+                errNodeInfo->dataId = div->nodes_[0]->id_;
+            }else{
+                error->coord = make_shared<DCCoord>();
+                error->coord->lng_ = 0;
+                error->coord->lat_ = 0;
+                error->coord->z_ = 0;
+                errNodeInfo->dataId="";
+            }
+            error->errNodeInfo.emplace_back(errNodeInfo);
             return error;
         }
 
@@ -850,6 +880,7 @@ namespace kd {
             error->detail = type;
             error->detail += ":";
             error->detail += id;
+            error->sourceId = id;
             for (auto idx : index) {
                 error->detail += ",索引点";
                 error->detail += to_string(idx);

@@ -93,7 +93,6 @@ namespace kd {
             ShpData shpData(dividerFile);
             if (shpData.isInit()) {
                 int record_nums = shpData.getRecords();
-                int total=0;
                 for (int i = 0; i < record_nums; i++) {
                     SHPObject *shpObject = shpData.readShpObject(i);
                     if (!shpObject || shpObject->nSHPType != SHPT_ARCZ)
@@ -112,7 +111,6 @@ namespace kd {
                     //读取空间信息
                     int nVertices = shpObject->nVertices;
                     set<long> error_node_index;
-                    total += nVertices;
                     for (int i = 0; i < nVertices; i++) {
                         shared_ptr<DCCoord> coord;
                         coord->lng_ = shpObject->padfX[i];
@@ -160,6 +158,7 @@ namespace kd {
                     }
                     dividers.insert(make_pair(divider->id_, divider));
                 }
+
             } else {
                 stringstream ss;
                 ss << "[Error] open divider file error. fileName " << dividerFile;
@@ -352,7 +351,6 @@ namespace kd {
                     //读取空间信息
                     int nVertices = shpObject->nVertices;
                     set<long> error_node_index;
-
                     for (int i = 0; i < nVertices; i++) {
                         shared_ptr<DCCoord> coord = make_shared<DCCoord>();
                         coord->lng_ = shpObject->padfX[i];
@@ -372,6 +370,7 @@ namespace kd {
                     }
                     map_data_manager_->lanes_.insert(make_pair(dcLane->id_, dcLane));
                 }
+
             } else {
                 stringstream ss;
                 ss << "[Error] open lane file error. fileName " << laneFile;
@@ -628,7 +627,6 @@ namespace kd {
             ShpData lg_road_data(lg_road__file);
             if (lg_road_data.isInit()) {
                 auto &roads = map_data_manager_->roads_;
-
                 int record_nums = lg_road_data.getRecords();
                 for (int i = 0; i < record_nums; i++) {
                     SHPObject *shp_object = lg_road_data.readShpObject(i);
@@ -668,6 +666,7 @@ namespace kd {
                     roads.insert(make_pair(ptr_road->id_, ptr_road));
                     SHPDestroyObject(shp_object);
                 }
+
             } else {
                 LOG(ERROR) << "open LG_ROADNODE_INDEX failed! ";
                 bRet = false;

@@ -24,6 +24,7 @@ namespace kd {
             string boundId;//任务框号
             string dataKey;//数据KEY
             string flag;
+            string sourceId;//源数据ID
             shared_ptr<DCCoord> coord;
             vector<shared_ptr<ErrNodeInfo>> errNodeInfo;
         };

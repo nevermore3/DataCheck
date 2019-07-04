@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <fstream>
+#include <util/KDSUtil.h>
 
 bool ReportJsonLog::RecursivelyCreateDir(const std::string &path, int mode) {
     if (access(path.c_str(), F_OK) == 0)
@@ -61,7 +62,11 @@ void ReportJsonLog::AppendErrorCase(ReportLogItem &errorCase){
             json_point.set("dataX",point->lng_);
             checkDataRefs.add(json_point);
         }
-
+        Object::Ptr entity = nullptr;
+        KDSUtil::getResourceData("lane",errorCase.task_id,errorCase.errNodeInfo[0]->dataType,errorCase.sourceId,entity);
+        if(entity){
+            oneCase.set("entity",entity);
+        }
     }
     oneCase.set("checkDataRefs",checkDataRefs);
     check_item.add(oneCase);

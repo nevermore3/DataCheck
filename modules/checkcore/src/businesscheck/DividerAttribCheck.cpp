@@ -370,7 +370,9 @@ void DividerAttribCheck::Check_kxs_01_016(){
 //同一个divider上相邻两个DA距离<1米
 void DividerAttribCheck::Check_kxs_01_017(){
     double daSpaceLen = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::DA_SPACE_LEN);
-
+    shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+    checkItemInfo->checkId = CHECK_ITEM_KXS_ORG_016;
+    int total = 0;
     for (auto recordit : data_manager()->dividers_) {
         shared_ptr<DCDivider> div = recordit.second;
         if (!div->valid_)
@@ -385,7 +387,7 @@ void DividerAttribCheck::Check_kxs_01_017(){
         if(div->nodes_[0]->id_ == div->toNodeId_){
             nodeDirection = false;
         }
-
+        total += div->atts_.size();
         for( int i = 1 ; i < div->atts_.size() ; i ++ ){
 
             shared_ptr<DCDividerAttribute> da1 = div->atts_[i-1];
@@ -417,6 +419,8 @@ void DividerAttribCheck::Check_kxs_01_017(){
             }
         }
     }
+    checkItemInfo->totalNum = total;
+    error_output()->addCheckItemInfo(checkItemInfo);
 }
 
 double DividerAttribCheck::calLength(shared_ptr<DCDivider> div, int begin, int end, bool direction){

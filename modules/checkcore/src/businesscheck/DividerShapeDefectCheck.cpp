@@ -96,7 +96,6 @@ void DividerShapeDefectCheck::checkShapeDefect(
                << "距离" << distance << "米";
             error->errorDesc_ = ss.str();
             error->checkLevel_ = LEVEL_WARNING;
-            error->coord = node2->coord_;
 
             error_output()->saveError(error);
         }
@@ -104,11 +103,13 @@ void DividerShapeDefectCheck::checkShapeDefect(
 }
 
 void DividerShapeDefectCheck::Check_kxs_01_005() {
-    check_kxs(DataCheckConfig::DOTLINE_DEFECT_LEN,
-              CHECK_ITEM_KXS_ORG_005, DA_TYPE_WHITE_DOTTED);
+
 }
 
 void DividerShapeDefectCheck::Check_kxs_01_006() {
+    check_kxs(DataCheckConfig::DOTLINE_DEFECT_LEN,
+              CHECK_ITEM_KXS_ORG_006, DA_TYPE_WHITE_DOTTED);
+
     check_kxs(DataCheckConfig::BUSELINE_DEFECT_LEN,
               CHECK_ITEM_KXS_ORG_006, DA_TYPE_BUS_LANE);
 }

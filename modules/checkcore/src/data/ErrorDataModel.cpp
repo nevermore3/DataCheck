@@ -121,11 +121,16 @@ namespace kd {
                 return error;
 
             error->dividerId_ = div->id_;
-
+            error->sourceId = div -> id_;
             if (node != nullptr) {
                 error->nodeId_ = node->id_;
                 error->attId_ = "";
                 error->coord = node->coord_;
+                shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(node->coord_);
+                errNodeInfo->dataId =  node->id_;
+                errNodeInfo->dataType = DATA_TYPE_WAY;
+                errNodeInfo->dataLayer = MODEL_NAME_DIVIDER;
+                error->errNodeInfo.emplace_back(errNodeInfo);
             } else {
                 error->nodeId_ = "";
                 error->attId_ = "";
@@ -133,6 +138,11 @@ namespace kd {
                 error->coord->lng_=0;
                 error->coord->lat_=0;
                 error->coord->z_=0;
+                shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(error->coord);
+                errNodeInfo->dataId =  "";
+                errNodeInfo->dataType = DATA_TYPE_WAY;
+                errNodeInfo->dataLayer = MODEL_NAME_DIVIDER;
+                error->errNodeInfo.emplace_back(errNodeInfo);
             }
             error->taskId_ = div->task_id_;
             error->flag = div->flag_;

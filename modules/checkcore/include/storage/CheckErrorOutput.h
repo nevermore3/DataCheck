@@ -32,9 +32,13 @@ namespace kd {
             CheckItemInfo(){
 
             }
+            // 检测模型
             string checkId;
+            //已经检查的数据数量
             int totalNum;
+            //失败数量
             int failNum;
+            //成功数量
             int successNum;
 
         };

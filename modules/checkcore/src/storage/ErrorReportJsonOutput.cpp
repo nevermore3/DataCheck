@@ -32,7 +32,7 @@ bool ReportJsonLog::RecursivelyCreateDir(const std::string &path, int mode) {
 void ReportJsonLog::AppendCheckItemTotal(ReportLogTotal &checkItem){
     Poco::JSON::Object oneCheck;
     Object::Ptr entity;
-    oneCheck.set("batchId", -1);
+    oneCheck.set("batchId", 0);
     oneCheck.set("checkItemCode",checkItem.checkItemCode);
     oneCheck.set("failNum",checkItem.failNum);
     oneCheck.set("successNum",checkItem.successNum);

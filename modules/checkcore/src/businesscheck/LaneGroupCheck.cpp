@@ -191,21 +191,7 @@ namespace kd {
                     auto ptr_divider = CommonUtil::get_divider(mapDataManager, div2_lg.first);
                     if (ptr_divider) {
                         // 如果是参考线
-                        if (ptr_divider->dividerNo_ == 0) {
-                            for (const auto &lg : div2_lg.second) {
-                                auto ptr_road =
-                                        CommonUtil::get_road_by_lg(mapDataManager, lg);
-                                if (ptr_road) {
-                                    // 不是双向的
-                                    if (ptr_road->direction_ != 1) {
-                                        check = true;
-                                        break;
-                                    }
-                                } else {
-                                    LOG(ERROR) << "get_road_by_lg failed! lane group:" << lg;
-                                }
-                            }
-                        } else {
+                        if (ptr_divider->dividerNo_ != 0 || ptr_divider->direction_ != 1) {
                             check = true;
                         }
                     } else {

@@ -170,7 +170,7 @@ namespace kd {
                 if (check_id_iter != check_total.end()) {
                     check_id_iter->second->totalNum +=checkItemInfo->totalNum;
                 }else{
-                    LOG(ERROR) << "totalNum:" << checkItemInfo->totalNum;
+//                    LOG(ERROR) << "totalNum:" << checkItemInfo->totalNum;
                     check_total[checkItemInfo->checkId] = checkItemInfo;
                 }
             } else {

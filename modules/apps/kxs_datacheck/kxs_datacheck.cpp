@@ -187,7 +187,6 @@ int main(int argc, const char *argv[]) {
             LOG(ERROR) << "读取配置文件config.properties失败,程序退出!";
             return ret;
         }
-
         // 检查项配置管理初始化
         std::string check_file = (std::string)"./" + kCheckListFile;
         Poco::File in_dir(check_file);
@@ -196,6 +195,11 @@ int main(int argc, const char *argv[]) {
             return 1;
         } else {
             CheckListConfig::getInstance().Load(check_file);
+        }
+        string errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH)+checkresult;
+        Poco::File error_file(errJsonPath);
+        if (error_file.exists()) {
+            error_file.remove();
         }
 
         auto error_output = make_shared<CheckErrorOutput>();

@@ -214,6 +214,7 @@ int main(int argc, const char *argv[]) {
         LOG(INFO) << "total task costs: " << compilerTimer.elapsed_message();
     } catch (std::exception &e) {
         LOG(ERROR) << "An exception occurred: " << e.what();
+        ReportJsonLog::GetInstance().WriteEmptyToFile(checkresult);
         ret = 1;
     }
 

@@ -176,6 +176,7 @@ int main(int argc, const char *argv[]) {
     string base_path;
 
     KDSDivider::FLAG;
+    string errJsonPath ="";
     try {
         exe_path = argv[0];
 
@@ -196,7 +197,7 @@ int main(int argc, const char *argv[]) {
         } else {
             CheckListConfig::getInstance().Load(check_file);
         }
-        string errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH)+checkresult;
+        errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH)+checkresult;
         Poco::File error_file(errJsonPath);
         if (error_file.exists()) {
             error_file.remove();
@@ -212,9 +213,10 @@ int main(int argc, const char *argv[]) {
         ret |= error_output->saveErrorReport(checkresult);
 
         LOG(INFO) << "total task costs: " << compilerTimer.elapsed_message();
+
     } catch (std::exception &e) {
         LOG(ERROR) << "An exception occurred: " << e.what();
-        ReportJsonLog::GetInstance().WriteEmptyToFile(checkresult);
+        ReportJsonLog::GetInstance().WriteToFile(errJsonPath,true);
         ret = 1;
     }
 

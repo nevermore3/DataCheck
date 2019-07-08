@@ -82,7 +82,7 @@ ReportJsonLog &ReportJsonLog::GetInstance() {
     return instance;
 }
 
-bool ReportJsonLog::WriteToFile(string path) {
+bool ReportJsonLog::WriteToFile(string path,bool isWriteEmpty) {
     if (path.empty())
         return false;
 
@@ -104,7 +104,11 @@ bool ReportJsonLog::WriteToFile(string path) {
     }
 
     stringstream ss;
-    Stringify(ss);
+    if(isWriteEmpty){
+        ss<<"[]";
+    }else{
+        Stringify(ss);
+    }
     ofstream outfile;
 
     outfile.open(path, ios::out | ios::trunc);

@@ -60,8 +60,7 @@ public:
     void AppendErrorCase(ReportLogItem &reportLogItem);
 
     void Stringify(ostream& out);
-
-    bool WriteToFile(string path);
+    bool WriteToFile(string path , bool isWriteEmpty = false);
 
 private:
 

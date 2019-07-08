@@ -176,6 +176,7 @@ int main(int argc, const char *argv[]) {
     string base_path;
 
     KDSDivider::FLAG;
+    string errJsonPath ="";
     try {
         exe_path = argv[0];
 
@@ -187,7 +188,6 @@ int main(int argc, const char *argv[]) {
             LOG(ERROR) << "读取配置文件config.properties失败,程序退出!";
             return ret;
         }
-
         // 检查项配置管理初始化
         std::string check_file = (std::string)"./" + kCheckListFile;
         Poco::File in_dir(check_file);
@@ -196,6 +196,11 @@ int main(int argc, const char *argv[]) {
             return 1;
         } else {
             CheckListConfig::getInstance().Load(check_file);
+        }
+        errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH)+checkresult;
+        Poco::File error_file(errJsonPath);
+        if (error_file.exists()) {
+            error_file.remove();
         }
 
         auto error_output = make_shared<CheckErrorOutput>();
@@ -208,8 +213,10 @@ int main(int argc, const char *argv[]) {
         ret |= error_output->saveErrorReport(checkresult);
 
         LOG(INFO) << "total task costs: " << compilerTimer.elapsed_message();
+
     } catch (std::exception &e) {
         LOG(ERROR) << "An exception occurred: " << e.what();
+        ReportJsonLog::GetInstance().WriteToFile(errJsonPath,true);
         ret = 1;
     }
 

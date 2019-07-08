@@ -77,10 +77,9 @@ namespace kd {
                             shared_ptr<DCDividerAttribute> dc_da = KDSUtil::CopyFromKDSDA(da.second, kds_divider);
                             if (dc_da) {
                                 dc_divider->atts_.emplace_back(dc_da);
-                            } else {
-                                int k = 0;
                             }
                         }
+
                         dc_divider->task_id_ = taskid;
                         dc_divider->flag_ = flag;
                         dividers.emplace(dc_divider->id_, dc_divider);

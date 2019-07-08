@@ -72,7 +72,7 @@ namespace kd {
                         map_data_manager_->insert_node_id2_dividers(dc_divider->toNodeId_, dc_divider);
 
                         const auto &da_maps = KDSUtil::GetDividerDAs(stol(dc_divider->id_), divider2_da_maps);
-                        if(&da_maps!= nullptr) {
+                        if(da_maps.size()>0) {
                             for (auto da : da_maps) {
                                 shared_ptr<DCDividerAttribute> dc_da = KDSUtil::CopyFromKDSDA(da.second, kds_divider);
                                 if (dc_da) {
@@ -82,6 +82,7 @@ namespace kd {
                                 }
                             }
                         }
+
                         dc_divider->task_id_ = taskid;
                         dc_divider->flag_ = flag;
                         dividers.emplace(dc_divider->id_, dc_divider);

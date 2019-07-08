@@ -187,7 +187,7 @@ namespace kd {
 
         map<int, shared_ptr<kd::api::KDSDividerAttribute>>
         &KDSUtil::GetDividerDAs(long div_id, map<long, map<int, shared_ptr<kd::api::KDSDividerAttribute>>> &divider_da_maps_) {
-            map<int, shared_ptr<kd::api::KDSDividerAttribute>> da_maps_;
+            static map<int, shared_ptr<kd::api::KDSDividerAttribute>> da_maps_;
             auto itemit = divider_da_maps_.find(div_id);
             if(itemit != divider_da_maps_.end()){
                 return itemit->second;

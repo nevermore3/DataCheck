@@ -127,6 +127,8 @@ namespace kd {
             int size  = v_substr.size();
             if(size >= 3){
                 task_id = v_substr[size-2];
+            }else{
+                LOG(ERROR) <<"input data error ,file_path is "<<file_path;
             }
         }
 

@@ -122,34 +122,11 @@ namespace kd {
 
             string file_path_noext = file_path.substr(0, file_path.find(".json"));
             string file_name = file_path_noext.substr(file_path_noext.find_last_of("/")+1);
-
-            if (1 == file_name_mode) {
-                // taskFrameId_taskId.json
-                int pos = file_name.find("_");
-                if (file_name.find("_") != string::npos) {
-                    task_id = file_name.substr(file_name.find_last_of("_") + 1);
-                    task_bound_id = file_name.substr(0, file_name.find_last_of("_"));
-                } else {
-                    task_id = file_name;
-                    task_bound_id = "";
-                }
-            } else {
-                // taskFrameId-objectType_taskId_seqNumber.json
-                int pos = file_name.find("-");
-                if (pos != string::npos) {
-                    task_bound_id = file_name.substr(0, pos);
-                    data_key = file_name.substr(pos + 1,file_name.length());
-                    std::string sub_str = file_name.substr(pos + 1);
-
-                    int f_pos = sub_str.find("_");
-                    int l_pos = sub_str.find_last_of("_");
-                    if (f_pos != string::npos && l_pos != string::npos) {
-                        task_id = sub_str.substr(f_pos + 1, l_pos - f_pos - 1);
-                    }
-                } else {
-                    task_id = file_name;
-                    task_bound_id = "";
-                }
+            vector<string> v_substr;
+            StringUtil::Token(file_name.c_str(),"_",v_substr);
+            int size  = v_substr.size();
+            if(size >= 3){
+                task_id = v_substr[size-2];
             }
         }
 

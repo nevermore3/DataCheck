@@ -208,7 +208,7 @@ int main(int argc, const char *argv[]) {
         //数据质量检查
         ret |= dataCheck(base_path, error_output);
 
-        ret |= error_output->saveJsonError();
+//        ret |= error_output->saveJsonError();
 
         ret |= error_output->saveErrorReport(checkresult);
 

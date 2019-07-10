@@ -45,7 +45,7 @@ void ReportJsonLog::AppendCheckItemTotal(ReportLogTotal &checkItem){
 }
 void ReportJsonLog::AppendErrorCase(ReportLogItem &errorCase){
     Poco::JSON::Object oneCase;
-    oneCase.set("taskId",errorCase.task_id);
+    oneCase.set("taskId",stol(errorCase.task_id));
     oneCase.set("errorMsg",errorCase.err_desc);
     oneCase.set("status",errorCase.state);
     if(errorCase.node!= nullptr){

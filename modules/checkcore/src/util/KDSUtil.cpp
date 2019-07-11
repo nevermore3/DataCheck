@@ -9,6 +9,7 @@
 #include "util/KDSUtil.h"
 #include <Poco/StringTokenizer.h>
 #include <util/CommonUtil.h>
+#include "util/StringUtil.h"
 namespace kd {
     namespace dc {
 
@@ -197,38 +198,48 @@ namespace kd {
         }
 
         void KDSUtil::getResourceData(const string & file_type,const string & taskId,const string & data_type,const string & data_id,Object::Ptr & entity){
-            string input_path  = DataCheckConfig::getInstance().getProperty(DataCheckConfig::JSON_DATA_INPUT);
-            vector<string> file_list;
-            std::string suffix = ".json";
-            FileUtil::getFileNames(input_path, file_list, suffix);
-
-            if (file_list.empty()) {
-                LOG(ERROR) << "inputFileName is empty";
-                return ;
-            }
-            int file_count = file_list.size();
-
-            for (int i = 0; i < file_count; i++) {
-
-                string inputJsonData;
-                const string &file_path = file_list[i];
-
-                if(file_path.find(taskId) == std::string::npos){
-                    continue;
+            string data_key = file_type + "_" + taskId +"_1";
+            string content = DataCheckConfig::getInstance().getProperty(data_key);
+            if(content.length()>10){
+                if (!getEntityData(content, data_type, data_id, entity)) {
+                    LOG(ERROR) << "getResourceData not find from Memory,taskId:" << taskId << " data_type:" << data_type
+                               << " , data_id :" << data_id;
                 }
-                if(file_path.find(file_type) == std::string::npos){
-                    continue;
-                }
-                if(!FileUtil::LoadFile(file_path, inputJsonData)){
-                    LOG(ERROR) << "getResourceData inputJsonData is empty";
-                    return ;
-                }
+            }else {
+                string input_path = DataCheckConfig::getInstance().getProperty(DataCheckConfig::JSON_DATA_INPUT);
+                vector<string> file_list;
+                std::string suffix = ".json";
+                FileUtil::getFileNames(input_path, file_list, suffix);
 
-                if (inputJsonData.length() < 10) {
-                    continue;
+                if (file_list.empty()) {
+                    LOG(ERROR) << "inputFileName is empty";
+                    return;
                 }
-                if(!getEntityData(inputJsonData,data_type,data_id,entity)){
-                    LOG(ERROR) << "getResourceData not find,taskId:"<<taskId<<" data_type:"<<data_type<<" , data_id :"<<data_id;
+                int file_count = file_list.size();
+
+                for (int i = 0; i < file_count; i++) {
+
+                    string inputJsonData;
+                    const string &file_path = file_list[i];
+
+                    if (file_path.find(taskId) == std::string::npos) {
+                        continue;
+                    }
+                    if (file_path.find(file_type) == std::string::npos) {
+                        continue;
+                    }
+                    if (!FileUtil::LoadFile(file_path, inputJsonData)) {
+                        LOG(ERROR) << "getResourceData inputJsonData is empty";
+                        return;
+                    }
+
+                    if (inputJsonData.length() < 10) {
+                        continue;
+                    }
+                    if (!getEntityData(inputJsonData, data_type, data_id, entity)) {
+                        LOG(ERROR) << "getResourceData not find,taskId:" << taskId << " data_type:" << data_type
+                                   << " , data_id :" << data_id;
+                    }
                 }
             }
         }
@@ -261,8 +272,8 @@ namespace kd {
                     }
                 }
 
-            } catch (Exception &e) {
-                cout << e.what() << endl;
+            } catch (Poco::Exception& e ) {
+                cout << e.message() << endl;
             }
             return false;
         }

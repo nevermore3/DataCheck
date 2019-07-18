@@ -9,7 +9,7 @@
 #include <shp/shapefil.h>
 #include <shp/ShpData.hpp>
 #include <storage/MapDataInput.h>
-
+#include "util/check_list_config.h"
 
 namespace kd {
     namespace dc {
@@ -18,6 +18,8 @@ namespace kd {
                 : DataInput(map_data_manager_, error_output_, base_path_) {}
 
         bool MapDataInput::loadDivider() {
+            bool isCheck_kxs01018 = CheckListConfig::getInstance().IsNeedCheck(CHECK_ITEM_KXS_ORG_018);
+            int checkItemTotal = 0;
             auto &dividers = map_data_manager_->dividers_;
 
             //由于divider引用dividernode,因此先读取dividernode
@@ -93,6 +95,7 @@ namespace kd {
             ShpData shpData(dividerFile);
             if (shpData.isInit()) {
                 int record_nums = shpData.getRecords();
+                checkItemTotal = record_nums;
                 for (int i = 0; i < record_nums; i++) {
                     SHPObject *shpObject = shpData.readShpObject(i);
                     if (!shpObject || shpObject->nSHPType != SHPT_ARCZ)
@@ -135,7 +138,7 @@ namespace kd {
                         error_output_->saveError(ptr_error);
                     }
 
-                    if (divider->fromNodeId_ != divider->nodes_.front()->id_ &&
+                    if (isCheck_kxs01018 && divider->fromNodeId_ != divider->nodes_.front()->id_ &&
                         divider->fromNodeId_ != divider->nodes_.back()->id_) {
                         shared_ptr<DCDividerCheckError> error =
                                 DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_018, divider, nullptr);
@@ -146,7 +149,7 @@ namespace kd {
                         error_output_->saveError(error);
                     }
 
-                    if (divider->toNodeId_ != divider->nodes_.front()->id_ &&
+                    if (isCheck_kxs01018 && divider->toNodeId_ != divider->nodes_.front()->id_ &&
                         divider->toNodeId_ != divider->nodes_.back()->id_) {
                         shared_ptr<DCDividerCheckError> error =
                                 DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_018, divider, nullptr);
@@ -165,6 +168,8 @@ namespace kd {
                 error_output_->writeInfo(ss.str());
                 return false;
             }
+
+            error_output_->addCheckItemInfo(CHECK_ITEM_KXS_ORG_018,checkItemTotal);
 
             //补充divider首末点的node信息
             for (auto divit : dividers) {

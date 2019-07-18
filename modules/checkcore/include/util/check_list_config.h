@@ -23,10 +23,15 @@ public:
 
     //获取检查项值
     bool IsNeedCheck(std::string key);
-
+    /**
+     * 从平台获取检查项列表
+     * @param url
+     * @return
+     */
+    bool GetCheckList(std::string url);
 
 private:
-    void ParseCheckList(const std::string &json_result);
+    bool ParseCheckList(const std::string &json_result);
 
     //所有可用检查项列表
     std::set<std::string> check_list_;

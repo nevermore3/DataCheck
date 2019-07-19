@@ -96,6 +96,7 @@ namespace kd {
             if (shpData.isInit()) {
                 int record_nums = shpData.getRecords();
                 checkItemTotal = record_nums;
+                int total_01024 =0;
                 for (int i = 0; i < record_nums; i++) {
                     SHPObject *shpObject = shpData.readShpObject(i);
                     if (!shpObject || shpObject->nSHPType != SHPT_ARCZ)
@@ -115,6 +116,7 @@ namespace kd {
                     int nVertices = shpObject->nVertices;
                     set<long> error_node_index;
                     for (int i = 0; i < nVertices; i++) {
+                        total_01024++;
                         shared_ptr<DCCoord> coord;
                         coord->lng_ = shpObject->padfX[i];
                         coord->lat_ = shpObject->padfY[i];
@@ -132,6 +134,9 @@ namespace kd {
                         }
                     }
                     bool isCheck_kxs01024 = CheckListConfig::getInstance().IsNeedCheck(CHECK_ITEM_KXS_ORG_024);
+                    if(isCheck_kxs01024){
+                        error_output_->addCheckItemInfo(CHECK_ITEM_KXS_ORG_024,total_01024);
+                    }
                     if (isCheck_kxs01024 && !error_node_index.empty()) {
                         shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_024("divider", divider->id_,
                                                                                          error_node_index);
@@ -147,9 +152,6 @@ namespace kd {
                         errNodeInfo->dataId="";
                         ptr_error->errNodeInfo.emplace_back(errNodeInfo);
                         error_output_->saveError(ptr_error);
-                    }
-                    if(isCheck_kxs01024){
-                        error_output_->addCheckItemInfo(CHECK_ITEM_KXS_ORG_024,checkItemTotal);
                     }
 
                     if (isCheck_kxs01018 && divider->fromNodeId_ != divider->nodes_.front()->id_ &&

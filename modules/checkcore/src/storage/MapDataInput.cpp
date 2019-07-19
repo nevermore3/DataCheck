@@ -131,8 +131,8 @@ namespace kd {
                             error_node_index.emplace(i);
                         }
                     }
-
-                    if (!error_node_index.empty()) {
+                    bool isCheck_kxs01024 = CheckListConfig::getInstance().IsNeedCheck(CHECK_ITEM_KXS_ORG_024);
+                    if (isCheck_kxs01024 && !error_node_index.empty()) {
                         shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_024("divider", divider->id_,
                                                                                          error_node_index);
                         ptr_error ->taskId_ = divider->task_id_;
@@ -147,6 +147,9 @@ namespace kd {
                         errNodeInfo->dataId="";
                         ptr_error->errNodeInfo.emplace_back(errNodeInfo);
                         error_output_->saveError(ptr_error);
+                    }
+                    if(isCheck_kxs01024){
+                        error_output_->addCheckItemInfo(CHECK_ITEM_KXS_ORG_024,checkItemTotal);
                     }
 
                     if (isCheck_kxs01018 && divider->fromNodeId_ != divider->nodes_.front()->id_ &&
@@ -179,8 +182,9 @@ namespace kd {
                 error_output_->writeInfo(ss.str());
                 return false;
             }
-
-            error_output_->addCheckItemInfo(CHECK_ITEM_KXS_ORG_018,checkItemTotal);
+            if(isCheck_kxs01018) {
+                error_output_->addCheckItemInfo(CHECK_ITEM_KXS_ORG_018, checkItemTotal);
+            }
 
             //补充divider首末点的node信息
             for (auto divit : dividers) {

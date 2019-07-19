@@ -79,7 +79,7 @@ namespace kd {
                 //load file
                 LOG(INFO) << "load file " << (i + 1) << "/" << file_count << " " << file_path;
 
-                GetFileTaskId(file_path,2,taskid,bound_id,data_key);
+                GetFileTaskId(file_path,taskid,bound_id,data_key);
                 DataCheckConfig::getInstance().addProperty(taskid,bound_id);
 
                 if(!FileUtil::LoadFile(file_path, inputJsonData)){
@@ -91,7 +91,7 @@ namespace kd {
                     continue;
                 }
 
-
+                DataCheckConfig::getInstance().addProperty(data_key,inputJsonData);
                 int parse_ret = parser.ParseKdsOSMJSONDataFilterByGason(
                         inputJsonData, taskid, filterNodes, filterWays, filterRels);
 
@@ -113,15 +113,15 @@ namespace kd {
         }
 
         //通过文件名获取任务id和框id
-        void JsonDataLoader::GetFileTaskId(const string& file_path, int file_name_mode, string& task_id,
+        void JsonDataLoader::GetFileTaskId(const string& file_path, string& task_id,
                            string& task_bound_id , string& data_key) {
-            if (1 != file_name_mode && 2 != file_name_mode) {
-                LOG(ERROR) << "invalid fileNameMode value : " << file_name_mode;
-                return;
-            }
 
             string file_path_noext = file_path.substr(0, file_path.find(".json"));
             string file_name = file_path_noext.substr(file_path_noext.find_last_of("/")+1);
+            if(file_name.find("-") != string::npos){
+                task_bound_id = file_name.substr(0,file_name.find("-"));
+                file_name = file_name.substr(file_name.find("-")+1);
+            }
             vector<string> v_substr;
             StringUtil::Token(file_name.c_str(),"_",v_substr);
             int size  = v_substr.size();
@@ -129,6 +129,11 @@ namespace kd {
                 task_id = v_substr[size-2];
             }else{
                 LOG(ERROR) <<"input data error ,file_path is "<<file_path;
+            }
+            if(size == 3){
+                data_key = file_name;
+            }else if(size>3){
+                data_key = v_substr[size-3] + "_" + v_substr[size-2]+"_"+v_substr[size-1];
             }
         }
 

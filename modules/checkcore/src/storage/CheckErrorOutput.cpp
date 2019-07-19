@@ -179,6 +179,13 @@ namespace kd {
 
         }
 
+        void CheckErrorOutput::addCheckItemInfo(string checkId,int total){
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->totalNum = total;
+            checkItemInfo->checkId = checkId;
+            addCheckItemInfo(checkItemInfo);
+        }
+
         string CheckErrorOutput::get_error_level(string check_model) {
             string ret = LEVEL_WARNING;
 

@@ -6,8 +6,8 @@ add_executable(${PROJECT_NAME} kxs_datacheck.cpp)
 #
 target_link_libraries(${PROJECT_NAME} autohdmap_checkcore)
 target_link_libraries(${PROJECT_NAME} general autohdmap_core autohdmap_api autohdmap_clothoid)
-target_link_libraries(${PROJECT_NAME} general PocoJSON PocoFoundation PocoNet PocoUtil pthread)
-target_link_libraries(${PROJECT_NAME} general geos glog tinyxml)
+target_link_libraries(${PROJECT_NAME} general PocoJSON PocoNet PocoFoundation  PocoUtil pthread)
+target_link_libraries(${PROJECT_NAME} general geos glog tinyxml pthread)
 
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${HDMAP_LIBS_DIR}/modules/api/include)

@@ -3,10 +3,10 @@
 #include <Poco/StringTokenizer.h>
 #include <glog/logging.h>
 #include "Poco/JSON/Parser.h"
-
+#include "util/RequestUtil.h"
 using namespace Poco;
 using namespace Poco::JSON;
-
+using namespace std;
 void CheckListConfig::Load(std::string fileName) {
     std::string file_content;
 
@@ -20,7 +20,18 @@ void CheckListConfig::Load(std::string fileName) {
     ParseCheckList(file_content);
 }
 
-void CheckListConfig::ParseCheckList(const std::string &json_result) {
+bool CheckListConfig::GetCheckList(std::string url){
+    string strJson;
+    CServiceRequestUtil requestUtil;
+    CommonResult reqresult = requestUtil.HttpGetEx(url, "", strJson, 60);
+    if(reqresult.code == "0"){
+        return ParseCheckList(strJson);
+    }else{
+        return false;
+    }
+}
+
+bool CheckListConfig::ParseCheckList(const std::string &json_result) {
     try {
         // get inner
         Poco::JSON::Parser parser;
@@ -31,10 +42,10 @@ void CheckListConfig::ParseCheckList(const std::string &json_result) {
             obj = jsonResult.extract<Poco::JSON::Object::Ptr>();
 
         //判断返回值
-//        string code = obj->getValue<string>("code");
-//        if (strcmp(code.c_str(), "0") != 0) {
-//            return;
-//        }
+        std::string code = obj->getValue<std::string>("code");
+        if (strcmp(code.c_str(), "0") != 0) {
+            return false;
+        }
         if(obj ->has("result")) {
             Object::Ptr result_obj = obj->getObject("result");
 
@@ -48,6 +59,7 @@ void CheckListConfig::ParseCheckList(const std::string &json_result) {
     } catch (Exception &e) {
         std::cout << e.what() << std::endl;
     }
+    return true;
 }
 
 bool CheckListConfig::IsNeedCheck(std::string key){

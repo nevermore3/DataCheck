@@ -887,6 +887,7 @@ namespace kd {
                 error->detail += ",索引点";
                 error->detail += to_string(idx);
             }
+
             return error;
         }
 

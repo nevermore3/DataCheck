@@ -68,7 +68,10 @@ namespace kd {
              * 添加检查项错误信息
              */
             void addCheckItemInfo(shared_ptr<CheckItemInfo> &checkItemInfo);
-
+            /**
+             * 添加检查项错误信息
+             */
+            void addCheckItemInfo(string checkId,int total);
             /**
              * 获取错误级别
              * @param check_model

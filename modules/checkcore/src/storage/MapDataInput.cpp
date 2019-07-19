@@ -9,7 +9,7 @@
 #include <shp/shapefil.h>
 #include <shp/ShpData.hpp>
 #include <storage/MapDataInput.h>
-
+#include "util/check_list_config.h"
 
 namespace kd {
     namespace dc {
@@ -18,6 +18,8 @@ namespace kd {
                 : DataInput(map_data_manager_, error_output_, base_path_) {}
 
         bool MapDataInput::loadDivider() {
+            bool isCheck_kxs01018 = CheckListConfig::getInstance().IsNeedCheck(CHECK_ITEM_KXS_ORG_018);
+            int checkItemTotal = 0;
             auto &dividers = map_data_manager_->dividers_;
 
             //由于divider引用dividernode,因此先读取dividernode
@@ -93,6 +95,8 @@ namespace kd {
             ShpData shpData(dividerFile);
             if (shpData.isInit()) {
                 int record_nums = shpData.getRecords();
+                checkItemTotal = record_nums;
+                int total_01024 =0;
                 for (int i = 0; i < record_nums; i++) {
                     SHPObject *shpObject = shpData.readShpObject(i);
                     if (!shpObject || shpObject->nSHPType != SHPT_ARCZ)
@@ -112,6 +116,7 @@ namespace kd {
                     int nVertices = shpObject->nVertices;
                     set<long> error_node_index;
                     for (int i = 0; i < nVertices; i++) {
+                        total_01024++;
                         shared_ptr<DCCoord> coord;
                         coord->lng_ = shpObject->padfX[i];
                         coord->lat_ = shpObject->padfY[i];
@@ -128,17 +133,31 @@ namespace kd {
                             error_node_index.emplace(i);
                         }
                     }
-
-                    if (!error_node_index.empty()) {
+                    bool isCheck_kxs01024 = CheckListConfig::getInstance().IsNeedCheck(CHECK_ITEM_KXS_ORG_024);
+                    if(isCheck_kxs01024){
+                        error_output_->addCheckItemInfo(CHECK_ITEM_KXS_ORG_024,total_01024);
+                    }
+                    if (isCheck_kxs01024 && !error_node_index.empty()) {
                         shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_024("divider", divider->id_,
                                                                                          error_node_index);
+                        ptr_error ->taskId_ = divider->task_id_;
+                        ptr_error->sourceId = divider->id_;
+                        ptr_error->coord = make_shared<DCCoord>();
+                        ptr_error->coord->lng_=0;
+                        ptr_error->coord->lat_=0;
+                        ptr_error->coord->z_=0;
+                        shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(ptr_error->coord);
+                        errNodeInfo->dataType = DATA_TYPE_NODE;
+                        errNodeInfo->dataLayer = MODEL_NAME_DIVIDER_NODE;
+                        errNodeInfo->dataId="";
+                        ptr_error->errNodeInfo.emplace_back(errNodeInfo);
                         error_output_->saveError(ptr_error);
                     }
 
-                    if (divider->fromNodeId_ != divider->nodes_.front()->id_ &&
+                    if (isCheck_kxs01018 && divider->fromNodeId_ != divider->nodes_.front()->id_ &&
                         divider->fromNodeId_ != divider->nodes_.back()->id_) {
                         shared_ptr<DCDividerCheckError> error =
-                                DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_018, divider, nullptr);
+                                DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_018, divider, divider->nodes_.front());
                         error->checkName = "DIVIDER的FDNODE与TDNODE应该是实际的首尾点";
                         stringstream ss;
                         ss << "divider:" << divider->id_ << ",from node_id:" << divider->fromNodeId_ << "标记错误";
@@ -146,10 +165,10 @@ namespace kd {
                         error_output_->saveError(error);
                     }
 
-                    if (divider->toNodeId_ != divider->nodes_.front()->id_ &&
+                    if (isCheck_kxs01018 && divider->toNodeId_ != divider->nodes_.front()->id_ &&
                         divider->toNodeId_ != divider->nodes_.back()->id_) {
                         shared_ptr<DCDividerCheckError> error =
-                                DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_018, divider, nullptr);
+                                DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_018, divider, divider->nodes_.front());
                         error->checkName = "DIVIDER的FDNODE与TDNODE应该是实际的首尾点";
                         stringstream ss;
                         ss << "divider:" << divider->id_ << ",to node_id:" << divider->fromNodeId_ << "标记错误";
@@ -164,6 +183,9 @@ namespace kd {
                 ss << "[Error] open divider file error. fileName " << dividerFile;
                 error_output_->writeInfo(ss.str());
                 return false;
+            }
+            if(isCheck_kxs01018) {
+                error_output_->addCheckItemInfo(CHECK_ITEM_KXS_ORG_018, checkItemTotal);
             }
 
             //补充divider首末点的node信息

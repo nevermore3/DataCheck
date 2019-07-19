@@ -22,7 +22,14 @@ namespace kd {
 
         private:
             bool LoadJsonData(shared_ptr<ResourceManager> resource_manager);
-            void GetFileTaskId(const string& file_path, int file_name_mode, string& task_id,
+            /**
+             * 从文件名称解析taskid,bound_id,data_key,兼容两种文件规范，如：ground_203187756_1.json和manual_990000_new_686574-lane_203187756_1.json
+             * @param file_path 文件路径，包括文件名称
+             * @param task_id 任务号
+             * @param task_bound_id 框ID
+             * @param data_key 数据ID
+             */
+            void GetFileTaskId(const string& file_path, string& task_id,
                                string& task_bound_id , string& data_key);
         private:
             const string id_ = "json_data_loader";

@@ -106,6 +106,9 @@ namespace kd {
                     lane->valid_ = false;
                 }
             }
+
+            errorOutput->addCheckItemInfo(CHECK_ITEM_KXS_LANE_008,mapDataManager->lanes_.size());
+
         }
 
         //车道右侧车道线起点没有LA

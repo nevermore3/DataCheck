@@ -380,6 +380,8 @@ namespace kd {
                 return error;
 
             error->laneId_ = lane->id_;
+            error->sourceId = error->laneId_;
+            error->taskId_ = lane->task_id_;
             if (lane->leftDivider_)
                 error->leftDividerId_ = lane->leftDivider_->id_;
             else
@@ -402,7 +404,10 @@ namespace kd {
                 error->coord->lat_=0;
                 error->coord->z_=0;
             }
-
+            shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(error->coord);
+            errNodeInfo->dataType = DATA_TYPE_WAY;
+            errNodeInfo->dataLayer = MODEL_NAME_LANE;
+            error->errNodeInfo.emplace_back(errNodeInfo);
             return error;
         }
 

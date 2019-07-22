@@ -116,8 +116,8 @@ int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) 
 //        shared_ptr<RoadCheck> road_check = make_shared<RoadCheck>();
 //        mapProcessManager->registerProcessor(road_check);
 //
-//        shared_ptr<LaneGroupRelationCheck> lanegroup_rel_check = make_shared<LaneGroupRelationCheck>();
-//        mapProcessManager->registerProcessor(lanegroup_rel_check);
+        shared_ptr<LaneGroupRelationCheck> lanegroup_rel_check = make_shared<LaneGroupRelationCheck>();
+        mapProcessManager->registerProcessor(lanegroup_rel_check);
 //
 //        shared_ptr<LaneGroupTopoCheck> lanegroup_topo_check = make_shared<LaneGroupTopoCheck>();
 //        mapProcessManager->registerProcessor(lanegroup_topo_check);
@@ -223,7 +223,7 @@ int main(int argc, const char *argv[]) {
 
 //        ret |= error_output->saveJsonError();
 
-        ret |= error_output->saveErrorReport(errJsonPath);
+        ret |= error_output->saveErrorReport(checkresult);
 
         LOG(INFO) << "total task costs: " << compilerTimer.elapsed_message();
 

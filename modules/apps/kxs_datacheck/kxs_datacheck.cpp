@@ -223,7 +223,7 @@ int main(int argc, const char *argv[]) {
 
 //        ret |= error_output->saveJsonError();
 
-        ret |= error_output->saveErrorReport(checkresult);
+        ret |= error_output->saveErrorReport(errJsonPath);
 
         LOG(INFO) << "total task costs: " << compilerTimer.elapsed_message();
 

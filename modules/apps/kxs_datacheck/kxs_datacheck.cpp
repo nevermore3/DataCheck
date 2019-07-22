@@ -116,8 +116,8 @@ int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) 
 //        shared_ptr<RoadCheck> road_check = make_shared<RoadCheck>();
 //        mapProcessManager->registerProcessor(road_check);
 //
-//        shared_ptr<LaneGroupRelationCheck> lanegroup_rel_check = make_shared<LaneGroupRelationCheck>();
-//        mapProcessManager->registerProcessor(lanegroup_rel_check);
+        shared_ptr<LaneGroupRelationCheck> lanegroup_rel_check = make_shared<LaneGroupRelationCheck>();
+        mapProcessManager->registerProcessor(lanegroup_rel_check);
 //
 //        shared_ptr<LaneGroupTopoCheck> lanegroup_topo_check = make_shared<LaneGroupTopoCheck>();
 //        mapProcessManager->registerProcessor(lanegroup_topo_check);
@@ -195,12 +195,12 @@ int main(int argc, const char *argv[]) {
             return ret;
         }
 
+        // 检查项配置管理初始化 本地调试使用
         if(!CheckListConfig::getInstance().GetCheckList(argv[1])){
             LOG(ERROR) << "download and parse checklist error!";
-            return 2;
+            return 1;
         }
 
-        // 检查项配置管理初始化 本地调试使用
 //        std::string check_file = (std::string)"./" + kCheckListFile;
 //        Poco::File in_dir(check_file);
 //        if (!in_dir.exists()) {

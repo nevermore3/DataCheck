@@ -15,14 +15,18 @@ namespace kd {
         bool LaneGroupTopoCheck::execute(shared_ptr<MapDataManager> mapDataManager,
                                          shared_ptr<CheckErrorOutput> errorOutput) {
             bool ret = true;
+
             try {
                 pre_divider_topo(mapDataManager);
-                if (mapDataManager->is_auto_road) {
+                if (CheckItemValid(CHECK_ITEM_KXS_ROAD_001) && mapDataManager->is_auto_road) {
                     check_road_topo(mapDataManager, errorOutput);
                 }
-                check_lane_topo(mapDataManager, errorOutput);
-
-                check_lane_group_depart_merge(mapDataManager, errorOutput);
+                if(CheckItemValid(CHECK_ITEM_KXS_LANE_001)){
+                    check_lane_topo(mapDataManager, errorOutput);
+                }
+                if(CheckItemValid(CHECK_ITEM_KXS_LG_027)) {
+                    check_lane_group_depart_merge(mapDataManager, errorOutput);
+                }
             } catch (exception &e) {
                 LOG(ERROR) << e.what();
                 ret = false;
@@ -57,6 +61,10 @@ namespace kd {
 
         void LaneGroupTopoCheck::check_road_topo(shared_ptr<MapDataManager> mapDataManager,
                                                  shared_ptr<CheckErrorOutput> errorOutput) {
+
+
+
+
             for (const auto &conn_lg : lane_group2_conn_lg_) {
                 bool check = false;
                 auto pre_roads = CommonUtil::get_roads_by_lg(mapDataManager, conn_lg.first);
@@ -90,12 +98,21 @@ namespace kd {
                 }
                 if (!check) {
                     // 错误输出
+                    auto onepair = lane_group2_conn_lg_.begin();
+                    auto div_v = CommonUtil::get_dividers_by_lg(mapDataManager,conn_lg.first);
+                    string taskid="";
+                    if(div_v.size()>0){
+                        taskid = div_v.front()->task_id_;
+                    }
                     shared_ptr<DCError> ptr_error = DCLaneGroupTopoCheckError::createByKXS_04_001(conn_lg.first,
                                                                                                   conn_lg.second);
+                    ptr_error->taskId_ = taskid;
                     errorOutput->saveError(ptr_error);
                 }
 
             }
+
+            errorOutput->addCheckItemInfo(CHECK_ITEM_KXS_ROAD_001,lane_group2_conn_lg_.size());
         }
 
         set<string> LaneGroupTopoCheck::get_road_nodes(const shared_ptr<MapDataManager> &mapDataManager,
@@ -287,6 +304,7 @@ namespace kd {
                     errorOutput->saveError(ptr_error);
                 }
             }
+            errorOutput->addCheckItemInfo(CHECK_ITEM_KXS_LANE_001,lane_group2_conn_lg_.size());
         }
 
 
@@ -589,6 +607,7 @@ namespace kd {
             map<string, set<string>> t_lane_group2_conn_lg;
             for (const auto &pairLg : lane_group2_conn_lg_) {
                 auto f_lg_iter = f_lane_group2_conn_lg.find(pairLg.first);
+
                 if (f_lg_iter != f_lane_group2_conn_lg.end()) {
                     f_lg_iter->second.insert(pairLg.second);
                 } else {
@@ -605,6 +624,12 @@ namespace kd {
                     t_lane_group2_conn_lg.insert(make_pair(pairLg.second, conn_lg_set));
                 }
             }
+            auto onepair = lane_group2_conn_lg_.begin();
+            vector<shared_ptr<DCDivider>> div_v = CommonUtil::get_dividers_by_lg(mapDataManager,onepair->first);
+            string taskid="";
+            if(div_v.size()>0){
+                taskid = div_v[0]->task_id_;
+            }
 
             for (auto f_lg2_conn_lg : f_lane_group2_conn_lg) {
                 // 存在进入车道
@@ -615,11 +640,14 @@ namespace kd {
                             // 错误输出
                             shared_ptr<DCError> ptr_error = DCLaneGroupCheckError::createByKXS_03_027(
                                     f_lg2_conn_lg.first);
+                            ptr_error->taskId_ = taskid;
                             errorOutput->saveError(ptr_error);
                         }
                     }
                 }
             }
+
+            errorOutput->addCheckItemInfo(CHECK_ITEM_KXS_LG_027,lane_group2_conn_lg_.size());
         }
     }
 }

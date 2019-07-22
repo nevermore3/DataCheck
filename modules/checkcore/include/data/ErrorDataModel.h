@@ -229,7 +229,7 @@ namespace kd {
 
             static shared_ptr<DCLaneCheckError> createByAtt(string checkModel, shared_ptr<DCLane> lane,
                                                             shared_ptr<DCLaneAttribute> att);
-
+            static shared_ptr<DCLaneCheckError> createByKXS_05_008(string checkModel, shared_ptr<DCLane> lane, shared_ptr<DCDivider> leftDiv, shared_ptr<DCDivider> rightDiv);
             static shared_ptr<DCLaneCheckError>
             createByNode(string checkModel, shared_ptr<DCLane> lane, shared_ptr<DCDividerNode> node);
 
@@ -314,7 +314,7 @@ namespace kd {
             static shared_ptr<DCLaneGroupCheckError> createByKXS_03_006(string road_id, string lg1,
                                                                         long s_index1, long e_index1,
                                                                         string lg2, long s_index2,
-                                                                        long e_index2, bool is_positive = true);
+                                                                        long e_index2,string taskId, bool is_positive = true);
 
             static shared_ptr<DCLaneGroupCheckError> createByKXS_03_004(string divider_id, set<string> lane_groups);
 
@@ -399,7 +399,7 @@ namespace kd {
             static shared_ptr<DCLaneError> createByKXS_05_002(const string &lane_id,
                                                               const string &divider_id);
 
-            static shared_ptr<DCLaneError> createByKXS_05_003(const string &lane_id,
+            static shared_ptr<DCLaneError> createByKXS_05_003(const string taskid,const string dataKey,const string dataType,const string dataLayer,shared_ptr<DCCoord>  coord,const string &lane_id,
                                                               const string &divider_id);
 
             static shared_ptr<DCLaneError> createByKXS_05_015(const string &lane_id1,

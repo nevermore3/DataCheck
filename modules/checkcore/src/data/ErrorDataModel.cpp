@@ -335,6 +335,43 @@ namespace kd {
 
             return error;
         }
+        shared_ptr<DCLaneCheckError>
+        DCLaneCheckError::createByKXS_05_008(string checkModel, shared_ptr<DCLane> lane, shared_ptr<DCDivider> leftDiv, shared_ptr<DCDivider> rightDiv) {
+
+            shared_ptr<DCLaneCheckError> error = make_shared<DCLaneCheckError>(checkModel);
+            if (lane == nullptr)
+                return error;
+
+            error->laneId_ = lane->id_;
+            if (lane->leftDivider_)
+                error->leftDividerId_ = lane->leftDivider_->id_;
+            else
+                error->leftDividerId_ = "";
+
+            if (lane->rightDivider_)
+                error->rightDividerId_ = lane->rightDivider_->id_;
+            else
+                error->rightDividerId_ = "";
+            error->sourceId = lane->id_;
+            shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(leftDiv->nodes_[0]->coord_);
+            errNodeInfo->dataType = DATA_TYPE_WAY;
+            errNodeInfo->dataLayer = MODEL_NAME_DIVIDER;
+            errNodeInfo->dataId = leftDiv->id_;
+            error->errNodeInfo.emplace_back(errNodeInfo);
+
+            shared_ptr<ErrNodeInfo> errNodeInfo1 = make_shared<ErrNodeInfo>(rightDiv->nodes_[0]->coord_);
+            errNodeInfo1->dataType = DATA_TYPE_WAY;
+            errNodeInfo1->dataLayer = MODEL_NAME_DIVIDER;
+            errNodeInfo1->dataId = rightDiv->id_;
+            error->errNodeInfo.emplace_back(errNodeInfo1);
+            error->coord = leftDiv->nodes_[0]->coord_;
+
+            error->taskId_ = lane->task_id_;
+            error->flag = lane->flag_;
+            error->dataKey_ = DATA_TYPE_LANE+lane->task_id_+DATA_TYPE_LAST_NUM;
+
+            return error;
+        }
 
         shared_ptr<DCLaneCheckError>
         DCLaneCheckError::createByNode(string checkModel, shared_ptr<DCLane> lane, shared_ptr<DCDividerNode> node) {
@@ -417,26 +454,35 @@ namespace kd {
         shared_ptr<DCLaneGroupCheckError>
         DCLaneGroupCheckError::createByKXS_03_005(string road_id, long index, bool is_positive) {
             shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>(CHECK_ITEM_KXS_LG_005);
-            error->checkLevel_ = LEVEL_WARNING;
+            error->checkLevel_ = LEVEL_ERROR;
             error->checkName = "自动生成二维路网时，车道组要对道路全覆盖";
             error->detail = "roadid:" + road_id + "未全被车道组覆盖.未覆盖的节点" +
-                            to_string(index) + "," + "lane group direction " + to_string(is_positive);
-
+                            to_string(index) + "," ;
+            error->sourceId = road_id;
             return error;
         }
 
         shared_ptr<DCLaneGroupCheckError> DCLaneGroupCheckError::createByKXS_03_006(string road_id, string lg1,
                                                                                     long s_index1, long e_index1,
                                                                                     string lg2, long s_index2,
-                                                                                    long e_index2, bool is_positive) {
+                                                                                    long e_index2,string taskId,bool is_positive) {
             shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>(CHECK_ITEM_KXS_LG_006);
             error->checkLevel_ = LEVEL_ERROR;
             error->checkName = "ValidityRange之间不重叠或交叉";
             error->detail = "roadid:" + road_id + "上的车道组关联关系有交叉." +
                             lg1 + ":" + to_string(s_index1) + "," + to_string(e_index1) + "," +
-                            lg2 + ":" + to_string(s_index2) + "," + to_string(e_index2) + "," +
-                            "lane group direction " + to_string(is_positive);
+                            lg2 + ":" + to_string(s_index2) + "," + to_string(e_index2);
 
+            error->sourceId = road_id;
+            error->coord = make_shared<DCCoord>();
+            error->coord->lng_=0;
+            error->coord->lat_=0;
+            error->coord->z_ = 0;
+            error->taskId_ = taskId;
+            shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(error->coord);
+            errNodeInfo->dataType = DATA_TYPE_NODE;
+            errNodeInfo->dataLayer = MODEL_NAME_DIVIDER_NODE;
+            error->errNodeInfo.emplace_back(errNodeInfo);
             return error;
         }
 
@@ -511,7 +557,15 @@ namespace kd {
             error->detail += "lane_group_id:";
             error->detail += lane_group_id;
             error->detail += "车道组没有打断";
-
+            error->coord = make_shared<DCCoord>();
+            error->coord->lat_=0;
+            error->coord->lng_=0;
+            error->coord->z_=0;
+            error->sourceId = lane_group_id;
+            shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(error->coord);
+            errNodeInfo->dataType = DATA_TYPE_RELATION;
+            errNodeInfo->dataLayer = MODEL_NAME_LANE_GROUP;
+            error->errNodeInfo.emplace_back(errNodeInfo);
             return error;
         }
 
@@ -569,8 +623,16 @@ namespace kd {
             error->detail += lg_id1;
             error->detail += ",lane group id:";
             error->detail += lg_id2;
-            error->detail += "道路不连通";
-
+            error->detail += "之间的道路不连通";
+            error->coord = make_shared<DCCoord>();
+            error->coord->lat_=0;
+            error->coord->lng_=0;
+            error->coord->z_=0;
+            error->sourceId = lg_id1;
+            shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(error->coord);
+            errNodeInfo->dataType = DATA_TYPE_RELATION;
+            errNodeInfo->dataLayer = MODEL_NAME_LANE_GROUP;
+            error->errNodeInfo.emplace_back(errNodeInfo);
             return error;
         }
 
@@ -585,7 +647,14 @@ namespace kd {
             error->detail += ",lane group id:";
             error->detail += lg_id2;
             error->detail += "车道中心线不连通";
-
+            error->coord = make_shared<DCCoord>();
+            error->coord->lat_=0;
+            error->coord->lng_=0;
+            error->coord->z_=0;
+            error->sourceId = lg_id1;
+            shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(error->coord);
+            errNodeInfo->dataType = DATA_TYPE_RELATION;
+            errNodeInfo->dataLayer = MODEL_NAME_LANE_GROUP;
             return error;
         }
 
@@ -612,6 +681,7 @@ namespace kd {
             error->detail += ",lane group id:";
             error->detail += lane_group_id;
             error->detail += "边缘线有交叉";
+            error->sourceId = road_id;
 
             return error;
         }
@@ -680,7 +750,13 @@ namespace kd {
                 error->detail += "前后点角度：";
                 error->detail += to_string(error_node->angle);
             }
-
+            error->sourceId =road_id;
+            error->coord = ptr_error_nodes[0]->ptr_current_coord;
+            shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(error->coord);
+            errNodeInfo->dataType = DATA_TYPE_WAY;
+            errNodeInfo->dataLayer = MODEL_NAME_ROAD;
+            errNodeInfo->dataId = ptr_error_nodes[0]->id;
+            error->errNodeInfo.emplace_back(errNodeInfo);
             return error;
         }
 
@@ -711,9 +787,14 @@ namespace kd {
                 error->detail += ")";
                 error->detail += "距离：";
                 error->detail += to_string(error_node->distance);
+
+                shared_ptr<ErrNodeInfo> errNodeInfo1 = make_shared<ErrNodeInfo>(error_node->ptr_current_coord);
+                errNodeInfo1->dataType = DATA_TYPE_WAY;
+                errNodeInfo1->dataLayer = MODEL_NAME_ROAD;
+                errNodeInfo1->dataId = error_node->id;
             }
             error->detail += "距离过近";
-
+            error->sourceId = road_id;
             return error;
         }
 
@@ -747,17 +828,24 @@ namespace kd {
             return error;
         }
 
-        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_003(const string &lane_id,
+        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_003(const string taskid,const string dataKey,const string dataType,const string dataLayer,shared_ptr<DCCoord>  coord,const string &lane_id,
                                                                 const string &divider_id) {
             shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_003);
             error->checkLevel_ = LEVEL_ERROR;
-            error->checkName = "车道中心线与本组的车道边缘线无交叉点。";
+            error->checkName = "车道中心线与本组的车道边缘线存在交叉点。";
             error->detail += "lane_id:";
             error->detail += lane_id;
             error->detail += ",divider_id:";
             error->detail += divider_id;
             error->detail += "边缘线有交点";
-
+            error->sourceId = divider_id;
+            error->taskId_ = taskid;
+            error->dataKey_ = dataKey;
+            error->coord = coord;
+            shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(coord);
+            errNodeInfo->dataType = DATA_TYPE_NODE;
+            errNodeInfo->dataLayer = MODEL_NAME_DIVIDER;
+            error->errNodeInfo.emplace_back(errNodeInfo);
             return error;
         }
 

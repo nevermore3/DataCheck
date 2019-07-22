@@ -54,11 +54,12 @@ namespace kd {
                 if ((leftDiv->direction_ != 4 && leftDiv->direction_ == 4)
                     || (leftDiv->direction_ == 4 && leftDiv->direction_ != 4)) {
                     shared_ptr<DCLaneCheckError> error =
-                            DCLaneCheckError::createByAtt(CHECK_ITEM_KXS_LANE_008, lane, nullptr);
+                            DCLaneCheckError::createByKXS_05_008(CHECK_ITEM_KXS_LANE_008, lane, leftDiv,rightDiv);
                     error->checkName = "车道线方向冲突";
                     stringstream ss;
                     ss << "divider:" << leftDiv->id_;
                     ss << "与divider:" << rightDiv->id_ << "方向冲突";
+                    error->detail_ =  ss.str();
                     errorOutput->saveError(error);
                     lane->valid_ = false;
                 } else if (leftDiv->direction_ == 1 || rightDiv->direction_ == 1) {
@@ -95,11 +96,12 @@ namespace kd {
                 double fAngle = fabs(leftAngle - rightAngle);
                 if (fAngle > limitAngle) {
                     shared_ptr<DCLaneCheckError> error =
-                            DCLaneCheckError::createByAtt(CHECK_ITEM_KXS_LANE_008, lane, nullptr);
+                            DCLaneCheckError::createByKXS_05_008(CHECK_ITEM_KXS_LANE_008, lane, leftDiv,rightDiv);
                     error->checkName = "车道线方向冲突";
                     stringstream ss;
                     ss << "divider:" << leftDiv->id_;
                     ss << "与divider:" << rightDiv->id_ << "方向冲突";
+                    error->detail_ =  ss.str();
                     errorOutput->saveError(error);
                     lane->valid_ = false;
                 }
@@ -218,8 +220,9 @@ namespace kd {
                                       shared_ptr<CheckErrorOutput> errorOutput) {
             if (mapDataManager == nullptr)
                 return false;
-
-            check_JH_C_16(mapDataManager, errorOutput);
+            if(CheckItemValid(CHECK_ITEM_KXS_LANE_008)){
+                check_JH_C_16(mapDataManager, errorOutput);
+            }
 
 //            check_JH_C_19(mapDataManager, errorOutput);
 

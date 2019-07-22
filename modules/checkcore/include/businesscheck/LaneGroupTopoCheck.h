@@ -162,6 +162,7 @@ namespace kd {
 
         private:
             const string id = "lanegroup_topo_check";
+            string taskid_;
 
         };
     }

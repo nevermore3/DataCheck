@@ -314,7 +314,7 @@ namespace kd {
             static shared_ptr<DCLaneGroupCheckError> createByKXS_03_006(string road_id, string lg1,
                                                                         long s_index1, long e_index1,
                                                                         string lg2, long s_index2,
-                                                                        long e_index2, bool is_positive = true);
+                                                                        long e_index2,string taskId, bool is_positive = true);
 
             static shared_ptr<DCLaneGroupCheckError> createByKXS_03_004(string divider_id, set<string> lane_groups);
 

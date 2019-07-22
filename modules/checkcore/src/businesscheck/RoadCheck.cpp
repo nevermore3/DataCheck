@@ -16,7 +16,9 @@ namespace kd {
         }
 
         bool RoadCheck::execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) {
-            check_road_divider_intersect(mapDataManager, errorOutput);
+            if(CheckItemValid(CHECK_ITEM_KXS_ROAD_002)){
+                check_road_divider_intersect(mapDataManager, errorOutput);
+            }
             check_road_node_height(mapDataManager, errorOutput);
             check_road_node(mapDataManager, errorOutput);
             return true;
@@ -25,7 +27,7 @@ namespace kd {
         void RoadCheck::check_road_divider_intersect(shared_ptr<MapDataManager> mapDataManager,
                                                      shared_ptr<CheckErrorOutput> errorOutput) {
             const auto &ptr_lane_groups = mapDataManager->laneGroups_;
-
+            int total = 0;
             shared_ptr<DCError> ptr_error = nullptr;
             for (const auto &lg : ptr_lane_groups) {
                 auto lane_group_id = lg.first;
@@ -38,6 +40,7 @@ namespace kd {
                     auto left_ptr_divider = ptr_dividers.front();
                     auto right_ptr_divider = ptr_dividers.back();
                     for (const auto &road_id : roads) {
+                        total++;
                         auto ptr_road = CommonUtil::get_road(mapDataManager, road_id);
                         if (ptr_road) {
                             if (ptr_road->direction_ == 2) {
@@ -46,6 +49,12 @@ namespace kd {
                                     road_divider_intersect(mapDataManager, ptr_road, lane_group_id,
                                                            right_ptr_divider)) {
                                     ptr_error = DCRoadCheckError::createByKXS_04_002(ptr_road->id_, lane_group_id);
+                                    ptr_error->taskId_ = right_ptr_divider->task_id_;
+                                    ptr_error->coord = ptr_road->nodes_[0];
+                                    shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(ptr_error->coord);
+                                    errNodeInfo->dataType = DATA_TYPE_WAY;
+                                    errNodeInfo->dataLayer = MODEL_NAME_ROAD;
+                                    ptr_error->errNodeInfo.emplace_back(errNodeInfo);
                                     errorOutput->saveError(ptr_error);
                                 }
                             } else if (ptr_road->direction_ == 1) {
@@ -53,7 +62,14 @@ namespace kd {
                                 if (road_divider_intersect(mapDataManager, ptr_road, lane_group_id,
                                                            right_ptr_divider)) {
                                     ptr_error = DCRoadCheckError::createByKXS_04_002(ptr_road->id_, lane_group_id);
+                                    ptr_error->taskId_ = right_ptr_divider->task_id_;
+                                    ptr_error->coord = ptr_road->nodes_[0];
+                                    shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(ptr_error->coord);
+                                    errNodeInfo->dataType = DATA_TYPE_WAY;
+                                    errNodeInfo->dataLayer = MODEL_NAME_ROAD;
+                                    ptr_error->errNodeInfo.emplace_back(errNodeInfo);
                                     errorOutput->saveError(ptr_error);
+
                                 }
                             }
                         } else {
@@ -62,12 +78,15 @@ namespace kd {
                     }
                 }
             }
+
+            errorOutput->addCheckItemInfo(CHECK_ITEM_KXS_ROAD_002,total);
         }
+
 
         bool RoadCheck::road_divider_intersect(const shared_ptr<MapDataManager> &mapDataManager,
                                                const shared_ptr<DCRoad> &ptr_road,
                                                const string &lane_group_id,
-                                               const shared_ptr<DCDivider> &ptr_divider) {
+                                               const shared_ptr<DCDivider> &ptr_divider ) {
             bool ret = false;
             auto ptr_road_line_string = get_road_line_string(mapDataManager, ptr_road, lane_group_id);
             auto ptr_div_line_string = CommonUtil::get_divider_line_string(ptr_divider->nodes_);
@@ -92,10 +111,12 @@ namespace kd {
                     if (is_same) {
                         ret = false;
                     }
+
                 }
             }
             return ret;
         }
+
 
         shared_ptr<geos::geom::LineString>
         RoadCheck::get_road_line_string(const shared_ptr<MapDataManager> &mapDataManager,
@@ -180,19 +201,28 @@ namespace kd {
 
         void RoadCheck::check_road_node(shared_ptr<MapDataManager> mapDataManager,
                                         shared_ptr<CheckErrorOutput> errorOutput) {
+            int total = 0;
             for (auto road_iter : mapDataManager->roads_) {
                 auto ptr_road = road_iter.second;
                 if (ptr_road) {
+                    total+=ptr_road->nodes_.size();
                     // 检查结点是否重复
                     check_road_node_repeat(errorOutput, ptr_road);
 
                     // 检查结点间角度是否过大出现拐点
-                    check_road_node_angle(errorOutput, ptr_road);
+                    if(CheckItemValid(CHECK_ITEM_KXS_ROAD_007)) {
+                        check_road_node_angle(errorOutput, ptr_road);
+
+                    }
 
                     // 结点间距检查
                     check_road_node_distance(errorOutput, ptr_road);
                 }
             }
+            if(CheckItemValid(CHECK_ITEM_KXS_ROAD_007)) {
+                errorOutput->addCheckItemInfo(CHECK_ITEM_KXS_ROAD_007, total);
+            }
+
         }
 
         void RoadCheck::check_road_node_repeat(shared_ptr<CheckErrorOutput> errorOutput, shared_ptr<DCRoad> ptr_road) {
@@ -236,6 +266,8 @@ namespace kd {
 
             if (ptr_error_nodes.size() > 1) {
                 auto ptr_error = DCRoadCheckError::createByKXS_04_007(ptr_road->id_, ptr_error_nodes);
+                ptr_error->taskId_ = ptr_road->task_id_;
+
                 errorOutput->saveError(ptr_error);
             }
         }
@@ -247,6 +279,8 @@ namespace kd {
 
             if (ptr_error_nodes.size() > 1) {
                 auto ptr_error = DCRoadCheckError::createByKXS_04_008(ptr_road->id_, ptr_error_nodes);
+                ptr_error->coord = ptr_road->nodes_[0];
+                ptr_error->taskId_ = ptr_road->task_id_;
                 errorOutput->saveError(ptr_error);
             }
         }

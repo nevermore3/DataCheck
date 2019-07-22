@@ -30,12 +30,14 @@ namespace kd {
                                                   shared_ptr<CheckErrorOutput> errorOutput) {
             const auto &road2LaneGroup2NodeIdxs = mapDataManager->road2LaneGroup2NodeIdxs_;
             const auto &roads = mapDataManager->roads_;
+            int total = 0;
             for (const auto &road2_lg_idx:road2LaneGroup2NodeIdxs) {
                 shared_ptr<DCRoad> ptr_road = CommonUtil::get_road(mapDataManager, road2_lg_idx.first);
                 const auto &lg_idx = road2_lg_idx.second;
                 vector<LGNodeIndex> pos_dir_lg_vec;
                 vector<LGNodeIndex> neg_dir_lg_vec;
                 for (const auto &node_idx : lg_idx) {
+                    total++;
                     const string &lane_group_id = node_idx.first;
                     bool lg_dir = true;
                     auto lang_group = CommonUtil::get_lane_group(mapDataManager, lane_group_id);
@@ -75,6 +77,13 @@ namespace kd {
                     LOG(ERROR) << "ptr_road failed! road:" << road2_lg_idx.first;
                 }
             }
+            if(CheckItemValid(CHECK_ITEM_KXS_LG_005)){
+                errorOutput->addCheckItemInfo(CHECK_ITEM_KXS_LG_005,total);
+            }
+            if(CheckItemValid(CHECK_ITEM_KXS_LG_006)){
+                errorOutput->addCheckItemInfo(CHECK_ITEM_KXS_LG_006,total);
+            }
+
         }
 
         void LaneGroupRelationCheck::check_road_node_index(vector<LGNodeIndex> lg_node_index_vec, shared_ptr<DCRoad> ptr_road,
@@ -93,7 +102,7 @@ namespace kd {
                 });
             }
             shared_ptr<DCError> ptr_error;
-            if (ptr_road) {
+            if (CheckItemValid(CHECK_ITEM_KXS_LG_005)&& ptr_road) {
                 // 检查索引点是否铺满
                 check_index_fill_all(lg_node_index_vec, ptr_road, is_positive, errorOutput);
             }
@@ -105,11 +114,12 @@ namespace kd {
                 if (lat_iter->f_idx > pre_iter->t_idx) {
                     if (!is_positive) {
                         auto ptr_lane_group = CommonUtil::get_lane_group(mapDataManager, lat_iter->lanegroup_id);
-                        if (ptr_lane_group && ptr_lane_group->is_virtual_ != 1) {
+                        if (CheckItemValid(CHECK_ITEM_KXS_LG_006)&& (ptr_lane_group && ptr_lane_group->is_virtual_ != 1)) {
                             ptr_error = DCLaneGroupCheckError::createByKXS_03_006(pre_iter->road_id, pre_iter->lanegroup_id,
                                                                                   pre_iter->f_idx, pre_iter->t_idx,
                                                                                   lat_iter->lanegroup_id, lat_iter->f_idx,
-                                                                                  lat_iter->t_idx, is_positive);
+                                                                                  lat_iter->t_idx,ptr_road->task_id_, is_positive);
+
                         }
                     }
 
@@ -118,13 +128,13 @@ namespace kd {
                     if (is_positive) {
                         // 出现交叉
                         auto ptr_lane_group = CommonUtil::get_lane_group(mapDataManager, lat_iter->lanegroup_id);
-                        if (ptr_lane_group && ptr_lane_group->is_virtual_ != 1) {
+                        if (CheckItemValid(CHECK_ITEM_KXS_LG_006) && (ptr_lane_group && ptr_lane_group->is_virtual_ != 1)) {
                             ptr_error = DCLaneGroupCheckError::createByKXS_03_006(pre_iter->road_id,
                                                                                   pre_iter->lanegroup_id,
                                                                                   pre_iter->f_idx, pre_iter->t_idx,
                                                                                   lat_iter->lanegroup_id,
                                                                                   lat_iter->f_idx,
-                                                                                  lat_iter->t_idx, is_positive);
+                                                                                  lat_iter->t_idx,ptr_road->task_id_, is_positive);
                         }
                     }
 
@@ -170,6 +180,12 @@ namespace kd {
                         ptr_error->taskId_ = ptr_road->task_id_;
                         ptr_error->flag = ptr_road->flag_;
                         ptr_error->dataKey_ = DATA_TYPE_LANE + ptr_road->task_id_ + DATA_TYPE_LAST_NUM;
+                        ptr_error->coord = ptr_road->nodes_[i];
+                        shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(ptr_road->nodes_[i]);
+                        errNodeInfo->dataType = DATA_TYPE_NODE;
+                        errNodeInfo->dataLayer = MODEL_NAME_ROAD;
+                        ptr_error->errNodeInfo.emplace_back(errNodeInfo);
+
                         errorOutput->saveError(ptr_error);
                     }
                 }

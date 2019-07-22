@@ -399,7 +399,7 @@ namespace kd {
             static shared_ptr<DCLaneError> createByKXS_05_002(const string &lane_id,
                                                               const string &divider_id);
 
-            static shared_ptr<DCLaneError> createByKXS_05_003(const string &lane_id,
+            static shared_ptr<DCLaneError> createByKXS_05_003(const string taskid,const string dataKey,const string dataType,const string dataLayer,shared_ptr<DCCoord>  coord,const string &lane_id,
                                                               const string &divider_id);
 
             static shared_ptr<DCLaneError> createByKXS_05_015(const string &lane_id1,

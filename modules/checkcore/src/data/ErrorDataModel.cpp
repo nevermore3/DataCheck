@@ -791,7 +791,7 @@ namespace kd {
             return error;
         }
 
-        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_003(const string &lane_id,
+        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_003(const string taskid,const string dataKey,const string dataType,const string dataLayer,shared_ptr<DCCoord>  coord,const string &lane_id,
                                                                 const string &divider_id) {
             shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_003);
             error->checkLevel_ = LEVEL_ERROR;
@@ -801,7 +801,14 @@ namespace kd {
             error->detail += ",divider_id:";
             error->detail += divider_id;
             error->detail += "边缘线有交点";
-
+            error->sourceId = divider_id;
+            error->taskId_ = taskid;
+            error->dataKey_ = dataKey;
+            error->coord = coord;
+            shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(coord);
+            errNodeInfo->dataType = DATA_TYPE_NODE;
+            errNodeInfo->dataLayer = MODEL_NAME_DIVIDER;
+            error->errNodeInfo.emplace_back(errNodeInfo);
             return error;
         }
 

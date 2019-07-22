@@ -229,7 +229,7 @@ namespace kd {
 
             static shared_ptr<DCLaneCheckError> createByAtt(string checkModel, shared_ptr<DCLane> lane,
                                                             shared_ptr<DCLaneAttribute> att);
-
+            static shared_ptr<DCLaneCheckError> createByKXS_05_008(string checkModel, shared_ptr<DCLane> lane, shared_ptr<DCDivider> leftDiv, shared_ptr<DCDivider> rightDiv);
             static shared_ptr<DCLaneCheckError>
             createByNode(string checkModel, shared_ptr<DCLane> lane, shared_ptr<DCDividerNode> node);
 

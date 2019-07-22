@@ -106,7 +106,7 @@ bool ReportJsonLog::WriteToFile(string path,bool isWriteEmpty) {
     stringstream ss;
     if(isWriteEmpty){
         ss<<"[]";
-    }else{
+    }else {
         Stringify(ss);
     }
     ofstream outfile;

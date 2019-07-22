@@ -195,12 +195,12 @@ int main(int argc, const char *argv[]) {
             return ret;
         }
 
+        // 检查项配置管理初始化 本地调试使用
         if(!CheckListConfig::getInstance().GetCheckList(argv[1])){
             LOG(ERROR) << "download and parse checklist error!";
-            return 2;
+            return 1;
         }
 
-        // 检查项配置管理初始化 本地调试使用
 //        std::string check_file = (std::string)"./" + kCheckListFile;
 //        Poco::File in_dir(check_file);
 //        if (!in_dir.exists()) {

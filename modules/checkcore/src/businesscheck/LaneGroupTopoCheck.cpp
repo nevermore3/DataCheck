@@ -21,7 +21,9 @@ namespace kd {
                 if (CheckItemValid(CHECK_ITEM_KXS_ROAD_001) && mapDataManager->is_auto_road) {
                     check_road_topo(mapDataManager, errorOutput);
                 }
-                check_lane_topo(mapDataManager, errorOutput);
+                if(CheckItemValid(CHECK_ITEM_KXS_LANE_001)){
+                    check_lane_topo(mapDataManager, errorOutput);
+                }
                 if(CheckItemValid(CHECK_ITEM_KXS_LG_027)) {
                     check_lane_group_depart_merge(mapDataManager, errorOutput);
                 }
@@ -302,6 +304,7 @@ namespace kd {
                     errorOutput->saveError(ptr_error);
                 }
             }
+            errorOutput->addCheckItemInfo(CHECK_ITEM_KXS_LANE_001,lane_group2_conn_lg_.size());
         }
 
 

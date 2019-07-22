@@ -610,7 +610,14 @@ namespace kd {
             error->detail += ",lane group id:";
             error->detail += lg_id2;
             error->detail += "车道中心线不连通";
-
+            error->coord = make_shared<DCCoord>();
+            error->coord->lat_=0;
+            error->coord->lng_=0;
+            error->coord->z_=0;
+            error->sourceId = lg_id1;
+            shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(error->coord);
+            errNodeInfo->dataType = DATA_TYPE_RELATION;
+            errNodeInfo->dataLayer = MODEL_NAME_LANE_GROUP;
             return error;
         }
 
@@ -788,7 +795,7 @@ namespace kd {
                                                                 const string &divider_id) {
             shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_003);
             error->checkLevel_ = LEVEL_ERROR;
-            error->checkName = "车道中心线与本组的车道边缘线无交叉点。";
+            error->checkName = "车道中心线与本组的车道边缘线存在交叉点。";
             error->detail += "lane_id:";
             error->detail += lane_id;
             error->detail += ",divider_id:";

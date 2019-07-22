@@ -216,13 +216,17 @@ namespace kd {
                     }
 
                     // 结点间距检查
-                    check_road_node_distance(errorOutput, ptr_road);
+                    if(CheckItemValid(CHECK_ITEM_KXS_ROAD_008)) {
+                        check_road_node_distance(errorOutput, ptr_road);
+                    }
                 }
             }
             if(CheckItemValid(CHECK_ITEM_KXS_ROAD_007)) {
                 errorOutput->addCheckItemInfo(CHECK_ITEM_KXS_ROAD_007, total);
             }
-
+            if(CheckItemValid(CHECK_ITEM_KXS_ROAD_008)) {
+                errorOutput->addCheckItemInfo(CHECK_ITEM_KXS_ROAD_008, total);
+            }
         }
 
         void RoadCheck::check_road_node_repeat(shared_ptr<CheckErrorOutput> errorOutput, shared_ptr<DCRoad> ptr_road) {
@@ -263,11 +267,9 @@ namespace kd {
         void RoadCheck::check_road_node_angle(shared_ptr<CheckErrorOutput> errorOutput, shared_ptr<DCRoad> ptr_road) {
             double road_node_angle = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::ROAD_NODE_ANGLE);
             auto ptr_error_nodes = CommonCheck::AngleCheck(ptr_road->nodes_, road_node_angle);
-
             if (ptr_error_nodes.size() > 1) {
                 auto ptr_error = DCRoadCheckError::createByKXS_04_007(ptr_road->id_, ptr_error_nodes);
                 ptr_error->taskId_ = ptr_road->task_id_;
-
                 errorOutput->saveError(ptr_error);
             }
         }

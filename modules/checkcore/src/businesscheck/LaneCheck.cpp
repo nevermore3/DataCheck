@@ -27,7 +27,7 @@ namespace kd {
         void LaneCheck::check_lane_divider_intersect(shared_ptr<MapDataManager> mapDataManager,
                                                      shared_ptr<CheckErrorOutput> errorOutput) {
             const auto &ptr_lane_groups = mapDataManager->laneGroups_;
-
+            char zone[8] = {0};
             shared_ptr<DCError> ptr_error = nullptr;
             for (const auto &lg : ptr_lane_groups) {
                 if (lg.second->is_virtual_) {
@@ -48,17 +48,18 @@ namespace kd {
                     for (const auto &ptr_lane : ptr_lanes) {
 
                         if (lane_divider_intersect(mapDataManager, ptr_lane, left_ptr_divider)) {
+
                             ptr_error = DCLaneError::createByKXS_05_003(ptr_lane->id_, left_ptr_divider->id_);
 
                             ptr_error->taskId_ = ptr_lane->task_id_;
                             ptr_error->flag = ptr_lane->flag_;
                             ptr_error->dataKey_ = DATA_TYPE_LANE+ptr_lane->task_id_+DATA_TYPE_LAST_NUM;
-
+                            ptr_error->sourceId = left_ptr_divider->id_;
                             errorOutput->saveError(ptr_error);
                         }
                         if (lane_divider_intersect(mapDataManager, ptr_lane, right_ptr_divider)) {
                             ptr_error = DCLaneError::createByKXS_05_003(ptr_lane->id_, right_ptr_divider->id_);
-
+                            ptr_error->sourceId = right_ptr_divider->id_;
                             ptr_error->taskId_ = ptr_lane->task_id_;
                             ptr_error->flag = ptr_lane->flag_;
                             ptr_error->dataKey_ = DATA_TYPE_LANE+ptr_lane->task_id_+DATA_TYPE_LAST_NUM;

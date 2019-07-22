@@ -53,7 +53,7 @@ namespace kd {
             FileUtil::getFileNames(json_data_path_, file_list, suffix);
 
             if (file_list.empty()) {
-                LOG(ERROR) << "inputFileName is empty";
+                LOG(ERROR) << json_data_path_<<" inputFileName is empty";
                 return false;
             }
 

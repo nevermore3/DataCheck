@@ -168,10 +168,7 @@ std::string GetConfigProperty(const std::string& key) {
  */
 int main(int argc, const char *argv[]) {
 
-    if (argc < 3) {
-        LOG(ERROR) << " not has url parameter";
-        return -1;
-    }
+
 
     // app返回值
     int ret = 0;
@@ -188,6 +185,10 @@ int main(int argc, const char *argv[]) {
 
         InitGlog(exe_path, "./");
 
+        if (argc < 3) {
+            LOG(ERROR) << " not has url parameter";
+            return -1;
+        }
         // 加载配置
         ret = DataCheckConfig::getInstance().load("config.properties");
         if (ret != 0) {

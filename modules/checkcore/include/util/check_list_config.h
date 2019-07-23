@@ -30,8 +30,15 @@ public:
      * @return
      */
     bool GetCheckList(std::string getItemUrl,string getDescUrl);
+    /**
+     * 解析检查项描述
+     * @param json_result json数据
+     * @return
+     */
     bool ParsseItemDesc(const string &json_result);
-
+    /**
+     * 根据检查项ID获取检查项描述
+     */
     string GetCheckItemDesc(string key);
 private:
     bool ParseCheckList(const std::string &json_result);

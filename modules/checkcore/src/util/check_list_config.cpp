@@ -121,7 +121,7 @@ string CheckListConfig::GetCheckItemDesc(string key){
         return check_map[key];
     }
 
-    LOG(WARNING) << "not fine " << key << " in check_map";
+    LOG(WARNING) << "not find " << key << " in check_map";
 
     return "";
 }

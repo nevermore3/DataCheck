@@ -23,7 +23,7 @@ namespace kd {
                                           shared_ptr<CheckErrorOutput> errorOutput) {
             const auto &f_node2_divider_maps = mapDataManager->fnode_id2_dividers_maps_;
             const auto &t_node2_divider_maps = mapDataManager->tnode_id2_dividers_maps_;
-
+            int total =0;
 
             //构造查询map
             multimap<string, string> fromLaneConns;
@@ -71,7 +71,7 @@ namespace kd {
                                             break;
                                         }
                                     }
-                                    if (check) {
+                                    if (CheckItemValid(CHECK_ITEM_KXS_LANE_013) && check) {
                                         shared_ptr<DCLaneCheckError> error =
                                                 DCLaneCheckError::createByNode(CHECK_ITEM_KXS_LANE_013, lane, nullptr);
                                         error->errorDesc_ = "lane_id:";
@@ -100,7 +100,7 @@ namespace kd {
                                             break;
                                         }
                                     }
-                                    if (check) {
+                                    if (CheckItemValid(CHECK_ITEM_KXS_LANE_014) && check) {
                                         shared_ptr<DCLaneCheckError> error =
                                                 DCLaneCheckError::createByNode(CHECK_ITEM_KXS_LANE_014, lane, nullptr);
                                         error->errorDesc_ = "lane_id:";
@@ -127,7 +127,7 @@ namespace kd {
                                 }
                             }
 
-                            if (!is_emergency) {
+                            if (CheckItemValid(CHECK_ITEM_KXS_LANE_012) && (!is_emergency)) {
                                 shared_ptr<DCLaneCheckError> error =
                                         DCLaneCheckError::createByNode(CHECK_ITEM_KXS_LANE_012, lane, nullptr);
                                 error->errorDesc_ = "lane_id:";
@@ -139,6 +139,16 @@ namespace kd {
                         }
                     }
                 }
+            }
+
+            if(CheckItemValid(CHECK_ITEM_KXS_LANE_012)){
+                errorOutput->addCheckItemInfo(CHECK_ITEM_KXS_LANE_012,total);
+            }
+            if(CheckItemValid(CHECK_ITEM_KXS_LANE_014)){
+                errorOutput->addCheckItemInfo(CHECK_ITEM_KXS_LANE_014,total);
+            }
+            if(CheckItemValid(CHECK_ITEM_KXS_LANE_013)){
+                errorOutput->addCheckItemInfo(CHECK_ITEM_KXS_LANE_013,total);
             }
         }
     }

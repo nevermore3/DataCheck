@@ -29,13 +29,11 @@ bool CheckListConfig::GetCheckList(std::string getItemUrl,string getDescUrl){
         if( ParseCheckList(strJson)){
             reqresult = requestUtil.HttpGetEx(getDescUrl,"",descJson,60);
             if(reqresult.code == "0"){
-                ParsseItemDesc(descJson);
+                return ParsseItemDesc(descJson);
             }
-            return true;
         }
-    }else{
-        return false;
     }
+    return false;
 }
 bool CheckListConfig::ParsseItemDesc(const string &json_result){
     try {

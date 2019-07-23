@@ -99,28 +99,28 @@ int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) 
 //        mapProcessManager->registerProcessor(divTopoCheck);
 //
 //        //车道属性检查
-//        shared_ptr<LaneAttribCheck> laneAttCheck = make_shared<LaneAttribCheck>();
-//        mapProcessManager->registerProcessor(laneAttCheck);
+        shared_ptr<LaneAttribCheck> laneAttCheck = make_shared<LaneAttribCheck>();
+        mapProcessManager->registerProcessor(laneAttCheck);
 //
 //        //车道几何形状检查
 //        shared_ptr<LaneShapeNormCheck> laneShpCheck = make_shared<LaneShapeNormCheck>();
 //        mapProcessManager->registerProcessor(laneShpCheck);
 //
 //        //车道拓扑检查
-//        shared_ptr<LaneTopoCheck> laneTopoCheck = make_shared<LaneTopoCheck>();
-//        mapProcessManager->registerProcessor(laneTopoCheck);
-//
+        shared_ptr<LaneTopoCheck> laneTopoCheck = make_shared<LaneTopoCheck>();
+        mapProcessManager->registerProcessor(laneTopoCheck);
+
 //        shared_ptr<LaneCheck> lane_check = make_shared<LaneCheck>();
 //        mapProcessManager->registerProcessor(lane_check);
 //
-//        shared_ptr<RoadCheck> road_check = make_shared<RoadCheck>();
-//        mapProcessManager->registerProcessor(road_check);
+        shared_ptr<RoadCheck> road_check = make_shared<RoadCheck>();
+        mapProcessManager->registerProcessor(road_check);
 //
         shared_ptr<LaneGroupRelationCheck> lanegroup_rel_check = make_shared<LaneGroupRelationCheck>();
         mapProcessManager->registerProcessor(lanegroup_rel_check);
 //
-//        shared_ptr<LaneGroupTopoCheck> lanegroup_topo_check = make_shared<LaneGroupTopoCheck>();
-//        mapProcessManager->registerProcessor(lanegroup_topo_check);
+        shared_ptr<LaneGroupTopoCheck> lanegroup_topo_check = make_shared<LaneGroupTopoCheck>();
+        mapProcessManager->registerProcessor(lanegroup_topo_check);
 //
 //        shared_ptr<AdasCheck> adas_check = make_shared<AdasCheck>(basePath);
 //        mapProcessManager->registerProcessor(adas_check);

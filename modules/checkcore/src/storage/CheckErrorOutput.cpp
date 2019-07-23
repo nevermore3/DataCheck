@@ -4,6 +4,7 @@
 
 #include <storage/CheckErrorOutput.h>
 #include <util/TimerUtil.h>
+#include <util/check_list_config.h>
 
 namespace kd {
     namespace dc {
@@ -73,6 +74,7 @@ namespace kd {
                     string errCode = check_item.first;
                     shared_ptr<CheckItemInfo> checkItemInfo = check_item.second;
                     vector<ErrorOutPut> errs_v = check_model_2_output_maps_[errCode];
+                    string errMessage = CheckListConfig::getInstance().GetCheckItemDesc(checkItemInfo->checkId);
                     int size = errs_v.size();
                     int failNum = 0;
                     if(size == 0){
@@ -84,6 +86,11 @@ namespace kd {
                            failNum++;
                            ReportLogItem reportLogItem;
                            reportLogItem.task_id = errCase.taskId;
+                           if(errMessage.length()>0){
+                               reportLogItem.err_message = errMessage;
+                           }else{
+                               reportLogItem.err_message = errCase.checkName;
+                           }
                            reportLogItem.err_desc = errCase.errDesc;
                            reportLogItem.node = errCase.coord;
                            reportLogItem.errNodeInfo = errCase.errNodeInfo;

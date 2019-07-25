@@ -168,10 +168,7 @@ std::string GetConfigProperty(const std::string& key) {
  */
 int main(int argc, const char *argv[]) {
 
-    if (argc < 2) {
-        LOG(ERROR) << " not has url parameter";
-        return -1;
-    }
+
 
     // app返回值
     int ret = 0;
@@ -188,6 +185,10 @@ int main(int argc, const char *argv[]) {
 
         InitGlog(exe_path, "./");
 
+        if (argc < 3) {
+            LOG(ERROR) << " not has url parameter";
+            return -1;
+        }
         // 加载配置
         ret = DataCheckConfig::getInstance().load("config.properties");
         if (ret != 0) {
@@ -196,7 +197,7 @@ int main(int argc, const char *argv[]) {
         }
 
         // 检查项配置管理初始化 本地调试使用
-        if(!CheckListConfig::getInstance().GetCheckList(argv[1])){
+        if(!CheckListConfig::getInstance().GetCheckList(argv[1],argv[2])){
             LOG(ERROR) << "download and parse checklist error!";
             return 1;
         }

@@ -229,9 +229,9 @@ namespace kd {
 
 //            check_JH_C_19(mapDataManager, errorOutput);
 
-            check_JH_C_20(mapDataManager, errorOutput);
-
-            check_JH_C_21(mapDataManager, errorOutput);
+//            check_JH_C_20(mapDataManager, errorOutput);
+//
+//            check_JH_C_21(mapDataManager, errorOutput);
 
             return true;
         }

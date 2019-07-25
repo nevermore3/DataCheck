@@ -15,6 +15,8 @@ using namespace kd::dc;
 struct ReportLogItem {
     //报错描述
     string err_desc;///////////
+    //错误信息
+    string err_message;
     //标记状态
     string state;///////////
     //任务号

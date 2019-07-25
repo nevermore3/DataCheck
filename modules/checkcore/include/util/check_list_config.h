@@ -5,8 +5,9 @@
 #include <cstring>
 #include <memory>
 #include <map>
-#include <set>
 #include <fstream>
+
+using namespace std;
 
 class CheckListConfig {
 public:
@@ -28,13 +29,22 @@ public:
      * @param url
      * @return
      */
-    bool GetCheckList(std::string url);
-
+    bool GetCheckList(std::string getItemUrl,string getDescUrl);
+    /**
+     * 解析检查项描述
+     * @param json_result json数据
+     * @return
+     */
+    bool ParsseItemDesc(const string &json_result);
+    /**
+     * 根据检查项ID获取检查项描述
+     */
+    string GetCheckItemDesc(string key);
 private:
     bool ParseCheckList(const std::string &json_result);
 
-    //所有可用检查项列表
-    std::set<std::string> check_list_;
+    //所有检查项配置
+    map<string, string> check_map;
 };
 
 #endif  // KXS_DATACHECK_MODULES_CHECKCORE_UTIL_CHECK_LIST_CONFIG_H

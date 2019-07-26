@@ -51,6 +51,7 @@ namespace kd {
 
         const string DataCheckConfig::ERR_JSON_PATH = "err_json_path";
         const string DataCheckConfig::OUTPUT_PATH = "output_path";
+        const string DataCheckConfig::CHECK_FILE_PATH ="check_file_path";
 
         int DataCheckConfig::load(string fileName) {
             int ret = 0;

@@ -626,7 +626,7 @@ namespace kd {
             error->checkName = "若车道组之间连通，则其内部的道路必然连通。";
             error->detail += "lane group id:";
             error->detail += lg_id1;
-            error->detail += ",lane group id:";
+            error->detail += "与lane group id:";
             error->detail += lg_id2;
             error->detail += "之间的道路不连通";
             error->coord = make_shared<DCCoord>();
@@ -649,7 +649,7 @@ namespace kd {
             error->checkName = "如果车道组之间是“封闭”的，则车道组之间的车道不会存在孤立的车道。";
             error->detail += "lane group id:";
             error->detail += lg_id1;
-            error->detail += ",lane group id:";
+            error->detail += "与lane group id:";
             error->detail += lg_id2;
             error->detail += "车道中心线不连通";
             error->coord = make_shared<DCCoord>();
@@ -680,10 +680,10 @@ namespace kd {
                                                                           const string &lane_group_id) {
             shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_002);
             error->checkLevel_ = LEVEL_ERROR;
-            error->checkName = "道路与车道组的两个车道边缘线无交叉点。双向道路除外。";
+            error->checkName = "道路与车道组的两个车道边缘线应无交叉点。双向道路除外。";
             error->detail += "road_id:";
             error->detail += road_id;
-            error->detail += ",lane group id:";
+            error->detail += "与lane group id:";
             error->detail += lane_group_id;
             error->detail += "边缘线有交叉";
             error->sourceId = road_id;
@@ -840,7 +840,7 @@ namespace kd {
             error->checkName = "车道中心线与本组的车道边缘线存在交叉点。";
             error->detail += "lane_id:";
             error->detail += lane_id;
-            error->detail += ",divider_id:";
+            error->detail += "与divider_id:";
             error->detail += divider_id;
             error->detail += "边缘线有交点";
             error->sourceId = divider_id;

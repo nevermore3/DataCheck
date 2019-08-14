@@ -602,7 +602,7 @@ namespace kd {
                 for (int i = 0; i < record_nums; i++) {
 
                     string lane_group_id = lg_road_index_data.readStringField(i, "LG_ID");
-                    string road_id = lg_road_index_data.readStringField(i, "ROADID");
+                    string road_id = lg_road_index_data.readStringField(i, "ROAD_ID");
                     int f_index = lg_road_index_data.readIntField(i, "F_INDEX");
                     int t_index = lg_road_index_data.readIntField(i, "T_INDEX");
 

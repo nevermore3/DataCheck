@@ -36,39 +36,15 @@ using namespace kd::dc;
 
 const char kCheckListFile[] = "check_list.json";
 const char checkresult[] = "checkresult.json";
+
+const static int TOPO_AUTO_CHECK = 1;
+const static int ALL_AUTO_CHECK = 1;
 int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) {
     int ret = 0;
-    //交换格式基本属性检查
-    {
-        shared_ptr<ModelProcessManager> modelProcessManager = make_shared<ModelProcessManager>("modelCheck");
 
-        //加载数据
-        shared_ptr<ModelDataLoader> modelLoader = make_shared<ModelDataLoader>(basePath);
-        modelProcessManager->registerProcessor(modelLoader);
-
-        //属性字段检查
-        shared_ptr<ModelFieldCheck> modelFiledCheck = make_shared<ModelFieldCheck>();
-        modelProcessManager->registerProcessor(modelFiledCheck);
-
-        //属性业务检查
-//        shared_ptr<ModelBussCheck> modelBussCheck = make_shared<ModelBussCheck>();
-//        modelProcessManager->registerProcessor(modelBussCheck);
-
-        //属性关系检查
-//        shared_ptr<ModelRelationCheck> modelRelationCheck = make_shared<ModelRelationCheck>();
-//        modelProcessManager->registerProcessor(modelRelationCheck);
-
-        //执行已注册检查项
-//        shared_ptr<ModelDataManager> modelDataManager = make_shared<ModelDataManager>();
-//        if (!modelProcessManager->execute(modelDataManager, errorOutput)) {
-//            LOG(ERROR) << "modelDataManager execute error!";
-//            ret = 1;
-//        }
-    }
-
-    //交换格式逻辑检查
-    {
-        shared_ptr<MapProcessManager> mapProcessManager = make_shared<MapProcessManager>("mapCheck");
+    // 拓扑自动化检查项
+    if (DataCheckConfig::getInstance().getPropertyI(DataCheckConfig::CHECK_STATE) == TOPO_AUTO_CHECK) {
+        shared_ptr<MapProcessManager> mapProcessManager = make_shared<MapProcessManager>("topo_auto_check");
 
         shared_ptr<JsonDataLoader> json_data_loader = make_shared<JsonDataLoader>();
         mapProcessManager->registerProcessor(json_data_loader);
@@ -133,6 +109,38 @@ int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) 
         }
     }
 
+
+
+    // KXF全要素检查
+    if (DataCheckConfig::getInstance().getPropertyI(DataCheckConfig::CHECK_STATE) == ALL_AUTO_CHECK) {
+        shared_ptr<ModelProcessManager> modelProcessManager = make_shared<ModelProcessManager>("all_auto_check");
+
+        //加载数据
+        shared_ptr<ModelDataLoader> modelLoader = make_shared<ModelDataLoader>(basePath);
+        modelProcessManager->registerProcessor(modelLoader);
+
+        //属性字段检查
+        shared_ptr<ModelFieldCheck> modelFiledCheck = make_shared<ModelFieldCheck>();
+        modelProcessManager->registerProcessor(modelFiledCheck);
+
+        //属性业务检查
+//        shared_ptr<ModelBussCheck> modelBussCheck = make_shared<ModelBussCheck>();
+//        modelProcessManager->registerProcessor(modelBussCheck);
+
+        //属性关系检查
+//        shared_ptr<ModelRelationCheck> modelRelationCheck = make_shared<ModelRelationCheck>();
+//        modelProcessManager->registerProcessor(modelRelationCheck);
+
+        //执行已注册检查项
+//        shared_ptr<ModelDataManager> modelDataManager = make_shared<ModelDataManager>();
+//        if (!modelProcessManager->execute(modelDataManager, errorOutput)) {
+//            LOG(ERROR) << "modelDataManager execute error!";
+//            ret = 1;
+//        }
+    }
+
+
+
     return ret;
 }
 
@@ -167,9 +175,6 @@ std::string GetConfigProperty(const std::string& key) {
  * @return
  */
 int main(int argc, const char *argv[]) {
-
-
-
     // app返回值
     int ret = 0;
 
@@ -179,7 +184,7 @@ int main(int argc, const char *argv[]) {
     string base_path;
 
     KDSDivider::FLAG;
-    string errJsonPath ="";
+    string errJsonPath = "";
     try {
         exe_path = argv[0];
 
@@ -201,7 +206,7 @@ int main(int argc, const char *argv[]) {
 //            LOG(ERROR) << "download and parse checklist error!";
 //            return 1;
 //        }
-          string checkFilePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::CHECK_FILE_PATH);
+        string checkFilePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::CHECK_FILE_PATH);
         Poco::File in_dir(checkFilePath);
         if (!in_dir.exists()) {
             LOG(ERROR) << checkFilePath << " is not exists!";
@@ -210,7 +215,7 @@ int main(int argc, const char *argv[]) {
             CheckListConfig::getInstance().Load(checkFilePath);
         }
 
-        errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH)+checkresult;
+        errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH) + checkresult;
         Poco::File error_file(errJsonPath);
         if (error_file.exists()) {
             error_file.remove();
@@ -229,7 +234,7 @@ int main(int argc, const char *argv[]) {
 
     } catch (std::exception &e) {
         LOG(ERROR) << "An exception occurred: " << e.what();
-        ReportJsonLog::GetInstance().WriteToFile(errJsonPath,true);
+        ReportJsonLog::GetInstance().WriteToFile(errJsonPath, true);
         ret = 1;
     }
 

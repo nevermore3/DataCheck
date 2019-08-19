@@ -90,8 +90,8 @@ namespace kd {
                 }
 
                 //检查矢量化方向是否相同，两条车道分割线的首尾连线夹角是否为锐角
-                double leftAngle = geo_util::calcAngle(lscoord.lng_, lscoord.lat_, lecoord.lng_, lecoord.lat_);
-                double rightAngle = geo_util::calcAngle(rscoord.lng_, rscoord.lat_, recoord.lng_, recoord.lat_);
+                double leftAngle = geo_util::calcAngle(lscoord.x_, lscoord.y_, lecoord.x_, lecoord.y_);
+                double rightAngle = geo_util::calcAngle(rscoord.x_, rscoord.y_, recoord.x_, recoord.y_);
                 double fAngle = fabs(leftAngle - rightAngle);
                 if (fAngle > limitAngle) {
                     shared_ptr<DCLaneCheckError> error =
@@ -197,8 +197,8 @@ namespace kd {
 
                     auto node1 = la1->dividerNode_;
                     auto node2 = la2->dividerNode_;
-                    double distance = KDGeoUtil::distanceLL(node1->coord_.lng_, node1->coord_.lat_, node2->coord_.lng_,
-                                                            node2->coord_.lat_);
+                    double distance = KDGeoUtil::distanceLL(node1->coord_.x_, node1->coord_.y_, node2->coord_.x_,
+                                                            node2->coord_.y_);
 
                     if (distance < laSpaceLen) {
                         shared_ptr<DCLaneCheckError> error =

@@ -154,8 +154,8 @@ namespace kd {
                     auto node2 = ptr_road->nodes_[i];
 
                     //间距判断
-                    double distance = kd::automap::KDGeoUtil::distanceLL(node1->lng_, node1->lat_,
-                                                                         node2->lng_, node2->lat_);
+                    double distance = kd::automap::KDGeoUtil::distanceLL(node1->x_, node1->y_,
+                                                                         node2->x_, node2->y_);
 
                     //坡度判断
                     double slopLimit = distance * heightchange;
@@ -203,8 +203,8 @@ namespace kd {
             ptr_e_node->ptr_coord = first_node;
             ptr_error_nodes.emplace_back(ptr_e_node);
             for (int i = 1; i < ptr_road->nodes_.size(); i++) {
-                if (first_node->lng_ == ptr_road->nodes_.at(i)->lng_ &&
-                    first_node->lat_ == ptr_road->nodes_.at(i)->lat_) {
+                if (first_node->x_ == ptr_road->nodes_.at(i)->x_ &&
+                    first_node->y_ == ptr_road->nodes_.at(i)->y_) {
                     shared_ptr<NodeError> ptr_cur_e_node = make_shared<NodeError>();
                     ptr_cur_e_node->index = i;
                     ptr_cur_e_node->ptr_coord = ptr_road->nodes_.at(i);

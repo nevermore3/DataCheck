@@ -90,8 +90,8 @@ namespace kd {
             if (att != nullptr) {
                 error->nodeId_ = att->dividerNode_->id_;
                 error->attId_ = att->id_;
-                error->lng_ = att->dividerNode_->coord_.lng_;
-                error->lat_ = att->dividerNode_->coord_.lat_;
+                error->lng_ = att->dividerNode_->coord_.x_;
+                error->lat_ = att->dividerNode_->coord_.y_;
                 error->z_ = att->dividerNode_->coord_.z_;
             } else {
                 error->nodeId_ = "";
@@ -116,8 +116,8 @@ namespace kd {
             if (node != nullptr) {
                 error->nodeId_ = node->id_;
                 error->attId_ = "";
-                error->lng_ = node->coord_.lng_;
-                error->lat_ = node->coord_.lat_;
+                error->lng_ = node->coord_.x_;
+                error->lat_ = node->coord_.y_;
                 error->z_ = node->coord_.z_;
             } else {
                 error->nodeId_ = "";
@@ -179,8 +179,8 @@ namespace kd {
             if (att != nullptr) {
                 error->nodeId_ = att->dividerNode_->id_;
                 error->attId_ = att->id_;
-                error->lng_ = att->dividerNode_->coord_.lng_;
-                error->lat_ = att->dividerNode_->coord_.lat_;
+                error->lng_ = att->dividerNode_->coord_.x_;
+                error->lat_ = att->dividerNode_->coord_.y_;
                 error->z_ = att->dividerNode_->coord_.z_;
             } else {
                 error->nodeId_ = "";
@@ -213,8 +213,8 @@ namespace kd {
             if (node != nullptr) {
                 error->nodeId_ = node->id_;
                 error->attId_ = "";
-                error->lng_ = node->coord_.lng_;
-                error->lat_ = node->coord_.lat_;
+                error->lng_ = node->coord_.x_;
+                error->lat_ = node->coord_.y_;
                 error->z_ = node->coord_.z_;
             } else {
                 error->nodeId_ = "";
@@ -458,9 +458,9 @@ namespace kd {
                 error->detail += ",索引点";
                 error->detail += to_string(error_node->index);
                 error->detail += ",坐标(";
-                error->detail += to_string(error_node->ptr_coord->lng_);
+                error->detail += to_string(error_node->ptr_coord->x_);
                 error->detail += ",";
-                error->detail += to_string(error_node->ptr_coord->lat_);
+                error->detail += to_string(error_node->ptr_coord->y_);
                 error->detail += ",";
                 error->detail += to_string(error_node->ptr_coord->z_);
                 error->detail += ")";
@@ -480,9 +480,9 @@ namespace kd {
                 error->detail += ",索引点";
                 error->detail += to_string(error_node->current);
                 error->detail += ",坐标(";
-                error->detail += to_string(error_node->ptr_current_coord->lng_);
+                error->detail += to_string(error_node->ptr_current_coord->x_);
                 error->detail += ",";
-                error->detail += to_string(error_node->ptr_current_coord->lat_);
+                error->detail += to_string(error_node->ptr_current_coord->y_);
                 error->detail += ",";
                 error->detail += to_string(error_node->ptr_current_coord->z_);
                 error->detail += ")";
@@ -503,18 +503,18 @@ namespace kd {
                 error->detail += ",索引点";
                 error->detail += to_string(error_node->previous);
                 error->detail += ",坐标(";
-                error->detail += to_string(error_node->ptr_previous_coord->lng_);
+                error->detail += to_string(error_node->ptr_previous_coord->x_);
                 error->detail += ",";
-                error->detail += to_string(error_node->ptr_previous_coord->lat_);
+                error->detail += to_string(error_node->ptr_previous_coord->y_);
                 error->detail += ",";
                 error->detail += to_string(error_node->ptr_previous_coord->z_);
                 error->detail += ")";
                 error->detail += "与索引点";
                 error->detail += to_string(error_node->current);
                 error->detail += ",坐标(";
-                error->detail += to_string(error_node->ptr_current_coord->lng_);
+                error->detail += to_string(error_node->ptr_current_coord->x_);
                 error->detail += ",";
-                error->detail += to_string(error_node->ptr_current_coord->lat_);
+                error->detail += to_string(error_node->ptr_current_coord->y_);
                 error->detail += ",";
                 error->detail += to_string(error_node->ptr_current_coord->z_);
                 error->detail += ")";
@@ -594,9 +594,9 @@ namespace kd {
                 error->detail += ",索引点";
                 error->detail += to_string(error_node->index);
                 error->detail += ",坐标(";
-                error->detail += to_string(error_node->ptr_coord->lng_);
+                error->detail += to_string(error_node->ptr_coord->x_);
                 error->detail += ",";
-                error->detail += to_string(error_node->ptr_coord->lat_);
+                error->detail += to_string(error_node->ptr_coord->y_);
                 error->detail += ",";
                 error->detail += to_string(error_node->ptr_coord->z_);
                 error->detail += ")";
@@ -637,9 +637,9 @@ namespace kd {
             error->detail += ",属性点索引:";
             error->detail += to_string(index);
             error->detail += ",点坐标:";
-            error->detail += to_string(ptr_coord->lng_);
+            error->detail += to_string(ptr_coord->x_);
             error->detail += ",";
-            error->detail += to_string(ptr_coord->lat_);
+            error->detail += to_string(ptr_coord->y_);
             error->detail += ",";
             error->detail += to_string(ptr_coord->z_);
             error->detail += ",与拟合曲线属性点距离:";

@@ -259,7 +259,7 @@ namespace kd {
                 double X0, Y0;
                 char zone0[8] = {0};
 
-                Coordinates::ll2utm(node->lat_, node->lng_, X0, Y0, zone0);
+                Coordinates::ll2utm(node->y_, node->x_, X0, Y0, zone0);
 
                 cl->add(geos::geom::Coordinate(X0, Y0, node->z_));
             }
@@ -285,7 +285,7 @@ namespace kd {
                 double X0, Y0;
                 char zone0[8] = {0};
 
-                Coordinates::ll2utm(node->coord_.lat_, node->coord_.lng_, X0, Y0, zone0);
+                Coordinates::ll2utm(node->coord_.y_, node->coord_.x_, X0, Y0, zone0);
 
                 cl->add(geos::geom::Coordinate(X0, Y0, node->coord_.z_));
             }
@@ -303,15 +303,19 @@ namespace kd {
 
         bool CommonUtil::check_dividers_same_direction(const shared_ptr<DCDivider> &left_divider,
                                                        const shared_ptr<DCDivider> &right_divider) {
-            auto first_ptr_node = left_divider->nodes_;
-            auto second_ptr_node = right_divider->nodes_;
-            if (calLaneSameDir(first_ptr_node[0]->coord_.lng_, first_ptr_node[0]->coord_.lat_,
-                               first_ptr_node[1]->coord_.lng_, first_ptr_node[1]->coord_.lat_,
-                               second_ptr_node[0]->coord_.lng_, second_ptr_node[0]->coord_.lat_,
-                               second_ptr_node[1]->coord_.lng_, second_ptr_node[1]->coord_.lat_)) {
-                return true;
-            }
-            return false;
+            //todo： 应该取更多的点进行检查
+            shared_ptr<DCDividerNode> s_node = left_divider->nodes_.front();
+            shared_ptr<DCDividerNode> t_node = left_divider->nodes_.back();
+
+            shared_ptr<DCDividerNode> ref_s_node = right_divider->nodes_.front();
+            shared_ptr<DCDividerNode> ref_t_node = right_divider->nodes_.back();
+
+            bool sameDir = calLaneSameDir(s_node->coord_.x_, s_node->coord_.y_,
+                                          t_node->coord_.x_, t_node->coord_.y_,
+                                          ref_s_node->coord_.x_, ref_s_node->coord_.y_,
+                                          ref_t_node->coord_.x_, ref_t_node->coord_.y_);
+
+            return sameDir;
         }
 
         bool CommonUtil::calLaneSameDir(double firstNode1X, double firstNode1Y, double firstNode2X, double firstNode2Y,
@@ -415,13 +419,13 @@ namespace kd {
 
         bool CommonUtil::CheckCoordValid(DCCoord coord) {
             bool ret = true;
-            if (__isnan(coord.lat_) || __isnan(coord.lng_) || __isnan(coord.z_)) {
+            if (__isnan(coord.y_) || __isnan(coord.x_) || __isnan(coord.z_)) {
                 ret = false;
             }
-            if (-180 > coord.lng_ || coord.lat_ > 180) {
+            if (-180 > coord.x_ || coord.y_ > 180) {
                 ret = false;
             }
-            if (-90 > coord.lat_ || coord.lat_ > 90) {
+            if (-90 > coord.y_ || coord.y_ > 90) {
                 ret = false;
             }
             return ret;
@@ -429,13 +433,13 @@ namespace kd {
 
         bool CommonUtil::CheckCoordValid(shared_ptr<DCCoord> coord) {
             bool ret = true;
-            if (__isnan(coord->lat_) || __isnan(coord->lng_) || __isnan(coord->z_)) {
+            if (__isnan(coord->y_) || __isnan(coord->x_) || __isnan(coord->z_)) {
                 ret = false;
             }
-            if (-180 > coord->lng_ || coord->lat_ > 180) {
+            if (-180 > coord->x_ || coord->y_ > 180) {
                 ret = false;
             }
-            if (-90 > coord->lat_ || coord->lat_ > 90) {
+            if (-90 > coord->y_ || coord->y_ > 90) {
                 ret = false;
             }
             return ret;

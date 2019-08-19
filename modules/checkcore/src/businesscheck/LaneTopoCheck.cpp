@@ -52,7 +52,7 @@ namespace kd {
 
                     if (fromLaneCount == 0 && toLaneCount == 0) {
                         tag_emergency_lanes.emplace_back(lane);
-                    } else if (fromLaneCount == 0 && toLaneCount > 0) {
+                    } else if (fromLaneCount == 0 && toLaneCount > 1) {
                         auto right_divider = lane->rightDivider_;
                         if (right_divider) {
                             auto div_back_node = right_divider->nodes_.back();
@@ -84,7 +84,7 @@ namespace kd {
                             }
                         }
 
-                    } else if (fromLaneCount > 0 && toLaneCount == 0) {
+                    } else if (fromLaneCount > 1 && toLaneCount == 0) {
                         auto right_divider = lane->rightDivider_;
                         if (right_divider) {
                             auto div_front_node = right_divider->nodes_.front();

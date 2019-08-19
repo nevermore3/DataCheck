@@ -237,20 +237,20 @@ namespace kd {
                     re1 = lane->rightDivider_->nodes_[1]->coord_;
                 }
 
-                double ltAngle = fabs(calcAngle(ls0.lng_, ls0.lat_, ls1.lng_, ls1.lat_)
-                                      - calcAngle(ls0.lng_, ls0.lat_, rs0.lng_, rs0.lat_));
+                double ltAngle = fabs(calcAngle(ls0.x_, ls0.y_, ls1.x_, ls1.y_)
+                                      - calcAngle(ls0.x_, ls0.y_, rs0.x_, rs0.y_));
                 ltAngle = (ltAngle > 180) ? (360 - ltAngle) : ltAngle;
 
-                double lbAngle = fabs(calcAngle(rs0.lng_, rs0.lat_, rs1.lng_, rs1.lat_)
-                                      - calcAngle(rs0.lng_, rs0.lat_, ls0.lng_, ls0.lat_));
+                double lbAngle = fabs(calcAngle(rs0.x_, rs0.y_, rs1.x_, rs1.y_)
+                                      - calcAngle(rs0.x_, rs0.y_, ls0.x_, ls0.y_));
                 lbAngle = (lbAngle > 180) ? (360 - lbAngle) : lbAngle;
 
-                double rtAngle = fabs(calcAngle(le0.lng_, le0.lat_, le1.lng_, le1.lat_)
-                                      - calcAngle(le0.lng_, le0.lat_, re0.lng_, re0.lat_));
+                double rtAngle = fabs(calcAngle(le0.x_, le0.y_, le1.x_, le1.y_)
+                                      - calcAngle(le0.x_, le0.y_, re0.x_, re0.y_));
                 rtAngle = (rtAngle > 180) ? (360 - rtAngle) : rtAngle;
 
-                double rbAngle = fabs(calcAngle(re0.lng_, re0.lat_, le0.lng_, le0.lat_)
-                                      - calcAngle(re0.lng_, re0.lat_, re1.lng_, re1.lat_));
+                double rbAngle = fabs(calcAngle(re0.x_, re0.y_, le0.x_, le0.y_)
+                                      - calcAngle(re0.x_, re0.y_, re1.x_, re1.y_));
                 rbAngle = (rbAngle > 180) ? (360 - rbAngle) : rbAngle;
 
                 double angle = 0.0;
@@ -330,8 +330,8 @@ namespace kd {
                             //计算距离
                             shared_ptr<DCDividerNode> dcNode = rightDiv->nodes_[i];
                             double PtA[2];
-                            PtA[0] = dcNode->coord_.lng_;
-                            PtA[1] = dcNode->coord_.lat_;
+                            PtA[0] = dcNode->coord_.x_;
+                            PtA[1] = dcNode->coord_.y_;
                             double PtB[2] = {0.0, 0.0};
                             double PtC[4] = {0.0, 0.0, 0.0, 0.0};
                             int index;
@@ -369,8 +369,8 @@ namespace kd {
                             //计算距离
                             shared_ptr<DCDividerNode> dcNode = rightDiv->nodes_[i];
                             double PtA[2];
-                            PtA[0] = dcNode->coord_.lng_;
-                            PtA[1] = dcNode->coord_.lat_;
+                            PtA[0] = dcNode->coord_.x_;
+                            PtA[1] = dcNode->coord_.y_;
                             double PtB[2] = {0.0, 0.0};
                             double PtC[4] = {0.0, 0.0, 0.0, 0.0};
                             int index;

@@ -44,10 +44,10 @@ namespace kd {
                     auto node2 = div->nodes_[i - 1];
                     auto node3 = div->nodes_[i];
 
-                    double angle1 = geo_util::calcAngle(node1->coord_.lng_, node1->coord_.lat_, node2->coord_.lng_,
-                                                        node2->coord_.lat_);
-                    double angle2 = geo_util::calcAngle(node2->coord_.lng_, node2->coord_.lat_, node3->coord_.lng_,
-                                                        node3->coord_.lat_);
+                    double angle1 = geo_util::calcAngle(node1->coord_.x_, node1->coord_.y_, node2->coord_.x_,
+                                                        node2->coord_.y_);
+                    double angle2 = geo_util::calcAngle(node2->coord_.x_, node2->coord_.y_, node3->coord_.x_,
+                                                        node3->coord_.y_);
 
                     double dAngle = fabs(angle1 - angle2);
                     if (dAngle > 180)
@@ -92,8 +92,8 @@ namespace kd {
                     auto node2 = div->nodes_[i];
 
                     //间距判断
-                    double distance = KDGeoUtil::distanceLL(node1->coord_.lng_, node1->coord_.lat_, node2->coord_.lng_,
-                                                            node2->coord_.lat_);
+                    double distance = KDGeoUtil::distanceLL(node1->coord_.x_, node1->coord_.y_, node2->coord_.x_,
+                                                            node2->coord_.y_);
                     if (distance < nodespace) {
                         shared_ptr<DCDividerCheckError> error =
                                 DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_012, div, node1);

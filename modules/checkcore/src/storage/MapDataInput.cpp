@@ -52,9 +52,9 @@ namespace kd {
                         //读取坐标信息
                         int nVertices = shpObject->nVertices;
                         if (nVertices == 1) {
-                            divNode->coord_->x_ = shpObject->padfX[0];
-                            divNode->coord_->y_ = shpObject->padfY[0];
-                            divNode->coord_->z_ = shpObject->padfZ[0];
+                            divNode->coord_.x_ = shpObject->padfX[0];
+                            divNode->coord_.y_ = shpObject->padfY[0];
+                            divNode->coord_.z_ = shpObject->padfZ[0];
                             commonNodeInfos.insert(make_pair(divNode->id_, divNode));
                             divNodeCoords.insert(make_pair(divNode->coord_, divNode->id_));
                         }
@@ -116,11 +116,10 @@ namespace kd {
                     int nVertices = shpObject->nVertices;
                     set<long> error_node_index;
                     for (int i = 0; i < nVertices; i++) {
-                        total_01024++;
-                        shared_ptr<DCCoord> coord;
-                        coord->x_ = shpObject->padfX[i];
-                        coord->y_ = shpObject->padfY[i];
-                        coord->z_ = shpObject->padfZ[i];
+                        DCCoord coord;
+                        coord.x_ = shpObject->padfX[i];
+                        coord.y_ = shpObject->padfY[i];
+                        coord.z_ = shpObject->padfZ[i];
                         if (divNodeCoords.find(coord) != divNodeCoords.end()) {
                             divider->nodes_.emplace_back(commonNodeInfos[divNodeCoords[coord]]);
                         } else {
@@ -288,9 +287,9 @@ namespace kd {
 
                 //判断是否与第一个节点坐标相同
                 shared_ptr<DCDividerNode> firstNode = div->nodes_[0];
-                if (firstNode->coord_->x_ == nodeObj->coord_->x_ &&
-                    firstNode->coord_->y_ == nodeObj->coord_->y_ &&
-                    firstNode->coord_->z_ == nodeObj->coord_->z_) {
+                if (firstNode->coord_.x_ == nodeObj->coord_.x_ &&
+                    firstNode->coord_.y_ == nodeObj->coord_.y_ &&
+                    firstNode->coord_.z_ == nodeObj->coord_.z_) {
                     firstNode->id_ = nodeObj->id_;
                     firstNode->dashType_ = nodeObj->dashType_;
                     return true;
@@ -298,9 +297,9 @@ namespace kd {
 
                 //判断是否与最后一个节点坐标相同
                 shared_ptr<DCDividerNode> lastNode = div->nodes_[div->nodes_.size() - 1];
-                if (lastNode->coord_->x_ == nodeObj->coord_->x_ &&
-                    lastNode->coord_->y_ == nodeObj->coord_->y_ &&
-                    lastNode->coord_->z_ == nodeObj->coord_->z_) {
+                if (lastNode->coord_.x_ == nodeObj->coord_.x_ &&
+                    lastNode->coord_.y_ == nodeObj->coord_.y_ &&
+                    lastNode->coord_.z_ == nodeObj->coord_.z_) {
                     lastNode->id_ = nodeObj->id_;
                     lastNode->dashType_ = nodeObj->dashType_;
                     return true;
@@ -619,7 +618,7 @@ namespace kd {
                 for (int i = 0; i < record_nums; i++) {
 
                     string lane_group_id = lg_road_index_data.readStringField(i, "LG_ID");
-                    string road_id = lg_road_index_data.readStringField(i, "ROADID");
+                    string road_id = lg_road_index_data.readStringField(i, "ROAD_ID");
                     int f_index = lg_road_index_data.readIntField(i, "F_INDEX");
                     int t_index = lg_road_index_data.readIntField(i, "T_INDEX");
 

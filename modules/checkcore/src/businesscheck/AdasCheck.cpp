@@ -46,11 +46,11 @@ namespace kd {
 //            }
 
             // 加载曲率数据
-            if (load_adas_node_curvature()) {
-                check_adas_node_curvature();
-            }
+//            if (load_adas_node_curvature()) {
+//                check_adas_node_curvature();
+//            }
 
-            return false;
+            return ret;
         }
 
         bool AdasCheck::load_adas_data() {
@@ -76,7 +76,7 @@ namespace kd {
                     shared_ptr<AdasNode> ptr_adas_node = make_shared<AdasNode>();
                     //读取属性信息
                     ptr_adas_node->id_ = std::to_string(shpNodeData.readIntField(i, "ID"));
-                    ptr_adas_node->road_id_ = shpNodeData.readIntField(i, "R_ID");
+                    ptr_adas_node->road_id_ = shpNodeData.readIntField(i, "ROAD_ID");
                     ptr_adas_node->road_node_idx_ = shpNodeData.readIntField(i, "R_NodeIdx");
                     ptr_adas_node->adas_node_id_ = shpNodeData.readIntField(i, "A_NodeID");
                     ptr_adas_node->curvature_ = shpNodeData.readDoubleField(i, "Curvature");

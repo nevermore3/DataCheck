@@ -5,6 +5,7 @@
 
 #include "businesscheck/LaneGroupTopoCheck.h"
 #include "util/CommonUtil.h"
+#include "util/dc_data_relation_util.h"
 
 namespace kd {
     namespace dc {
@@ -54,6 +55,14 @@ namespace kd {
                             get_conn_lane_groups(mapDataManager, ptr_lg);
                         }
                         tag_lane_group.insert(lg);
+                    }
+                }
+            }
+
+            for (auto topo_lg : mapDataManager->topo_lane_groups_) {
+                if (topo_lg.second) {
+                    for (auto from_lg : topo_lg.second->from_lanegroups_) {
+                        lane_group2_conn_lg_.emplace(make_pair(to_string(topo_lg.first), to_string(from_lg->id_)));
                     }
                 }
             }
@@ -390,7 +399,7 @@ namespace kd {
                                 if (state) {
                                     if (!is_virtual_lane_group(ptr_lane_group) &&
                                         !is_virtual_lane_group(mapDataManager, conn_lg)) {
-                                        lane_group2_conn_lg_.insert(make_pair(ptr_lane_group->id_, conn_lg));
+//                                        lane_group2_conn_lg_.insert(make_pair(ptr_lane_group->id_, conn_lg));
                                         insert_divider2_conn_divider(ptr_div->id_, div->id_);
                                     }
                                 }
@@ -421,7 +430,7 @@ namespace kd {
                 if (lg2_time.second > 1) {
                     ret_conn_lane_groups.insert(lg2_time.first);
                     if (!is_virtual_lane_group(mapDataManager, lg2_time.first)) {
-                        lane_group2_conn_lg_.insert(make_pair(ptr_lane_group->id_, lg2_time.first));
+//                        lane_group2_conn_lg_.insert(make_pair(ptr_lane_group->id_, lg2_time.first));
                         auto lg2_div_iter = lane_group2_div2_div.find(lg2_time.first);
                         if (lg2_div_iter != lane_group2_div2_div.end()) {
                             for (auto div2_div : lg2_div_iter->second) {

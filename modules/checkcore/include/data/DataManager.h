@@ -10,6 +10,7 @@
 #include "MapDataModel.h"
 #include "DividerGeomModel.h"
 #include "TaskDataModel.h"
+#include "data/data_type.h"
 
 namespace kd {
    namespace dc {
@@ -112,6 +113,10 @@ namespace kd {
 
            // key为lane group id，value为road id
            map<string, vector<string>> lane_group2_roads_maps_;
+
+           // lane group拓扑关系
+           unordered_map<long, shared_ptr<TopoLaneGroup>> topo_lane_groups_;
+
        public:
            // 是否道路是自动生成
            bool is_auto_road = false;

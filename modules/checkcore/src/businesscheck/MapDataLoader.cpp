@@ -2,6 +2,7 @@
 // Created by gaoyanhong on 2018/3/29.
 //
 
+#include <util/dc_data_relation_util.h>
 #include "businesscheck/MapDataLoader.h"
 
 #include "storage/MapDataInput.h"
@@ -24,6 +25,8 @@ namespace kd {
             shared_ptr<MapDataInput> map_data_input = make_shared<MapDataInput>(mapDataManager, errorOutput, basePath_);
 
             map_data_input->LoadData();
+
+            DCDataRelationUtil::BuildTopoLaneGroup(mapDataManager, mapDataManager->topo_lane_groups_);
 
             return true;
         }

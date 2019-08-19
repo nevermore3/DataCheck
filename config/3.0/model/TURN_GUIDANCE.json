@@ -27,7 +27,8 @@
       "valueLimit" : ""
     }
   ],
-  
+  "members" : [
+  ],
   "relation" : [
     {
       "member" : "ROAD",

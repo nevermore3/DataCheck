@@ -285,7 +285,7 @@ namespace kd {
                 double X0, Y0;
                 char zone0[8] = {0};
 
-                Coordinates::ll2utm(node->coord_.lat_, node->coord_.lng_, X0, Y0, zone0);
+                Coordinates::ll2utm(node->coord_->y_, node->coord_->x_, X0, Y0, zone0);
 
                 cl->add(geos::geom::Coordinate(X0, Y0, node->coord_->z_));
             }
@@ -310,10 +310,10 @@ namespace kd {
             shared_ptr<DCDividerNode> ref_s_node = right_divider->nodes_.front();
             shared_ptr<DCDividerNode> ref_t_node = right_divider->nodes_.back();
 
-            bool sameDir = calLaneSameDir(s_node->coord_.x_, s_node->coord_.y_,
-                                          t_node->coord_.x_, t_node->coord_.y_,
-                                          ref_s_node->coord_.x_, ref_s_node->coord_.y_,
-                                          ref_t_node->coord_.x_, ref_t_node->coord_.y_);
+            bool sameDir = calLaneSameDir(s_node->coord_->x_, s_node->coord_->y_,
+                                          t_node->coord_->x_, t_node->coord_->y_,
+                                          ref_s_node->coord_->x_, ref_s_node->coord_->y_,
+                                          ref_t_node->coord_->x_, ref_t_node->coord_->y_);
 
             return sameDir;
         }

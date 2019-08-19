@@ -19,9 +19,9 @@ namespace kd {
                                                                          char *zone0, bool is_z) {
             shared_ptr<geos::geom::Coordinate> ret = nullptr;
             double X0, Y0;
-            double x = ptr_node->coord_.x_;
-            double y = ptr_node->coord_.y_;
-            double z = ptr_node->coord_.z_;
+            double x = ptr_node->coord_->x_;
+            double y = ptr_node->coord_->y_;
+            double z = ptr_node->coord_->z_;
             kd::automap::Coordinates::ll2utm(y, x, X0, Y0, zone0);
             if (is_z) {
                 ret = make_shared<geos::geom::Coordinate>(X0, Y0);
@@ -379,14 +379,14 @@ namespace kd {
             if(GetDiffPoint(line, distance, start, diff_coord)){
                 char zone[4] = {0};
                 shared_ptr<DCDividerNode> node = start ? div->nodes_.front() : div->nodes_.back();
-                kd::automap::Coordinates::utmZone(node->coord_.y_,node->coord_.x_,zone);
+                kd::automap::Coordinates::utmZone(node->coord_->y_,node->coord_->x_,zone);
 
                 double lng, lat;
                 kd::automap::Coordinates::utm2ll(diff_coord.y, diff_coord.x, zone, lat, lng);
-
-                kdsnode->coord_.x_ = lng;
-                kdsnode->coord_.y_ = lat;
-                kdsnode->coord_.z_ = diff_coord.z;
+                kdsnode->coord_ = make_shared<DCCoord>();
+                kdsnode->coord_->x_ = lng;
+                kdsnode->coord_->y_ = lat;
+                kdsnode->coord_->z_ = diff_coord.z;
                 return true;
             }
 

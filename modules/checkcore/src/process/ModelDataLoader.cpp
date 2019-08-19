@@ -14,8 +14,7 @@
 namespace kd {
     namespace dc {
 
-        ModelDataLoader::ModelDataLoader(const string& basePath) {
-            basePath_ = basePath;
+        ModelDataLoader::ModelDataLoader(const string &basePath) : basePath_(basePath) {
             taskFile_ = DataCheckConfig::getInstance().getProperty(DataCheckConfig::TASK_FILE);
             configPath_ = DataCheckConfig::getInstance().getProperty(DataCheckConfig::CONFIG_FILE_PATH);
         }

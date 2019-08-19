@@ -25,7 +25,7 @@ namespace kd {
              * @param mapDataManager 地图数据
              * @return 操作是否成功
              */
-            virtual bool execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) override ;
+            virtual bool execute(shared_ptr<MapDataManager> map_data_manager, shared_ptr<CheckErrorOutput> error_output) override ;
 
         private:
 
@@ -33,6 +33,9 @@ namespace kd {
 
             //基础数据路径
             string basePath_;
+
+            shared_ptr<MapDataManager> map_data_manager_;
+            shared_ptr<CheckErrorOutput> error_output_;
 
         };
     }

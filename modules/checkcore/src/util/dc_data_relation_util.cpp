@@ -512,17 +512,17 @@ namespace kd {
 
             for (auto node : topo_lg->dividers_.front()->nodes_) {
                 shared_ptr<DCCoord> ptr_coord = make_shared<DCCoord>();
-                ptr_coord->x_ = node->coord_.x_;
-                ptr_coord->y_ = node->coord_.y_;
-                ptr_coord->z_ = node->coord_.z_;
+                ptr_coord->x_ = node->coord_->x_;
+                ptr_coord->y_ = node->coord_->y_;
+                ptr_coord->z_ = node->coord_->z_;
                 leftNodes.emplace_back(ptr_coord);
             }
 
             for (auto node : topo_lg->dividers_.back()->nodes_) {
                 shared_ptr<DCCoord> ptr_coord = make_shared<DCCoord>();
-                ptr_coord->x_ = node->coord_.x_;
-                ptr_coord->y_ = node->coord_.y_;
-                ptr_coord->z_ = node->coord_.z_;
+                ptr_coord->x_ = node->coord_->x_;
+                ptr_coord->y_ = node->coord_->y_;
+                ptr_coord->z_ = node->coord_->z_;
                 rightNodes.emplace_back(ptr_coord);
             }
 

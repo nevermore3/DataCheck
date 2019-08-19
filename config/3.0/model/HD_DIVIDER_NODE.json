@@ -36,7 +36,8 @@
       "valueLimit" : ""
     }
   ],
-  
+  "members" : [
+  ],
    "relation" : [
   ],
    "relationcheck" : [

@@ -50,6 +50,7 @@ namespace kd {
             const static string OUTPUT_PATH;
             const static string CHECK_FILE_PATH;
 
+            const static string SHP_FILE_PATH;
             const static string CHECK_STATE;
 
         public:

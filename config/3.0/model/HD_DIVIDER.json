@@ -72,7 +72,8 @@
       "valueLimit" : "0,1"
     }
   ],
-  
+  "members" : [
+  ],
   "relation" : [
     {
       "member" : "HD_DIVIDER_NODE",

@@ -161,7 +161,7 @@ namespace kd {
                 double X0, Y0;
                 char zone0[8] = {0};
 
-                Coordinates::ll2utm(node->coord_.y_, node->coord_.x_, X0, Y0, zone0);
+                Coordinates::ll2utm(node->coord_->y_, node->coord_->x_, X0, Y0, zone0);
 
                 cl->add(geos::geom::Coordinate(X0, Y0, node->coord_->z_));
             }
@@ -306,8 +306,8 @@ namespace kd {
                 }
                 //根据方向判定通行方向的起始终止点
                 if (bLeftNoIsuueDir || bRightNoIsuueDir){
-                    double LineA[] = {lsNode->coord_.x_, lsNode->coord_.y_, rsNode->coord_.x_, rsNode->coord_.y_};
-                    double LineB[] = {leNode->coord_.x_, leNode->coord_.y_, reNode->coord_.x_, reNode->coord_.y_};
+                    double LineA[] = {lsNode->coord_->x_, lsNode->coord_->y_, rsNode->coord_->x_, rsNode->coord_->y_};
+                    double LineB[] = {leNode->coord_->x_, leNode->coord_->y_, reNode->coord_->x_, reNode->coord_->y_};
                     bool bCross = geo::geo_util::isLineSegmentCross(LineA, LineB);
                     if (bCross){
                         if (!bLeftNoIsuueDir && bRightNoIsuueDir){

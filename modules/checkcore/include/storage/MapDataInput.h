@@ -10,6 +10,7 @@
 
 #include "CheckErrorOutput.h"
 #include "DataInput.h"
+#include "ModelInput.h"
 
 namespace kd {
     namespace dc {

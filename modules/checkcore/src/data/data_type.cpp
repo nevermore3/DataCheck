@@ -116,14 +116,14 @@ namespace kd {
                 //                    /
                 //  ------->---------               // center line right, angle is positive
 
-                directionWeight = kd::automap::KDGeoUtil::getAngleDiff(diff_node.coord_.x_, diff_node.coord_.y_,
-                                                                       toNode->coord_.x_, toNode->coord_.y_,
-                                                                       diff_node.coord_.x_, diff_node.coord_.y_,
-                                                                       fromNode->coord_.x_, fromNode->coord_.y_);
+                directionWeight = kd::automap::KDGeoUtil::getAngleDiff(diff_node.coord_->x_, diff_node.coord_->y_,
+                                                                       toNode->coord_->x_, toNode->coord_->y_,
+                                                                       diff_node.coord_->x_, diff_node.coord_->y_,
+                                                                       fromNode->coord_->x_, fromNode->coord_->y_);
 
-                int relation = kd::automap::KDGeoUtil::calPTOrentationOfLine(toNode->coord_.x_, toNode->coord_.y_,
-                                                                             diff_node.coord_.x_, diff_node.coord_.y_,
-                                                                             fromNode->coord_.x_, fromNode->coord_.y_);
+                int relation = kd::automap::KDGeoUtil::calPTOrentationOfLine(toNode->coord_->x_, toNode->coord_->y_,
+                                                                             diff_node.coord_->x_, diff_node.coord_->y_,
+                                                                             fromNode->coord_->x_, fromNode->coord_->y_);
                 if (relation == 1) {
                     directionWeight *= -1;
                 }
@@ -138,14 +138,14 @@ namespace kd {
         //                           ------->---------  // center line right, angle is positive
 
 
-                directionWeight = kd::automap::KDGeoUtil::getAngleDiff(diff_node.coord_.x_, diff_node.coord_.y_,
-                                                                       fromNode->coord_.x_, fromNode->coord_.y_,
-                                                                       diff_node.coord_.x_, diff_node.coord_.y_,
-                                                                       toNode->coord_.x_, toNode->coord_.y_);
+                directionWeight = kd::automap::KDGeoUtil::getAngleDiff(diff_node.coord_->x_, diff_node.coord_->y_,
+                                                                       fromNode->coord_->x_, fromNode->coord_->y_,
+                                                                       diff_node.coord_->x_, diff_node.coord_->y_,
+                                                                       toNode->coord_->x_, toNode->coord_->y_);
 
-                int relation = kd::automap::KDGeoUtil::calPTOrentationOfLine(diff_node.coord_.x_, diff_node.coord_.y_,
-                                                                             fromNode->coord_.x_, fromNode->coord_.y_,
-                                                                             toNode->coord_.x_, toNode->coord_.y_);
+                int relation = kd::automap::KDGeoUtil::calPTOrentationOfLine(diff_node.coord_->x_, diff_node.coord_->y_,
+                                                                             fromNode->coord_->x_, fromNode->coord_->y_,
+                                                                             toNode->coord_->x_, toNode->coord_->y_);
                 if (relation == 1) {
                     directionWeight *= -1;
                 }

@@ -146,11 +146,6 @@
         "fileName": "HD_TOLLBOOTH",
         "fileType": "polygon",
         "modelName": "HD_TOLLBOOTH"
-      },
-      {
-        "fileName": "DIVIDER",
-        "fileType": "json",
-        "modelName": "DIVIDER"
       }
     ]
 }

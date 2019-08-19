@@ -267,8 +267,8 @@ namespace kd {
                 ptr_e_node->ptr_coord = first_node;
                 ptr_error_nodes.emplace_back(ptr_e_node);
                 for (int i = 1; i < ptr_lane->coords_.size(); i++) {
-                    if (first_node->lng_ == ptr_lane->coords_.at(i)->lng_ &&
-                        first_node->lat_ == ptr_lane->coords_.at(i)->lat_) {
+                    if (first_node->x_ == ptr_lane->coords_.at(i)->x_ &&
+                        first_node->y_ == ptr_lane->coords_.at(i)->y_) {
                         shared_ptr<NodeError> ptr_cur_e_node = make_shared<NodeError>();
                         ptr_cur_e_node->index = i;
                         ptr_cur_e_node->ptr_coord = ptr_lane->coords_.at(i);

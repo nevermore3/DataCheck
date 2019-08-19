@@ -18,8 +18,8 @@ namespace kd {
                                                                          char *zone0, bool is_z) {
             shared_ptr<geos::geom::Coordinate> ret = nullptr;
             double X0, Y0;
-            double x = ptr_node->coord_->lng_;
-            double y = ptr_node->coord_->lat_;
+            double x = ptr_node->coord_->x_;
+            double y = ptr_node->coord_->y_;
             double z = ptr_node->coord_->z_;
             kd::automap::Coordinates::ll2utm(y, x, X0, Y0, zone0);
             if (is_z) {
@@ -34,8 +34,8 @@ namespace kd {
                                                                          char *zone0, bool is_z) {
             shared_ptr<geos::geom::Coordinate> ret = nullptr;
             double X0, Y0;
-            double x = ptr_node->lng_;
-            double y = ptr_node->lat_;
+            double x = ptr_node->x_;
+            double y = ptr_node->y_;
             double z = ptr_node->z_;
             kd::automap::Coordinates::ll2utm(y, x, X0, Y0, zone0);
             if (is_z) {
@@ -54,8 +54,8 @@ namespace kd {
             double y = ptr_coord->y;
             double x = ptr_coord->x;
             kd::automap::Coordinates::utm2ll(y, x, zone0, lat, lon);
-            ptr_node->lng_ = lon;
-            ptr_node->lat_ = lat;
+            ptr_node->x_ = lon;
+            ptr_node->y_ = lat;
             if (is_z) {
                 ptr_node->z_ = ptr_coord->z;
             }
@@ -68,8 +68,8 @@ namespace kd {
             for(const auto &ptr_coord : ptr_coords){
                 double X0, Y0;
                 char zone0[8] = {0};
-                double x = ptr_coord->lng_;
-                double y = ptr_coord->lat_;
+                double x = ptr_coord->x_;
+                double y = ptr_coord->y_;
                 double z = ptr_coord->z_;
                 kd::automap::Coordinates::ll2utm(y, x, X0, Y0, zone0);
                 cl->add(geos::geom::Coordinate(X0, Y0, z));
@@ -114,7 +114,7 @@ namespace kd {
 
         bool GeosObjUtil::is_same_coord(const shared_ptr<DCCoord> &coord1, const shared_ptr<DCCoord> &coord2,
                                         double precise) {
-            if (fabs(coord1->lng_ - coord2->lng_) < precise && fabs(coord1->lat_ - coord2->lat_) < precise &&
+            if (fabs(coord1->x_ - coord2->x_) < precise && fabs(coord1->y_ - coord2->y_) < precise &&
                 fabs(coord1->z_ - coord2->z_) < precise) {
                 return true;
             } else {

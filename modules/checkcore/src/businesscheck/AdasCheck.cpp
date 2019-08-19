@@ -86,8 +86,8 @@ namespace kd {
                     int nVertices = shpObject->nVertices;
                     if (nVertices == 1) {
                         shared_ptr<DCCoord> ptr_coord = make_shared<DCCoord>();
-                        ptr_coord->lng_ = shpObject->padfX[0];
-                        ptr_coord->lat_ = shpObject->padfY[0];
+                        ptr_coord->x_ = shpObject->padfX[0];
+                        ptr_coord->y_ = shpObject->padfY[0];
                         ptr_coord->z_ = shpObject->padfZ[0];
                         ptr_adas_node->coord_ = ptr_coord;
                     }
@@ -126,8 +126,8 @@ namespace kd {
                     int nVertices = shpObject->nVertices;
                     for (int idx = 0; idx < nVertices; idx++) {
                         shared_ptr<DCCoord> ptr_coord = make_shared<DCCoord>();
-                        ptr_coord->lng_ = shpObject->padfX[idx];
-                        ptr_coord->lat_ = shpObject->padfY[idx];
+                        ptr_coord->x_ = shpObject->padfX[idx];
+                        ptr_coord->y_ = shpObject->padfY[idx];
                         ptr_coord->z_ = shpObject->padfZ[idx];
                         ptr_adas_node_slope->nodes_.emplace_back(ptr_coord);
                     }
@@ -162,8 +162,8 @@ namespace kd {
                     int nVertices = shpObject->nVertices;
                     if (nVertices == 1) {
                         shared_ptr<DCCoord> ptr_coord = make_shared<DCCoord>();
-                        ptr_coord->lng_ = shpObject->padfX[0];
-                        ptr_coord->lat_ = shpObject->padfY[0];
+                        ptr_coord->x_ = shpObject->padfX[0];
+                        ptr_coord->y_ = shpObject->padfY[0];
                         ptr_coord->z_ = shpObject->padfZ[0];
                         ptr_adas_node_fitting->coord_ = ptr_coord;
                     }
@@ -228,8 +228,8 @@ namespace kd {
                     int nVertices = shpObject->nVertices;
                     for (int idx = 0; idx < nVertices; idx++) {
                         shared_ptr<DCCoord> ptr_coord = make_shared<DCCoord>();
-                        ptr_coord->lng_ = shpObject->padfX[idx];
-                        ptr_coord->lat_ = shpObject->padfY[idx];
+                        ptr_coord->x_ = shpObject->padfX[idx];
+                        ptr_coord->y_ = shpObject->padfY[idx];
                         ptr_coord->z_ = shpObject->padfZ[idx];
                         ptr_adas_node_curvature->nodes_.emplace_back(ptr_coord);
                     }
@@ -491,7 +491,7 @@ namespace kd {
                                         vector<shared_ptr<DCCoord>> &ptr_nodes_vec) {
 //            for (const auto &node : ptr_node_slope->nodes_) {
 //                LineModel lm;
-//                lm.setup(node->lng_, ptr_node_slope->intercept_, 0, 0);
+//                lm.setup(node->x_, ptr_node_slope->intercept_, 0, 0);
 //            }
         }
 

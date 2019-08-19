@@ -89,8 +89,8 @@ void LaneGroupCheck::Check_kxs_03_004() {
             ptr_error->dataKey_ = dataKey;
             ptr_error->taskId_ = taskid;
             ptr_error->coord = make_shared<DCCoord>();
-            ptr_error->coord->lng_ = 0;
-            ptr_error->coord->lat_ = 0;
+            ptr_error->coord->x_ = 0;
+            ptr_error->coord->y_ = 0;
             ptr_error->coord->z_ = 0;
             error_output()->saveError(ptr_error);
         }
@@ -284,8 +284,8 @@ void LaneGroupCheck::check_divider_length(const string &lane_group,
         ptr_error->flag = flag;
         ptr_error->dataKey_ = dataKey;
         ptr_error->coord = make_shared<DCCoord>();
-        ptr_error->coord->lat_=0;
-        ptr_error->coord->lng_=0;
+        ptr_error->coord->y_=0;
+        ptr_error->coord->x_=0;
         ptr_error->coord->z_=0;
         error_output()->saveError(ptr_error);
     }

@@ -52,15 +52,15 @@ namespace kd {
                         for(auto node_index:error_node_index){
                             shared_ptr<KDSNode> node = kds_divider->nodes[node_index];
                             shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>();
-                            errNodeInfo->lng_ = node->x;
-                            errNodeInfo->lat_ = node->y;
+                            errNodeInfo->x_ = node->x;
+                            errNodeInfo->y_ = node->y;
                             errNodeInfo->z_ = node->z;
                             errNodeInfo->dataId = to_string(node->ID);
                             errNodeInfo->dataType = DATA_TYPE_NODE;
                             errNodeInfo->dataLayer = MODEL_NAME_DIVIDER_NODE;
                             ptr_error->coord = make_shared<DCCoord>();
-                            ptr_error->coord->lng_ = node->x;
-                            ptr_error->coord->lat_ = node->y;
+                            ptr_error->coord->x_ = node->x;
+                            ptr_error->coord->y_ = node->y;
                             ptr_error->coord->z_ = node->z;
                             ptr_error->errNodeInfo.emplace_back(errNodeInfo);
                         }
@@ -90,8 +90,8 @@ namespace kd {
                 dc_divider_node->id_ = to_string(kds_divider_node->ID);
                 dc_divider_node->dashType_ = kds_divider_node->getPropertyLong(KDSDividerNode::DASHTYPE);
                 dc_divider_node->coord_ = make_shared<DCCoord>();
-                dc_divider_node->coord_->lng_ = kds_divider_node->x;
-                dc_divider_node->coord_->lat_ = kds_divider_node->y;
+                dc_divider_node->coord_->x_ = kds_divider_node->x;
+                dc_divider_node->coord_->y_ = kds_divider_node->y;
                 dc_divider_node->coord_->z_ = kds_divider_node->z;
             }
             return dc_divider_node;

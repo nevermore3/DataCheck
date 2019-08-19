@@ -60,8 +60,8 @@ namespace kd {
         public:
             ErrNodeInfo(){};
             ErrNodeInfo(shared_ptr<DCCoord> coord){
-                 lng_ = coord->lng_;
-                 lat_ = coord->lat_;
+                 x_ = coord->x_;
+                 y_ = coord->y_;
                  z_ = coord->z_;
             };
             //数据ID

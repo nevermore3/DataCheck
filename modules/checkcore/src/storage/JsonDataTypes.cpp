@@ -20,8 +20,8 @@ void JsonLog::SetGeometry(double x, double y, double z) {
 void JsonLog::SetGeometry(shared_ptr<DCCoord> node) {
     Poco::JSON::Array ja_coordinates;
     if (node) {
-        ja_coordinates.add(node->lng_);
-        ja_coordinates.add(node->lat_);
+        ja_coordinates.add(node->x_);
+        ja_coordinates.add(node->y_);
         ja_coordinates.add(node->z_);
     } else {
         ja_coordinates.add(0);

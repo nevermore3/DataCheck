@@ -233,6 +233,8 @@ int main(int argc, const char *argv[]) {
             output_path = output_path + "/" + ur_path;
             base_path = base_path + "/" + ur_path;
 
+            DataCheckConfig::getInstance().setProperty(DataCheckConfig::CHECK_STATE,
+                                                       to_string(DataCheckConfig::ALL_AUTO_CHECK));
             DataCheckConfig::getInstance().addProperty(DataCheckConfig::UPDATE_REGION, getUpdateRegion(ur_path));
         }
 

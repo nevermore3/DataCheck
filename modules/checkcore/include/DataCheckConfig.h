@@ -92,6 +92,8 @@ namespace kd {
 
             void addProperty(string key, string value);
 
+            void setProperty(string key, string value);
+
             string getTaskId();
 
             void setTaskId(string id);

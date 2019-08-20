@@ -131,6 +131,14 @@ namespace kd {
             m_properties.insert(make_pair(key, value));
         }
 
+        void DataCheckConfig::setProperty(string key, string value) {
+            auto iter = m_properties.find(key);
+            if (iter != m_properties.end()) {
+                iter->second = value;
+            }
+        }
+
+
         string DataCheckConfig::getTaskId() {
             return task_id;
         }

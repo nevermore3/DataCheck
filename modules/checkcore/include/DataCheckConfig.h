@@ -11,6 +11,9 @@ namespace kd {
     namespace dc {
         class DataCheckConfig {
         public:
+            const static int TOPO_AUTO_CHECK = 1;
+            const static int ALL_AUTO_CHECK = 2;
+
             const static string DOTLINE_DEFECT_LEN;
             const static string BUSELINE_DEFECT_LEN;
             const static string DA_SPACE_LEN;
@@ -51,6 +54,7 @@ namespace kd {
             const static string CHECK_FILE_PATH;
 
             const static string SHP_FILE_PATH;
+            const static string DB_INPUT_FILE;
             const static string CHECK_STATE;
 
         public:

@@ -9,6 +9,11 @@
 #include "data/ErrorDataModel.h"
 #include "JsonDataTypes.h"
 #include "ErrorReportJsonOutput.h"
+
+#include "cppsqlite3/Database.h"
+#include "cppsqlite3/Statement.h"
+#include "cppsqlite3/Query.h"
+
 namespace kd {
     namespace dc {
         struct ErrorOutPut{
@@ -46,8 +51,8 @@ namespace kd {
         class CheckErrorOutput{
 
         public:
-            CheckErrorOutput();
-            ~CheckErrorOutput() = default;
+            CheckErrorOutput(int check_state);
+            ~CheckErrorOutput();
 
             /**
              * 输出自定义文本信息
@@ -59,11 +64,15 @@ namespace kd {
              * @return
              */
             int saveErrorReport(string err_file_name);
+
             /**
              * 输出检查信息到sql中
              */
+            int saveErrorToDb(const string &ouput_file);
+
             int saveJsonError();
             void saveError(shared_ptr<DCError> error);
+
             /**
              * 添加检查项错误信息
              */
@@ -79,11 +88,17 @@ namespace kd {
              */
             string get_error_level(string check_model);
 
+        private:
+            void initErrorLevel();
+
         protected:
             map<string, vector<ErrorOutPut>> check_model_2_output_maps_;
-            map<string,shared_ptr<CheckItemInfo>> check_total;//统计检查项信息
+            map<string,shared_ptr<CheckItemInfo>> check_total_;//统计检查项信息
             set<string> error_check_levels_;
 
+            int check_state_ = 0;
+
+            CppSQLite3::Database *p_db_out_ = nullptr;
         };
     }
 

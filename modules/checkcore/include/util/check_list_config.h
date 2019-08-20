@@ -7,6 +7,8 @@
 #include <map>
 #include <fstream>
 
+#include "DataCheckConfig.h"
+
 using namespace std;
 
 class CheckListConfig {
@@ -45,6 +47,8 @@ private:
 
     //所有检查项配置
     map<string, string> check_map;
+
+    int check_state_;
 };
 
 #endif  // KXS_DATACHECK_MODULES_CHECKCORE_UTIL_CHECK_LIST_CONFIG_H

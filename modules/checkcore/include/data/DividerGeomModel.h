@@ -161,7 +161,7 @@ namespace kd {
 
             //虚线起终点类型: "0：实线, 1：虚线起点, 2：虚线终点, 3：虚线中间点"
             long dashType_;
-
+            long is_split_;
         };
 
         /**

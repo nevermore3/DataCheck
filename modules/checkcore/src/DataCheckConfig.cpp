@@ -54,6 +54,7 @@ namespace kd {
         const string DataCheckConfig::CHECK_FILE_PATH ="check_file_path";
 
         const string DataCheckConfig::SHP_FILE_PATH ="shp_data_input";
+        const string DataCheckConfig::DB_INPUT_FILE ="db_input_file";
 
         const string DataCheckConfig::CHECK_STATE ="check_state";
 

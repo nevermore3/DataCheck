@@ -70,9 +70,6 @@ namespace kd {
              * @return
              */
             bool loadLaneGroupLogicInfo();
-
-        private:
-            bool setDividerNode(shared_ptr<DCDivider> div, string nodeId, map<string, shared_ptr<DCDividerNode>> & commonNodeInfos);
         };
     }
 }

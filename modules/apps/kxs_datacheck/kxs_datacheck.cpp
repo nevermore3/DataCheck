@@ -11,6 +11,7 @@
 #include "process/ModelBussCheck.h"
 #include "process/ModelRelationCheck.h"
 #include "process/TaskLoader.h"
+#include "process/ModelSqlCheck.h"
 
 #include "MapProcessManager.h"
 #include "businesscheck/MapDataLoader.h"
@@ -167,6 +168,20 @@ int AllAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, const string& 
     return ret;
 }
 
+int SqlAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput) {
+    int ret = 0;
+    shared_ptr<ProcessManager> process_manager = make_shared<ProcessManager>("sql_auto_check");
+    //加载数据
+    shared_ptr<ModelSqlCheck> model_sql_check = make_shared<ModelSqlCheck>();
+    process_manager->registerProcessor(model_sql_check);
+
+    if (!process_manager->execute(errorOutput)){
+        LOG(ERROR) << "ProcessManager execute error!";
+        ret = 1;
+    }
+    return ret;
+}
+
 void InitGlog(const string &exe_path, const string &ur_path) {
     google::InitGoogleLogging(exe_path.c_str());
     google::LogToStderr();
@@ -233,6 +248,7 @@ int main(int argc, const char *argv[]) {
             output_path = output_path + "/" + ur_path;
             base_path = base_path + "/" + ur_path;
 
+            DataCheckConfig::getInstance().setProperty(DataCheckConfig::DB_INPUT_FILE, db_file_name);
             DataCheckConfig::getInstance().setProperty(DataCheckConfig::CHECK_STATE,
                                                        to_string(DataCheckConfig::ALL_AUTO_CHECK));
             DataCheckConfig::getInstance().addProperty(DataCheckConfig::UPDATE_REGION, getUpdateRegion(ur_path));
@@ -287,6 +303,7 @@ int main(int argc, const char *argv[]) {
             }
 
             // KXF全要素检查
+            ret |= SqlAutoCheck(error_output);
             ret |= AllAutoCheck(error_output, base_path);
             ret |= error_output->saveErrorToDb(output_file);
         }

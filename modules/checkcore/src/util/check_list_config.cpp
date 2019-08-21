@@ -17,7 +17,8 @@ void CheckListConfig::Load(std::string fileName) {
     }
     fp.close();
 
-    ParsseItemDesc(file_content);
+    //ParsseItemDesc(file_content);
+    ParseCheckList(file_content);
 }
 
 bool CheckListConfig::GetCheckList(std::string getItemUrl,string getDescUrl){

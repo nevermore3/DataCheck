@@ -36,6 +36,9 @@ using namespace kd::dc;
 
 const char kCheckListFile[] = "check_list.json";
 const char checkresult[] = "checkresult.json";
+
+shared_ptr<ResourceManager> IMapProcessor::resource_manager_;
+string IMapProcessor::kxf_base_path_;
 int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) {
     int ret = 0;
     //交换格式基本属性检查
@@ -176,21 +179,23 @@ int main(int argc, const char *argv[]) {
     TimerUtil compilerTimer;
 
     string exe_path;
-    string base_path;
+    string base_path = "../input/shp";
+    IMapProcessor::kxf_base_path_ = base_path;
 
     KDSDivider::FLAG;
     string errJsonPath ="";
     try {
         exe_path = argv[0];
 
-        InitGlog(exe_path, "./");
+        InitGlog(exe_path, "../output");
 
 //        if (argc < 3) {
 //            LOG(ERROR) << " not has url parameter";
 //            return -1;
 //        }
         // 加载配置
-        ret = DataCheckConfig::getInstance().load("config.properties");
+        string configPath = "./config/3.0/config.properties";
+        ret = DataCheckConfig::getInstance().load(configPath);
         if (ret != 0) {
             LOG(ERROR) << "读取配置文件config.properties失败,程序退出!";
             return ret;

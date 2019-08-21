@@ -214,8 +214,8 @@
                    LEVEL="error"
                    INFO="道路RANGE索引号超限,最大号超限，最小号非０"
                    SQL="SELECT RD.ID road_id, NUMVERTEX road_node_num, MINIDX min_index, MAXIDX max_index FROM ROAD RD
-                    JOIN(SELECT ROADID,MAX(MAX(F_INDEX),MAX(T_INDEX)) MAXIDX,MIN(MIN(F_INDEX),MIN(T_INDEX))
-                    MINIDX FROM LG_ROADNODE_INDEX GROUP BY ROADID) MIDX
-                    ON RD.ID=MIDX.ROADID AND (MIDX.MAXIDX>=RD.NUMVERTEX OR MINIDX<0);"/>
+                    JOIN(SELECT ROAD_ID,MAX(MAX(F_INDEX),MAX(T_INDEX)) MAXIDX,MIN(MIN(F_INDEX),MIN(T_INDEX))
+                    MINIDX FROM LG_ROADNODE_INDEX GROUP BY ROAD_ID) MIDX
+                    ON RD.ID=MIDX.ROAD_ID AND (MIDX.MAXIDX>=RD.NUMVERTEX OR MINIDX<0);"/>
   </datacheck>
 </datachecks>

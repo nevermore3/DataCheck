@@ -52,7 +52,6 @@ namespace kd {
             }
         public:
             static shared_ptr<ResourceManager> resource_manager_;
-            static string kxf_base_path_;
         private:
             shared_ptr<MapDataManager> data_manager_;
             shared_ptr<CheckErrorOutput> error_output_;

@@ -28,7 +28,7 @@
 #include "businesscheck/LaneCheck.h"
 #include "businesscheck/AdasCheck.h"
 #include "businesscheck/JsonDataLoader.h"
-
+#include "datacheck/LengthCheck.h"
 #include "util/TimerUtil.h"
 #include "util/check_list_config.h"
 
@@ -38,7 +38,6 @@ const char kCheckListFile[] = "check_list.json";
 const char checkresult[] = "checkresult.json";
 
 shared_ptr<ResourceManager> IMapProcessor::resource_manager_;
-string IMapProcessor::kxf_base_path_;
 int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) {
     int ret = 0;
     //交换格式基本属性检查
@@ -76,7 +75,8 @@ int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) 
         shared_ptr<JsonDataLoader> json_data_loader = make_shared<JsonDataLoader>();
         mapProcessManager->registerProcessor(json_data_loader);
 
-
+        shared_ptr<LengthCheck> lengthCheck = make_shared<LengthCheck>();
+        mapProcessManager->registerProcessor(lengthCheck);
 
         //加载数据
 //        shared_ptr<MapDataLoader> loader = make_shared<MapDataLoader>(basePath);
@@ -180,7 +180,6 @@ int main(int argc, const char *argv[]) {
 
     string exe_path;
     string base_path = "../input/shp";
-    IMapProcessor::kxf_base_path_ = base_path;
 
     KDSDivider::FLAG;
     string errJsonPath ="";

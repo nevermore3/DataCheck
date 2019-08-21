@@ -99,6 +99,12 @@ const static std::string CHECK_ITEM_KXS_LM_002 = "KXS-06-002";
 const static std::string CHECK_ITEM_KXS_ADAS_001 = "KXS-07-001";
 const static std::string CHECK_ITEM_KXS_ADAS_002 = "KXS-07-002";
 
+//长度一致性检查
+const static std::string CHECK_ITEM_KXS_LENGTH_001 = "KXS-08-001";
+
+//数目一致性检查
+const static std::string CHECK_ITEM_KXS_COUNT_001 = "KXS-09-001";
+
 const static std::string ID = "ID";
 const static std::string DIVIDER_ID = "DIVIDER_ID";
 const static std::string DIVIDER_NODE_ID = "DIVIDER_NODE_ID";

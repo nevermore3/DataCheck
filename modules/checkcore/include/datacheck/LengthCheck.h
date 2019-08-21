@@ -18,18 +18,19 @@ namespace kd {
 
             string getId() override;
 
+            void LoadCheckModel();
+
             bool execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) override;
 
-
             void Check_kxs_08_001();
+
+            void CheckLength(const string &modelName, const string &fileName);
         private:
             const string id_ = "length_check";
 
             double length_precise_;
 
-            shared_ptr<MapDataManager>osm_data_manager_;
-
-            shared_ptr<MapDataManager>kxf_data_manager_;
+            vector<shared_ptr<DCTask>> length_check_model_;
         };
     }
 }

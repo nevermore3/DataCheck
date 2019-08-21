@@ -53,6 +53,10 @@ namespace kd {
         const string DataCheckConfig::OUTPUT_PATH = "output_path";
         const string DataCheckConfig::CHECK_FILE_PATH ="check_file_path";
 
+        //数据一致性检查
+        const string DataCheckConfig::LENGTH_CHECK_FILE = "length_check_file";
+        const string DataCheckConfig::LENGTH_PRECISE = "length_precise";
+
         int DataCheckConfig::load(string fileName) {
             int ret = 0;
             try {

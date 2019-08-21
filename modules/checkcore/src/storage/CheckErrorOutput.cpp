@@ -41,7 +41,6 @@ namespace kd {
             error_check_levels_.insert(CHECK_ITEM_KXS_LG_026);
             error_check_levels_.insert(CHECK_ITEM_KXS_LG_027);
 
-
             error_check_levels_.insert(CHECK_ITEM_KXS_ROAD_001);
             error_check_levels_.insert(CHECK_ITEM_KXS_ROAD_002);
             error_check_levels_.insert(CHECK_ITEM_KXS_ROAD_004);
@@ -58,6 +57,10 @@ namespace kd {
 
             error_check_levels_.insert(CHECK_ITEM_KXS_LM_001);
             error_check_levels_.insert(CHECK_ITEM_KXS_LM_002);
+
+            //数据一致性检查
+            error_check_levels_.insert(CHECK_ITEM_KXS_LENGTH_001);
+            error_check_levels_.insert(CHECK_ITEM_KXS_COUNT_001);
         }
 
         void CheckErrorOutput::writeInfo(string info, bool bLongString) {

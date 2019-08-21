@@ -50,6 +50,11 @@ namespace kd {
             const static string OUTPUT_PATH;
             const static string CHECK_FILE_PATH;
 
+            //数据一致性检查
+            const static string LENGTH_CHECK_FILE;
+
+            const static string LENGTH_PRECISE;
+
         public:
             static DataCheckConfig & getInstance() {
                 static DataCheckConfig instance;

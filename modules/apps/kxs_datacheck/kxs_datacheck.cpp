@@ -143,8 +143,8 @@ int AllAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, const string& 
     shared_ptr<LaneTopoCheck> laneTopoCheck = make_shared<LaneTopoCheck>();
     map_process_manager->registerProcessor(laneTopoCheck);
 
-//        shared_ptr<LaneCheck> lane_check = make_shared<LaneCheck>();
-//        map_process_manager->registerProcessor(lane_check);
+    shared_ptr<LaneCheck> lane_check = make_shared<LaneCheck>();
+    map_process_manager->registerProcessor(lane_check);
 
     shared_ptr<RoadCheck> road_check = make_shared<RoadCheck>();
     map_process_manager->registerProcessor(road_check);

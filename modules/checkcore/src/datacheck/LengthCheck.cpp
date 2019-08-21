@@ -90,12 +90,13 @@ namespace kd {
             shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
             checkItemInfo->checkId = CHECK_ITEM_KXS_LENGTH_001;
             size_t  total = 0;
-
-            for (const auto &task : length_check_model_) {
-                CheckLength(task->modelName, task->fileName);
+            if (length_check_model_.empty()) {
+                LOG(ERROR)<<"check model is null";
+            } else {
+                for (const auto &task : length_check_model_) {
+                    CheckLength(task->modelName, task->fileName);
+                }
             }
-
-
             checkItemInfo->totalNum = total;
             error_output()->addCheckItemInfo(checkItemInfo);
         }
@@ -106,6 +107,11 @@ namespace kd {
 
             //read osm data
             const map<long, shared_ptr<KDSData>> &kdsDataMap = resource_manager_->getKdsData(modelName);
+            if (kdsDataMap.empty()) {
+                shared_ptr<DCLengthCheckError> error = DCLengthCheckError::createByNullFile(modelName);
+                error_output()->saveError(error);
+                return;
+            }
             for (const auto &kdsData : kdsDataMap) {
                 shared_ptr<KDSWay> kdsWay = std::static_pointer_cast<KDSWay>(kdsData.second);
                 vector<shared_ptr<DCCoord>>coords;
@@ -122,7 +128,9 @@ namespace kd {
             //read kxf data
             ShpData shpObj(fileName);
             if (!shpObj.isInit()) {
-                //todo error info
+                shared_ptr<DCLengthCheckError> error = DCLengthCheckError::createByNullFile(fileName);
+                error_output()->saveError(error);
+                return;
             }
             size_t recordNums = shpObj.getRecords();
             for (size_t i = 0; i < recordNums; i++) {
@@ -140,7 +148,13 @@ namespace kd {
                 }
                 kxfLength += GeosObjUtil::get_length_of_coords(coords);
             }
-            // compare & output
+
+            double ratio = (abs(osmLength - kxfLength) / osmLength ) * 100;
+
+            if (ratio > length_precise_) {
+                shared_ptr<DCLengthCheckError> error = DCLengthCheckError::createByLength(osmLength, kxfLength, modelName);
+                error_output()->saveError(error);
+            }
 
         }
 

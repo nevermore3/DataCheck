@@ -179,7 +179,7 @@ int main(int argc, const char *argv[]) {
     TimerUtil compilerTimer;
 
     string exe_path;
-    string base_path = "../input/shp";
+    string base_path;
 
     KDSDivider::FLAG;
     string errJsonPath ="";
@@ -193,8 +193,7 @@ int main(int argc, const char *argv[]) {
 //            return -1;
 //        }
         // 加载配置
-        string configPath = "./config/3.0/config.properties";
-        ret = DataCheckConfig::getInstance().load(configPath);
+        ret = DataCheckConfig::getInstance().load("config.properties");
         if (ret != 0) {
             LOG(ERROR) << "读取配置文件config.properties失败,程序退出!";
             return ret;
@@ -214,7 +213,7 @@ int main(int argc, const char *argv[]) {
             CheckListConfig::getInstance().Load(checkFilePath);
         }
 
-        errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH)+checkresult;
+        errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH) + checkresult;
         Poco::File error_file(errJsonPath);
         if (error_file.exists()) {
             error_file.remove();

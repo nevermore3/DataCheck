@@ -37,7 +37,8 @@ namespace kd {
             shared_ptr<ResourceManager> resource_manager = make_shared<ResourceManager>();
             if (LoadJsonData(resource_manager)) {
                 shared_ptr<JsonDataInput> json_data_input = make_shared<JsonDataInput>(map_data_manager_, error_output_,
-                                                                                       "", model_path, resource_manager);
+                                                                                      "", model_path, resource_manager);
+
                 json_data_input->LoadModel();
                 json_data_input->LoadData();
                 json_data_input->CheckModelField(error_output_);

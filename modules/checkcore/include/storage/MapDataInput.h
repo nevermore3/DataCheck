@@ -10,6 +10,7 @@
 
 #include "CheckErrorOutput.h"
 #include "DataInput.h"
+#include "ModelInput.h"
 
 namespace kd {
     namespace dc {
@@ -69,9 +70,6 @@ namespace kd {
              * @return
              */
             bool loadLaneGroupLogicInfo();
-
-        private:
-            bool setDividerNode(shared_ptr<DCDivider> div, string nodeId, map<string, shared_ptr<DCDividerNode>> & commonNodeInfos);
         };
     }
 }

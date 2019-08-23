@@ -63,7 +63,8 @@
       "valueLimit" : "0123456789Mywdflthmsz{}[]()*+-"
     }
   ],
-  
+  "members" : [
+  ],
   "relation" : [
     {
       "member" : "NODECONN",

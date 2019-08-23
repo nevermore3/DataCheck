@@ -50,8 +50,8 @@ void ReportJsonLog::AppendErrorCase(ReportLogItem &errorCase){
     oneCase.set("errorDetail",errorCase.err_desc);
     oneCase.set("status",errorCase.state);
     if(errorCase.node!= nullptr){
-        oneCase.set("dataX",errorCase.node->lng_);
-        oneCase.set("dataY",errorCase.node->lat_);
+        oneCase.set("dataX",errorCase.node->x_);
+        oneCase.set("dataY",errorCase.node->y_);
     }
     Poco::JSON::Array checkDataRefs;
     if(errorCase.errNodeInfo.size()>0){
@@ -60,8 +60,8 @@ void ReportJsonLog::AppendErrorCase(ReportLogItem &errorCase){
             json_point.set("dataId",point->dataId);
             json_point.set("dataLayer",point->dataLayer);
             json_point.set("dataType",point->dataType);
-            json_point.set("dataY",point->lat_);
-            json_point.set("dataX",point->lng_);
+            json_point.set("dataY",point->y_);
+            json_point.set("dataX",point->x_);
             checkDataRefs.add(json_point);
         }
         Object::Ptr entity = nullptr;

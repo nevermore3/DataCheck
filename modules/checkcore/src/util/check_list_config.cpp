@@ -18,6 +18,8 @@ void CheckListConfig::Load(std::string fileName) {
     fp.close();
 
     ParsseItemDesc(file_content);
+
+    check_state_ = kd::dc::DataCheckConfig::getInstance().getPropertyI(kd::dc::DataCheckConfig::CHECK_STATE);
 }
 
 bool CheckListConfig::GetCheckList(std::string getItemUrl,string getDescUrl){
@@ -108,6 +110,10 @@ bool CheckListConfig::ParseCheckList(const std::string &json_result) {
 
 bool CheckListConfig::IsNeedCheck(std::string key){
     if (check_map.find(key) != check_map.end()) {
+        return true;
+    }
+
+    if (check_state_ == kd::dc::DataCheckConfig::ALL_AUTO_CHECK) {
         return true;
     }
 

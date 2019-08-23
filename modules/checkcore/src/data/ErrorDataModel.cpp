@@ -99,8 +99,8 @@ namespace kd {
                 error->nodeId_ = "";
                 error->attId_ = "";
                 error->coord = make_shared<DCCoord>();
-                error->coord->lng_=0;
-                error->coord->lat_=0;
+                error->coord->x_=0;
+                error->coord->y_=0;
                 error->coord->z_=0;
                 shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(error->coord);
                 errNodeInfo->dataLayer = MODEL_NAME_DIVIDER;
@@ -135,8 +135,8 @@ namespace kd {
                 error->nodeId_ = "";
                 error->attId_ = "";
                 error->coord = make_shared<DCCoord>();
-                error->coord->lng_=0;
-                error->coord->lat_=0;
+                error->coord->x_=0;
+                error->coord->y_=0;
                 error->coord->z_=0;
                 shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(error->coord);
                 errNodeInfo->dataId =  "";
@@ -157,8 +157,8 @@ namespace kd {
             error->nodeId_ = nodeId;
             error->attId_ = "";
             error->coord = make_shared<DCCoord>();
-            error->coord->lng_ = lng;
-            error->coord->lat_ = lat;
+            error->coord->x_ = lng;
+            error->coord->y_ = lat;
             error->coord->z_ = z;
 
             return error;
@@ -175,8 +175,8 @@ namespace kd {
             error->sourceId = divider_id;
             for (const auto &error_node : ptr_error_nodes) {
                 shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>();
-                errNodeInfo->lng_ = error_node->ptr_current_coord->lng_;
-                errNodeInfo->lat_ = error_node->ptr_current_coord->lat_;
+                errNodeInfo->x_ = error_node->ptr_current_coord->x_;
+                errNodeInfo->y_ = error_node->ptr_current_coord->y_;
                 errNodeInfo->z_ = error_node->ptr_current_coord->z_;
                 errNodeInfo->dataId = error_node->id;
                 errNodeInfo->dataType = DATA_TYPE_WAY;
@@ -185,9 +185,9 @@ namespace kd {
                 error->detail_ += ",索引点";
                 error->detail_ += to_string(error_node->current);
                 error->detail_ += ",坐标(";
-                error->detail_ += to_string(error_node->ptr_current_coord->lng_);
+                error->detail_ += to_string(error_node->ptr_current_coord->x_);
                 error->detail_ += ",";
-                error->detail_ += to_string(error_node->ptr_current_coord->lat_);
+                error->detail_ += to_string(error_node->ptr_current_coord->y_);
                 error->detail_ += ",";
                 error->detail_ += to_string(error_node->ptr_current_coord->z_);
                 error->detail_ += ")";
@@ -208,8 +208,8 @@ namespace kd {
             error->sourceId = divider_id;
             for (const auto &error_node : ptr_error_nodes) {
                 shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>();
-                errNodeInfo->lng_ = error_node->ptr_current_coord->lng_;
-                errNodeInfo->lat_ = error_node->ptr_current_coord->lat_;
+                errNodeInfo->x_ = error_node->ptr_current_coord->x_;
+                errNodeInfo->y_ = error_node->ptr_current_coord->y_;
                 errNodeInfo->z_ = error_node->ptr_current_coord->z_;
                 errNodeInfo->dataId = error_node->id;
                 errNodeInfo->dataType = DATA_TYPE_WAY;
@@ -218,18 +218,18 @@ namespace kd {
                 error->detail_ += ",索引点";
                 error->detail_ += to_string(error_node->previous);
                 error->detail_ += ",坐标(";
-                error->detail_ += to_string(error_node->ptr_previous_coord->lng_);
+                error->detail_ += to_string(error_node->ptr_previous_coord->x_);
                 error->detail_ += ",";
-                error->detail_ += to_string(error_node->ptr_previous_coord->lat_);
+                error->detail_ += to_string(error_node->ptr_previous_coord->y_);
                 error->detail_ += ",";
                 error->detail_ += to_string(error_node->ptr_previous_coord->z_);
                 error->detail_ += ")";
                 error->detail_ += "与索引点";
                 error->detail_ += to_string(error_node->current);
                 error->detail_ += ",坐标(";
-                error->detail_ += to_string(error_node->ptr_current_coord->lng_);
+                error->detail_ += to_string(error_node->ptr_current_coord->x_);
                 error->detail_ += ",";
-                error->detail_ += to_string(error_node->ptr_current_coord->lat_);
+                error->detail_ += to_string(error_node->ptr_current_coord->y_);
                 error->detail_ += ",";
                 error->detail_ += to_string(error_node->ptr_current_coord->z_);
                 error->detail_ += ")";
@@ -250,8 +250,8 @@ namespace kd {
             error->sourceId = divider_id;
             for (const auto &error_node : ptr_error_nodes) {
                 shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>();
-                errNodeInfo->lng_ = error_node->ptr_current_coord->lng_;
-                errNodeInfo->lat_ = error_node->ptr_current_coord->lat_;
+                errNodeInfo->x_ = error_node->ptr_current_coord->x_;
+                errNodeInfo->y_ = error_node->ptr_current_coord->y_;
                 errNodeInfo->z_ = error_node->ptr_current_coord->z_;
                 errNodeInfo->dataId = error_node->id;
                 errNodeInfo->dataType = DATA_TYPE_WAY;
@@ -260,18 +260,18 @@ namespace kd {
                 error->detail_ += ",索引点";
                 error->detail_ += to_string(error_node->previous);
                 error->detail_ += ",坐标(";
-                error->detail_ += to_string(error_node->ptr_previous_coord->lng_);
+                error->detail_ += to_string(error_node->ptr_previous_coord->x_);
                 error->detail_ += ",";
-                error->detail_ += to_string(error_node->ptr_previous_coord->lat_);
+                error->detail_ += to_string(error_node->ptr_previous_coord->y_);
                 error->detail_ += ",";
                 error->detail_ += to_string(error_node->ptr_previous_coord->z_);
                 error->detail_ += ")";
                 error->detail_ += "与索引点";
                 error->detail_ += to_string(error_node->current);
                 error->detail_ += ",坐标(";
-                error->detail_ += to_string(error_node->ptr_current_coord->lng_);
+                error->detail_ += to_string(error_node->ptr_current_coord->x_);
                 error->detail_ += ",";
-                error->detail_ += to_string(error_node->ptr_current_coord->lat_);
+                error->detail_ += to_string(error_node->ptr_current_coord->y_);
                 error->detail_ += ",";
                 error->detail_ += to_string(error_node->ptr_current_coord->z_);
                 error->detail_ += ")";
@@ -324,8 +324,8 @@ namespace kd {
                 error->nodeId_ = "";
                 error->attId_ = "";
                 error->coord = make_shared<DCCoord>();
-                error->coord->lng_=0;
-                error->coord->lat_=0;
+                error->coord->x_=0;
+                error->coord->y_=0;
                 error->coord->z_=0;
             }
 
@@ -400,8 +400,8 @@ namespace kd {
                 error->nodeId_ = "";
                 error->attId_ = "";
                 error->coord = make_shared<DCCoord>();
-                error->coord->lng_=0;
-                error->coord->lat_=0;
+                error->coord->x_=0;
+                error->coord->y_=0;
                 error->coord->z_=0;
             }
             shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(error->coord);
@@ -480,8 +480,8 @@ namespace kd {
 
             error->sourceId = road_id;
             error->coord = make_shared<DCCoord>();
-            error->coord->lng_=0;
-            error->coord->lat_=0;
+            error->coord->x_=0;
+            error->coord->y_=0;
             error->coord->z_ = 0;
             error->taskId_ = taskId;
             shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(error->coord);
@@ -505,8 +505,8 @@ namespace kd {
                 error->detail += " ";
             }
             shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>();
-            errNodeInfo->lng_ = 0;
-            errNodeInfo->lat_ = 0;
+            errNodeInfo->x_ = 0;
+            errNodeInfo->y_ = 0;
             errNodeInfo->z_ = 0;
             errNodeInfo->dataId = "";
             errNodeInfo->dataType = DATA_TYPE_WAY;
@@ -542,8 +542,8 @@ namespace kd {
                 error->detail += " ";
 
                 shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>();
-                errNodeInfo->lng_ = 0;
-                errNodeInfo->lat_ = 0;
+                errNodeInfo->x_ = 0;
+                errNodeInfo->y_ = 0;
                 errNodeInfo->z_ = 0;
                 errNodeInfo->dataId = div;
                 errNodeInfo->dataType = DATA_TYPE_RELATION;
@@ -563,8 +563,8 @@ namespace kd {
             error->detail += lane_group_id;
             error->detail += "车道组没有打断";
             error->coord = make_shared<DCCoord>();
-            error->coord->lat_=0;
-            error->coord->lng_=0;
+            error->coord->y_=0;
+            error->coord->x_=0;
             error->coord->z_=0;
             error->sourceId = lane_group_id;
             shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(error->coord);
@@ -593,8 +593,8 @@ namespace kd {
                 errNodeInfo->dataId = div->nodes_[0]->id_;
             }else{
                 error->coord = make_shared<DCCoord>();
-                error->coord->lng_ = 0;
-                error->coord->lat_ = 0;
+                error->coord->x_ = 0;
+                error->coord->y_ = 0;
                 error->coord->z_ = 0;
                 errNodeInfo = make_shared<ErrNodeInfo>(error->coord);
                 errNodeInfo->dataId="";
@@ -630,8 +630,8 @@ namespace kd {
             error->detail += lg_id2;
             error->detail += "之间的道路不连通";
             error->coord = make_shared<DCCoord>();
-            error->coord->lat_=0;
-            error->coord->lng_=0;
+            error->coord->y_=0;
+            error->coord->x_=0;
             error->coord->z_=0;
             error->sourceId = lg_id1;
             shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(error->coord);
@@ -653,8 +653,8 @@ namespace kd {
             error->detail += lg_id2;
             error->detail += "车道中心线不连通";
             error->coord = make_shared<DCCoord>();
-            error->coord->lat_=0;
-            error->coord->lng_=0;
+            error->coord->y_=0;
+            error->coord->x_=0;
             error->coord->z_=0;
             error->sourceId = lg_id1;
             shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(error->coord);
@@ -724,9 +724,9 @@ namespace kd {
                 error->detail += ",索引点";
                 error->detail += to_string(error_node->index);
                 error->detail += ",坐标(";
-                error->detail += to_string(error_node->ptr_coord->lng_);
+                error->detail += to_string(error_node->ptr_coord->x_);
                 error->detail += ",";
-                error->detail += to_string(error_node->ptr_coord->lat_);
+                error->detail += to_string(error_node->ptr_coord->y_);
                 error->detail += ",";
                 error->detail += to_string(error_node->ptr_coord->z_);
                 error->detail += ")";
@@ -746,9 +746,9 @@ namespace kd {
                 error->detail += ",索引点";
                 error->detail += to_string(error_node->current);
                 error->detail += ",坐标(";
-                error->detail += to_string(error_node->ptr_current_coord->lng_);
+                error->detail += to_string(error_node->ptr_current_coord->x_);
                 error->detail += ",";
-                error->detail += to_string(error_node->ptr_current_coord->lat_);
+                error->detail += to_string(error_node->ptr_current_coord->y_);
                 error->detail += ",";
                 error->detail += to_string(error_node->ptr_current_coord->z_);
                 error->detail += ")";
@@ -775,18 +775,18 @@ namespace kd {
                 error->detail += ",索引点";
                 error->detail += to_string(error_node->previous);
                 error->detail += ",坐标(";
-                error->detail += to_string(error_node->ptr_previous_coord->lng_);
+                error->detail += to_string(error_node->ptr_previous_coord->x_);
                 error->detail += ",";
-                error->detail += to_string(error_node->ptr_previous_coord->lat_);
+                error->detail += to_string(error_node->ptr_previous_coord->y_);
                 error->detail += ",";
                 error->detail += to_string(error_node->ptr_previous_coord->z_);
                 error->detail += ")";
                 error->detail += "与索引点";
                 error->detail += to_string(error_node->current);
                 error->detail += ",坐标(";
-                error->detail += to_string(error_node->ptr_current_coord->lng_);
+                error->detail += to_string(error_node->ptr_current_coord->x_);
                 error->detail += ",";
-                error->detail += to_string(error_node->ptr_current_coord->lat_);
+                error->detail += to_string(error_node->ptr_current_coord->y_);
                 error->detail += ",";
                 error->detail += to_string(error_node->ptr_current_coord->z_);
                 error->detail += ")";
@@ -878,9 +878,9 @@ namespace kd {
                 error->detail += ",索引点";
                 error->detail += to_string(error_node->index);
                 error->detail += ",坐标(";
-                error->detail += to_string(error_node->ptr_coord->lng_);
+                error->detail += to_string(error_node->ptr_coord->x_);
                 error->detail += ",";
-                error->detail += to_string(error_node->ptr_coord->lat_);
+                error->detail += to_string(error_node->ptr_coord->y_);
                 error->detail += ",";
                 error->detail += to_string(error_node->ptr_coord->z_);
                 error->detail += ")";
@@ -921,9 +921,9 @@ namespace kd {
             error->detail += ",属性点索引:";
             error->detail += to_string(index);
             error->detail += ",点坐标:";
-            error->detail += to_string(ptr_coord->lng_);
+            error->detail += to_string(ptr_coord->x_);
             error->detail += ",";
-            error->detail += to_string(ptr_coord->lat_);
+            error->detail += to_string(ptr_coord->y_);
             error->detail += ",";
             error->detail += to_string(ptr_coord->z_);
             error->detail += ",与拟合曲线属性点距离:";

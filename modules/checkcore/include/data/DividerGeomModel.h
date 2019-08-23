@@ -108,22 +108,22 @@ namespace kd {
          */
         class DCCoord {
         public:
-            double lng_;
-            double lat_;
+            double x_;
+            double y_;
             double z_;
 
             bool operator==(const DCCoord b) const{
-                return (lng_==b.lng_ && lat_==b.lat_ && z_==b.z_);
+                return (x_==b.x_ && y_==b.y_ && z_==b.z_);
             }
 
             bool operator<(const DCCoord b) const{
-                if (lng_ < b.lng_)
+                if (x_ < b.x_)
                     return true;
-                else if (lng_ > b.lng_)
+                else if (x_ > b.x_)
                     return false;
-                else if (lat_ < b.lat_)
+                else if (y_ < b.y_)
                     return true;
-                else if (lat_ > b.lat_)
+                else if (y_ > b.y_)
                     return false;
                 else if (z_ < b.z_)
                     return true;
@@ -161,7 +161,7 @@ namespace kd {
 
             //虚线起终点类型: "0：实线, 1：虚线起点, 2：虚线终点, 3：虚线中间点"
             long dashType_;
-
+            long is_split_;
         };
 
         /**

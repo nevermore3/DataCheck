@@ -54,7 +54,8 @@
       "valueLimit" : "1,2,3,4"
     }
   ],
-  
+  "members" : [
+  ],
    "relation" : [
     {
       "member" : "HD_DIVIDER",

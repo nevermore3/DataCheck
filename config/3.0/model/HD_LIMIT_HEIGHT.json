@@ -45,7 +45,8 @@
       "valueLimit" : ""
     }
   ],
- 
+  "members" : [
+  ],
   "relation" : [
     {
       "member" : "HD_BRIDGE",

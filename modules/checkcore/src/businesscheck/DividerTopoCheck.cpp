@@ -299,13 +299,13 @@ namespace kd {
                         shared_ptr<DCDividerTopoNode> topoNode = make_shared<DCDividerTopoNode>();
                         topoNode->nodeId_ = fromNodeId;
                         if(fromNodeId == div->nodes_[0]->id_){
-                            topoNode->lng_ = div->nodes_[0]->coord_->lng_;
-                            topoNode->lat_ = div->nodes_[0]->coord_->lat_;
+                            topoNode->lng_ = div->nodes_[0]->coord_->x_;
+                            topoNode->lat_ = div->nodes_[0]->coord_->y_;
                             topoNode->z_ = div->nodes_[0]->coord_->z_;
 
                         }else{
-                            topoNode->lng_ = div->nodes_[div->nodes_.size()-1]->coord_->lng_;
-                            topoNode->lat_ = div->nodes_[div->nodes_.size()-1]->coord_->lat_;
+                            topoNode->lng_ = div->nodes_[div->nodes_.size()-1]->coord_->x_;
+                            topoNode->lat_ = div->nodes_[div->nodes_.size()-1]->coord_->y_;
                             topoNode->z_ = div->nodes_[div->nodes_.size()-1]->coord_->z_;
                         }
                         topoNode->startRels_.insert(pair<string,string>(div->id_, div->id_));
@@ -325,13 +325,13 @@ namespace kd {
                         topoNode->nodeId_ = toNodeId;
 
                         if(toNodeId == div->nodes_[0]->id_){
-                            topoNode->lng_ = div->nodes_[0]->coord_->lng_;
-                            topoNode->lat_ = div->nodes_[0]->coord_->lat_;
+                            topoNode->lng_ = div->nodes_[0]->coord_->x_;
+                            topoNode->lat_ = div->nodes_[0]->coord_->y_;
                             topoNode->z_ = div->nodes_[0]->coord_->z_;
 
                         }else{
-                            topoNode->lng_ = div->nodes_[div->nodes_.size()-1]->coord_->lng_;
-                            topoNode->lat_ = div->nodes_[div->nodes_.size()-1]->coord_->lat_;
+                            topoNode->lng_ = div->nodes_[div->nodes_.size()-1]->coord_->x_;
+                            topoNode->lat_ = div->nodes_[div->nodes_.size()-1]->coord_->y_;
                             topoNode->z_ = div->nodes_[div->nodes_.size()-1]->coord_->z_;
                         }
 

@@ -430,16 +430,16 @@ double DividerAttribCheck::calLength(shared_ptr<DCDivider> div, int begin, int e
         for( int i = begin ; i < end ; i ++ ){
             auto node1 = div->nodes_[i];
             auto node2 = div->nodes_[i+1];
-            double distTemp = KDGeoUtil::distanceLL(node1->coord_->lng_, node1->coord_->lat_,
-                                                    node2->coord_->lng_, node2->coord_->lat_);
+            double distTemp = KDGeoUtil::distanceLL(node1->coord_->x_, node1->coord_->y_,
+                                                    node2->coord_->x_, node2->coord_->y_);
             distTotal += distTemp;
         }
     }else{
         for( int i = begin ; i > end ; i -- ){
             auto node1 = div->nodes_[i];
             auto node2 = div->nodes_[i-1];
-            double distTemp = KDGeoUtil::distanceLL(node1->coord_->lng_, node1->coord_->lat_,
-                                                    node2->coord_->lng_, node2->coord_->lat_);
+            double distTemp = KDGeoUtil::distanceLL(node1->coord_->x_, node1->coord_->y_,
+                                                    node2->coord_->x_, node2->coord_->y_);
             distTotal += distTemp;
         }
     }

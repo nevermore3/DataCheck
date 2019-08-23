@@ -53,6 +53,11 @@ namespace kd {
         const string DataCheckConfig::OUTPUT_PATH = "output_path";
         const string DataCheckConfig::CHECK_FILE_PATH ="check_file_path";
 
+        const string DataCheckConfig::SHP_FILE_PATH ="shp_data_input";
+        const string DataCheckConfig::DB_INPUT_FILE ="db_input_file";
+
+        const string DataCheckConfig::CHECK_STATE ="check_state";
+
         int DataCheckConfig::load(string fileName) {
             int ret = 0;
             try {
@@ -125,6 +130,14 @@ namespace kd {
         void DataCheckConfig::addProperty(string key, string value) {
             m_properties.insert(make_pair(key, value));
         }
+
+        void DataCheckConfig::setProperty(string key, string value) {
+            auto iter = m_properties.find(key);
+            if (iter != m_properties.end()) {
+                iter->second = value;
+            }
+        }
+
 
         string DataCheckConfig::getTaskId() {
             return task_id;

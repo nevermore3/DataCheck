@@ -50,8 +50,6 @@ namespace kd {
             bool CheckItemValid(const std::string& check_item) {
                 return CheckListConfig::getInstance().IsNeedCheck(check_item);
             }
-        public:
-            static shared_ptr<ResourceManager> resource_manager_;
         private:
             shared_ptr<MapDataManager> data_manager_;
             shared_ptr<CheckErrorOutput> error_output_;

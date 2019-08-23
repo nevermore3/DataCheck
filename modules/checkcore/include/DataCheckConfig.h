@@ -52,6 +52,7 @@ namespace kd {
 
             //数据一致性检查
             const static string LENGTH_CHECK_FILE;
+            const static string COUNT_CHECK_FILE;
 
             const static string LENGTH_PRECISE;
 

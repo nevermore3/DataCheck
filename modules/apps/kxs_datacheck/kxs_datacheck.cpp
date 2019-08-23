@@ -29,15 +29,15 @@
 #include "businesscheck/AdasCheck.h"
 #include "businesscheck/JsonDataLoader.h"
 #include "datacheck/LengthCheck.h"
+#include "datacheck/CountCheck.h"
 #include "util/TimerUtil.h"
 #include "util/check_list_config.h"
-
+#include "data/ResourceDataManager.h"
 using namespace kd::dc;
 
 const char kCheckListFile[] = "check_list.json";
 const char checkresult[] = "checkresult.json";
-
-shared_ptr<ResourceManager> IMapProcessor::resource_manager_;
+shared_ptr<ResourceDataManager> ResourceDataManager::instance_ = nullptr;
 int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) {
     int ret = 0;
     //交换格式基本属性检查
@@ -67,16 +67,32 @@ int dataCheck(string basePath, const shared_ptr<CheckErrorOutput> &errorOutput) 
 //            ret = 1;
 //        }
     }
+    //数据一致性检查
+    {
+        shared_ptr<MapProcessManager> dataCheckManager = make_shared<MapProcessManager>("dataCheck");
 
+        shared_ptr<ResourceDataManager> resourceDataManager = ResourceDataManager::GetInstance();
+        dataCheckManager->registerProcessor(resourceDataManager);
+
+        shared_ptr<LengthCheck> lengthCheck = make_shared<LengthCheck>();
+        dataCheckManager->registerProcessor(lengthCheck);
+
+        shared_ptr<CountCheck> countCheck = make_shared<CountCheck>();
+        dataCheckManager->registerProcessor(countCheck);
+
+        shared_ptr<MapDataManager> mapDataManager = make_shared<MapDataManager>();
+        if (!dataCheckManager->execute(mapDataManager, errorOutput)){
+            LOG(ERROR) << "dataCheckManager execute error!";
+            ret = 1;
+        }
+
+    }
     //交换格式逻辑检查
     {
         shared_ptr<MapProcessManager> mapProcessManager = make_shared<MapProcessManager>("mapCheck");
 
         shared_ptr<JsonDataLoader> json_data_loader = make_shared<JsonDataLoader>();
         mapProcessManager->registerProcessor(json_data_loader);
-
-        shared_ptr<LengthCheck> lengthCheck = make_shared<LengthCheck>();
-        mapProcessManager->registerProcessor(lengthCheck);
 
         //加载数据
 //        shared_ptr<MapDataLoader> loader = make_shared<MapDataLoader>(basePath);

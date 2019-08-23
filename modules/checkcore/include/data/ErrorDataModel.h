@@ -474,7 +474,15 @@ namespace kd {
             static shared_ptr<DCLengthCheckError> createByLength(const double osmLength, const double kxfLength,
                                                                  const string &name);
 
-            static shared_ptr<DCLengthCheckError> createByNullFile(const string &file);
+        };
+
+        //数目总和检查
+        class DCCountCheckError : public DCError {
+        public:
+            explicit DCCountCheckError(const string &checkModel) : DCError(checkModel) {}
+            string toString() override ;
+
+            static shared_ptr<DCCountCheckError> createByKXS_09_001(size_t osmCount, size_t kxfCount, const string &name);
         };
     }
 }

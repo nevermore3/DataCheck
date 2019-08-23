@@ -174,6 +174,7 @@ namespace kd {
                 LOG(ERROR) << "saveError error is null!";
             }
         }
+
         void CheckErrorOutput::addCheckItemInfo(shared_ptr<CheckItemInfo> &checkItemInfo){
             if(checkItemInfo){
                 auto check_id_iter = check_total.find(checkItemInfo->checkId);

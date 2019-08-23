@@ -5,17 +5,30 @@
     {
       "fileName": "ROAD",
       "fileType": "arc",
-      "modelName": "ROAD"
+      "shpLength": "LENGTH",
+      "modelName": "ROAD",
+      "modelLength": "LENGTH"
     },
     {
       "fileName": "HD_DIVIDER",
       "fileType": "arc",
-      "modelName": "DIVIDER"
+      "shpLength": "",
+      "modelName": "DIVIDER",
+      "modelLength": ""
     },
     {
       "fileName": "HD_BRIDGE",
       "fileType": "arc",
-      "modelName": "BRIDGE"
+      "shpLength": "",
+      "modelName": "BRIDGE",
+      "modelLength": ""
+    },
+    {
+      "fileName": "HD_OBJECT_PL",
+      "fileType": "arc",
+      "shpLength": "",
+      "modelName": "OBJECT_PL",
+      "modelLength": ""
     }
   ]
 }

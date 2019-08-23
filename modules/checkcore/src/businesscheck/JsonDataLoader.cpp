@@ -43,7 +43,6 @@ namespace kd {
                 json_data_input->LoadData();
                 json_data_input->CheckModelField(error_output_);
                 json_data_input->CheckModelRelation();
-                resource_manager_ = resource_manager;
             }
             return ret;
         }

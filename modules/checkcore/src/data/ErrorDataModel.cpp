@@ -984,6 +984,36 @@ namespace kd {
             return error;
         }
 
+        string DCLengthCheckError::toString() {
+            return detail_;
+        }
+
+        shared_ptr<DCLengthCheckError> DCLengthCheckError::createByLength(const double osmLength,
+                                                                          const double kxfLength,
+                                                                          const string &name) {
+            shared_ptr<DCLengthCheckError>error = make_shared<DCLengthCheckError>(CHECK_ITEM_KXS_LENGTH_001);
+            string head = "母库中的" + name + "和kxf中的" + name + "长度总和一致性检查";
+            error->checkName = head;
+            string content = "OSM格式中" + name + "长度为 : " + to_string(osmLength) + "\t";
+            content += "KXF格式中"+ name + "长度为 : " + to_string(kxfLength);
+            error->detail_ = content;
+            return error;
+        }
+
+        string DCCountCheckError::toString() {
+            return detail_;
+        }
+
+        shared_ptr<DCCountCheckError> DCCountCheckError::createByKXS_09_001(size_t osmCount, size_t kxfCount,
+                                                                            const string &name) {
+            shared_ptr<DCCountCheckError>error = make_shared<DCCountCheckError>(CHECK_ITEM_KXS_COUNT_001);
+            string head = "母库中的" + name + "和kxf中的" + name + "数量一致性检查";
+            error->checkName = head;
+            string content = "OSM格式中" + name + "数量为 : " + to_string(osmCount) + "\t";
+            content += "KXF格式中"+ name + "数量为 : " + to_string(kxfCount);
+            error->detail_ = content;
+            return error;
+        }
 
     }
 }

@@ -1,0 +1,34 @@
+{
+  "taskName": "length_check",
+  "dataPath": "../input/shp/",
+  "tasks": [
+    {
+      "fileName": "ROAD",
+      "fileType": "arc",
+      "shpLength": "LENGTH",
+      "modelName": "ROAD",
+      "modelLength": "LENGTH"
+    },
+    {
+      "fileName": "HD_DIVIDER",
+      "fileType": "arc",
+      "shpLength": "",
+      "modelName": "DIVIDER",
+      "modelLength": ""
+    },
+    {
+      "fileName": "HD_BRIDGE",
+      "fileType": "arc",
+      "shpLength": "",
+      "modelName": "BRIDGE",
+      "modelLength": ""
+    },
+    {
+      "fileName": "HD_OBJECT_PL",
+      "fileType": "arc",
+      "shpLength": "",
+      "modelName": "OBJECT_PL",
+      "modelLength": ""
+    }
+  ]
+}

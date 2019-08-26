@@ -29,15 +29,16 @@
 #include "businesscheck/LaneCheck.h"
 #include "businesscheck/AdasCheck.h"
 #include "businesscheck/JsonDataLoader.h"
-
+#include "datacheck/LengthCheck.h"
+#include "datacheck/CountCheck.h"
 #include "util/TimerUtil.h"
 #include "util/check_list_config.h"
-
+#include "data/ResourceDataManager.h"
 using namespace kd::dc;
 
 const char kCheckListFile[] = "check_list.json";
 const char checkresult[] = "checkresult.json";
-
+shared_ptr<ResourceDataManager> ResourceDataManager::instance_ = nullptr;
 
 int TopoAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, int check_state) {
     int ret = 0;
@@ -89,14 +90,38 @@ int TopoAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, int check_sta
     return ret;
 }
 
+int ConsistencyCheck(const shared_ptr<CheckErrorOutput> &errorOutput)
+{
+    int ret = 0;
+    shared_ptr<MapProcessManager> dataCheckManager = make_shared<MapProcessManager>("dataCheck");
+
+    shared_ptr<ResourceDataManager> resourceDataManager = ResourceDataManager::GetInstance();
+    dataCheckManager->registerProcessor(resourceDataManager);
+
+    shared_ptr<LengthCheck> lengthCheck = make_shared<LengthCheck>();
+    dataCheckManager->registerProcessor(lengthCheck);
+
+    shared_ptr<CountCheck> countCheck = make_shared<CountCheck>();
+    dataCheckManager->registerProcessor(countCheck);
+
+    shared_ptr<MapDataManager> mapDataManager = make_shared<MapDataManager>();
+    if (!dataCheckManager->execute(mapDataManager, errorOutput)){
+        LOG(ERROR) << "dataCheckManager execute error!";
+        ret = 1;
+    }
+    return ret;
+}
+
 int AllAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, const string& base_path) {
     int ret = 0;
     // KXF全要素检查
     shared_ptr<ModelProcessManager> model_process_manager = make_shared<ModelProcessManager>("all_auto_field_check");
 
+
     //加载数据
     shared_ptr<ModelDataLoader> modelLoader = make_shared<ModelDataLoader>(base_path);
     model_process_manager->registerProcessor(modelLoader);
+
 
     //属性字段检查
     shared_ptr<ModelFieldCheck> modelFiledCheck = make_shared<ModelFieldCheck>();
@@ -110,6 +135,7 @@ int AllAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, const string& 
     }
 
     shared_ptr<MapProcessManager> map_process_manager = make_shared<MapProcessManager>("all_auto_check");
+
 
     //加载数据
     shared_ptr<MapDataLoader> loader = make_shared<MapDataLoader>(base_path);
@@ -227,7 +253,7 @@ int main(int argc, const char *argv[]) {
     try {
         exe_path = argv[0];
 
-        InitGlog(exe_path, "./");
+        InitGlog(exe_path, "../output");
 
         // 加载配置
         ret = DataCheckConfig::getInstance().load("config.properties");
@@ -305,6 +331,7 @@ int main(int argc, const char *argv[]) {
             // KXF全要素检查
             ret |= SqlAutoCheck(error_output);
             ret |= AllAutoCheck(error_output, base_path);
+            ret |= ConsistencyCheck(error_output);
             ret |= error_output->saveErrorToDb(output_file);
         }
 

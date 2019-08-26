@@ -1,0 +1,36 @@
+{
+  "taskName": "length_check",
+  "dataPath": "../input/shp/",
+  "tasks": [
+    {
+      "fileName": "HD_TRAFFICSIGN",
+      "fileType": "arc",
+      "modelName": "TRAFFICSIGN"
+    },
+    {
+      "fileName": "HD_LAMPPOST",
+      "fileType": "arc",
+      "modelName": "LAMPPOST"
+    },
+    {
+      "fileName": "HD_TRAFFIC_LIGHT",
+      "fileType": "arc",
+      "modelName": "TRAFFICLIGHT"
+    },
+    {
+      "fileName": "HD_OBJECT_PG",
+      "fileType": "arc",
+      "modelName": "OBJECT_PG"
+    },
+    {
+      "fileName": "C_NODE",
+      "fileType": "arc",
+      "modelName": "C_NODE"
+    },
+    {
+      "fileName": "HD_JUNCTION",
+      "fileType": "arc",
+      "modelName": "JUNCTION"
+    }
+  ]
+}

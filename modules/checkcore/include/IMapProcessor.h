@@ -9,6 +9,7 @@
 #include "data/DataManager.h"
 #include "storage/CheckErrorOutput.h"
 #include "util/check_list_config.h"
+#include <ResourceManager.h>
 
 namespace kd {
     namespace dc {
@@ -49,7 +50,6 @@ namespace kd {
             bool CheckItemValid(const std::string& check_item) {
                 return CheckListConfig::getInstance().IsNeedCheck(check_item);
             }
-
         private:
             shared_ptr<MapDataManager> data_manager_;
             shared_ptr<CheckErrorOutput> error_output_;

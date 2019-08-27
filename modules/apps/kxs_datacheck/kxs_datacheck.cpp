@@ -255,7 +255,7 @@ int main(int argc, const char *argv[]) {
     string errJsonPath = "";
     try {
         exe_path = argv[0];
-        cout<<exe_path<<endl;
+
         InitGlog(exe_path, "../output");
 
         // 加载配置

@@ -1,10 +1,10 @@
 {
-"model" : "HD_POINT",
+  "model" : "ROAD_FACILITIES",
   "checks" : [
     {
-       "name":"ID",
-       "func":"ID",
-       "refValue":""
+      "name":"ID",
+      "func":"ID",
+      "refValue":""
     }
   ],
   "fields" : [
@@ -19,28 +19,28 @@
     },
     {
       "defaultValue" : "",
-      "inputLimit" : "1",
+      "inputLimit" : "0",
       "inputType" : "",
-      "lenLimit" : "0",
-      "name" : "NAME",
-      "type" : "0",
+      "lenLimit" : "",
+      "name" : "TYPE",
+      "type" : "1",
+      "valueLimit" : "0,1,2,3"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "",
+      "name" : "ROAD_ID",
+      "type" : "1",
       "valueLimit" : ""
     },
     {
       "defaultValue" : "",
-      "inputLimit" : "1",
+      "inputLimit" : "0",
       "inputType" : "",
-      "lenLimit" : "0",
-      "name" : "TYPE",
-      "type" : "1",
-      "valueLimit" : "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,99"
-    },
-    {
-      "defaultValue" : "",
-      "inputLimit" : "1",
-      "inputType" : "",
-      "lenLimit" : "0",
-      "name" : "HEIGHT",
+      "lenLimit" : "",
+      "name" : "DIVIDER_ID",
       "type" : "1",
       "valueLimit" : ""
     }
@@ -49,6 +49,6 @@
   ],
   "relation" : [
   ],
-   "relationcheck" : [
+  "relationcheck" : [
   ]
 }

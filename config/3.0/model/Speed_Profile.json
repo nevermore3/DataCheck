@@ -1,10 +1,10 @@
 {
-"model" : "HD_POINT",
+  "model" : "Speed_Profile",
   "checks" : [
     {
-       "name":"ID",
-       "func":"ID",
-       "refValue":""
+      "name":"ID",
+      "func":"ID",
+      "refValue":""
     }
   ],
   "fields" : [
@@ -22,8 +22,8 @@
       "inputLimit" : "1",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "NAME",
-      "type" : "0",
+      "name" : "R_ID",
+      "type" : "1",
       "valueLimit" : ""
     },
     {
@@ -31,17 +31,35 @@
       "inputLimit" : "1",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "TYPE",
+      "name" : "DAYOFWEEK",
       "type" : "1",
-      "valueLimit" : "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,99"
+      "valueLimit" : "0,1,2,3,4,5,6"
     },
     {
       "defaultValue" : "",
-      "inputLimit" : "1",
+      "inputLimit" : "0",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "HEIGHT",
+      "name" : "SPEED",
       "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "NUM",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "AVG_SPEED",
+      "type" : "0",
       "valueLimit" : ""
     }
   ],
@@ -49,6 +67,6 @@
   ],
   "relation" : [
   ],
-   "relationcheck" : [
+  "relationcheck" : [
   ]
 }

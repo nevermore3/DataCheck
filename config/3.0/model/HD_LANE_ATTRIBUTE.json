@@ -51,7 +51,7 @@
       "lenLimit" : "0",
       "name" : "SUBTYPE",
       "type" : "1",
-      "valueLimit" : ""
+      "valueLimit" : "0,1"
     },
     {
       "defaultValue" : "",

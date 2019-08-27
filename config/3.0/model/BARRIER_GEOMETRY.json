@@ -1,10 +1,10 @@
 {
-"model" : "HD_POINT",
+  "model" : "BARRIER_GEOMETRY",
   "checks" : [
     {
-       "name":"ID",
-       "func":"ID",
-       "refValue":""
+      "name":"ID",
+      "func":"ID",
+      "refValue":""
     }
   ],
   "fields" : [
@@ -21,26 +21,17 @@
       "defaultValue" : "",
       "inputLimit" : "1",
       "inputType" : "",
-      "lenLimit" : "0",
-      "name" : "NAME",
-      "type" : "0",
-      "valueLimit" : ""
-    },
-    {
-      "defaultValue" : "",
-      "inputLimit" : "1",
-      "inputType" : "",
-      "lenLimit" : "0",
-      "name" : "TYPE",
+      "lenLimit" : "",
+      "name" : "Edge",
       "type" : "1",
-      "valueLimit" : "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,99"
+      "valueLimit" : "0,1,2,3"
     },
     {
       "defaultValue" : "",
-      "inputLimit" : "1",
+      "inputLimit" : "0",
       "inputType" : "",
-      "lenLimit" : "0",
-      "name" : "HEIGHT",
+      "lenLimit" : "",
+      "name" : "Barrier_ID",
       "type" : "1",
       "valueLimit" : ""
     }
@@ -49,6 +40,6 @@
   ],
   "relation" : [
   ],
-   "relationcheck" : [
+  "relationcheck" : [
   ]
 }

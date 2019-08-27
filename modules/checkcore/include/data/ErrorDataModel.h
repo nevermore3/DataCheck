@@ -438,6 +438,23 @@ namespace kd {
         };
 
         /**
+        * 表描述检查
+        */
+        class DCTableDescError : public DCError {
+        public:
+            explicit DCTableDescError(const string &checkModel) : DCError(checkModel) {}
+
+            string toString() override;
+        public:
+            static shared_ptr<DCTableDescError> createByKXS_10_001(const string &detail);
+
+        public:
+            //错误信息描述
+            string detail;
+        };
+
+
+        /**
         * 字段检查错误
         */
         class DCFieldError : public DCError {
@@ -463,6 +480,8 @@ namespace kd {
             //错误详细信息描述
             string detail;
         };
+
+
 
         //长度总和检查
         class DCLengthCheckError : public DCError {

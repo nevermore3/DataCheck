@@ -1015,6 +1015,18 @@ namespace kd {
             return error;
         }
 
+
+        string DCTableDescError::toString() {
+            return detail;
+        }
+
+        shared_ptr<DCTableDescError> DCTableDescError::createByKXS_10_001(const string &detail) {
+            shared_ptr<DCTableDescError> error = make_shared<DCTableDescError>(CHECK_ITEM_KXS_NORM_001);
+            error->checkName = "KXF表描述检查";
+            error->detail = detail;
+            return error;
+        }
+
     }
 }
 

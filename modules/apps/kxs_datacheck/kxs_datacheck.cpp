@@ -34,6 +34,7 @@
 #include "util/TimerUtil.h"
 #include "util/check_list_config.h"
 #include "data/ResourceDataManager.h"
+#include "datacheck/TableDescCheck.h"
 using namespace kd::dc;
 
 const char kCheckListFile[] = "check_list.json";
@@ -117,15 +118,17 @@ int AllAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, const string& 
     // KXF全要素检查
     shared_ptr<ModelProcessManager> model_process_manager = make_shared<ModelProcessManager>("all_auto_field_check");
 
-
     //加载数据
     shared_ptr<ModelDataLoader> modelLoader = make_shared<ModelDataLoader>(base_path);
     model_process_manager->registerProcessor(modelLoader);
 
-
     //属性字段检查
     shared_ptr<ModelFieldCheck> modelFiledCheck = make_shared<ModelFieldCheck>();
     model_process_manager->registerProcessor(modelFiledCheck);
+
+    //kxf規格检查-表描述检查
+    shared_ptr<TableDescCheck> tableDescCheck = make_shared<TableDescCheck>();
+    model_process_manager->registerProcessor(tableDescCheck);
 
     //执行已注册检查项
     shared_ptr<ModelDataManager> modelDataManager = make_shared<ModelDataManager>();
@@ -252,7 +255,7 @@ int main(int argc, const char *argv[]) {
     string errJsonPath = "";
     try {
         exe_path = argv[0];
-
+        cout<<exe_path<<endl;
         InitGlog(exe_path, "../output");
 
         // 加载配置

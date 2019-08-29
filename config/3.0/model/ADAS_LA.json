@@ -1,0 +1,117 @@
+{
+  "model" : "ADAS_LA",
+  "checks" : [
+    {
+      "name":"ID",
+      "func":"ID",
+      "refValue":""
+    }
+  ],
+  "fields" : [
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "R_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "S_RNodeIdx",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "E_RNodeIdx",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "NUM_LANE",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "WIDTH",
+      "type" : "3",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "HEIGHT",
+      "type" : "3",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "SPEED",
+      "type" : "3",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "TIME",
+      "type" : "3",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "VEHICLE",
+      "type" : "3",
+      "valueLimit" : "0,1,2,3,4,5,6"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "DIRECTION",
+      "type" : "1",
+      "valueLimit" : "0,1,2,3,4,5,6,7,8,9"
+    }
+  ],
+  "members" : [
+  ],
+  "relation" : [
+  ],
+  "relationcheck" : [
+  ]
+}

@@ -93,8 +93,11 @@ namespace kd {
                 errorOutput->writeInfo("[Error] model config file load fail. " + modelPath);
                 return false;
             }
-
-            dataManager->modelDatas_.insert(pair<string, shared_ptr<DCModalData>>(task->name, modelData));
+            string shpFile = dataPath + ".shp";
+            string dbfFile = dataPath + ".dbf";
+            if (access(shpFile.c_str(), F_OK) == 0 || access(dbfFile.c_str(), F_OK) == 0) {
+                dataManager->modelDatas_.insert(pair<string, shared_ptr<DCModalData>>(task->name, modelData));
+            }
             dataManager->modelDefines_.insert(pair<string, shared_ptr<DCModelDefine>>(task->name, modelDefine));
 
             for (const auto &rl : modelDefine->vecRelation){

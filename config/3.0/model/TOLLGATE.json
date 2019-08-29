@@ -1,10 +1,10 @@
 {
-"model" : "HD_POINT",
+  "model" : "TOLLGATE",
   "checks" : [
     {
-       "name":"ID",
-       "func":"ID",
-       "refValue":""
+      "name":"ID",
+      "func":"ID",
+      "refValue":""
     }
   ],
   "fields" : [
@@ -21,27 +21,36 @@
       "defaultValue" : "",
       "inputLimit" : "1",
       "inputType" : "",
-      "lenLimit" : "0",
-      "name" : "NAME",
-      "type" : "0",
+      "lenLimit" : "",
+      "name" : "NUM",
+      "type" : "1",
       "valueLimit" : ""
     },
     {
       "defaultValue" : "",
       "inputLimit" : "1",
       "inputType" : "",
-      "lenLimit" : "0",
+      "lenLimit" : "",
       "name" : "TYPE",
-      "type" : "1",
-      "valueLimit" : "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,99"
+      "type" : "3",
+      "valueLimit" : "0,1,2,3,4,5"
     },
     {
       "defaultValue" : "",
-      "inputLimit" : "1",
+      "inputLimit" : "0",
       "inputType" : "",
-      "lenLimit" : "0",
-      "name" : "HEIGHT",
+      "lenLimit" : "",
+      "name" : "RN_ID",
       "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "",
+      "name" : "DIVIDER_ID",
+      "type" : "3",
       "valueLimit" : ""
     }
   ],
@@ -49,6 +58,6 @@
   ],
   "relation" : [
   ],
-   "relationcheck" : [
+  "relationcheck" : [
   ]
 }

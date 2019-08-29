@@ -629,13 +629,12 @@ namespace kd {
 
         bool MapDataInput::LoadData() {
             if (loadRoad()) {
-                // 暂时不使用
-//                for (auto road : mapDataManager->roads_) {
-//                    if (!road.second->valid_) {
-//                        continue;
-//                    }
-//                    road.second->buildGeometryInfo();
-//                }
+                for (auto road : map_data_manager_->roads_) {
+                    if (!road.second->valid_) {
+                        continue;
+                    }
+                    road.second->buildGeometryInfo();
+                }
 
             }
 

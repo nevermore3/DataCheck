@@ -41,6 +41,8 @@ namespace kd {
         const string DataCheckConfig::ADAS_NODE_DISTANCE = "adas_node_distance";
         const string DataCheckConfig::ADAS_NODE_DISTANCE_ACCURACY = "adas_node_distance_accuracy";
         const string DataCheckConfig::ADAS_NODE_CURVATURE_DISTANCE = "adas_node_curvature_distance";
+        const string DataCheckConfig::ADAS_NODE_MAX_CURVATURE = "adas_node_max_curvature";
+        const string DataCheckConfig::ADAS_NODE_MAX_SLOPE = "adas_node_max_slope";
         const string DataCheckConfig::ROAD_NODE_ANGLE = "road_node_angle";
         const string DataCheckConfig::ROAD_NODE_DISTANCE = "road_node_distance";
 

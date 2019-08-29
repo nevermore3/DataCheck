@@ -28,6 +28,11 @@ namespace kd {
             static shared_ptr<DCCoord> get_coord(const shared_ptr<geos::geom::Coordinate> &ptr_coord,
                                                                  char *zone0, bool is_z = false);
 
+            static shared_ptr<geos::geom::Point> CreatePoint(const shared_ptr<DCCoord> &node);
+
+            static shared_ptr<geos::geom::Point> CreatePointUTM(double utmX, double utmY, double z);
+
+
             /**
              * 获取点集合长度
              * @param ptr_coords
@@ -82,6 +87,9 @@ namespace kd {
 
             //确定点集合的参考方向
             static double GetAngle(vector<shared_ptr<DCCoord>> &lane_nodes, bool start, double ref_dist, char *zone);
+
+            static double GetVerticleDistance(shared_ptr<geos::geom::LineString> line,
+                                              shared_ptr<geos::geom::Point> point);
 
         private:
             static bool CheckFirstSegInvalid(vector<shared_ptr<DCCoord>> &lane_nodes, bool start, double angle_limit,

@@ -98,6 +98,11 @@ const static std::string CHECK_ITEM_KXS_LM_002 = "KXS-06-002";
 // ADAS
 const static std::string CHECK_ITEM_KXS_ADAS_001 = "KXS-07-001";
 const static std::string CHECK_ITEM_KXS_ADAS_002 = "KXS-07-002";
+const static std::string CHECK_ITEM_KXS_ADAS_003 = "KXS-07-003";
+const static std::string CHECK_ITEM_KXS_ADAS_005 = "KXS-07-005";
+const static std::string CHECK_ITEM_KXS_ADAS_007 = "KXS-07-007";
+const static std::string CHECK_ITEM_KXS_ADAS_008 = "KXS-07-008";
+
 
 const static std::string ID = "ID";
 const static std::string DIVIDER_ID = "DIVIDER_ID";

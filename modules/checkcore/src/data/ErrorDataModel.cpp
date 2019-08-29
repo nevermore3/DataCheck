@@ -933,6 +933,72 @@ namespace kd {
             return error;
         }
 
+        shared_ptr<DCAdasError> DCAdasError::createByKXS_07_003(long road_id, long index,
+                                                                const shared_ptr<DCCoord> &ptr_coord, int level) {
+            shared_ptr<DCAdasError> error = make_shared<DCAdasError>(CHECK_ITEM_KXS_ADAS_003);
+            error->checkName = "ADAS_NODE点完备性检查。";
+            error->detail += "road_id:";
+            error->detail += std::to_string(road_id);
+            error->detail += ",属性点索引:";
+            error->detail += to_string(index);
+            if (level == 1) {
+                error->detail += ",道路节点周围1米内找不到ADAS_NODE";
+            } else if (level == 2) {
+                error->detail += ",道路起点和终点之处缺失ADAS_NODE";
+            } else if (level == 3) {
+                error->detail += ",DAS_NODE点离ROAD的垂直距离超过10cm";
+            }
+            error->coord = ptr_coord;
+
+            return error;
+        }
+
+        shared_ptr<DCAdasError> DCAdasError::createByKXS_07_005(long adas_node_id, shared_ptr<DCCoord> ptr_coord) {
+            double adas_max_curvature = DataCheckConfig::getInstance().getPropertyD(
+                    DataCheckConfig::ADAS_NODE_MAX_CURVATURE);
+
+            shared_ptr<DCAdasError> error = make_shared<DCAdasError>(CHECK_ITEM_KXS_ADAS_005);
+            error->checkName = "ADAS_NODE曲率值域检查。";
+            error->detail += "adas_node_id:";
+            error->detail += std::to_string(adas_node_id);
+            error->detail += ",曲率的绝对值不能大于";
+            error->detail += to_string(adas_max_curvature);
+
+            error->coord = ptr_coord;
+
+            return error;
+        }
+
+        shared_ptr<DCAdasError> DCAdasError::createByKXS_07_007(long adas_node_id, shared_ptr<DCCoord> ptr_coord) {
+            double adas_max_slope = DataCheckConfig::getInstance().getPropertyD(
+                    DataCheckConfig::ADAS_NODE_MAX_SLOPE);
+
+            shared_ptr<DCAdasError> error = make_shared<DCAdasError>(CHECK_ITEM_KXS_ADAS_007);
+            error->checkName = "ADAS_NODE坡度值域检查。";
+            error->detail += "adas_node_id:";
+            error->detail += std::to_string(adas_node_id);
+            error->detail += ",ADAS_NODE的坡度的绝对值不能超过";
+            error->detail += to_string(adas_max_slope);
+
+            error->coord = ptr_coord;
+
+            return error;
+        }
+
+        shared_ptr<DCAdasError> DCAdasError::createByKXS_07_008(long adas_node_id, shared_ptr<DCCoord> ptr_coord) {
+            shared_ptr<DCAdasError> error = make_shared<DCAdasError>(CHECK_ITEM_KXS_ADAS_008);
+            error->checkName = "ADAS_NODE与关联ROAD距离检查。";
+            error->detail += "adas_node_id:";
+            error->detail += std::to_string(adas_node_id);
+            error->detail += ",ADAS_NODE点离ROAD的垂直距离超过10cm";
+
+            error->coord = ptr_coord;
+
+            return error;
+        }
+
+
+
         string DCAdasError::toString() {
             return detail;
         }

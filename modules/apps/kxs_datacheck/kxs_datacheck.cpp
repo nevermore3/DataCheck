@@ -155,8 +155,8 @@ int AllAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, const string& 
     shared_ptr<LaneGroupTopoCheck> lanegroup_topo_check = make_shared<LaneGroupTopoCheck>();
     map_process_manager->registerProcessor(lanegroup_topo_check);
 
-//        shared_ptr<AdasCheck> adas_check = make_shared<AdasCheck>(base_path);
-//        map_process_manager->registerProcessor(adas_check);
+    shared_ptr<AdasCheck> adas_check = make_shared<AdasCheck>(base_path);
+    map_process_manager->registerProcessor(adas_check);
 
     //执行已注册检查项
     shared_ptr<MapDataManager> mapDataManager = make_shared<MapDataManager>();

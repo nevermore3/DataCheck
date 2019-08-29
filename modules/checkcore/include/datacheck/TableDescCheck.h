@@ -40,6 +40,8 @@ namespace kd {
             void CheckRelationType(const shared_ptr<ModelDataManager> &modelDataManager,
                                    shared_ptr<CheckErrorOutput> errorOutput);
 
+            vector<string >RemoveFileNamePrefix(vector<string> &allFiles);
+
             const string id_ = "table_desc_check";
 
             string base_path_;

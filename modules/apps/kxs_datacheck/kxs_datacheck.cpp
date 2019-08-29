@@ -204,6 +204,8 @@ int SqlAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput) {
     shared_ptr<ModelSqlCheck> model_sql_check = make_shared<ModelSqlCheck>();
     process_manager->registerProcessor(model_sql_check);
 
+
+
     if (!process_manager->execute(errorOutput)){
         LOG(ERROR) << "ProcessManager execute error!";
         ret = 1;

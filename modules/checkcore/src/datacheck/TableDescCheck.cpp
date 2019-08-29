@@ -6,7 +6,9 @@
 #include <storage/CheckTaskInput.h>
 #include <util/StringUtil.h>
 #include "parsers/OSMDataParser.hpp"
-#include "IMapProcessor.h"
+#include <dirent.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include "util/GeosObjUtil.h"
 #include "data/ErrorDataModel.h"
 #include <shp/shapefil.h>
@@ -22,21 +24,47 @@ namespace kd {
             return id_;
         }
 
+
+        vector<string> TableDescCheck::RemoveFileNamePrefix(vector<string> &allFiles) {
+            vector<string> result;
+            for (const auto &file : allFiles) {
+                std::size_t start = file.find_last_of('/');
+                start = (start == std::string::npos) ? 0 : start + 1;
+                std::size_t end = file.find_last_of('.');
+                end = (end == std::string::npos || isdigit(file[end + 1])) ? file.size() : end;
+                string fileName = file.substr(start, end - start);
+                if (find(result.begin(), result.end(), fileName) == result.end()) {
+                    result.push_back(fileName);
+                }
+            }
+            return result;
+        }
+
         void TableDescCheck::CheckModelName(const shared_ptr<ModelDataManager> &modelDataManager,
                                             shared_ptr<CheckErrorOutput> errorOutput) {
             map<string, shared_ptr<DCTask>> tasks = modelDataManager->tasks_;
-            for (const auto &model : modelDataManager->modelDatas_) {
-                if (tasks.find(model.first) == tasks.end()) {
-
+            map<string, shared_ptr<DCModalData>>modelDatas = modelDataManager->modelDatas_;
+            for (const auto &task : tasks) {
+                if (modelDatas.find(task.first) == modelDatas.end()) {
                     stringstream ss;
-                    ss << " 要素" << model.first << " 在规格中不存在";
+                    ss << " 要素" << task.first << " 在规格中存在, 而文件不存在";
                     shared_ptr<DCError> pError = DCTableDescError::createByKXS_10_001(ss.str());
                     errorOutput->saveError(pError);
                 }
             }
-
+            // 检查规格中不存在而实际存在的多余文件
+            vector<string>allFiles;
+            FileUtil::getFileNames(base_path_, allFiles, "");
+            allFiles = RemoveFileNamePrefix(allFiles);
+            for (const auto &fileName : allFiles) {
+                if (tasks.find(fileName) == tasks.end()) {
+                    stringstream ss;
+                    ss << " 要素" << fileName << " 在规格中不存在, 而文件存在";
+                    shared_ptr<DCError> pError = DCTableDescError::createByKXS_10_001(ss.str());
+                    errorOutput->saveError(pError);
+                }
+            }
         }
-
 
         void TableDescCheck::CheckGeometricType(const shared_ptr<ModelDataManager> &modelDataManager,
                                                 shared_ptr<CheckErrorOutput> errorOutput) {

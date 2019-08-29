@@ -19,6 +19,26 @@
         "modelName": "ROAD"
       },
       {
+        "fileName": "Speed_Profile",
+        "fileType": "dbf",
+        "modelName": "Speed_Profile"
+      },
+      {
+        "fileName": "ADAS_Sign",
+        "fileType": "point",
+        "modelName": "ADAS_Sign"
+      },
+      {
+        "fileName": "ADAS_LA",
+        "fileType": "point",
+        "modelName": "ADAS_LA"
+      },
+      {
+        "fileName": "ADAS_NODE",
+        "fileType": "point",
+        "modelName": "ADAS_NODE"
+      },
+      {
         "fileName": "C_NODECONN",
         "fileType": "dbf",
         "modelName": "C_NODECONN"
@@ -53,11 +73,15 @@
         "fileType": "point",
         "modelName": "HD_JUNCTION"
       },
-
       {
         "fileName": "HD_DIVIDER",
         "fileType": "arc",
         "modelName": "HD_DIVIDER"
+      },
+      {
+        "fileName": "HD_Divider_SCH",
+        "fileType": "point",
+        "modelName": "HD_Divider_SCH"
       },
       {
         "fileName": "HD_DIVIDER_NODE",
@@ -69,11 +93,15 @@
         "fileType": "dbf",
         "modelName": "HD_DIVIDER_ATTRIBUTE"
       },
-
       {
         "fileName": "HD_LANE",
         "fileType": "arc",
         "modelName": "HD_LANE"
+      },
+      {
+        "fileName": "HD_Lane_SCH",
+        "fileType": "point",
+        "modelName": "HD_Lane_SCH"
       },
       {
         "fileName": "HD_LANE_ATTRIBUTE",
@@ -91,6 +119,11 @@
         "modelName": "HD_LANE_GROUP"
       },
       {
+        "fileName": "HD_TOPO_LANEGROUP",
+        "fileType": "dbf",
+        "modelName": "HD_TOPO_LANEGROUP"
+      },
+      {
         "fileName": "HD_R_LANE_GROUP",
         "fileType": "dbf",
         "modelName": "HD_R_LANE_GROUP"
@@ -100,7 +133,6 @@
         "fileType": "dbf",
         "modelName": "HD_LANE_CONNECTIVITY"
       },
-
       {
         "fileName": "HD_POLYGON",
         "fileType": "polygon",
@@ -116,7 +148,6 @@
         "fileType": "point",
         "modelName": "HD_POINT"
       },
-
       {
         "fileName": "HD_TRAFFICSIGN",
         "fileType": "polygon",
@@ -124,7 +155,7 @@
       },
       {
         "fileName": "HD_TRAFFIC_LIGHT",
-        "fileType": "polygon",
+        "fileType": "point",
         "modelName": "HD_TRAFFIC_LIGHT"
       },
       {
@@ -146,6 +177,36 @@
         "fileName": "HD_TOLLBOOTH",
         "fileType": "polygon",
         "modelName": "HD_TOLLBOOTH"
+      },
+      {
+        "fileName": "HD_R_LO_LANE",
+        "fileType": "dbf",
+        "modelName": "HD_R_LO_LANE"
+      },
+      {
+        "fileName": "HD_R_LO_ROAD",
+        "fileType": "dbf",
+        "modelName": "HD_R_LO_ROAD"
+      },
+      {
+        "fileName": "BARRIER",
+        "fileType": "dbf",
+        "modelName": "BARRIER"
+      },
+      {
+        "fileName": "BARRIER_GEOMETRY",
+        "fileType": "arc",
+        "modelName": "BARRIER_GEOMETRY"
+      },
+      {
+        "fileName": "ROAD_FACILITIES",
+        "fileType": "polygon",
+        "modelName": "ROAD_FACILITIES"
+      },
+      {
+        "fileName": "Tollgate",
+        "fileType": "dbf",
+        "modelName": "Tollgate"
       }
     ]
 }

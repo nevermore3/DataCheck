@@ -472,6 +472,27 @@ namespace kd {
             //错误详细信息描述
             string detail;
         };
+
+        //长度总和检查
+        class DCLengthCheckError : public DCError {
+        public:
+            explicit DCLengthCheckError(const string &checkModel) : DCError(checkModel) {}
+            string toString() override;
+
+        public:
+            static shared_ptr<DCLengthCheckError> createByLength(const double osmLength, const double kxfLength,
+                                                                 const string &name);
+
+        };
+
+        //数目总和检查
+        class DCCountCheckError : public DCError {
+        public:
+            explicit DCCountCheckError(const string &checkModel) : DCError(checkModel) {}
+            string toString() override ;
+
+            static shared_ptr<DCCountCheckError> createByKXS_09_001(size_t osmCount, size_t kxfCount, const string &name);
+        };
     }
 }
 

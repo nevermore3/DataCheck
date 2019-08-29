@@ -59,6 +59,12 @@ namespace kd {
             const static string DB_INPUT_FILE;
             const static string CHECK_STATE;
 
+            //数据一致性检查
+            const static string LENGTH_CHECK_FILE;
+            const static string COUNT_CHECK_FILE;
+
+            const static string LENGTH_PRECISE;
+
 
         public:
             static DataCheckConfig & getInstance() {

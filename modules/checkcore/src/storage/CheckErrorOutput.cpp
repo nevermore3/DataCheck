@@ -17,6 +17,7 @@ namespace kd {
         }
 
 
+
         CheckErrorOutput::~CheckErrorOutput() {
             if (p_db_out_) {
                 p_db_out_->close();
@@ -27,6 +28,10 @@ namespace kd {
             check_model_2_output_maps_.clear();
             check_total_.clear();
             error_check_levels_.clear();
+
+
+
+
         }
 
 
@@ -242,6 +247,10 @@ namespace kd {
 
             error_check_levels_.insert(CHECK_ITEM_KXS_LM_001);
             error_check_levels_.insert(CHECK_ITEM_KXS_LM_002);
+
+            //数据一致性检查
+            error_check_levels_.insert(CHECK_ITEM_KXS_LENGTH_001);
+            error_check_levels_.insert(CHECK_ITEM_KXS_COUNT_001);
         }
 
         int CheckErrorOutput::saveErrorToDb(const string &ouput_file) {

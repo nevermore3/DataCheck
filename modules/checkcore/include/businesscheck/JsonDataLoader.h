@@ -10,6 +10,7 @@
 
 namespace kd {
     namespace dc {
+
         class JsonDataLoader : public IMapProcessor {
         public:
             explicit JsonDataLoader();

@@ -17,9 +17,11 @@ void CheckListConfig::Load(std::string fileName) {
     }
     fp.close();
 
+
     ParsseItemDesc(file_content);
 
     check_state_ = kd::dc::DataCheckConfig::getInstance().getPropertyI(kd::dc::DataCheckConfig::CHECK_STATE);
+
 }
 
 bool CheckListConfig::GetCheckList(std::string getItemUrl,string getDescUrl){

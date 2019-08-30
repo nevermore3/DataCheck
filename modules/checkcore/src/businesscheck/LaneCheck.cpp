@@ -327,15 +327,17 @@ namespace kd {
             for (const auto &connectNode : mapDataManager->laneConnectivitys_) {
                 long fromLaneID = connectNode.second->fLaneId_;
                 long toLaneID = connectNode.second->tLaneId_;
+
                 shared_ptr<DCLane>fromLane = mapDataManager->lanes_[to_string(fromLaneID)];
                 shared_ptr<DCLane>toLane = mapDataManager->lanes_[to_string(toLaneID)];
 
-                double angle = 0;
-
+                if (fromLane == nullptr || toLane == nullptr) {
+                    continue;
+                }
                 shared_ptr<DCCoord> previous = fromLane->coords_[fromLane->coords_.size() - 2];
                 shared_ptr<DCCoord> current = toLane->coords_[0];
                 shared_ptr<DCCoord> next = toLane->coords_[1];
-
+                double angle = 0;
                 if (!CommonUtil::CheckCoordAngle(previous, current, next, angleThreshold, angle)) {
                     //angle = angle * 180 / kd::automap::PI;
                     auto error = DCLaneError::createByKXS_05_018(fromLaneID, toLaneID, angle);
@@ -376,7 +378,7 @@ namespace kd {
             double threshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::LANE_CURVATURE);
             LoadLaneCurvature();
             for (const auto &curvature : map_lane_curvature_) {
-                if (curvature.second->curvature_ > threshold) {
+                if (abs(curvature.second->curvature_) > threshold) {
                     auto error = DCLaneError::createByKXS_05_019(to_string(curvature.second->lane_id_),
                                                                  curvature.second->curvature_,
                                                                  curvature.second->coord_);
@@ -384,7 +386,8 @@ namespace kd {
                 }
             }
 
-
+            //释放lane_curvature
+            map<string, shared_ptr<DCLaneCurvature>>().swap(map_lane_curvature_);
         }
 
     }

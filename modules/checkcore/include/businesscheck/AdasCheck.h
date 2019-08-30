@@ -6,6 +6,8 @@
 #define AUTOHDMAP_DATACHECK_ADASCHECK_H
 
 #include "IMapProcessor.h"
+#include "geos/index/quadtree/Quadtree.h"
+
 namespace kd {
     namespace dc {
         class AdasCheck : public IMapProcessor {
@@ -19,9 +21,34 @@ namespace kd {
             bool execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) override;
 
             /**
-             * 对拟合点进行检查
+             * 相邻属性点间的距离检查
              */
-            void check_adas_node();
+            void Check_KXS_07_001();
+
+            /**
+             * ADAS_NODE点完备性检查
+             */
+            void Check_KXS_07_003();
+
+            void Check_KXS_07_004();
+
+            /*
+             * ADAS_NODE曲率值域检查
+             * @param ptr_adas_node
+             */
+            void Check_KXS_07_005(shared_ptr<AdasNode> ptr_adas_node);
+
+            /**
+             * ADAS_NODE坡度值域检查
+             * @param ptr_adas_node
+             */
+            void Check_KXS_07_007(shared_ptr<AdasNode> ptr_adas_node);
+
+            /**
+             * ADAS_NODE与关联ROAD距离检查
+             * @param ptr_adas_node
+             */
+            void Check_KXS_07_008(shared_ptr<AdasNode> ptr_adas_node);
 
             /**
              * 坡度检查
@@ -51,6 +78,8 @@ namespace kd {
             void insert_road_id2_adas_nodes_slope(const shared_ptr<AdasNodeSlope> &ptr_adas_node_slope);
 
             void insert_road_id2_adas_nodes_cur(const shared_ptr<AdasNodeCurvature> &ptr_adas_node_cur);
+
+            void PrepareAdasNode();
 
             void release();
         private:
@@ -87,6 +116,8 @@ namespace kd {
             unordered_map<long, vector<shared_ptr<AdasNodeCurvature>>> road_id2_adas_nodes_cur_maps_;
             vector<shared_ptr<AdasNodeFitting>> adas_nodes_fitting_vec_;
 //            vector<shared_ptr<AdasNodeSlope>> adas_nodes_slope_vec_;
+
+            shared_ptr<geos::index::quadtree::Quadtree> adas_node_quadtree_;
         };
     }
 }

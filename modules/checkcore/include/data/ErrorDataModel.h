@@ -431,6 +431,15 @@ namespace kd {
             static shared_ptr<DCAdasError> createByKXS_07_002(long road_id, const shared_ptr<DCCoord> &ptr_coord,
                                                               long index, double distance);
 
+            static shared_ptr<DCAdasError> createByKXS_07_003(long road_id, long index,
+                                                              const shared_ptr<DCCoord> &ptr_coord, int level);
+
+            static shared_ptr<DCAdasError> createByKXS_07_005(long adas_node_id, shared_ptr<DCCoord> ptr_coord);
+
+            static shared_ptr<DCAdasError> createByKXS_07_007(long adas_node_id, shared_ptr<DCCoord> ptr_coord);
+
+            static shared_ptr<DCAdasError> createByKXS_07_008(long adas_node_id, shared_ptr<DCCoord> ptr_coord);
+
         public:
 
             //错误详细信息描述

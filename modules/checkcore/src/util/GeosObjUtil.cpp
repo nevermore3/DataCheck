@@ -89,6 +89,31 @@ namespace kd {
             return ptr_node;
         }
 
+        shared_ptr<geos::geom::Point> GeosObjUtil::CreatePoint(const shared_ptr<DCCoord> &node) {
+            if (node == nullptr) {
+                LOG(ERROR) << "node argument is nullptr";
+                return nullptr;
+            }
+
+            double lng = (node->x_);
+            double lat = (node->y_);
+            double z = (node->z_);
+
+            double utmX, utmY;
+            char zone[4] = {0};
+            kd::automap::Coordinates::ll2utm(lat, lng, utmX, utmY, zone);
+
+            return CreatePointUTM(utmX, utmY, z);
+        }
+
+        shared_ptr<geos::geom::Point> GeosObjUtil::CreatePointUTM(double utmX, double utmY, double z) {
+            const geos::geom::GeometryFactory *gf = geos::geom::GeometryFactory::getDefaultInstance();
+
+            shared_ptr<geos::geom::Point> point(gf->createPoint(Coordinate(utmX, utmY, z)));
+
+            return point;
+        }
+
         double GeosObjUtil::get_length_of_coords(const vector<shared_ptr<DCCoord>> &ptr_coords) {
             geos::geom::CoordinateSequence *cl = new geos::geom::CoordinateArraySequence();
             for(const auto &ptr_coord : ptr_coords){
@@ -456,6 +481,18 @@ namespace kd {
 
 
             return (angle_diff > angle_limit);
+        }
+
+        double GeosObjUtil::GetVerticleDistance(shared_ptr<geos::geom::LineString> line,
+                                                shared_ptr<geos::geom::Point> point) {
+            if (line == nullptr || point == nullptr) {
+                return 0;
+            }
+            double PtA[2] = {point->getX(), point->getY()};
+            double PtB[2] = {0};
+            double PtC[4] = {0};
+            int min_index = 0;
+            return kd::automap::KDGeoUtil::pt2LineDist(line->getCoordinates(), PtA, PtB, PtC, min_index);
         }
     }
 }

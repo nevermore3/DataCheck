@@ -18,6 +18,8 @@
 
 using namespace geo;
 
+const double kZLimitRate = 0.2;
+
 namespace kd {
     namespace automap {
 

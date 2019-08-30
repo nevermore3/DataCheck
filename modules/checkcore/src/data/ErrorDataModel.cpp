@@ -890,6 +890,57 @@ namespace kd {
             return error;
         }
 
+        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_017(const string &lane_id,
+                                                                const vector<shared_ptr<NodeCompareError>> &errorArray) {
+            shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_017);
+            error->checkLevel_ = LEVEL_ERROR;
+            error->checkName = "同一条车道中心线上连续三个节点构成的夹角（绝对值）不能小于165度 (可配置)";
+            error->detail += "lane_id:";
+            error->detail += lane_id;
+            for (const auto &errorNode : errorArray) {
+                error->detail += ", { 3个坐标点的索引为: (";
+                error->detail += to_string(errorNode->previous);
+                error->detail += ",";
+                error->detail += to_string(errorNode->current);
+                error->detail += ",";
+                error->detail += to_string(errorNode->next);
+                error->detail += ")";
+                error->detail += "角度为 ：";
+                error->detail += to_string(errorNode->angle);
+                error->detail += "}";
+            }
+            return error;
+        }
+
+        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_018(long fromLaneID, long toLaneID, double angle) {
+            shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_018);
+            error->checkLevel_ = LEVEL_ERROR;
+            error->checkName = "两条相交且有车道拓扑关系的车道中心线最近的形状点构成的夹角（绝对值）不能小于170度(可配置)";
+            error->detail += " 进入车道 ID :";
+            error->detail += to_string(fromLaneID);
+            error->detail += ", 退出车道 ID :";
+            error->detail += to_string(toLaneID);
+            error->detail += ", 夹角为 : ";
+            error->detail += to_string(angle);
+            return error;
+        }
+
+        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_019(const string &laneID, long curvature,
+                                                                shared_ptr<DCCoord> coord) {
+            shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_019);
+            error->checkLevel_ = LEVEL_ERROR;
+            error->checkName = "车道中心线的曲率(绝对值)不能超过 0.4 (可配置)";
+            error->detail += "lane_id :";
+            error->detail += laneID;
+            error->detail += ", 曲率为 :";
+            error->detail += to_string(curvature);
+            error->detail += ";";
+
+            error->coord = std::move(coord);
+            return error;
+        }
+
+
         DCAdasError::DCAdasError(const string &checkModel) : DCError(checkModel) {
 
         }

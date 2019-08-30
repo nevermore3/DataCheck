@@ -111,6 +111,10 @@
   "members" : [
   ],
   "relation" : [
+    {
+      "member" : "ROAD",
+      "rule" : "R_ID"
+    }
   ],
   "relationcheck" : [
   ]

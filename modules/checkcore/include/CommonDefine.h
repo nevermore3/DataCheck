@@ -90,6 +90,9 @@ const static std::string CHECK_ITEM_KXS_LANE_013 = "KXS-05-013";
 const static std::string CHECK_ITEM_KXS_LANE_014 = "KXS-05-014";
 const static std::string CHECK_ITEM_KXS_LANE_015 = "KXS-05-015";
 const static std::string CHECK_ITEM_KXS_LANE_016 = "KXS-05-016";
+const static std::string CHECK_ITEM_KXS_LANE_017 = "KXS-05-017";
+const static std::string CHECK_ITEM_KXS_LANE_018 = "KXS-05-018";
+const static std::string CHECK_ITEM_KXS_LANE_019 = "KXS-05-019";
 
 // 定位目标
 const static std::string CHECK_ITEM_KXS_LM_001 = "KXS-06-001";

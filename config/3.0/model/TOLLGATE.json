@@ -57,6 +57,14 @@
   "members" : [
   ],
   "relation" : [
+    {
+      "member" : "ROAD_NODE",
+      "rule" : "RN_ID"
+    },
+    {
+      "member" : "HD_DIVIDER",
+      "rule" : "DIVIDER_ID"
+    }
   ],
   "relationcheck" : [
   ]

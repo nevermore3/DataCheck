@@ -66,6 +66,14 @@
   "members" : [
   ],
   "relation" : [
+    {
+      "member" : "ROAD",
+      "rule"  : "ROAD_ID"
+    },
+    {
+      "member" : "HD_DIVIDER",
+      "rule" : "DIVIDER_ID"
+    }
   ],
   "relationcheck" : [
   ]

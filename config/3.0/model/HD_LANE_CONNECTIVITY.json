@@ -64,8 +64,20 @@
     {
       "member" : "HD_LANE",
       "rule" : "TLANE_ID"
+    },
+    {
+      "member" : "HD_JUNCTION",
+      "rule" : "NODE_ID"
+    },
+    {
+      "member" : "HD_ROAD_ATTRIBUTE",
+      "rule" : "NODE_ID"
+    },
+    {
+      "member" : "HD_LANE_ATTRIBUTE",
+      "rule" : "NODE_ID"
     }
-  ],
+   ],
    "relationcheck" : [
   ]
 }

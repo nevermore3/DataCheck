@@ -58,6 +58,34 @@ namespace kd {
             void check_lane_node(shared_ptr<MapDataManager> mapDataManager,
                                  shared_ptr<CheckErrorOutput> errorOutput,
                                  shared_ptr<DCLaneGroup> ptr_lane_group);
+
+            /**
+             * 车道中心线折线检查
+             * 同一条车道中心线上连续三个节点构成的夹角（绝对值）不能小于165度 (可配置)
+             * @param mapDataManager
+             * @param errorOutput
+             */
+            void check_lane_nodes_angle(shared_ptr<MapDataManager> mapDataManager,
+                                         shared_ptr<CheckErrorOutput> errorOutput);
+
+            /**
+            * 车道中心线折线检查
+            * 两条相交且有车道拓扑关系的车道中心线最近的形状点构成的夹角（绝对值）不能小于170度，(可配置)
+            * @param mapDataManager
+            * @param errorOutput
+            */
+            void check_lane_angle(shared_ptr<MapDataManager> mapDataManager,
+                                  shared_ptr<CheckErrorOutput> errorOutput);
+
+            /**
+           * 车道中心线曲率检查
+           * 车道中心线的曲率绝对值最大不超过 0.4 (可配置)
+           * @param mapDataManager
+           * @param errorOutput
+           */
+            void check_lane_curvature(shared_ptr<MapDataManager> mapDataManager,
+                                      shared_ptr<CheckErrorOutput> errorOutput);
+
         private:
             /**
              * lane与divider是否相交
@@ -95,6 +123,10 @@ namespace kd {
         private:
 
             const string id = "lane_check";
+
+            void LoadLaneCurvature();
+
+            map<string, shared_ptr<DCLaneCurvature>> map_lane_curvature_;
 
         };
     }

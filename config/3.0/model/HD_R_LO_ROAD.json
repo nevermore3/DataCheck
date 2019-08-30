@@ -93,6 +93,18 @@
   "members" : [
   ],
   "relation" : [
+    {
+      "member" : "HD_POLYGON",
+      "rule" : "LO_ID"
+    },
+    {
+      "member" : "HD_TRAFFIC_LIGHT",
+      "rule" : "LO_ID"
+    },
+    {
+      "member" : "ROAD",
+      "rule" : "ROAD_ID"
+    }
   ],
   "relationcheck" : [
   ]

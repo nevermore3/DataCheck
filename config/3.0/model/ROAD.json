@@ -176,11 +176,13 @@
   "relation" : [
     {
       "member" : "ROAD_NODE",
-      "rule" : "SNODE_ID"
+      "rule" : "SNODE_ID",
+      "name" : "ID"
     },
     {
       "member" : "ROAD_NODE",
-      "rule" : "ENODE_ID"
+      "rule" : "ENODE_ID",
+      "name" : "ID"
     }
   ],
    "relationcheck" : [

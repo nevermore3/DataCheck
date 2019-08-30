@@ -408,6 +408,14 @@ namespace kd {
             static shared_ptr<DCLaneError> createByKXS_05_016(const string &lane_id,
                                                               const vector<shared_ptr<NodeError>> &ptr_error_nodes);
 
+            static shared_ptr<DCLaneError> createByKXS_05_017(const string &lane_id,
+                                                              const vector<shared_ptr<NodeCompareError>> &errorArray);
+
+            static shared_ptr<DCLaneError> createByKXS_05_018(long fromLaneID, long toLaneID, double angle);
+
+            static shared_ptr<DCLaneError> createByKXS_05_019(const string &laneID, long curvature,
+                                                              shared_ptr<DCCoord> coord);
+
         public:
 
             //错误详细信息描述

@@ -122,7 +122,7 @@ namespace kd {
 
             map<string,double> doubleDatas;
 
-            map<string,long> longDatas;
+            map<string, long> longDatas;
 
             map<string, vector<string>> text_data_maps_;
 

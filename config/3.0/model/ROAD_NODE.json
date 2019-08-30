@@ -104,7 +104,8 @@
   "relation" : [
     {
       "member" : "C_NODE",
-      "rule" : "C_NODE_ID"
+      "rule" : "C_NODE_ID",
+      "name" : "ID"
     }
   ],
    "relationcheck" : [

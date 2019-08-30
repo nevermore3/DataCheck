@@ -785,6 +785,30 @@ namespace kd {
 
             std::vector<shared_ptr<DCCoord>> nodes_;
         };
+
+        /*
+         * 车道线曲率信息 HD_Lane_SCH
+         */
+        class DCLaneCurvature : public DCModel {
+        public:
+            long lane_id_;
+
+            long lane_node_index_;
+
+            long att_node_id_;
+
+            double curvature_;
+
+            double slope_;
+
+            double heading_;
+
+            double superlevation_;
+            //坐标信息
+            shared_ptr<DCCoord> coord_;
+
+
+        };
     }
 }
 

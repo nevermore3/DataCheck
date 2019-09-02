@@ -44,7 +44,8 @@ namespace kd {
                 shared_ptr<DCModelDefine>modelDefine = model.second;
                 vector<shared_ptr<DCRelationDefine>> relations = modelDefine->vecRelation;
 
-                if (relations.empty()) {
+                //没有外键 或者数据库中该表不存在
+                if (relations.empty() || !pDataBase->tableExists(modelName)) {
                     continue;
                 }
 
@@ -99,7 +100,7 @@ namespace kd {
                             query.nextRow();
                         }
                         query.finalize();
-                    } catch (CppSQLite3::Exception e) {
+                    } catch (CppSQLite3::Exception &e) {
                         LOG(ERROR) << "Error:" << e.errorMessage().c_str();
                     }
                 }
@@ -115,7 +116,7 @@ namespace kd {
                     string dbFile = DataCheckConfig::getInstance().getProperty(DataCheckConfig::DB_INPUT_FILE);
                     pDataBase->open(dbFile);
                 } else {
-                    LOG(ERROR) << "Create DataBase Error";
+                    LOG(ERROR) << "Open DataBase Error";
                     return false;
                 }
                 //检查外键是否存在

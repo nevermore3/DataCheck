@@ -50,11 +50,13 @@
   "relation" : [
     {
       "member" : "ROAD",
-      "rule" : "ROAD_ID"
+      "rule" : "ROAD_ID",
+      "name" : "ID"
     },
     {
       "member" : "HD_DIVIDER",
-      "rule" : "DIVIDER_ID"
+      "rule" : "DIVIDER_ID",
+      "name" : "ID"
     }
   ],
   "relationcheck" : [

@@ -511,6 +511,33 @@ namespace kd {
 
             static shared_ptr<DCCountCheckError> createByKXS_09_001(size_t osmCount, size_t kxfCount, const string &name);
         };
+
+        /**
+         * 外键检查
+         */
+        class DCForeignKeyCheckError : public DCError {
+
+        public:
+
+            explicit DCForeignKeyCheckError(const string &checkModel) : DCError(checkModel) {};
+
+            // 外键是否存在检查
+            static shared_ptr<DCForeignKeyCheckError> createByKXS_01_026(string &modelName, string &fieldName);
+
+            // 外键完备性检查
+            static shared_ptr<DCForeignKeyCheckError> createByKXS_01_027(string &tableName,
+                                                                         string &foreignKeyName,
+                                                                         string &value,
+                                                                         string &relationTableName,
+                                                                         string &relationFieldName);
+
+            virtual string toString() override;
+
+        public:
+            //错误详细信息描述
+            string detail;
+        };
+
     }
 }
 

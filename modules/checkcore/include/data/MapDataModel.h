@@ -172,6 +172,8 @@ namespace kd {
             string model;
 
             string rule;
+
+            string name;
         };
 
     }

@@ -59,7 +59,8 @@
    "relation" : [
     {
       "member" : "ROAD",
-      "rule" : "ROAD_ID"
+      "rule" : "ROAD_ID",
+      "name" : "ID"
     }
   ],
    "relationcheck" : [

@@ -59,11 +59,13 @@
   "relation" : [
     {
       "member" : "ROAD_NODE",
-      "rule" : "RN_ID"
+      "rule" : "RN_ID",
+      "name" : "ID"
     },
     {
       "member" : "HD_DIVIDER",
-      "rule" : "DIVIDER_ID"
+      "rule" : "DIVIDER_ID",
+      "name" : "ID"
     }
   ],
   "relationcheck" : [

@@ -95,7 +95,8 @@
   "relation" : [
     {
       "member" : "HD_DIVIDER",
-      "rule" : "DIVIDER_ID"
+      "rule" : "DIVIDER_ID",
+      "name" : "ID"
     }
   ],
    "relationcheck" : [

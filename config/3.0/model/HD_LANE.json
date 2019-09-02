@@ -59,11 +59,13 @@
    "relation" : [
     {
       "member" : "HD_DIVIDER",
-      "rule" : "DIVIDER_L"
+      "rule" : "DIVIDER_L",
+      "name" : "ID"
     },
     {
       "member" : "HD_DIVIDER",
-      "rule" : "DIVIDER_R"
+      "rule" : "DIVIDER_R",
+      "name" : "ID"
     }
   ],
    "relationcheck" : [

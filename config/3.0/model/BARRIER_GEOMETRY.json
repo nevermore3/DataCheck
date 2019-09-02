@@ -41,7 +41,8 @@
   "relation" : [
     {
       "member" : "BARRIER",
-      "rule" : "BARRIER_ID"
+      "rule" : "BARRIER_ID",
+      "name" : "ID"
     }
   ],
   "relationcheck" : [

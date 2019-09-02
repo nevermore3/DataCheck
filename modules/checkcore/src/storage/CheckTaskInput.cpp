@@ -196,7 +196,7 @@ namespace kd {
                         reldef->member = getJSONString(nodeObj, "member");
                         reldef->model = getJSONString(nodeObj, "model");
                         reldef->rule = getJSONString(nodeObj, "rule");
-
+                        reldef->name = getJSONString(nodeObj, "name");
                         modelDefine->vecRelation.emplace_back(reldef);
                     }
                 }

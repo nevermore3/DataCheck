@@ -86,7 +86,8 @@
   "relation" : [
     {
       "member" : "HD_LANE",
-      "rule" : "LANE_ID"
+      "rule" : "LANE_ID",
+      "name" : "ID"
     }
   ],
   "relationcheck" : [

@@ -1079,6 +1079,46 @@ namespace kd {
             return error;
         }
 
+        string DCForeignKeyCheckError::toString() {
+            return detail;
+        }
+
+        shared_ptr<DCForeignKeyCheckError> DCForeignKeyCheckError::createByKXS_01_026(string &modelName,
+                                                                                      string &fieldName) {
+            shared_ptr<DCForeignKeyCheckError> error = make_shared<DCForeignKeyCheckError>(CHECK_ITEM_KXS_ORG_026);
+            error->checkLevel_ = LEVEL_ERROR;
+            error->checkName = "外键在规格中存在, 在数据中不存在";
+            error->detail += "{表名 : ";
+            error->detail += modelName;
+            error->detail += ",";
+            error->detail += "外键 : ";
+            error->detail += fieldName;
+            error->detail += "}";
+            return error;
+        }
+
+        shared_ptr<DCForeignKeyCheckError> DCForeignKeyCheckError::createByKXS_01_027(string &tableName,
+                                                                                      string &foreignKeyName,
+                                                                                      string &value,
+                                                                                      string &relationTableName,
+                                                                                      string &relationFieldName) {
+            shared_ptr<DCForeignKeyCheckError> error = make_shared<DCForeignKeyCheckError>(CHECK_ITEM_KXS_ORG_027);
+            error->checkLevel_ = LEVEL_ERROR;
+            error->checkName = "外键的完备性检查, 记录不可缺失";
+            error->detail += "{ 表名 : ";
+            error->detail += tableName;
+            error->detail += ", 外键 : ";
+            error->detail += foreignKeyName;
+            error->detail += ", 的值 :";
+            error->detail += value;
+            error->detail += ", 在关联表 : ";
+            error->detail += relationTableName;
+            error->detail += ", 关联字段 : ";
+            error->detail += relationFieldName;
+            error->detail += " 中不存在其数值 }";
+            return error;
+        }
+
     }
 }
 

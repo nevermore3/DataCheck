@@ -50,11 +50,13 @@
   "relation" : [
     {
       "member" : "HD_LANE_GROUP",
-      "rule" : "FROM_LG"
+      "rule" : "FROM_LG",
+      "name" : "ID"
     },
     {
       "member" : "HD_LANE_GROUP",
-      "rule": "TO_LG"
+      "rule" : "TO_LG",
+      "name" : "ID"
     }
   ],
   "relationcheck" : [

@@ -95,15 +95,18 @@
   "relation" : [
     {
       "member" : "HD_POLYGON",
-      "rule" : "LO_ID"
+      "rule" : "LO_ID",
+      "name" : "ID"
     },
     {
       "member" : "HD_TRAFFIC_LIGHT",
-      "rule" : "LO_ID"
+      "rule" : "LO_ID",
+      "name" : "ID"
     },
     {
       "member" : "ROAD",
-      "rule" : "ROAD_ID"
+      "rule" : "ROAD_ID",
+      "name" : "ID"
     }
   ],
   "relationcheck" : [

@@ -35,6 +35,7 @@
 #include "util/check_list_config.h"
 #include "data/ResourceDataManager.h"
 #include "datacheck/TableDescCheck.h"
+#include "datacheck/ForeignKeyCheck.h"
 using namespace kd::dc;
 
 const char kCheckListFile[] = "check_list.json";
@@ -129,6 +130,10 @@ int AllAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, const string& 
     //kxf規格检查-表描述检查
     shared_ptr<TableDescCheck> tableDescCheck = make_shared<TableDescCheck>();
     model_process_manager->registerProcessor(tableDescCheck);
+
+    //外键及其外键完备性检查
+    shared_ptr<ForeignKeyCheck> foreignKeyCheck = make_shared<ForeignKeyCheck>();
+    model_process_manager->registerProcessor(foreignKeyCheck);
 
     //执行已注册检查项
     shared_ptr<ModelDataManager> modelDataManager = make_shared<ModelDataManager>();

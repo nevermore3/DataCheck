@@ -1,12 +1,12 @@
 {
- "model" : "HD_LANE_GROUP",
+  "model" : "BARRIER",
   "checks" : [
     {
-       "name":"ID",
-       "func":"ID",
-       "refValue":""
+      "name":"ID",
+      "func":"ID",
+      "refValue":""
     }
-  ], 
+  ],
   "fields" : [
     {
       "defaultValue" : "",
@@ -21,6 +21,33 @@
       "defaultValue" : "",
       "inputLimit" : "1",
       "inputType" : "",
+      "lenLimit" : "",
+      "name" : "TYPE",
+      "type" : "1",
+      "valueLimit" : "0,1,2,3,4,5,6,7,8,9,10,11,12"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "",
+      "name" : "LATERAL",
+      "type" : "1",
+      "valueLimit" : "0,1,2,3"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
+      "lenLimit" : "",
+      "name" : "ROAD_SIDE",
+      "type" : "1",
+      "valueLimit" : "0,1,2"
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "0",
+      "inputType" : "",
       "lenLimit" : "0",
       "name" : "ROAD_ID",
       "type" : "1",
@@ -31,16 +58,7 @@
       "inputLimit" : "0",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "IS_VIR",
-      "type" : "1",
-      "valueLimit" : ""
-    },
-    {
-      "defaultValue" : "",
-      "inputLimit" : "0",
-      "inputType" : "",
-      "lenLimit" : "0",
-      "name" : "DIRECTION",
+      "name" : "DIVIDER_ID",
       "type" : "1",
       "valueLimit" : ""
     }
@@ -48,11 +66,7 @@
   "members" : [
   ],
   "relation" : [
-    {
-      "member" : "ROAD",
-      "rule" : "ROAD_ID"
-    }
   ],
-   "relationcheck" : [
+  "relationcheck" : [
   ]
 }

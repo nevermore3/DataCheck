@@ -1,10 +1,10 @@
 {
-"model" : "HD_POINT",
+  "model" : "HD_TOPO_LANEGROUP",
   "checks" : [
     {
-       "name":"ID",
-       "func":"ID",
-       "refValue":""
+      "name":"ID",
+      "func":"ID",
+      "refValue":""
     }
   ],
   "fields" : [
@@ -22,26 +22,26 @@
       "inputLimit" : "1",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "NAME",
-      "type" : "0",
+      "name" : "TYPE",
+      "type" : "1",
       "valueLimit" : ""
     },
     {
       "defaultValue" : "",
-      "inputLimit" : "1",
+      "inputLimit" : "0",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "TYPE",
-      "type" : "1",
-      "valueLimit" : "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,99"
+      "name" : "FROM＿LG",
+      "type" : "3",
+      "valueLimit" : ""
     },
     {
       "defaultValue" : "",
-      "inputLimit" : "1",
+      "inputLimit" : "0",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "HEIGHT",
-      "type" : "1",
+      "name" : "TO_LG",
+      "type" : "3",
       "valueLimit" : ""
     }
   ],
@@ -49,6 +49,6 @@
   ],
   "relation" : [
   ],
-   "relationcheck" : [
+  "relationcheck" : [
   ]
 }

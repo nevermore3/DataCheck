@@ -110,6 +110,11 @@ const static std::string CHECK_ITEM_KXS_LENGTH_001 = "KXS-08-001";
 //数目一致性检查
 const static std::string CHECK_ITEM_KXS_COUNT_001 = "KXS-09-001";
 
+//kxf规格检查
+const static std::string CHECK_ITEM_KXS_NORM_001 = "KXS-10-001";
+const static std::string CHECK_ITEM_KXS_NORM_002 = "KXS-10-002";
+const static std::string CHECK_ITEM_KXS_NORM_003 = "KXS-10-003";
+
 const static std::string ID = "ID";
 const static std::string DIVIDER_ID = "DIVIDER_ID";
 const static std::string DIVIDER_NODE_ID = "DIVIDER_NODE_ID";

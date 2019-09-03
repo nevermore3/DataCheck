@@ -34,6 +34,7 @@
 #include "util/TimerUtil.h"
 #include "util/check_list_config.h"
 #include "data/ResourceDataManager.h"
+#include "datacheck/TableDescCheck.h"
 using namespace kd::dc;
 
 const char kCheckListFile[] = "check_list.json";
@@ -117,15 +118,17 @@ int AllAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, const string& 
     // KXF全要素检查
     shared_ptr<ModelProcessManager> model_process_manager = make_shared<ModelProcessManager>("all_auto_field_check");
 
-
     //加载数据
     shared_ptr<ModelDataLoader> modelLoader = make_shared<ModelDataLoader>(base_path);
     model_process_manager->registerProcessor(modelLoader);
 
-
     //属性字段检查
     shared_ptr<ModelFieldCheck> modelFiledCheck = make_shared<ModelFieldCheck>();
     model_process_manager->registerProcessor(modelFiledCheck);
+
+    //kxf規格检查-表描述检查
+    shared_ptr<TableDescCheck> tableDescCheck = make_shared<TableDescCheck>();
+    model_process_manager->registerProcessor(tableDescCheck);
 
     //执行已注册检查项
     shared_ptr<ModelDataManager> modelDataManager = make_shared<ModelDataManager>();
@@ -200,6 +203,8 @@ int SqlAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput) {
     //加载数据
     shared_ptr<ModelSqlCheck> model_sql_check = make_shared<ModelSqlCheck>();
     process_manager->registerProcessor(model_sql_check);
+
+
 
     if (!process_manager->execute(errorOutput)){
         LOG(ERROR) << "ProcessManager execute error!";

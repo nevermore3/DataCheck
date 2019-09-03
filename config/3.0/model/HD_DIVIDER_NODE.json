@@ -24,16 +24,16 @@
       "lenLimit" : "0",
       "name" : "DASHTYPE",
       "type" : "1",
-      "valueLimit" : "0,1,2,3,4,5,9"
+      "valueLimit" : "0,1,2,3,4,5"
     },
     {
       "defaultValue" : "",
-      "inputLimit" : "1",
+      "inputLimit" : "0",
       "inputType" : "",
       "lenLimit" : "0",
       "name" : "ISSPLIT",
       "type" : "1",
-      "valueLimit" : ""
+      "valueLimit" : "0,1"
     }
   ],
   "members" : [

@@ -43,6 +43,9 @@ namespace kd {
                         total++;
                         auto ptr_road = CommonUtil::get_road(mapDataManager, road_id);
                         if (ptr_road) {
+                            if (ptr_lane_group->is_virtual_ == 1) {
+                                continue;
+                            }
                             if (ptr_road->direction_ == 2) {
                                 // 最左最右DIVIDER检查交点
                                 if (road_divider_intersect(mapDataManager, ptr_road, lane_group_id, left_ptr_divider) ||

@@ -33,6 +33,8 @@ const static std::string CHECK_ITEM_KXS_ORG_022 = "KXS-01-022";
 const static std::string CHECK_ITEM_KXS_ORG_023 = "KXS-01-023";
 const static std::string CHECK_ITEM_KXS_ORG_024 = "KXS-01-024";
 const static std::string CHECK_ITEM_KXS_ORG_025 = "KXS-01-025";
+const static std::string CHECK_ITEM_KXS_ORG_026 = "KXS_01_026";
+const static std::string CHECK_ITEM_KXS_ORG_027 = "KXS_01_027";
 
 // 分组检查
 const static std::string CHECK_ITEM_KXS_LG_001 = "KXS-03-001";
@@ -90,6 +92,9 @@ const static std::string CHECK_ITEM_KXS_LANE_013 = "KXS-05-013";
 const static std::string CHECK_ITEM_KXS_LANE_014 = "KXS-05-014";
 const static std::string CHECK_ITEM_KXS_LANE_015 = "KXS-05-015";
 const static std::string CHECK_ITEM_KXS_LANE_016 = "KXS-05-016";
+const static std::string CHECK_ITEM_KXS_LANE_017 = "KXS-05-017";
+const static std::string CHECK_ITEM_KXS_LANE_018 = "KXS-05-018";
+const static std::string CHECK_ITEM_KXS_LANE_019 = "KXS-05-019";
 
 // 定位目标
 const static std::string CHECK_ITEM_KXS_LM_001 = "KXS-06-001";

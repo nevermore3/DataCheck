@@ -224,7 +224,6 @@ namespace kd {
             }
         }
 
-
         void JsonDataInput::CheckModelRelation() {
             for (auto model_define : model_data_manager_->modelDefines_) {
                 string model_name = model_define.first;

@@ -9,6 +9,8 @@
 
 #include "util/CommonUtil.h"
 #include "util/KDGeoUtil.hpp"
+#include "util/CommonCheck.h"
+#include <shp/ShpData.hpp>
 
 using namespace kd::automap;
 
@@ -21,6 +23,13 @@ namespace kd {
         bool LaneCheck::execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) {
             check_lane_divider_intersect(mapDataManager, errorOutput);
             check_lane_lane_intersect(mapDataManager, errorOutput);
+            // 检查车道中心线 节点间角度
+            check_lane_nodes_angle(mapDataManager, errorOutput);
+            // 有拓扑关系的车道中心线夹角检查
+            check_lane_angle(mapDataManager, errorOutput);
+            // 车道中心线曲率检查
+            check_lane_curvature(mapDataManager, errorOutput);
+
             return true;
         }
 
@@ -293,5 +302,93 @@ namespace kd {
                 }
             }
         }
+
+        //同一条车道中心线上连续三个节点构成的夹角（绝对值）不能小于165度 (可配置)
+        void LaneCheck::check_lane_nodes_angle(shared_ptr<MapDataManager> mapDataManager,
+                                               shared_ptr<CheckErrorOutput> errorOutput) {
+            double angleThreshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::LANE_NODE_ANGLE);
+
+            for (const auto &lane : mapDataManager->lanes_) {
+                string laneId = lane.first;
+                vector<shared_ptr<DCCoord>> coords = lane.second->coords_;
+
+                vector<shared_ptr<NodeCompareError>> errorArray = CommonCheck::AngleCheck(coords, angleThreshold);
+                if (!errorArray.empty()) {
+                    auto error = DCLaneError::createByKXS_05_017(laneId, errorArray);
+                    errorOutput->saveError(error);
+                }
+            }
+        }
+
+        void LaneCheck::check_lane_angle(shared_ptr<MapDataManager> mapDataManager,
+                                         shared_ptr<CheckErrorOutput> errorOutput) {
+
+            double angleThreshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::LANE_ANGLE);
+            for (const auto &connectNode : mapDataManager->laneConnectivitys_) {
+                long fromLaneID = connectNode.second->fLaneId_;
+                long toLaneID = connectNode.second->tLaneId_;
+
+                shared_ptr<DCLane>fromLane = mapDataManager->lanes_[to_string(fromLaneID)];
+                shared_ptr<DCLane>toLane = mapDataManager->lanes_[to_string(toLaneID)];
+
+                if (fromLane == nullptr || toLane == nullptr) {
+                    continue;
+                }
+                shared_ptr<DCCoord> previous = fromLane->coords_[fromLane->coords_.size() - 2];
+                shared_ptr<DCCoord> current = toLane->coords_[0];
+                shared_ptr<DCCoord> next = toLane->coords_[1];
+                double angle = 0;
+                if (!CommonUtil::CheckCoordAngle(previous, current, next, angleThreshold, angle)) {
+                    //angle = angle * 180 / kd::automap::PI;
+                    auto error = DCLaneError::createByKXS_05_018(fromLaneID, toLaneID, angle);
+                    errorOutput->saveError(error);
+                }
+
+            }
+        }
+
+        void LaneCheck::LoadLaneCurvature() {
+            string basePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::SHP_FILE_PATH);
+            string file = basePath + "/HD_Lane_SCH";
+            ShpData shpFile(file);
+            if (shpFile.isInit()) {
+                int recordNums = shpFile.getRecords();
+                for (size_t i = 0; i < recordNums; i++) {
+                    SHPObject *shpObject = shpFile.readShpObject(i);
+
+                    shared_ptr<DCLaneCurvature> laneCurvature = make_shared<DCLaneCurvature>();
+                    laneCurvature->id_ = shpFile.readStringField(i, "ID");
+                    laneCurvature->lane_id_ = shpFile.readLongField(i, "LANE_ID");
+                    laneCurvature->lane_node_index_ = shpFile.readLongField(i, "L_NodeIdx");
+                    laneCurvature->att_node_id_ = shpFile.readLongField(i, "A_NodeID");
+                    laneCurvature->curvature_ = shpFile.readDoubleField(i, "CURVATURE");
+
+                    laneCurvature->coord_->x_ = shpObject->padfX[0];
+                    laneCurvature->coord_->y_ = shpObject->padfY[0];
+                    laneCurvature->coord_->z_ = shpObject->padfZ[0];
+
+                    map_lane_curvature_.insert(make_pair(laneCurvature->id_, laneCurvature));
+                }
+            }
+        }
+
+        //车道中心线曲率检查 绝对值最大不超过0.4
+        void LaneCheck::check_lane_curvature(shared_ptr<MapDataManager> mapDataManager,
+                                             shared_ptr<CheckErrorOutput> errorOutput) {
+            double threshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::LANE_CURVATURE);
+            LoadLaneCurvature();
+            for (const auto &curvature : map_lane_curvature_) {
+                if (abs(curvature.second->curvature_) > threshold) {
+                    auto error = DCLaneError::createByKXS_05_019(to_string(curvature.second->lane_id_),
+                                                                 curvature.second->curvature_,
+                                                                 curvature.second->coord_);
+                    errorOutput->saveError(error);
+                }
+            }
+
+            //释放lane_curvature
+            map<string, shared_ptr<DCLaneCurvature>>().swap(map_lane_curvature_);
+        }
+
     }
 }

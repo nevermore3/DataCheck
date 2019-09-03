@@ -68,11 +68,13 @@
   "relation" : [
     {
       "member" : "NODECONN",
-      "rule" : "NODECONN_ID"
+      "rule" : "NODECONN_ID",
+      "name" : "ID"
     },
     {
       "member" : "C_NODECONN",
-      "rule" : "NODECONN_ID"
+      "rule" : "NODECONN_ID",
+      "name" : "ID"
     }
   ],
    "relationcheck" : [

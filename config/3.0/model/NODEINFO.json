@@ -95,15 +95,18 @@
   "relation" : [
     {
       "member" : "ROAD",
-      "rule" : "ROAD_ID"
+      "rule" : "ROAD_ID",
+      "name" : "ID"
     },
     {
       "member" : "ROAD_NODE",
-      "rule" : "NODE_ID"
+      "rule" : "NODE_ID",
+      "name" : "ID"
     },
     {
       "member" : "C_NODE",
-      "rule" : "NODE_ID"
+      "rule" : "NODE_ID",
+      "name" : "ID"
     }
   ],
    "relationcheck" : [

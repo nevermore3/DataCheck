@@ -101,7 +101,8 @@ namespace kd {
                     //只有dbf文件存在，没有shp文件存在为关系类型
                     string shpFile = base_path_ + "/" + fileName + ".shp";
                     string dbfFile = base_path_ + "/" + fileName + ".dbf";
-                    if (access(dbfFile.c_str(), F_OK) == 0 && access(shpFile.c_str(), F_OK) != 0) {
+
+                    if (access(dbfFile.c_str(), F_OK) != 0 || access(shpFile.c_str(), F_OK) != 0) {
                         continue;
                     }
                     stringstream ss;

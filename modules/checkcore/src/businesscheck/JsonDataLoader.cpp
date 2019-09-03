@@ -70,7 +70,6 @@ namespace kd {
 
                 OSMDataParser parser(resource_manager);
 
-
                 string inputJsonData;
                 const string &file_path = file_list[i];
                 if (file_path.find(config_file) != std::string::npos) {

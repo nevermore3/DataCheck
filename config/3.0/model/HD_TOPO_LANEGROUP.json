@@ -31,7 +31,7 @@
       "inputLimit" : "0",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "FROM＿LG",
+      "name" : "FROM_LG",
       "type" : "3",
       "valueLimit" : ""
     },
@@ -48,6 +48,16 @@
   "members" : [
   ],
   "relation" : [
+    {
+      "member" : "HD_LANE_GROUP",
+      "rule" : "FROM_LG",
+      "name" : "ID"
+    },
+    {
+      "member" : "HD_LANE_GROUP",
+      "rule" : "TO_LG",
+      "name" : "ID"
+    }
   ],
   "relationcheck" : [
   ]

@@ -22,7 +22,7 @@
       "inputLimit" : "1",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "R_ID",
+      "name" : "ROAD_ID",
       "type" : "1",
       "valueLimit" : ""
     },
@@ -84,6 +84,11 @@
   "members" : [
   ],
   "relation" : [
+    {
+      "member" : "ROAD",
+      "rule" : "ROAD_ID",
+      "name" : "ID"
+    }
   ],
   "relationcheck" : [
   ]

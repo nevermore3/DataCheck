@@ -41,11 +41,13 @@
   "relation" : [
     {
       "member" : "HD_LANE_GROUP",
-      "rule" : "LG_ID"
+      "rule" : "LG_ID",
+      "name" : "ID"
     },
     {
       "member" : "HD_LANE",
-      "rule" : "LANE_ID"
+      "rule" : "LANE_ID",
+      "name" : "ID"
     }
   ],
    "relationcheck" : [

@@ -61,15 +61,18 @@
   "relation" : [
     {
       "member" : "ROAD",
-      "rule" : "EROAD_ID"
+      "rule" : "EROAD_ID",
+      "name" : "ID"
     },
     {
       "member" : "C_NODE",
-      "rule" : "C_NODE_ID"
+      "rule" : "C_NODE_ID",
+      "name" : "ID"
     },
     {
       "member" : "ROAD",
-      "rule" : "QROAD_ID"
+      "rule" : "QROAD_ID",
+      "name" : "ID"
     }
   ],
    "relationcheck" : [

@@ -78,7 +78,7 @@ namespace kd {
                     string foreignKeyName = relation->rule;
                     try {
                         memset(sqlCmd, 0, MAXCMDLEN);
-                        snprintf(sqlCmd, MAXCMDLEN - 1,"select %s from %s where %s not in (select %s from %s)",
+                        snprintf(sqlCmd, MAXCMDLEN - 1,"select %s from %s where %s not in (select %s from %s);",
                                  foreignKeyName.c_str(),
                                  modelName.c_str(),
                                  foreignKeyName.c_str(),

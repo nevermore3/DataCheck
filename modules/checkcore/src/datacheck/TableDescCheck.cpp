@@ -68,7 +68,7 @@ namespace kd {
 
         void TableDescCheck::CheckGeometricType(const shared_ptr<ModelDataManager> &modelDataManager,
                                                 shared_ptr<CheckErrorOutput> errorOutput) {
-            map<string, int> typeMap {{"point", 11}, {"arc", 13}, {"ploygon", 15}};
+            map<string, int> typeMap {{"point", 11}, {"arc", 13}, {"polygon", 15}};
 
             for (const auto &task : modelDataManager->tasks_) {
                 string fileType = task.second->fileType;

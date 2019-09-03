@@ -263,7 +263,7 @@ int main(int argc, const char *argv[]) {
     try {
         exe_path = argv[0];
 
-        InitGlog(exe_path, "../output");
+        InitGlog(exe_path, "./");
 
         // 加载配置
         ret = DataCheckConfig::getInstance().load("config.properties");

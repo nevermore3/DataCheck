@@ -61,6 +61,8 @@ namespace kd {
 
         void ForeignKeyCheck::CheckForeignKeyIntegrity(shared_ptr<ModelDataManager> modelDataManager,
                                                        shared_ptr<CheckErrorOutput> errorOutput) {
+            map<string, string>whiteList {{"HD_LANE_CONNECTIVITY", "NODE_ID"},
+                                          {"ROAD_NODE", "C_NODE_ID"}};
             const size_t MAXCMDLEN = 256;
             char sqlCmd[MAXCMDLEN] = {0};
             map<string, shared_ptr<DCModelDefine>>modelDefines = modelDataManager->modelDefines_;
@@ -76,6 +78,9 @@ namespace kd {
                     string relationTableName = relation->member;
                     string relationFieldName = relation->name;
                     string foreignKeyName = relation->rule;
+                    if (whiteList.find(modelName) != whiteList.end() && whiteList[modelName] == foreignKeyName) {
+                        continue;
+                    }
                     try {
                         memset(sqlCmd, 0, MAXCMDLEN);
                         snprintf(sqlCmd, MAXCMDLEN - 1,"select %s from %s where %s not in (select %s from %s);",

@@ -155,7 +155,7 @@
       },
       {
         "fileName": "HD_TRAFFIC_LIGHT",
-        "fileType": "point",
+        "fileType": "polygon",
         "modelName": "HD_TRAFFIC_LIGHT"
       },
       {

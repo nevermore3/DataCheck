@@ -787,7 +787,7 @@ namespace kd {
         };
 
         /*
-         * 车道线曲率信息 HD_Lane_SCH
+         * 车道中心线曲率信息 HD_Lane_SCH
          */
         class DCLaneCurvature : public DCModel {
         public:
@@ -806,7 +806,28 @@ namespace kd {
             double superlevation_;
             //坐标信息
             shared_ptr<DCCoord> coord_;
+        };
 
+        /*
+         * 车道线属性信息 HD_DIVIDE_SCH
+         */
+        class DCDivideSCH : public DCModel {
+        public:
+            long dividier_id_;
+
+            long dividier_node_inidex_;
+
+            long att_node_id_;
+
+            double curvature_;
+
+            double slope_;
+
+            double heading_;
+
+            double superlevation_;
+            //坐标信息
+            shared_ptr<DCCoord> coord_;
 
         };
     }

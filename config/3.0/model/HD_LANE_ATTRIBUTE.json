@@ -69,7 +69,7 @@
       "lenLimit" : "0",
       "name" : "WIDTH",
       "type" : "2",
-      "valueLimit" : "[0~99.999999]"
+      "valueLimit" : "[1~10]"
     },
     {
       "defaultValue" : "",

@@ -68,6 +68,9 @@ namespace kd {
         const string DataCheckConfig::COUNT_CHECK_FILE = "count_check_file";
         const string DataCheckConfig::LENGTH_PRECISE = "length_precise";
 
+        // 坡度检查
+        const string DataCheckConfig::AVG_SLOPE_ERROR = "avg_slope_error";
+
 
         int DataCheckConfig::load(string fileName) {
             int ret = 0;

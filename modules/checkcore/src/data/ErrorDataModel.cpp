@@ -1185,6 +1185,18 @@ namespace kd {
             return error;
         }
 
+        // 属性值检查
+        string DCAttributeCheckError::toString() {
+            return detail;
+        }
+
+        shared_ptr<DCAttributeCheckError> DCAttributeCheckError::createByKXS_10_002(const string &detail) {
+            shared_ptr<DCAttributeCheckError> error = make_shared<DCAttributeCheckError>(CHECK_ITEM_KXS_NORM_002);
+            error->checkLevel_ = LEVEL_ERROR;
+            error->checkName = "坡度变化的平滑检查";
+            error->detail = detail;
+            return error;
+        }
     }
 }
 

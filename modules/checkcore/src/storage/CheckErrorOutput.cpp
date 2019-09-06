@@ -121,7 +121,7 @@ namespace kd {
 
         void CheckErrorOutput::saveError(shared_ptr<DCError> error) {
             if (error) {
-                if (check_state_ == DataCheckConfig::ALL_AUTO_CHECK) {
+                if (check_state_ == DataCheckConfig::TOPO_AUTO_CHECK) {
                     ErrorOutPut error_output;
 
                     error_output.checkId = error->checkId;

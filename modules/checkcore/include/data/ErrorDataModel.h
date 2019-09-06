@@ -547,6 +547,17 @@ namespace kd {
             string detail;
         };
 
+        class DCAttributeCheckError : public DCError {
+        public:
+            explicit DCAttributeCheckError(const string &checkModel) : DCError(checkModel) {};
+
+            static shared_ptr<DCAttributeCheckError> createByKXS_10_002(const string &detail);
+
+            virtual string toString() override;
+        public:
+            string detail;
+        };
+
     }
 }
 

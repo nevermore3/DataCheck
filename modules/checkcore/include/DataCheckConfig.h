@@ -68,6 +68,8 @@ namespace kd {
 
             const static string LENGTH_PRECISE;
 
+            const static string AVG_SLOPE_ERROR;
+
 
         public:
             static DataCheckConfig & getInstance() {

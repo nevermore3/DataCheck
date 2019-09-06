@@ -41,6 +41,9 @@ namespace kd {
                 errorOutput->writeInfo("[ERROR] can't find task: " + taskName);
                 return false;
             }
+            if (taskName == "HD_LANE_SCH") {
+                cout<<"sd";
+            }
 
             shared_ptr<DCTask> task = itTask->second;
             string modelPath = task->modelName + ".json";

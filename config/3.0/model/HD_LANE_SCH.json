@@ -1,5 +1,5 @@
 {
-  "model" : "HD_Lane_SCH",
+  "model" : "HD_LANE_SCH",
   "checks" : [
     {
       "name":"ID",
@@ -50,8 +50,8 @@
       "inputType" : "",
       "lenLimit" : "0",
       "name" : "CURVATURE",
-      "type" : "3",
-      "valueLimit" : ""
+      "type" : "2",
+      "valueLimit" : "[-0.4~0.4]"
     },
     {
       "defaultValue" : "",
@@ -59,8 +59,8 @@
       "inputType" : "",
       "lenLimit" : "0",
       "name" : "SLOPE",
-      "type" : "3",
-      "valueLimit" : ""
+      "type" : "2",
+      "valueLimit" : "[-0.15~0.15]"
     },
     {
       "defaultValue" : "",

@@ -61,6 +61,10 @@ namespace kd {
 
             shared_ptr<DCLaneCurvature> GetNextLaneAdasNode(long laneID);
 
+            shared_ptr<DCDivideSCH> GetPreDivideAdasNode(long divideID);
+
+            shared_ptr<DCDivideSCH> GetNextDivideAdasNode(long divideID);
+
             bool LoadData();
 
         private:

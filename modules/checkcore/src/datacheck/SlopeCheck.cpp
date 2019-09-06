@@ -38,10 +38,13 @@ namespace kd {
                                  shared_ptr<CheckErrorOutput> errorOutput) {
             data_manager_ = mapDataManager;
 
+            // 检查每个ADAS_NODE 与其前后两个node(跨road) 坡度的平均值比较
             CheckAdasNode(mapDataManager, errorOutput);
 
+            // 检查每个DIVIDER_SCH 与其前后两个node(跨divider) 坡度的平均值比较
             CheckDividerSCH(mapDataManager, errorOutput);
 
+            // 检查每个LANE_SCH 与其前后两个node(跨lane) 坡度的平均值比较
             CheckLaneSCH(mapDataManager, errorOutput);
 
             return true;
@@ -53,7 +56,7 @@ namespace kd {
 
             DbfData dbfFile(nodeConnFile);
             if (!dbfFile.isInit()) {
-                LOG(ERROR) << "Open dbfFile :" << nodeConnFile << "Fail";
+                LOG(ERROR) << "Open dbfFile :" << nodeConnFile << " Fail";
                 return false;
             }
 
@@ -76,7 +79,7 @@ namespace kd {
             string adasNodeFile = base_path_ + "/ADAS_NODE";
             ShpData shpFile(adasNodeFile);
             if (!shpFile.isInit()) {
-                LOG(ERROR) << "Open shpFile :" << adasNodeFile << "Fail";
+                LOG(ERROR) << "Open shpFile :" << adasNodeFile << " Fail";
                 return false;
             }
 
@@ -121,7 +124,7 @@ namespace kd {
             string dividerFile = base_path_ + "/HD_DIVIDER_SCH";
             ShpData shpFile(dividerFile);
             if (!shpFile.isInit()) {
-                LOG(ERROR) << "Open shpFile :" << dividerFile << "Fail";
+                LOG(ERROR) << "Open shpFile :" << dividerFile << " Fail";
                 return false;
             }
 
@@ -375,9 +378,88 @@ namespace kd {
             }
         }
 
+        shared_ptr<DCDivideSCH> SlopeCheck::GetPreDivideAdasNode(long divideID) {
+            string strDividerID = to_string(divideID);
+            map<string, shared_ptr<DCDivider>> dividers = data_manager_->dividers_;
+            if (dividers.find(strDividerID) == dividers.end()) {
+                return nullptr;
+            }
+            string fromID = dividers[strDividerID]->fromNodeId_;
+            if (data_manager_->tnode_id2_dividers_maps_.find(fromID) == data_manager_->tnode_id2_dividers_maps_.end()) {
+                return nullptr;
+            }
+            shared_ptr<DCDivider> dividerObj = data_manager_->tnode_id2_dividers_maps_[fromID].front();
+            if (map_divider_sch_.find(stol(dividerObj->id_)) == map_divider_sch_.end()) {
+                return nullptr;
+            }
+            auto iter = map_divider_sch_[stol(dividerObj->id_)].rbegin();
+            iter++;
+            return iter->second;
+        }
+
+        shared_ptr<DCDivideSCH> SlopeCheck::GetNextDivideAdasNode(long divideID) {
+            string strDividerID = to_string(divideID);
+            map<string, shared_ptr<DCDivider>> dividers = data_manager_->dividers_;
+            if (dividers.find(strDividerID) == dividers.end()) {
+                return nullptr;
+            }
+            string toID = dividers[strDividerID]->toNodeId_;
+            if (data_manager_->fnode_id2_dividers_maps_.find(toID) == data_manager_->fnode_id2_dividers_maps_.end()) {
+                return nullptr;
+            }
+            shared_ptr<DCDivider> dividerObj = data_manager_->fnode_id2_dividers_maps_[toID].front();
+            if (map_divider_sch_.find(stol(dividerObj->id_)) == map_divider_sch_.end()) {
+                return nullptr;
+            }
+            auto iter = map_divider_sch_[stol(dividerObj->id_)].begin();
+            iter++;
+            return iter->second;
+        }
+
         void SlopeCheck::CheckDividerSCH(shared_ptr<MapDataManager> modelDataManager,
                                          shared_ptr<CheckErrorOutput> errorOutput) {
-            return;
+            if (!LoadDividerSCH()) {
+                return;
+            }
+            for (const auto &divideSCH : map_divider_sch_) {
+                long divideID = divideSCH.first;
+                map<long, shared_ptr<DCDivideSCH>> mapDivideSCH = divideSCH.second;
+
+                auto curIter = mapDivideSCH.begin();
+                shared_ptr<DCDivideSCH> pre = GetPreDivideAdasNode(divideID);
+                if (pre == nullptr) {
+                    pre = curIter->second;
+                    curIter++;
+                }
+                while (curIter != mapDivideSCH.end()) {
+                    auto nextIter = curIter;
+                    nextIter++;
+                    shared_ptr<DCDivideSCH> next = nullptr;
+                    if (nextIter == mapDivideSCH.end()) {
+                        next = GetNextDivideAdasNode(divideID);
+                    } else {
+                        next = nextIter->second;
+                    }
+
+                    if (next == nullptr) {
+                        break;
+                    }
+
+                    double avgSlope = (pre->slope_ + next->slope_) / 2;
+                    double curSlope = curIter->second->slope_;
+                    if (fabs(avgSlope - curSlope) > slope_threshold_) {
+                        stringstream ss;
+                        ss << "当前的 Divide ID 是" << divideID << ", Index 是" << curIter->second->att_node_id_;
+                        ss << ", 当前的坡度是" << curSlope << "前后两个node 平均坡度是 " << avgSlope;
+                        ss << ", 误差大于 " << slope_threshold_;
+                        auto error = DCAttributeCheckError::createByKXS_10_002(ss.str());
+                        errorOutput->saveError(error);
+                    }
+
+                    pre = curIter->second;
+                    curIter++;
+                }
+            }
         }
     }
 }

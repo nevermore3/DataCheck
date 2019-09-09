@@ -6,6 +6,7 @@
 #define AUTOHDMAP_DATACHECK_SLOPECHECK_H
 
 #include "IMapProcessor.h"
+#include "geos/index/quadtree/Quadtree.h"
 
 namespace kd {
     namespace dc {
@@ -45,6 +46,10 @@ namespace kd {
             void CheckLaneSCH(shared_ptr<MapDataManager> modelDataManager,
                               shared_ptr<CheckErrorOutput> errorOutput);
 
+            void CheckAdasNodeToClosestDividerSlope(shared_ptr<CheckErrorOutput> errorOutput);
+
+            shared_ptr<DCDivider> GetRelevantDivider(long roadID);
+
             bool LoadNodeConn();
 
             bool LoadAdasNode();
@@ -65,7 +70,9 @@ namespace kd {
 
             shared_ptr<DCDivideSCH> GetNextDivideAdasNode(long divideID);
 
-            bool LoadData();
+            //创建几何信息,用于距离判断
+            void BuildDividerGeometryInfo();
+
 
         private:
             const string id_ = "slope check";
@@ -83,6 +90,9 @@ namespace kd {
             unordered_map<long, map<long, shared_ptr<AdasNode>>> map_road_adas_node_;
 
             unordered_map<long, map<long, shared_ptr<DCDivideSCH>>> map_divider_sch_;
+
+            shared_ptr<geos::index::quadtree::Quadtree> divider_quadtree_;
+
         };
 
     }

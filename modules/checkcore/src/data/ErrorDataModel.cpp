@@ -940,6 +940,42 @@ namespace kd {
             return error;
         }
 
+        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_020(long laneID, long index,
+                                                                const shared_ptr<DCCoord> &coord, int level) {
+
+            shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_020);
+            error->checkLevel_ = LEVEL_ERROR;
+            error->checkName = "LANE点完备性检查。";
+            error->detail += "Lane_id:";
+            error->detail += std::to_string(laneID);
+            error->detail += ",属性点索引:";
+            error->detail += to_string(index);
+            if (level == 1) {
+                error->detail += ",Lane节点周围1.5米内找不到HD_LANE_SCH";
+            } else if (level == 2) {
+                error->detail += ",车道中心线起点和终点之处缺失HD_LANE_SCH";
+            }
+            error->coord = coord;
+            return error;
+        }
+
+        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_021(long laneID, int index1, int index2, double dis,
+                                                                double threshold) {
+            shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_021);
+            error->checkLevel_ = LEVEL_ERROR;
+            error->checkName = "相邻HD_LANE_SCH点之间距离不超过1.3m";
+            error->detail += "Lane_id: ";
+            error->detail += std::to_string(laneID);
+            error->detail += ",属性点索引: ";
+            error->detail += to_string(index1);
+            error->detail += "和";
+            error->detail += to_string(index2);
+            error->detail += ", 的距离为: ";
+            error->detail += to_string(dis);
+            error->detail += ", 超过规定的 ";
+            error->detail += to_string(threshold);
+            return error;
+        }
 
         DCAdasError::DCAdasError(const string &checkModel) : DCError(checkModel) {
 

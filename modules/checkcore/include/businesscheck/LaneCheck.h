@@ -6,7 +6,7 @@
 #define AUTOHDMAP_DATACHECK_LANECHECK_H
 
 #include <IMapProcessor.h>
-
+#include "geos/index/quadtree/Quadtree.h"
 namespace kd {
     namespace dc {
 
@@ -86,6 +86,7 @@ namespace kd {
             void check_lane_curvature(shared_ptr<MapDataManager> mapDataManager,
                                       shared_ptr<CheckErrorOutput> errorOutput);
 
+
         private:
             /**
              * lane与divider是否相交
@@ -120,13 +121,36 @@ namespace kd {
             void lane_intersects(const shared_ptr<MapDataManager> &mapDataManager,
                                  const shared_ptr<CheckErrorOutput> &errorOutput,
                                  const vector<shared_ptr<DCLane>> &ptr_lanes);
+
+            /**
+             * 每一LANE的形状点周围1.5米内必有一个关联该LANE的HD_LANE_SCH
+             * @param mapDataManager
+             * @param errorOutput
+             */
+            void lane_relevant_lane_sch(const shared_ptr<MapDataManager> &mapDataManager,
+                                        const shared_ptr<CheckErrorOutput> &errorOutput);
+
+
+
+            //创建几何信息,用于距离判断
+            void BuildLaneSCHGeometryInfo();
+
+            /**
+             * 相邻HD_LANE_SCH点之间距离不能超过1.3m
+             * @param mapDataManager
+             * @param errorOutput
+             */
+             void adjacent_lane_sch_node_distance(const shared_ptr<MapDataManager> &mapDataManager,
+                                                  const shared_ptr<CheckErrorOutput> &errorOutput);
         private:
 
             const string id = "lane_check";
 
             void LoadLaneCurvature();
 
-            map<string, shared_ptr<DCLaneCurvature>> map_lane_curvature_;
+            unordered_map<long, map<long, shared_ptr<DCLaneCurvature>>> map_lane_sch_;
+
+            shared_ptr<geos::index::quadtree::Quadtree> lane_node_quadtree_;
 
         };
     }

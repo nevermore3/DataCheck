@@ -416,6 +416,12 @@ namespace kd {
             static shared_ptr<DCLaneError> createByKXS_05_019(const string &laneID, long curvature,
                                                               shared_ptr<DCCoord> coord);
 
+            static shared_ptr<DCLaneError> createByKXS_05_020(long laneID, long index,
+                                                              const shared_ptr<DCCoord> &coord, int level);
+
+            static shared_ptr<DCLaneError> createByKXS_05_021(long laneID, int index1, int index2,
+                                                              double dis, double threshold);
+
         public:
 
             //错误详细信息描述

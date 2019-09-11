@@ -96,6 +96,7 @@ namespace kd {
             LOG(INFO) << "task [save error] start. ";
             TimerUtil compilerTimer;
             try {
+                string taskid = DataCheckConfig::getInstance().getProperty("taskId");
 
                 for (const auto &check_item : check_model_2_output_maps_) {
                     for (const auto& item : check_item.second) {
@@ -104,7 +105,10 @@ namespace kd {
                             err_type = "E1";
                             ret = 1;
                         }
-                        JsonLog::GetInstance().AppendCheckError(item.checkId,item.checkName,item.errDesc,item.taskId,err_type,item.dataKey,item.boundId,item.flag, item.coord);
+                        if(taskid.length()==0){
+                             taskid =item.taskId;
+                        }
+                        JsonLog::GetInstance().AppendCheckError(item.checkId,item.checkName,item.errDesc,taskid,err_type,item.dataKey,item.boundId,item.flag, item.coord);
                     }
                 }
                 string errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH)+err_file_name;

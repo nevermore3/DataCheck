@@ -36,10 +36,13 @@
 #include "data/ResourceDataManager.h"
 #include "datacheck/TableDescCheck.h"
 #include "datacheck/ForeignKeyCheck.h"
+#include "util/task_info.h"
+#include "util/FileUtil.h"
 using namespace kd::dc;
 
 const char kCheckListFile[] = "check_list.json";
 const char checkresult[] = "checkresult.json";
+const char checkresultforjson[] = "error.json";
 shared_ptr<ResourceDataManager> ResourceDataManager::instance_ = nullptr;
 
 int TopoAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, int check_state) {
@@ -263,7 +266,27 @@ int main(int argc, const char *argv[]) {
     try {
         exe_path = argv[0];
 
-        InitGlog(exe_path, "./");
+        AdjustTaskInfo task_info;
+        if(argc==2) {
+            {
+                std::string config_file(argv[1]);
+                Poco::File file(config_file);
+                if (!file.exists()) {
+                    return 2;
+                }
+
+                string file_content;
+                if (FileUtil::LoadFile(config_file, file_content)) {
+                    AdjustTaskInfoLoader loader;
+                    if (!loader.Load(file_content, task_info)) {
+                        return 2;
+                    }
+                }
+            }
+            InitGlog(exe_path, task_info.logs_path_);
+        }else{
+            InitGlog(exe_path, "./");
+        }
 
         // 加载配置
         ret = DataCheckConfig::getInstance().load("config.properties");
@@ -288,28 +311,41 @@ int main(int argc, const char *argv[]) {
             DataCheckConfig::getInstance().setProperty(DataCheckConfig::CHECK_STATE,
                                                        to_string(DataCheckConfig::ALL_AUTO_CHECK));
             DataCheckConfig::getInstance().addProperty(DataCheckConfig::UPDATE_REGION, getUpdateRegion(ur_path));
+        }else if (argc == 2){
+            DataCheckConfig::getInstance().setProperty(DataCheckConfig::OUTPUT_PATH,task_info.output_path_);
+            DataCheckConfig::getInstance().setProperty(DataCheckConfig::JSON_DATA_INPUT,task_info.input_path_);
+            //检查项
+            auto checkItems = task_info.param_results.find("checkItemConfig");
+            if(checkItems==task_info.param_results.end()){
+                LOG(ERROR) << "read checkItemConfig param error!!";
+                return 3;
+            }
+            CheckListConfig::getInstance().ParsseItemDesc(checkItems->second);
+        }else{
+            string checkFilePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::CHECK_FILE_PATH);
+            Poco::File in_dir(checkFilePath);
+            if (!in_dir.exists()) {
+                LOG(ERROR) << checkFilePath << " is not exists!";
+                return 1;
+            } else {
+                CheckListConfig::getInstance().Load(checkFilePath);
+            }
         }
+
+
 
         // 检查项配置管理初始化 本地调试使用
 //        if(!CheckListConfig::getInstance().GetCheckList(argv[1],argv[2])){
 //            LOG(ERROR) << "download and parse checklist error!";
 //            return 1;
 //        }
-        string checkFilePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::CHECK_FILE_PATH);
-        Poco::File in_dir(checkFilePath);
-        if (!in_dir.exists()) {
-            LOG(ERROR) << checkFilePath << " is not exists!";
-            return 1;
-        } else {
-            CheckListConfig::getInstance().Load(checkFilePath);
-        }
+
 
         errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH) + checkresult;
         Poco::File error_file(errJsonPath);
         if (error_file.exists()) {
             error_file.remove();
         }
-
 
         int check_state = DataCheckConfig::getInstance().getPropertyI(DataCheckConfig::CHECK_STATE);
 
@@ -322,6 +358,7 @@ int main(int argc, const char *argv[]) {
             //拓扑自动化检查
             ret |= TopoAutoCheck(error_output, check_state);
             ret |= error_output->saveErrorReport(checkresult);
+            ret |= error_output->saveJsonError(checkresultforjson);
         } else if (check_state == DataCheckConfig::ALL_AUTO_CHECK) {
             // 创建UR路径
             Poco::File outDir(output_path);

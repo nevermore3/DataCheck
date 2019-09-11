@@ -33,11 +33,6 @@ bool LoadTaskBound(const AdjustTaskInfo task_info,map<string, shared_ptr<TaskBou
         string content =boundinfo->second;
         CTaskBoundService taskBoundService("");
         return taskBoundService.ParseTaskBound(content, task_bounds);
-    }else{
-        string content;
-        FileUtil::LoadFile("/home/ubuntu/orgdata/task/110000.json",content);
-        CTaskBoundService taskBoundService("");
-        return taskBoundService.ParseTaskBound(content, task_bounds);
     }
     LOG(ERROR) << "not find task bound info!";
     return false;

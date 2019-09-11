@@ -37,6 +37,9 @@ namespace kd {
 
             // 相邻HD_LANE_SCH点之间距离不超过1.3m
             adjacent_lane_sch_node_distance(mapDataManager, errorOutput);
+
+            //HD_LANE_SCH点离关联的LANE的垂直距离不超过10cm
+            lane_sch_vertical_distance(mapDataManager, errorOutput);
             return true;
         }
 
@@ -492,6 +495,27 @@ namespace kd {
                     }
                     preIter = currIter;
                     currIter++;
+                }
+            }
+        }
+
+        void LaneCheck::lane_sch_vertical_distance(const shared_ptr<MapDataManager> &mapDataManager,
+                                                   const shared_ptr<CheckErrorOutput> &errorOutput) {
+
+            for (const auto &laneSCH : map_lane_sch_) {
+                long laneID = laneSCH.first;
+                string strLaneID = to_string(laneID);
+                if (mapDataManager->lanes_.find(strLaneID) == mapDataManager->lanes_.end()) {
+                    continue;
+                }
+                auto lane = mapDataManager->lanes_[strLaneID];
+                for (const auto &node : laneSCH.second) {
+                    shared_ptr<geos::geom::Point> point = GeosObjUtil::CreatePoint(node.second->coord_);
+                    double distance = GeosObjUtil::GetVerticleDistance(lane->line_, point);
+                    if (distance > 0.1) {
+                        auto error = DCLaneError::createByKXS_05_022(node.first, node.second->coord_);
+                        errorOutput->saveError(error);
+                    }
                 }
             }
         }

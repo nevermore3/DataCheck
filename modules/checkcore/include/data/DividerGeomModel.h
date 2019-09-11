@@ -337,6 +337,12 @@ namespace kd {
             int getAttNodeIndex(shared_ptr<DCDividerNode> node);
 
             /**
+             * 创建几何对象，用于后期的空间判断
+             * @return 创建是否成功
+             */
+            bool buildGeometryInfo();
+
+            /**
               * 获得通行方向的首尾节点
               * @param left 左侧车道标识
               * @param start 首节点标识
@@ -362,6 +368,9 @@ namespace kd {
 
             //线坐标对象
             vector<shared_ptr<DCCoord>> coords_;
+
+            //geos线对象，用于空间运算判断
+            shared_ptr<geos::geom::LineString> line_;
 
         private:
             shared_ptr<DCDividerNode> leftDivSNode_;

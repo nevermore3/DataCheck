@@ -45,6 +45,8 @@ namespace kd {
             DividerRelevantDividerSCH(errorOutput);
             //相邻HD_DIVIDER_SCH点之间距离不超过1.3m
             AdjacentDividerSCHNodeDistance(errorOutput);
+            //HD_DIVIDER_SCH点离关联的DIVIDER的垂直距离不超过10cm
+            DividerSCHVerticalDistance(errorOutput);
 
             return true;
         }
@@ -191,6 +193,25 @@ namespace kd {
             }
         }
 
+        void DividerCheck::DividerSCHVerticalDistance(shared_ptr<CheckErrorOutput> errorOutput) {
+
+            for (const auto &dividerSCH : map_divider_sch_) {
+                long dividerID = dividerSCH.first;
+                string strDividerID = to_string(dividerID);
+                if (map_data_manager_->dividers_.find(strDividerID) == map_data_manager_->dividers_.end()) {
+                    continue;
+                }
+                auto divider = map_data_manager_->dividers_[strDividerID];
+                for (const auto &node : dividerSCH.second) {
+                    shared_ptr<geos::geom::Point> point = GeosObjUtil::CreatePoint(node.second->coord_);
+                    double distance = GeosObjUtil::GetVerticleDistance(divider->line_, point);
+                    if (distance > 0.1) {
+                        auto error = DCDividerCheckError::createByKXS_01_029(node.first, node.second->coord_);
+                        errorOutput->saveError(error);
+                    }
+                }
+            }
+        }
 
     }
 }

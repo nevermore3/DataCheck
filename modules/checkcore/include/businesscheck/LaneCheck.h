@@ -132,7 +132,15 @@ namespace kd {
 
 
             void adjacent_lane_sch_node_distance(const shared_ptr<MapDataManager> &mapDataManager,
-                                                  const shared_ptr<CheckErrorOutput> &errorOutput);
+                                                 const shared_ptr<CheckErrorOutput> &errorOutput);
+
+            /**
+             * HD_LANE_SCH点离LANE的垂直距离不超过10cm
+             * @param mapDataManager
+             * @param errorOutput
+             */
+             void lane_sch_vertical_distance(const shared_ptr<MapDataManager> &mapDataManager,
+                                             const shared_ptr<CheckErrorOutput> &errorOutput);
         private:
 
             const string id = "lane_check";

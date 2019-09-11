@@ -319,6 +319,19 @@ namespace kd {
             error->detail_ += to_string(threshold);
             return error;
         }
+
+        shared_ptr<DCDividerCheckError> DCDividerCheckError::createByKXS_01_029(long nodeID,
+                                                                                shared_ptr<DCCoord> coord) {
+            shared_ptr<DCDividerCheckError> error = make_shared<DCDividerCheckError>(CHECK_ITEM_KXS_ORG_029);
+            error->checkName = "DIVIDER_SCH与关联DIVIDER距离检查。";
+            error->detail_ += "DIVIDER_SCH ID:";
+            error->detail_ += std::to_string(nodeID);
+            error->detail_ += ",DIVIDER_SCH点离DIVIDER的垂直距离超过10cm";
+
+            error->coord = coord;
+            return error;
+
+        }
         /////////////////////////////////////////////////////////////////////////////////////////
         // DCLaneCheckError
         /////////////////////////////////////////////////////////////////////////////////////////
@@ -1009,6 +1022,17 @@ namespace kd {
             error->detail += to_string(dis);
             error->detail += ", 超过规定的 ";
             error->detail += to_string(threshold);
+            return error;
+        }
+
+        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_022(long nodeID, shared_ptr<DCCoord> coord) {
+            shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_022);
+            error->checkName = "LANE_SCH与关联LANE距离检查。";
+            error->detail += "LANE_SCH ID:";
+            error->detail += std::to_string(nodeID);
+            error->detail += ",LANE_SCH点离LANE的垂直距离超过10cm";
+
+            error->coord = coord;
             return error;
         }
 

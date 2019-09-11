@@ -207,6 +207,10 @@ namespace kd {
 
             static shared_ptr<DCDividerCheckError> createByKXS_01_028(long dividerID, int index1, int index2,
                                                                       double dis, double threshold);
+
+            static shared_ptr<DCDividerCheckError> createByKXS_01_029(long nodeID, shared_ptr<DCCoord> coord);
+
+
         public:
             virtual string toString() override;
 
@@ -426,6 +430,8 @@ namespace kd {
 
             static shared_ptr<DCLaneError> createByKXS_05_021(long laneID, int index1, int index2,
                                                               double dis, double threshold);
+
+            static shared_ptr<DCLaneError> createByKXS_05_022(long nodeID, shared_ptr<DCCoord> coord);
 
         public:
 

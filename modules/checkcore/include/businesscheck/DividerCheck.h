@@ -35,6 +35,12 @@ namespace kd {
              * @param errorOutput
              */
             void AdjacentDividerSCHNodeDistance(shared_ptr<CheckErrorOutput> errorOutput);
+
+            /**
+             * HD_DIVIDER_SCH点离关联的DIVIDER的垂直距离不超过10cm
+             * @param errorOutput
+             */
+            void DividerSCHVerticalDistance(shared_ptr<CheckErrorOutput> errorOutput);
         private:
             const string id_ = "divider_check";
 

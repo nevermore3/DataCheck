@@ -540,7 +540,7 @@ namespace kd {
                 }
             }
         }
-        
+
         void AdasCheck::Check_KXS_07_003() {
             // 保存Road形点 和 ADAS_NODE点之间的关系
             // key : RoadID ,value: {key: RoadNodeindex , value: {ADAS_NODE}}

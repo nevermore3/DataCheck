@@ -250,6 +250,35 @@ namespace kd {
             return -1;
         }
 
+        bool DCLane::buildGeometryInfo() {
+            //创建linestring
+            CoordinateSequence *cl = new CoordinateArraySequence();
+            for (const auto &node : coords_) {
+                double X0, Y0;
+                char zone0[8] = {0};
+
+                Coordinates::ll2utm(node->y_, node->x_, X0, Y0, zone0);
+
+                cl->add(geos::geom::Coordinate(X0, Y0, node->z_));
+            }
+
+            if (cl->size() < 2) {
+                this->valid_ = false;
+                return false;
+            }
+
+            const GeometryFactory *gf = GeometryFactory::getDefaultInstance();
+            geos::geom::LineString *lineString = gf->createLineString(cl);
+            if (lineString) {
+                line_.reset(lineString);
+                return true;
+            } else {
+                delete cl;
+                this->valid_ = false;
+                return false;
+            }
+        }
+
         shared_ptr<DCDividerNode> DCLane::getPassDividerNode(bool left, bool start) {
             if (leftDivSNode_ == nullptr && leftDivENode_ == nullptr
                 && rightDivSNode_ == nullptr && rightDivENode_ == nullptr){

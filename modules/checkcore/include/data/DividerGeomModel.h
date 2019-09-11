@@ -161,7 +161,7 @@ namespace kd {
 
             //虚线起终点类型: "0：实线, 1：虚线起点, 2：虚线终点, 3：虚线中间点"
             long dashType_;
-            long is_split_;
+            long isSplit_;
         };
 
         /**
@@ -264,6 +264,7 @@ namespace kd {
                 material_ = 1; //
                 width_ = 0; //
                 dividerNode_ = nullptr;
+                overlay_ = 0;
             }
 
             //判断两个属性变化点对象是否是同类型属性
@@ -308,7 +309,8 @@ namespace kd {
 
             //分隔线宽度："0：0CM, 1：15CM, 2：20CM, 3：25CM, 4：45CM, 5：50CM, 6：55CM, 7：60CM"
             long width_;
-
+             //覆盖类型
+            long overlay_;
             //属性变化点关联的节点
             shared_ptr<DCDividerNode> dividerNode_;
         };

@@ -32,7 +32,7 @@ namespace kd {
 
             static shared_ptr<geos::geom::Point> CreatePointUTM(double utmX, double utmY, double z);
 
-
+            static shared_ptr<geos::geom::LineString> CreateLineString(const vector<shared_ptr<DCDividerNode>> &coords);
             /**
              * 获取点集合长度
              * @param ptr_coords
@@ -90,7 +90,20 @@ namespace kd {
 
             static double GetVerticleDistance(shared_ptr<geos::geom::LineString> line,
                                               shared_ptr<geos::geom::Point> point);
-
+/**
+             * 根据 start, end所确定的方向，创建三角形对象
+             * @param startx 开始点坐标X
+             * @param starty 开始点坐标Y
+             * @param endx  结束点坐标X
+             * @param endy  结束点坐标Y
+             * @param trace_Angle 三角形的张角的1/2
+             * @param trace_Length 三角形张角的边距离开始点的距离
+             * @return  三角形对象
+             */
+            static shared_ptr<geos::geom::Polygon>
+            CreateTriGeometry(double startx, double starty, double endx, double endy,
+                              double ref_z, double trace_Angle, double trace_Length);
+            static void rotate(double centx, double centy, double x, double y, double radius, double *newx, double *newy);
         private:
             static bool CheckFirstSegInvalid(vector<shared_ptr<DCCoord>> &lane_nodes, bool start, double angle_limit,
                                              double dist_limit);

@@ -68,6 +68,11 @@ namespace kd {
 
             const static string LENGTH_PRECISE;
 
+            ///接边检查
+            const static string CONN_INPUTPATH;
+            const static string CONN_OUTPATH;
+            const static string CONN_TASKBOUNDPATH;
+            const static string CONN_CHECKFILEPATH;
 
         public:
             static DataCheckConfig & getInstance() {

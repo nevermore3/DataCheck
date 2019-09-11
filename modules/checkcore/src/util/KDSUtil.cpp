@@ -93,6 +93,9 @@ namespace kd {
                 dc_divider_node->coord_->x_ = kds_divider_node->x;
                 dc_divider_node->coord_->y_ = kds_divider_node->y;
                 dc_divider_node->coord_->z_ = kds_divider_node->z;
+                dc_divider_node->isSplit_ = kds_divider_node->getPropertyLong(KDSDividerNode::ISSPLIT);
+                dc_divider_node->task_id_ = kds_divider_node->getProperty(KDSDividerNode::TASKID);
+                dc_divider_node->flag_ = kds_divider_node->getProperty(KDSDividerNode::FLAG);
             }
             return dc_divider_node;
         }
@@ -109,6 +112,7 @@ namespace kd {
                 dc_da->driveRule_ = kds_da->getPropertyLong(KDSDividerAttribute::DRIVE_RULE);
                 dc_da->material_ = kds_da->getPropertyLong(KDSDividerAttribute::MATERIAL);
                 dc_da->width_ = kds_da->getPropertyLong(KDSDividerAttribute::WIDTH);
+                dc_da->overlay_= kds_da->getPropertyLong(KDSDividerAttribute::OVERLAY);
 
                 long divider_node_id = -1;
                 for (const auto &role : kds_da->vecMemberAndRols) {

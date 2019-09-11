@@ -68,6 +68,13 @@ namespace kd {
         const string DataCheckConfig::COUNT_CHECK_FILE = "count_check_file";
         const string DataCheckConfig::LENGTH_PRECISE = "length_precise";
 
+        ///接边检查
+        const string DataCheckConfig::CONN_INPUTPATH = "conn_inputPath";
+        const string DataCheckConfig::CONN_OUTPATH = "conn_outputPath";
+        const string DataCheckConfig::CONN_TASKBOUNDPATH="conn_taskBoundPath";
+        const string DataCheckConfig::CONN_CHECKFILEPATH="conn_checkFilePath";
+
+
 
         int DataCheckConfig::load(string fileName) {
             int ret = 0;

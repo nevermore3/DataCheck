@@ -113,7 +113,15 @@ namespace kd {
             //错误所在数据源ID，node、way、relation数据ID
             string sourceId;
         };
+        /**
+         * 接边检查错误
+         */
+        class SplitCheckError : public DCError{
+        public:
+            SplitCheckError(string checkId_);
+            virtual string toString() override;
 
+        };
         /**
          * 数据字段约束检查
          */

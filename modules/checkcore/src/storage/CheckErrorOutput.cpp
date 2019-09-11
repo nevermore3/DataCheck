@@ -91,7 +91,7 @@ namespace kd {
             LOG(INFO) << "task [save error] end successfully " << " costs : " << compilerTimer.elapsed_message();
             return ret;
         }
-        int CheckErrorOutput::saveJsonError(){
+        int CheckErrorOutput::saveJsonError(string err_file_name){
             int ret = 0;
             LOG(INFO) << "task [save error] start. ";
             TimerUtil compilerTimer;
@@ -107,7 +107,7 @@ namespace kd {
                         JsonLog::GetInstance().AppendCheckError(item.checkId,item.checkName,item.errDesc,item.taskId,err_type,item.dataKey,item.boundId,item.flag, item.coord);
                     }
                 }
-                string errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::ERR_JSON_PATH);
+                string errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH)+err_file_name;
                 JsonLog::GetInstance().WriteToFile(errJsonPath);
             } catch (std::exception &e) {
                 LOG(ERROR) << e.what();

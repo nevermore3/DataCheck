@@ -50,29 +50,32 @@ bool CheckListConfig::ParsseItemDesc(const string &json_result){
             obj = jsonResult.extract<Poco::JSON::Object::Ptr>();
 
         //判断返回值
-        string code = obj->getValue<string>("code");
-        if (strcmp(code.c_str(), "0") != 0) {
-            return false;
-        }
+//        string code = obj->getValue<string>("code");
+//        if (strcmp(code.c_str(), "0") != 0) {
+//            return false;
+//        }
         if(obj ->has("result")) {
-            Poco::JSON::Array::Ptr dataArray = obj->getArray("result");
+            Object::Ptr result_obj = obj->getObject("result");
+            if(result_obj->has("checkItemList")) {
+                Poco::JSON::Array::Ptr dataArray = result_obj->getArray("checkItemList");
+                int totalCount = dataArray->size();
 
-            int totalCount = dataArray->size();
+                for (long i = 0; i < totalCount; i++) {
 
-            for (long i = 0; i < totalCount; i++) {
+                    Object::Ptr item = dataArray->getObject(i);
+                    string code = item->get("code");
+                    string desc = item->get("description");
 
-                Object::Ptr item = dataArray->getObject(i);
-                string code = item->get("code");
-                string desc = item->get("description");
-
-                map<string, string>::iterator it = check_map.find(code);
-                if (it != check_map.end()) {
-                    check_map[code] =desc;
-                } else {
-                    check_map.insert(make_pair(code, desc));
+                    map<string, string>::iterator it = check_map.find(code);
+                    if (it != check_map.end()) {
+                        check_map[code] = desc;
+                    } else {
+                        check_map.insert(make_pair(code, desc));
+                    }
                 }
             }
         }
+        check_map.insert(make_pair("FEM-008", "测试测试"));
     } catch (Exception &e) {
         cout << e.what() << endl;
     }

@@ -70,7 +70,7 @@ namespace kd {
              */
             int saveErrorToDb(const string &ouput_file);
 
-            int saveJsonError();
+            int saveJsonError(string err_file_name);
             void saveError(shared_ptr<DCError> error);
 
             /**

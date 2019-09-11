@@ -22,6 +22,7 @@
 #include "businesscheck/LaneGroupCheck.h"
 #include "businesscheck/LaneAttribCheck.h"
 #include "businesscheck/LaneShapeNormCheck.h"
+#include "businesscheck/DividerCheck.h"
 #include "businesscheck/LaneTopoCheck.h"
 #include "businesscheck/LaneGroupRelationCheck.h"
 #include "businesscheck/LaneGroupTopoCheck.h"
@@ -196,6 +197,10 @@ int AllAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, const string& 
     // 坡度检查
     shared_ptr<SlopeCheck> slopeCheck = make_shared<SlopeCheck>();
     map_process_manager->registerProcessor(slopeCheck);
+
+    // divider检查
+    shared_ptr<DividerCheck> dividerCheck = make_shared<DividerCheck>();
+    map_process_manager->registerProcessor(dividerCheck);
 
     //执行已注册检查项
     shared_ptr<MapDataManager> mapDataManager = make_shared<MapDataManager>();

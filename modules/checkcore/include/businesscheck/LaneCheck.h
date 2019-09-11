@@ -131,16 +131,7 @@ namespace kd {
                                         const shared_ptr<CheckErrorOutput> &errorOutput);
 
 
-
-            //创建几何信息,用于距离判断
-            void BuildLaneSCHGeometryInfo();
-
-            /**
-             * 相邻HD_LANE_SCH点之间距离不能超过1.3m
-             * @param mapDataManager
-             * @param errorOutput
-             */
-             void adjacent_lane_sch_node_distance(const shared_ptr<MapDataManager> &mapDataManager,
+            void adjacent_lane_sch_node_distance(const shared_ptr<MapDataManager> &mapDataManager,
                                                   const shared_ptr<CheckErrorOutput> &errorOutput);
         private:
 

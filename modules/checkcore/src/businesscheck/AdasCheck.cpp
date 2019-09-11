@@ -540,50 +540,65 @@ namespace kd {
                 }
             }
         }
-
+        
         void AdasCheck::Check_KXS_07_003() {
+            // 保存Road形点 和 ADAS_NODE点之间的关系
+            // key : RoadID ,value: {key: RoadNodeindex , value: {ADAS_NODE}}
+            unordered_map<long, map<long, vector<shared_ptr<AdasNode>>>>mapRoadAdasNode;
+
+            map<string, shared_ptr<DCRoad>>roads = data_manager->roads_;
+            for (const auto &adasNode : road_id2_adas_node_maps_) {
+                long roadID = adasNode.first;
+
+                map<long, vector<shared_ptr<AdasNode>>>mapNodeIndex2AdasNode;
+                for (const auto &node : adasNode.second) {
+                    long roadNodeIndex = node.second->road_node_idx_;
+                    if (mapNodeIndex2AdasNode.find(roadNodeIndex) == mapNodeIndex2AdasNode.end()) {
+                        vector<shared_ptr<AdasNode>>adasNodeArray;
+                        adasNodeArray.emplace_back(node.second);
+                        mapNodeIndex2AdasNode.insert(make_pair(roadNodeIndex, adasNodeArray));
+                    } else {
+                        mapNodeIndex2AdasNode[roadNodeIndex].emplace_back(node.second);
+                    }
+                }
+                mapRoadAdasNode.insert(make_pair(roadID, mapNodeIndex2AdasNode));
+            }
+
             // 每一Road的形状点周围1.5米内必有一个关联该ROAD的ADAS_NODE
-            double adas_node_distance = 1.5;
-            shared_ptr<DCError> ptr_error = nullptr;
-            for (const auto &road_it : data_manager->roads_) {
-                if (road_it.second) {
-                    int count = 0;
-                    for (const auto &node : road_it.second->nodes_) {
-                        shared_ptr<geos::geom::Point> point = GeosObjUtil::CreatePoint(node);
-                        shared_ptr<geos::geom::Geometry> geom_buffer(point->buffer(1.5));
-                        vector<void *> adas_nodes;
-                        adas_node_quadtree_->query(geom_buffer->getEnvelopeInternal(), adas_nodes);
+            double distanceThreshold = 1.5;
+            for (const auto &road : roads) {
+                long roadID = stol(road.first);
+                if (mapRoadAdasNode.find(roadID) == mapRoadAdasNode.end()) {
+                    continue;
+                }
 
-                        if (!adas_nodes.empty()) {
-                            double max_distance = DBL_MAX;
-                            for (auto adas_node : adas_nodes) {
-                                AdasNode *ptr_adas_node = static_cast<AdasNode *>(adas_node);
-                                double dis = GeosObjUtil::get_length_of_node(ptr_adas_node->coord_, node);
-                                if (dis < max_distance) {
-                                    max_distance = dis;
-                                }
-                            }
-
-                            if (max_distance > 1.5) {
-                                // KXS-07-003-E1
-                                ptr_error = DCAdasError::createByKXS_07_003(stol(road_it.first), count, node, 1);
-                                error_output->saveError(ptr_error);
-                            }
-
-                            if (count == 0 || count == road_it.second->nodes_.size() - 1) {
-                                if (max_distance > 0.2) {
-                                    // KXS-07-003-E2
-                                    ptr_error = DCAdasError::createByKXS_07_003(stol(road_it.first), count, node, 2);
-                                    error_output->saveError(ptr_error);
-                                }
-                            }
-                        } else {
-                            // KXS-07-003-E1
-                            ptr_error = DCAdasError::createByKXS_07_003(stol(road_it.first), count, node, 1);
-                            error_output->saveError(ptr_error);
+                for (size_t i = 0; i < road.second->nodes_.size(); i++) {
+                    if (mapRoadAdasNode[roadID].find(i) == mapRoadAdasNode[roadID].end()) {
+                        auto error = DCAdasError::createByKXS_07_003(roadID, i, road.second->nodes_[i], 1);
+                        error_output->saveError(error);
+                        continue;
+                    }
+                    vector<shared_ptr<AdasNode>>adasNodeArray = mapRoadAdasNode[roadID][i];
+                    //求Road形点到 ADAS_NODE集合点中最近的一个点
+                    double minDistance = DBL_MAX;
+                    for (const auto &adasNode : adasNodeArray) {
+                        double distance = GeosObjUtil::get_length_of_node(road.second->nodes_[i], adasNode->coord_);
+                        if (distance < minDistance) {
+                            minDistance = distance;
                         }
+                    }
 
-                        count++;
+                    if (minDistance > distanceThreshold) {
+                        auto error = DCAdasError::createByKXS_07_003(roadID, i, road.second->nodes_[i], 1);
+                        error_output->saveError(error);
+                    }
+
+                    //road的起点和终点之处（buffer20cm）必有一个关联该road的ADAS_NODE
+                    if (i == 0 || i == road.second->nodes_.size() - 1) {
+                        if (minDistance > 0.2) {
+                            auto error = DCAdasError::createByKXS_07_003(roadID, i, road.second->nodes_[i], 2);
+                            error_output->saveError(error);
+                        }
                     }
                 }
             }

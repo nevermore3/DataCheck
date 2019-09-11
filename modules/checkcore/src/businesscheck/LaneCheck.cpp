@@ -27,6 +27,8 @@ namespace kd {
             check_lane_nodes_angle(mapDataManager, errorOutput);
             // 有拓扑关系的车道中心线夹角检查
             check_lane_angle(mapDataManager, errorOutput);
+
+            LoadLaneCurvature();
             // 车道中心线曲率检查
             check_lane_curvature(mapDataManager, errorOutput);
 
@@ -390,7 +392,7 @@ namespace kd {
         void LaneCheck::check_lane_curvature(shared_ptr<MapDataManager> mapDataManager,
                                              shared_ptr<CheckErrorOutput> errorOutput) {
             double threshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::LANE_CURVATURE);
-            LoadLaneCurvature();
+
 
             for (const auto &laneSCH : map_lane_sch_) {
                 for (const auto &laneNode : laneSCH.second) {
@@ -405,58 +407,65 @@ namespace kd {
 
         }
 
-        void LaneCheck::BuildLaneSCHGeometryInfo() {
-            lane_node_quadtree_ = make_shared<geos::index::quadtree::Quadtree>();
-            for (const auto &laneSCH : map_lane_sch_) {
-                for (const auto &laneNode : laneSCH.second) {
-                    shared_ptr<geos::geom::Point> point = GeosObjUtil::CreatePoint(laneNode.second->coord_);
-                    lane_node_quadtree_->insert(point->getEnvelopeInternal(), laneNode.second.get());
-                }
-            }
-        }
-
+        // 每一Lane的形状点周围1.5米内必有一个关联该Lane的HD_LANE_SCH
         void LaneCheck::lane_relevant_lane_sch(const shared_ptr<MapDataManager> &mapDataManager,
                                                const shared_ptr<CheckErrorOutput> &errorOutput) {
-            BuildLaneSCHGeometryInfo();
-            // 每一Lane的形状点周围1.5米内必有一个关联该Lane的HD_LANE_SCH
-            double distanceThreshold = 1.5;
-            shared_ptr<DCError> error = nullptr;
-            for (const auto &lane : mapDataManager->lanes_) {
+            // 保存LANE形点 和 HD_LANE_SCH点之间的关系
+            // key : LaneID ,value: {key: LaneNodeindex , value: {LANE_SCH}}
+            unordered_map<long, map<long, vector<shared_ptr<DCLaneCurvature>>>>mapLaneNodeSCH;
+            map<string, shared_ptr<DCLane>>lanes = mapDataManager->lanes_;
+            for (const auto &laneSCH : map_lane_sch_) {
+                long laneID = laneSCH.first;
 
-                size_t count = 0;
-                for (const auto &laneNode : lane.second->coords_) {
-                    shared_ptr<geos::geom::Point> point = GeosObjUtil::CreatePoint(laneNode);
-                    shared_ptr<geos::geom::Geometry> geomBuffer(point->buffer(distanceThreshold));
-                    vector<void *> laneSCHArray;
-                    lane_node_quadtree_->query(geomBuffer->getEnvelopeInternal(), laneSCHArray);
-
-                    if (!laneSCHArray.empty()) {
-                        double maxDistance = DBL_MAX;
-                        for (const auto &laneSCH : laneSCHArray) {
-                            DCLaneCurvature *laneNodeObj = static_cast<DCLaneCurvature *>(laneSCH);
-
-                            double distance = GeosObjUtil::get_length_of_node(laneNodeObj->coord_, laneNode);
-                            if (distance < maxDistance) {
-                                maxDistance = distance;
-                            }
-                        }
-
-                        if (maxDistance > distanceThreshold) {
-                            error = DCLaneError::createByKXS_05_020(stol(lane.first), count, laneNode, 1);
-                            errorOutput->saveError(error);
-                        }
-
-                        if (count == 0 || count == lane.second->coords_.size() - 1) {
-                            if (maxDistance > 0.2) {
-                                error = DCLaneError::createByKXS_05_020(stol(lane.first), count, laneNode, 2);
-                                errorOutput->saveError(error);
-                            }
-                        }
+                map<long, vector<shared_ptr<DCLaneCurvature>>>mapNodeIndex2SCH;
+                for (const auto &node : laneSCH.second) {
+                    long laneNodeIndex = node.second->lane_node_index_;
+                    if (mapNodeIndex2SCH.find(laneNodeIndex) == mapNodeIndex2SCH.end()) {
+                        vector<shared_ptr<DCLaneCurvature>>laneSCHArray;
+                        laneSCHArray.emplace_back(node.second);
+                        mapNodeIndex2SCH.insert(make_pair(laneNodeIndex, laneSCHArray));
                     } else {
-                        error = DCLaneError::createByKXS_05_020(stol(lane.first), count, laneNode, 1);
+                        mapNodeIndex2SCH[laneNodeIndex].emplace_back(node.second);
+                    }
+                }
+                mapLaneNodeSCH.insert(make_pair(laneID, mapNodeIndex2SCH));
+            }
+
+            double distanceThreshold = 1.5;
+            for (const auto &lane : lanes) {
+                long laneID = stol(lane.first);
+                if (mapLaneNodeSCH.find(laneID) == mapLaneNodeSCH.end()) {
+                    continue;
+                }
+
+                for (size_t i = 0; i < lane.second->coords_.size(); i++) {
+                    if (mapLaneNodeSCH[laneID].find(i) == mapLaneNodeSCH[laneID].end()) {
+                        auto error = DCLaneError::createByKXS_05_020(laneID, i, lane.second->coords_[i], 1);
+                        errorOutput->saveError(error);
+                        continue;
+                    }
+                    vector<shared_ptr<DCLaneCurvature>>laneSCHArray = mapLaneNodeSCH[laneID][i];
+                    //求Lane形点到 LANE_SCH集合点中最近的一个点
+                    double minDistance = DBL_MAX;
+                    for (const auto &schNode : laneSCHArray) {
+                        double distance = GeosObjUtil::get_length_of_node(lane.second->coords_[i], schNode->coord_);
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                        }
+                    }
+
+                    if (minDistance > distanceThreshold) {
+                        auto error = DCLaneError::createByKXS_05_020(laneID, i, lane.second->coords_[i], 1);
                         errorOutput->saveError(error);
                     }
-                    count++;
+
+                    //lane的起点和终点之处（buffer20cm）必有一个关联该lane的HD_LANE_SCH
+                    if (i == 0 || i == lane.second->coords_.size() - 1) {
+                        if (minDistance > 0.2) {
+                            auto error = DCLaneError::createByKXS_05_020(laneID, i, lane.second->coords_[i], 2);
+                            errorOutput->saveError(error);
+                        }
+                    }
                 }
             }
         }

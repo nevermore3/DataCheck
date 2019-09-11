@@ -283,7 +283,42 @@ namespace kd {
             return error;
         }
 
+        shared_ptr<DCDividerCheckError> DCDividerCheckError::createByKXS_01_027(long dividerID, long index,
+                                                                                const shared_ptr<DCCoord> &coord,
+                                                                                int level) {
+            shared_ptr<DCDividerCheckError> error = make_shared<DCDividerCheckError>(CHECK_ITEM_KXS_ORG_027);
+            error->checkLevel_ = LEVEL_ERROR;
+            error->checkName = "Divider点完备性检查.";
+            error->detail_ += "Divider ID:";
+            error->detail_ += std::to_string(dividerID);
+            error->detail_ += ",属性点索引:";
+            error->detail_ += to_string(index);
+            if (level == 1) {
+                error->detail_ += ",Divider节点周围1.5米内找不到HD_DIVIDER_SCH";
+            } else if (level == 2) {
+                error->detail_ += ",车道线起点和终点之处缺失HD_DIVIDER_SCH";
+            }
+            error->coord = coord;
+            return error;
+        }
 
+        shared_ptr<DCDividerCheckError> DCDividerCheckError::createByKXS_01_028(long dividerID, int index1, int index2,
+                                                                                double dis, double threshold) {
+            shared_ptr<DCDividerCheckError> error = make_shared<DCDividerCheckError>(CHECK_ITEM_KXS_ORG_028);
+            error->checkLevel_ = LEVEL_ERROR;
+            error->checkName = "相邻HD_DIVIDER_SCH点之间距离不超过1.3m";
+            error->detail_ += "Divider ID: ";
+            error->detail_ += std::to_string(dividerID);
+            error->detail_ += ",属性点索引: ";
+            error->detail_ += to_string(index1);
+            error->detail_ += "和";
+            error->detail_ += to_string(index2);
+            error->detail_ += ", 的距离为: ";
+            error->detail_ += to_string(dis);
+            error->detail_ += ", 超过规定的 ";
+            error->detail_ += to_string(threshold);
+            return error;
+        }
         /////////////////////////////////////////////////////////////////////////////////////////
         // DCLaneCheckError
         /////////////////////////////////////////////////////////////////////////////////////////

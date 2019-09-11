@@ -144,6 +144,8 @@ int forAllCheck(int argc, const char *argv[]){
             LOG(ERROR) << "读取配置文件config.properties失败,程序退出!";
             return ret;
         }
+        DataCheckConfig::getInstance().addProperty("taskId",task_info.param_results.find("taskId")->second);
+        DataCheckConfig::getInstance().addProperty("branchName",task_info.param_results.find("branchName")->second);
         DataCheckConfig::getInstance().setProperty(DataCheckConfig::OUTPUT_PATH,task_info.output_path_);
         DataCheckConfig::getInstance().setProperty(DataCheckConfig::JSON_DATA_INPUT,task_info.input_path_);
         DataCheckConfig::getInstance().setProperty(DataCheckConfig::ERR_JSON_PATH,task_info.input_path_+checkresultforjson);

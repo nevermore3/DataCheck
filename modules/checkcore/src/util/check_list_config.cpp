@@ -75,7 +75,6 @@ bool CheckListConfig::ParsseItemDesc(const string &json_result){
                 }
             }
         }
-        check_map.insert(make_pair("FEM-008", "测试测试"));
     } catch (Exception &e) {
         cout << e.what() << endl;
     }

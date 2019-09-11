@@ -198,8 +198,10 @@ int forAllCheck(int argc, const char *argv[]){
  */
 int main(int argc, const char *argv[]) {
     if(argc>1){
+        //全库检查
         return forAllCheck(argc,argv);
     }else{
-
+        //OSM检查
+        return 1;
     }
 }

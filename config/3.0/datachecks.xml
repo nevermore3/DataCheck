@@ -14,7 +14,7 @@
                    LEVEL="error"
                    INFO="数据中存在几何对象完全相同的重复记录"
                    SQL="SELECT fileName tblName FROM ARCSHAPE_METADATA WHERE SHPType&lt;&gt;0 and fileName&lt;&gt;'HD_DIVIDER_NODE_INDEX'
-                   and fileName&lt;&gt;'HD_DIVIDER_NODE' and fileName&lt;&gt;'ADAS_NODE';
+                   and fileName&lt;&gt;'HD_DIVIDER_NODE' and fileName&lt;&gt;'ADAS_NODE' and fileName&lt;&gt;'HD_LANE_SCH';
                    SELECT rp.FileName, RepeatGeometryIds, LocalX, LocalY FROM
                    (SELECT '{tblName}' FileName, min(r.id) localid, group_concat(id) 
                    RepeatGeometryIds FROM {tblName} r 

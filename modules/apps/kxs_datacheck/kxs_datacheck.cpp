@@ -162,8 +162,8 @@ int AllAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, const string& 
     map_process_manager->registerProcessor(divShpDefCheck);
 
 //        //车道线拓扑检查
-//        shared_ptr<DividerTopoCheck> divTopoCheck = make_shared<DividerTopoCheck>();
-//        map_process_manager->registerProcessor(divTopoCheck);
+        shared_ptr<DividerTopoCheck> divTopoCheck = make_shared<DividerTopoCheck>();
+        map_process_manager->registerProcessor(divTopoCheck);
 
     //车道属性检查
     shared_ptr<LaneAttribCheck> laneAttCheck = make_shared<LaneAttribCheck>();
@@ -285,8 +285,7 @@ int main(int argc, const char *argv[]) {
             base_path = base_path + "/" + ur_path;
 
             DataCheckConfig::getInstance().setProperty(DataCheckConfig::DB_INPUT_FILE, db_file_name);
-            DataCheckConfig::getInstance().setProperty(DataCheckConfig::CHECK_STATE,
-                                                       to_string(DataCheckConfig::ALL_AUTO_CHECK));
+            DataCheckConfig::getInstance().setProperty(DataCheckConfig::CHECK_STATE, to_string(DataCheckConfig::ALL_AUTO_CHECK));
             DataCheckConfig::getInstance().addProperty(DataCheckConfig::UPDATE_REGION, getUpdateRegion(ur_path));
         }
 
@@ -295,14 +294,7 @@ int main(int argc, const char *argv[]) {
 //            LOG(ERROR) << "download and parse checklist error!";
 //            return 1;
 //        }
-        string checkFilePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::CHECK_FILE_PATH);
-        Poco::File in_dir(checkFilePath);
-        if (!in_dir.exists()) {
-            LOG(ERROR) << checkFilePath << " is not exists!";
-            return 1;
-        } else {
-            CheckListConfig::getInstance().Load(checkFilePath);
-        }
+
 
         errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH) + checkresult;
         Poco::File error_file(errJsonPath);
@@ -320,6 +312,14 @@ int main(int argc, const char *argv[]) {
 
         if (check_state == DataCheckConfig::TOPO_AUTO_CHECK) {
             //拓扑自动化检查
+            string checkFilePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::CHECK_FILE_PATH);
+            Poco::File in_dir(checkFilePath);
+            if (!in_dir.exists()) {
+                LOG(ERROR) << checkFilePath << " is not exists!";
+                return 1;
+            } else {
+                CheckListConfig::getInstance().Load(checkFilePath);
+            }
             ret |= TopoAutoCheck(error_output, check_state);
             ret |= error_output->saveErrorReport(checkresult);
         } else if (check_state == DataCheckConfig::ALL_AUTO_CHECK) {

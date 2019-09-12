@@ -202,6 +202,15 @@ namespace kd {
             static shared_ptr<DCDividerCheckError> createByKXS_01_013(const string &divider_id,
                                                                       const vector<shared_ptr<NodeCompareError>> &ptr_error_nodes);
 
+            static shared_ptr<DCDividerCheckError> createByKXS_01_027(long dividerID, long index,
+                                                                      const shared_ptr<DCCoord> &coord, int level);
+
+            static shared_ptr<DCDividerCheckError> createByKXS_01_028(long dividerID, int index1, int index2,
+                                                                      double dis, double threshold);
+
+            static shared_ptr<DCDividerCheckError> createByKXS_01_029(long nodeID, shared_ptr<DCCoord> coord);
+
+
         public:
             virtual string toString() override;
 
@@ -416,6 +425,14 @@ namespace kd {
             static shared_ptr<DCLaneError> createByKXS_05_019(const string &laneID, long curvature,
                                                               shared_ptr<DCCoord> coord);
 
+            static shared_ptr<DCLaneError> createByKXS_05_020(long laneID, long index,
+                                                              const shared_ptr<DCCoord> &coord, int level);
+
+            static shared_ptr<DCLaneError> createByKXS_05_021(long laneID, int index1, int index2,
+                                                              double dis, double threshold);
+
+            static shared_ptr<DCLaneError> createByKXS_05_022(long nodeID, shared_ptr<DCCoord> coord);
+
         public:
 
             //错误详细信息描述
@@ -544,6 +561,17 @@ namespace kd {
 
         public:
             //错误详细信息描述
+            string detail;
+        };
+
+        class DCAttributeCheckError : public DCError {
+        public:
+            explicit DCAttributeCheckError(const string &checkModel) : DCError(checkModel) {};
+
+            static shared_ptr<DCAttributeCheckError> createByKXS_10_002(const string &detail);
+
+            virtual string toString() override;
+        public:
             string detail;
         };
 

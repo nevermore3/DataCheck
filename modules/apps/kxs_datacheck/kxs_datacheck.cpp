@@ -22,6 +22,7 @@
 #include "businesscheck/LaneGroupCheck.h"
 #include "businesscheck/LaneAttribCheck.h"
 #include "businesscheck/LaneShapeNormCheck.h"
+#include "businesscheck/DividerCheck.h"
 #include "businesscheck/LaneTopoCheck.h"
 #include "businesscheck/LaneGroupRelationCheck.h"
 #include "businesscheck/LaneGroupTopoCheck.h"
@@ -36,6 +37,7 @@
 #include "data/ResourceDataManager.h"
 #include "datacheck/TableDescCheck.h"
 #include "datacheck/ForeignKeyCheck.h"
+#include "datacheck/SlopeCheck.h"
 using namespace kd::dc;
 
 const char kCheckListFile[] = "check_list.json";
@@ -192,6 +194,14 @@ int AllAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, const string& 
     shared_ptr<AdasCheck> adas_check = make_shared<AdasCheck>(base_path);
     map_process_manager->registerProcessor(adas_check);
 
+    // 坡度检查
+    shared_ptr<SlopeCheck> slopeCheck = make_shared<SlopeCheck>();
+    map_process_manager->registerProcessor(slopeCheck);
+
+    // divider检查
+    shared_ptr<DividerCheck> dividerCheck = make_shared<DividerCheck>();
+    map_process_manager->registerProcessor(dividerCheck);
+
     //执行已注册检查项
     shared_ptr<MapDataManager> mapDataManager = make_shared<MapDataManager>();
     if (!map_process_manager->execute(mapDataManager, errorOutput)) {
@@ -296,12 +306,14 @@ int main(int argc, const char *argv[]) {
 //            return 1;
 //        }
         string checkFilePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::CHECK_FILE_PATH);
-        Poco::File in_dir(checkFilePath);
-        if (!in_dir.exists()) {
-            LOG(ERROR) << checkFilePath << " is not exists!";
-            return 1;
-        } else {
-            CheckListConfig::getInstance().Load(checkFilePath);
+        if (DataCheckConfig::getInstance().getPropertyI(DataCheckConfig::CHECK_STATE) == DataCheckConfig::TOPO_AUTO_CHECK) {
+            Poco::File in_dir(checkFilePath);
+            if (!in_dir.exists()) {
+                LOG(ERROR) << checkFilePath << " is not exists!";
+                return 1;
+            } else {
+                CheckListConfig::getInstance().Load(checkFilePath);
+            }
         }
 
         errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH) + checkresult;
@@ -322,6 +334,7 @@ int main(int argc, const char *argv[]) {
             //拓扑自动化检查
             ret |= TopoAutoCheck(error_output, check_state);
             ret |= error_output->saveErrorReport(checkresult);
+            ret |= error_output->saveJsonError();
         } else if (check_state == DataCheckConfig::ALL_AUTO_CHECK) {
             // 创建UR路径
             Poco::File outDir(output_path);
@@ -341,7 +354,7 @@ int main(int argc, const char *argv[]) {
             // KXF全要素检查
             ret |= SqlAutoCheck(error_output);
             ret |= AllAutoCheck(error_output, base_path);
-            //ret |= ConsistencyCheck(error_output);
+            ret |= ConsistencyCheck(error_output);
             ret |= error_output->saveErrorToDb(output_file);
         }
 

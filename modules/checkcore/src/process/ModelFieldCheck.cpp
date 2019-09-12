@@ -89,7 +89,8 @@ namespace kd {
                     stringstream ss;
                     ss << task_name << " 检查double类型 : " << fieldName << "=" << recordValue << " not in '"
                        << fieldDef->valueLimit << "'";
-                    errorOutput->writeInfo(ss.str());
+                    shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
+                    errorOutput->saveError(ptr_error);
                 }
             }
         }

@@ -97,7 +97,7 @@ void JsonLog::AppendCheckError(
     log_property.err_type = err_type;
     log_property.data_key =data_key;
 //            GetKeyByTask(task_id, ORIGIN_TYPE_LANE);
-    log_property.frame_id = bound_id;//TaskInfoManager::GetInstance().GetBoundIdByTask(task_id);
+    log_property.frame_id = bound_id; //TaskInfoManager::GetInstance().GetBoundIdByTask(task_id);
 
     AppendCheckError(log_property, node);
 }

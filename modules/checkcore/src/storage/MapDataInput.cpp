@@ -667,6 +667,9 @@ namespace kd {
 
                     //属性重排
                     lane->sortAtts();
+
+                    //构造空间几何属性
+                    lane->buildGeometryInfo();
                 }
             }
 

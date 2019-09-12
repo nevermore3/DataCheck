@@ -68,6 +68,9 @@ namespace kd {
 
             const static string LENGTH_PRECISE;
 
+            const static string AVG_SLOPE_ERROR;
+            const static string ADAS_NODE_DIVIDER_SLOPE;
+
 
         public:
             static DataCheckConfig & getInstance() {

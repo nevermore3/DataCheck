@@ -45,7 +45,7 @@ namespace kd {
 
             //共点的车道线通行方向（矢量化方向+车道线方向）冲突
             void check_JH_C_6(shared_ptr<MapDataManager> mapDataManager, const map<string, shared_ptr<DCDividerTopoNode>> & topoNodes, shared_ptr<CheckErrorOutput> errorOutput);
-
+            void save_kxs_01_010_error(shared_ptr<DCDividerTopoNode> topoNode ,shared_ptr<CheckErrorOutput> errorOutput);
 
             /**
              * 构建车道线共点关系

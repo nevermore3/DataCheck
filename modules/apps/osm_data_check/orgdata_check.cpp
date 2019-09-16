@@ -25,7 +25,8 @@
 using namespace kd::dc;
 
 const char checkresult[] = "checkresult.json";
-const char checkresultforjson[] = "error.json";
+const char checkresultforjson[] = "conn_error.json";
+const char subDir[] = "COMPILE_CHECK_TAG/";
 //加载任务框信息
 bool LoadTaskBound(const AdjustTaskInfo task_info,map<string, shared_ptr<TaskBound>>& task_bounds) {
     auto boundinfo = task_info.param_results.find("range");
@@ -158,10 +159,10 @@ int forAllCheck(int argc, const char *argv[]){
         }
         CheckListConfig::getInstance().ParsseItemDesc(checkItems->second);
 
-        errJsonPath = task_info.input_path_+checkresultforjson;
+        errJsonPath = task_info.input_path_+subDir;
         Poco::File error_file(errJsonPath);
-        if (error_file.exists()) {
-            error_file.remove();
+        if (!error_file.exists()) {
+            error_file.createDirectories();
         }
 
         int check_state = DataCheckConfig::getInstance().getPropertyI(DataCheckConfig::CHECK_STATE);
@@ -171,7 +172,7 @@ int forAllCheck(int argc, const char *argv[]){
         //数据质量检查
         ret |= dataCheck(task_info, error_output);
 
-        ret |= error_output->saveJsonError(checkresultforjson);
+        ret |= error_output->saveJsonError(errJsonPath+checkresultforjson);
 
 //        ret |= error_output->saveErrorReport(checkresult);
 
@@ -179,7 +180,7 @@ int forAllCheck(int argc, const char *argv[]){
 
     } catch (std::exception &e) {
         LOG(ERROR) << "An exception occurred: " << e.what();
-        ReportJsonLog::GetInstance().WriteToFile(errJsonPath,true);
+        ReportJsonLog::GetInstance().WriteToFile(errJsonPath+checkresultforjson,true);
         ret = 1;
     }
 

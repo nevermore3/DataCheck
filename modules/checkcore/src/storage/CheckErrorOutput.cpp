@@ -111,8 +111,7 @@ namespace kd {
                         JsonLog::GetInstance().AppendCheckError(item.checkId,item.checkName,item.errDesc,taskid,err_type,item.dataKey,item.boundId,item.flag, item.coord);
                     }
                 }
-                string errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH)+err_file_name;
-                JsonLog::GetInstance().WriteToFile(errJsonPath);
+                JsonLog::GetInstance().WriteToFile(err_file_name);
             } catch (std::exception &e) {
                 LOG(ERROR) << e.what();
                 ret = 1;

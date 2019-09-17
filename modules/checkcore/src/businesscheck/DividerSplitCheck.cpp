@@ -344,6 +344,7 @@ namespace kd {
                 error_item->sourceId = to_string(div_id);
                 error_item->coord = coord;
                 error_item->taskId_ = to_string(task_id);
+                error_item->dataKey_ = DATA_TYPE_LANE+error_item->taskId_+DATA_TYPE_LAST_NUM;
                 shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(coord);
                 errNodeInfo->dataType = DATA_TYPE_NODE;
                 errNodeInfo->dataLayer = MODEL_NAME_DIVIDER_NODE;
@@ -411,6 +412,7 @@ namespace kd {
                                 error_item->sourceId = divider_id;
                                 error_item->coord = coord;
                                 error_item->taskId_ = to_string(it->second.get()->task_id);
+                                error_item->dataKey_ = DATA_TYPE_LANE+error_item->taskId_+DATA_TYPE_LAST_NUM;
                                 shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(coord);
                                 errNodeInfo->dataType = DATA_TYPE_NODE;
                                 errNodeInfo->dataLayer = MODEL_NAME_DIVIDER_NODE;
@@ -599,6 +601,7 @@ namespace kd {
                             error_item->sourceId = to_string(c_divider_id);
                             error_item->coord = coord;
                             error_item->taskId_ = to_string(current_dividerNode->task_id);
+                            error_item->dataKey_ = DATA_TYPE_LANE+error_item->taskId_+DATA_TYPE_LAST_NUM;
                             shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(coord);
                             errNodeInfo->dataType = DATA_TYPE_NODE;
                             errNodeInfo->dataLayer = MODEL_NAME_DIVIDER_NODE;
@@ -758,6 +761,7 @@ namespace kd {
                                     error_item->sourceId = to_string(divider_id);
                                     error_item->coord = coord;
                                     error_item->taskId_ = to_string(task_id);
+                                    error_item->dataKey_ = DATA_TYPE_LANE+error_item->taskId_+DATA_TYPE_LAST_NUM;
                                     shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(coord);
                                     errNodeInfo->dataType = DATA_TYPE_WAY;
                                     errNodeInfo->dataId= node->id_;
@@ -989,6 +993,7 @@ namespace kd {
                         error_item->sourceId = it.second->divider_ptr->id_;
                         error_item->coord = coord;
                         error_item->taskId_ = to_string(task_id);
+                        error_item->dataKey_ = DATA_TYPE_LANE+error_item->taskId_+DATA_TYPE_LAST_NUM;
                         shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(coord);
                         errNodeInfo->dataType = DATA_TYPE_NODE;
                         errNodeInfo->dataId = node->id_;
@@ -1522,6 +1527,7 @@ namespace kd {
                 error_item->sourceId = to_string(divider_id);
                 error_item->coord = coord;
                 error_item->taskId_ = to_string(split_node1->task_id);
+                error_item->dataKey_ = DATA_TYPE_LANE+error_item->taskId_+DATA_TYPE_LAST_NUM;
                 shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(coord);
                 errNodeInfo->dataType = DATA_TYPE_WAY;
                 errNodeInfo->dataLayer = MODEL_NAME_DIVIDER;
@@ -1573,6 +1579,7 @@ namespace kd {
                 error_item->sourceId = div_da1->id_;
                 error_item->coord = coord;
                 error_item->taskId_ = to_string(split_node1->task_id);
+                error_item->dataKey_ = DATA_TYPE_LANE+error_item->taskId_+DATA_TYPE_LAST_NUM;
                 shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(coord);
                 errNodeInfo->dataType = DATA_TYPE_RELATION;
                 errNodeInfo->dataLayer = MODEL_NAME_DIVIDER_ATTRIBUTE;

@@ -21,12 +21,19 @@ DividerAttribCheck::DividerAttribCheck() {
     yellowTypes.insert(pair<long, long>(DA_TYPE_YELLOW_LSOLID_RDOT, DA_TYPE_YELLOW_LSOLID_RDOT));
     yellowTypes.insert(pair<long, long>(DA_TYPE_YELLOW_RSOLID_LDOT, DA_TYPE_YELLOW_RSOLID_LDOT));
     yellowTypes.insert(pair<long, long>(DA_TYPE_BUS_LANE, DA_TYPE_BUS_LANE));
+    yellowTypes.insert(pair<long, long>(DA_TYPE_DECELERATION, DA_TYPE_DECELERATION));
+    yellowTypes.insert(pair<long, long>(DA_TYPE_LEFT_EDGE,DA_TYPE_LEFT_EDGE));
+    yellowTypes.insert(pair<long, long>(DA_TYPE_RIGHT_EDGE,DA_TYPE_RIGHT_EDGE));
+
 
     whiteTypes.insert(pair<long, long>(DA_TYPE_WHITE_SOLID, DA_TYPE_WHITE_SOLID));
     whiteTypes.insert(pair<long, long>(DA_TYPE_WHITE_DOTTED, DA_TYPE_WHITE_DOTTED));
     whiteTypes.insert(pair<long, long>(DA_TYPE_WHITE_LSOLID_RDOT, DA_TYPE_WHITE_LSOLID_RDOT));
     whiteTypes.insert(pair<long, long>(DA_TYPE_WHITE_RSOLID_LDOT, DA_TYPE_WHITE_RSOLID_LDOT));
     whiteTypes.insert(pair<long, long>(DA_TYPE_BUS_LANE, DA_TYPE_BUS_LANE));
+    whiteTypes.insert(pair<long, long>(DA_TYPE_DECELERATION,DA_TYPE_DECELERATION));
+    whiteTypes.insert(pair<long, long>(DA_TYPE_LEFT_EDGE,DA_TYPE_LEFT_EDGE));
+    whiteTypes.insert(pair<long, long>(DA_TYPE_RIGHT_EDGE,DA_TYPE_RIGHT_EDGE));
 
     // 颜色为1时，分割线类型为1、2、3、4、5、6、7、11、14、16、18、33、34、35、36；
     map<long,long> whiteMaps;
@@ -56,6 +63,8 @@ DividerAttribCheck::DividerAttribCheck() {
     yellowMaps[DA_TYPE_DUAL_YELLOW_DOTTED] = DA_TYPE_DUAL_YELLOW_DOTTED;//12：双黄虚线
     yellowMaps[DA_TYPE_DUAL_YELLOW_SOLID] = DA_TYPE_DUAL_YELLOW_SOLID;//13：双黄实线
     yellowMaps[DA_TYPE_YELLOW_RSOLID_LDOT] = DA_TYPE_YELLOW_RSOLID_LDOT;//17：黄右实左虚线
+    yellowMaps[DA_TYPE_LEFT_EDGE] = DA_TYPE_LEFT_EDGE;//34：车行道左边缘线
+    yellowMaps[DA_TYPE_RIGHT_EDGE] = DA_TYPE_RIGHT_EDGE;//35：车行道右边缘线
 
     map<long,long> orangeMaps;
     orangeMaps[DA_TYPE_BUS_LANE] = DA_TYPE_BUS_LANE;//4：公交专用车道线
@@ -121,9 +130,9 @@ bool DividerAttribCheck::execute(shared_ptr<MapDataManager> data_manager,
     set_data_manager(data_manager);
     set_error_output(error_output);
 
-    if (CheckItemValid(CHECK_ITEM_KXS_ORG_007)) {
-        Check_kxs_01_007();
-    }
+//    if (CheckItemValid(CHECK_ITEM_KXS_ORG_007)) {
+//        Check_kxs_01_007();
+//    }
 
     if (CheckItemValid(CHECK_ITEM_KXS_ORG_014)) {
         Check_kxs_01_014();

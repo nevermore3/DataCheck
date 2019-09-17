@@ -74,6 +74,9 @@ namespace kd {
         const string DataCheckConfig::CONN_TASKBOUNDPATH="conn_taskBoundPath";
         const string DataCheckConfig::CONN_CHECKFILEPATH="conn_checkFilePath";
 
+        // 坡度检查
+        const string DataCheckConfig::AVG_SLOPE_ERROR = "avg_slope_error";
+        const string DataCheckConfig::ADAS_NODE_DIVIDER_SLOPE = "adas_node_divider_slope";
 
 
         int DataCheckConfig::load(string fileName) {

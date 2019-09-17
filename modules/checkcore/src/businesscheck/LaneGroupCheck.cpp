@@ -52,25 +52,17 @@ void LaneGroupCheck::Check_kxs_03_004() {
             // divider关联多个车道组
             auto ptr_divider = CommonUtil::get_divider(data_manager(), div2_lg.first);
             if (ptr_divider) {
+                string divider_id = ptr_divider->id_;
                 // 如果是参考线
                 if (ptr_divider->dividerNo_ == 0) {
-                    for (const auto &lg : div2_lg.second) {
-                        auto ptr_road =
-                                CommonUtil::get_road_by_lg(data_manager(), lg);
-                        if (ptr_road) {
                             // 不是双向的
-                            if (ptr_road->direction_ != 1) {
+                     if (ptr_divider->direction_ != 1) {
+                          taskid = ptr_divider->task_id_;
+                          flag = ptr_divider->flag_;
+                          dataKey = DATA_TYPE_LANE + taskid + DATA_TYPE_LAST_NUM;
+                          check = true;
+                         }
 
-                                taskid = ptr_road->task_id_;
-                                flag = ptr_road->flag_;
-                                dataKey = DATA_TYPE_LANE + taskid + DATA_TYPE_LAST_NUM;
-                                check = true;
-                                break;
-                            }
-                        } else {
-                            LOG(ERROR) << "get_road_by_lg failed! lane group:" << lg;
-                        }
-                    }
                 } else {
                     check = true;
                 }

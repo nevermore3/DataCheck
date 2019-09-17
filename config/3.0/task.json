@@ -99,9 +99,9 @@
         "modelName": "HD_LANE"
       },
       {
-        "fileName": "HD_Lane_SCH",
+        "fileName": "HD_LANE_SCH",
         "fileType": "point",
-        "modelName": "HD_Lane_SCH"
+        "modelName": "HD_LANE_SCH"
       },
       {
         "fileName": "HD_LANE_ATTRIBUTE",

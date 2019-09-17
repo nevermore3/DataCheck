@@ -117,7 +117,7 @@ bool CheckListConfig::IsNeedCheck(std::string key){
         return true;
     }
 
-    if (check_state_ == kd::dc::DataCheckConfig::ALL_AUTO_CHECK) {
+    if (kd::dc::DataCheckConfig::getInstance().getPropertyI(kd::dc::DataCheckConfig::CHECK_STATE) == kd::dc::DataCheckConfig::ALL_AUTO_CHECK) {
         return true;
     }
 

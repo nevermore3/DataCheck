@@ -114,6 +114,7 @@ void JsonLog::AppendCheckError(
     log_property.data_id = data_id;
     log_property.model_name = model_name;
     log_property.project_id = project_id;
+
     AppendCheckError(log_property, node);
 }
 

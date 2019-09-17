@@ -37,9 +37,12 @@ namespace kd {
 
         void ForeignKeyCheck::CheckForeignKeyExist(shared_ptr<ModelDataManager> modelDataManager,
                                                    shared_ptr<CheckErrorOutput> errorOutput) {
-
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_ORG_026;
+            size_t total = 0;
             map<string, shared_ptr<DCModelDefine>>modelDefines = modelDataManager->modelDefines_;
             for (const auto &model : modelDefines) {
+                total++;
                 string modelName = model.first;
                 shared_ptr<DCModelDefine>modelDefine = model.second;
                 vector<shared_ptr<DCRelationDefine>> relations = modelDefine->vecRelation;
@@ -57,21 +60,132 @@ namespace kd {
                     }
                 }
             }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
+        }
+
+        bool ForeignKeyCheck::CheckForeignKey(shared_ptr<ModelDataManager> modelDataManager,
+                                              shared_ptr<CheckErrorOutput> errorOutput, string modelName) {
+            const size_t MAXCMDLEN = 256;
+            char sqlCmd[MAXCMDLEN] = {0};
+            if (modelName == "HD_TOPO_LANEGROUP") {
+                // FROM_LG 和 TO_LG 中有空值或多个值，需要单独处理
+                auto modelData = modelDataManager->modelDatas_["HD_TOPO_LANEGROUP"];
+                if (modelData == nullptr) {
+                    return true;
+                }
+                string foreignTable = "HD_LANE_GROUP";
+                string keyName = "ID";
+                for (const auto &record : modelData->records) {
+                    vector<string>fromLGArray = record->text_data_maps_["FROM_LG"];
+                    if (!fromLGArray.empty()) {
+                        string foreignKeyName = "FROM_LG";
+
+                        for (const auto &fromLG : fromLGArray) {
+                            long id = stol(fromLG);
+                            if (id == 0) {
+                                continue;
+                            }
+                            memset(sqlCmd, 0, MAXCMDLEN);
+                            snprintf(sqlCmd, MAXCMDLEN - 1, "select ID from HD_LANE_GROUP "\
+                                                                 "where ID = %ld", id);
+                            CppSQLite3::Query query = pDataBase->execQuery(sqlCmd);
+                            if (query.eof()) {
+                                string value = fromLG;
+                                auto error = DCForeignKeyCheckError::createByKXS_01_027(modelName,
+                                                                                        foreignKeyName,
+                                                                                        value,
+                                                                                        foreignTable,
+                                                                                        keyName);
+                                errorOutput->saveError(error);
+                            }
+                            query.finalize();
+                        }
+                    }
+                    vector<string>toLGArray = record->text_data_maps_["TO_LG"];
+                    if (toLGArray.empty()) {
+                        continue;
+                    }
+                    string foreignKeyName = "TO_LG";
+                    for (const auto &toLG : toLGArray) {
+                        long id = stol(toLG);
+                        if (id == 0) {
+                            continue;
+                        }
+                        memset(sqlCmd, 0, MAXCMDLEN);
+                        snprintf(sqlCmd, MAXCMDLEN - 1, "select ID from HD_LANE_GROUP "\
+                                                             "where ID = %ld", id);
+                        CppSQLite3::Query query = pDataBase->execQuery(sqlCmd);
+                        if (query.eof()) {
+                            string value = toLG;
+                            auto error = DCForeignKeyCheckError::createByKXS_01_027(modelName,
+                                                                                    foreignKeyName,
+                                                                                    value,
+                                                                                    foreignTable,
+                                                                                    keyName);
+                            errorOutput->saveError(error);
+                        }
+                        query.finalize();
+                    }
+                }
+                return true;
+            }
+            if (modelName == "HD_R_LO_ROAD" || modelName == "HD_R_LO_LANE") {
+                // HD_R_LO_ROAD 和 HD_R_LO_LANE中相关联的表单独考虑
+                map<string, long> tables {{"HD_POLYGON", 1},
+                                          {"HD_TRAFFIC_LIGHT", 5}};
+                for (const auto &table : tables) {
+                    memset(sqlCmd, 0, MAXCMDLEN);
+                    snprintf(sqlCmd, MAXCMDLEN - 1, "select a.LO_ID from %s a, %s b "\
+                                                                    "where a.TYPE = %ld and a.LO_ID not in "\
+                                                                    "(select ID from %s)",
+                                                                    modelName.c_str(),
+                                                                    table.first.c_str(),
+                                                                    table.second,
+                                                                    table.first.c_str());
+                    CppSQLite3::Query query = pDataBase->execQuery(sqlCmd);
+                    string foreignKeyName = "LO_ID";
+                    string keyName = "ID";
+                    string foreignTable = table.first;
+                    while (!query.eof()) {
+                        int value = query.getInt64Field(foreignKeyName);
+                        string strValue = to_string(value);
+                        auto error = DCForeignKeyCheckError::createByKXS_01_027(modelName,
+                                                                                foreignKeyName,
+                                                                                strValue,
+                                                                                foreignTable,
+                                                                                keyName);
+                        errorOutput->saveError(error);
+                        query.nextRow();
+                    }
+                    query.finalize();
+                }
+                // 还有一项检查，所以 不返回true
+            }
+            return false;
         }
 
         void ForeignKeyCheck::CheckForeignKeyIntegrity(shared_ptr<ModelDataManager> modelDataManager,
                                                        shared_ptr<CheckErrorOutput> errorOutput) {
             map<string, string>whiteList {{"HD_LANE_CONNECTIVITY", "NODE_ID"},
                                           {"ROAD_NODE", "C_NODE_ID"}};
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_ORG_027;
+            size_t total = 0;
+
             const size_t MAXCMDLEN = 256;
             char sqlCmd[MAXCMDLEN] = {0};
             map<string, shared_ptr<DCModelDefine>>modelDefines = modelDataManager->modelDefines_;
             for (const auto &model : modelDefines) {
+                total++;
                 string modelName = model.first;
                 shared_ptr<DCModelDefine> modelDefine = model.second;
                 vector<shared_ptr<DCRelationDefine>> relations = modelDefine->vecRelation;
 
                 if (relations.empty()) {
+                    continue;
+                }
+                if (CheckForeignKey(modelDataManager, errorOutput, modelName)) {
                     continue;
                 }
                 for (const auto &relation : relations) {
@@ -101,7 +215,6 @@ namespace kd {
                                                                                     relationTableName,
                                                                                     relationFieldName);
                             errorOutput->saveError(error);
-
                             query.nextRow();
                         }
                         query.finalize();
@@ -110,7 +223,8 @@ namespace kd {
                     }
                 }
             }
-
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
         }
 
         bool ForeignKeyCheck::execute(shared_ptr<ModelDataManager> modelDataManager,

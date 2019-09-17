@@ -11,6 +11,4 @@ RUN ln -s /build/link/data /build/data
 #复制配置文件到相应位置
 ADD build build
 RUN ln -s /build/bin/libgeos.so /build/bin/libgeos.so.3.6.2
-RUN ln -s /build/bin/libnds_sqlite3_crypto.so /build/bin/libnds_sqlite3_crypto.so
-RUN ln -s /build/bin/libnds_sqlite3.so /build/bin/libnds_sqlite3.so
 WORKDIR /build/bin

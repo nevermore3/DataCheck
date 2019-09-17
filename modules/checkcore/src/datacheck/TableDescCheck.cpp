@@ -42,9 +42,13 @@ namespace kd {
 
         void TableDescCheck::CheckModelName(const shared_ptr<ModelDataManager> &modelDataManager,
                                             shared_ptr<CheckErrorOutput> errorOutput) {
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_NORM_001;
+            size_t total = 0;
             map<string, shared_ptr<DCTask>> tasks = modelDataManager->tasks_;
             map<string, shared_ptr<DCModalData>>modelDatas = modelDataManager->modelDatas_;
             for (const auto &task : tasks) {
+                total++;
                 if (modelDatas.find(task.first) == modelDatas.end()) {
                     stringstream ss;
                     ss << " 要素" << task.first << " 在规格中存在, 而文件不存在";
@@ -64,17 +68,22 @@ namespace kd {
                     errorOutput->saveError(pError);
                 }
             }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
         }
 
         void TableDescCheck::CheckGeometricType(const shared_ptr<ModelDataManager> &modelDataManager,
                                                 shared_ptr<CheckErrorOutput> errorOutput) {
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_NORM_001;
+            size_t total = 0;
             map<string, int> typeMap {{"point", 11}, {"arc", 13}, {"polygon", 15}};
 
             for (const auto &task : modelDataManager->tasks_) {
                 string fileType = task.second->fileType;
                 string fileName = task.second->fileName;
                 if (fileType != "dbf") {
-
+                    total++;
                     string shpFile = base_path_ + "/" + fileName + ".shp";
                     SHPHandle pSHP = SHPOpen(shpFile.c_str(), "rb");
                     if (pSHP != nullptr) {
@@ -89,11 +98,15 @@ namespace kd {
                     }
                 }
             }
-
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
         }
 
         void TableDescCheck::CheckRelationType(const shared_ptr<ModelDataManager> &modelDataManager,
                                                shared_ptr<CheckErrorOutput> errorOutput) {
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_NORM_001;
+            size_t total = 0;
             for (const auto &task : modelDataManager->tasks_) {
                 string fileName = task.second->fileName;
                 string fileType = task.second->fileType;
@@ -101,7 +114,7 @@ namespace kd {
                     //只有dbf文件存在，没有shp文件存在为关系类型
                     string shpFile = base_path_ + "/" + fileName + ".shp";
                     string dbfFile = base_path_ + "/" + fileName + ".dbf";
-
+                    total++;
                     if (access(dbfFile.c_str(), F_OK) != 0 || access(shpFile.c_str(), F_OK) != 0) {
                         continue;
                     }
@@ -111,6 +124,8 @@ namespace kd {
                     errorOutput->saveError(pError);
                 }
             }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
         }
 
         bool TableDescCheck::execute(shared_ptr<ModelDataManager> modelDataManager,

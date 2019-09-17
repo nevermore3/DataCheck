@@ -1,5 +1,5 @@
 {
-  "model" : "HD_R_LO_Lane",
+  "model" : "HD_R_LO_LANE",
   "checks" : [
     {
       "name":"ID",
@@ -84,16 +84,6 @@
   "members" : [
   ],
   "relation" : [
-    {
-      "member" : "HD_POLYGON",
-      "rule" : "LO_ID",
-      "name" : "ID"
-    },
-    {
-      "member" : "HD_TRAFFIC_LIGHT",
-      "rule" : "LO_ID",
-      "name" : "ID"
-    },
     {
       "member" : "HD_LANE",
       "rule" : "LANE_ID",

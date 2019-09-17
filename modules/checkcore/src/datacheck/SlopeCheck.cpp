@@ -256,6 +256,9 @@ namespace kd {
 
         void SlopeCheck::CheckAdasNode(shared_ptr<MapDataManager> mapDataManager,
                                        shared_ptr<CheckErrorOutput> errorOutput) {
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_NORM_002;
+            size_t total = 0;
             if (!LoadAdasNode()) {
                 return;
             }
@@ -264,7 +267,7 @@ namespace kd {
             for (const auto &roadAdasNode : map_road_adas_node_) {
                 long roadID = roadAdasNode.first;
                 map<long, shared_ptr<AdasNode>> mapAdasNode = roadAdasNode.second;
-
+                total += mapAdasNode.size();
                 auto curIter = mapAdasNode.begin();
                 shared_ptr<AdasNode> pre = GetPreRoadAdasNode(roadID);
                 if (pre == nullptr) {
@@ -300,6 +303,8 @@ namespace kd {
                     curIter++;
                 }
             }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
         }
 
         shared_ptr<DCLaneCurvature> SlopeCheck::GetPreLaneAdasNode(long laneID) {
@@ -340,13 +345,16 @@ namespace kd {
 
         void SlopeCheck::CheckLaneSCH(shared_ptr<MapDataManager> modelDataManager,
                                       shared_ptr<CheckErrorOutput> errorOutput) {
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_NORM_002;
+            size_t  total = 0;
             if (!LoadLaneSCH()) {
                 return;
             }
             for (const auto &laneSCH : map_lane_sch_) {
                 long laneID = laneSCH.first;
                 map<long, shared_ptr<DCLaneCurvature>> mapLaneSCH = laneSCH.second;
-
+                total += mapLaneSCH.size();
                 auto curIter = mapLaneSCH.begin();
                 shared_ptr<DCLaneCurvature> pre = GetPreLaneAdasNode(laneID);
                 if (pre == nullptr) {
@@ -382,6 +390,8 @@ namespace kd {
                     curIter++;
                 }
             }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
         }
 
         shared_ptr<DCDivideSCH> SlopeCheck::GetPreDivideAdasNode(long divideID) {
@@ -424,13 +434,16 @@ namespace kd {
 
         void SlopeCheck::CheckDividerSCH(shared_ptr<MapDataManager> modelDataManager,
                                          shared_ptr<CheckErrorOutput> errorOutput) {
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_NORM_002;
+            size_t  total = 0;
             if (!LoadDividerSCH()) {
                 return;
             }
             for (const auto &divideSCH : map_divider_sch_) {
                 long divideID = divideSCH.first;
                 map<long, shared_ptr<DCDivideSCH>> mapDivideSCH = divideSCH.second;
-
+                total += mapDivideSCH.size();
                 auto curIter = mapDivideSCH.begin();
                 shared_ptr<DCDivideSCH> pre = GetPreDivideAdasNode(divideID);
                 if (pre == nullptr) {
@@ -466,6 +479,8 @@ namespace kd {
                     curIter++;
                 }
             }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
         }
 
         void SlopeCheck::BuildDividerGeometryInfo() {
@@ -503,9 +518,12 @@ namespace kd {
         void SlopeCheck::CheckAdasNodeToClosestDividerSlope(shared_ptr<CheckErrorOutput> errorOutput) {
 
             double slopeThreshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::ADAS_NODE_DIVIDER_SLOPE);
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_NORM_002;
+            size_t  total = 0;
             for (const auto &roadAdasNode : map_road_adas_node_) {
                 map<long, shared_ptr<AdasNode>> roadAdasNodeObj = roadAdasNode.second;
-
+                total += roadAdasNodeObj.size();
                 long roadID = roadAdasNode.first;
 
                 shared_ptr<DCDivider> divider = GetRelevantDivider(roadID);
@@ -543,8 +561,9 @@ namespace kd {
                     }
                 }
             }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
         }
-
 
     }
 }

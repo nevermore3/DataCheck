@@ -45,6 +45,7 @@ using namespace kd::dc;
 const char kCheckListFile[] = "check_list.json";
 const char checkresult[] = "checkresult.json";
 const char checkresultforjson[] = "kxs_check_error.json";
+const char subDir[] = "COMPILE_CHECK_TAG/";
 shared_ptr<ResourceDataManager> ResourceDataManager::instance_ = nullptr;
 
 int TopoAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, int check_state) {
@@ -273,6 +274,7 @@ int main(int argc, const char *argv[]) {
 
     KDSDivider::FLAG;
     string errJsonPath = "";
+    string errForAllCHeckPath="";
     try {
         exe_path = argv[0];
 
@@ -293,7 +295,7 @@ int main(int argc, const char *argv[]) {
                     }
                 }
             }
-            InitGlog(exe_path, task_info.logs_path_);
+            InitGlog(exe_path, "/home/ubuntu/orgdata/kxf_bug_fix/out/");
         }else{
             InitGlog(exe_path, "./");
         }
@@ -321,7 +323,7 @@ int main(int argc, const char *argv[]) {
             DataCheckConfig::getInstance().setProperty(DataCheckConfig::CHECK_STATE, to_string(DataCheckConfig::ALL_AUTO_CHECK));
             DataCheckConfig::getInstance().addProperty(DataCheckConfig::UPDATE_REGION, getUpdateRegion(ur_path));
         }else if (argc == 2){
-            DataCheckConfig::getInstance().setProperty(DataCheckConfig::OUTPUT_PATH,task_info.output_path_);
+            DataCheckConfig::getInstance().setProperty(DataCheckConfig::OUTPUT_PATH,"/home/ubuntu/orgdata/kxf_bug_fix/out/");
             DataCheckConfig::getInstance().setProperty(DataCheckConfig::JSON_DATA_INPUT,task_info.input_path_);
             //检查项
             auto checkItems = task_info.param_results.find("checkItemConfig");
@@ -330,7 +332,13 @@ int main(int argc, const char *argv[]) {
                 return 3;
             }
             CheckListConfig::getInstance().ParsseItemDesc(checkItems->second);
-        }else{
+
+            DataCheckConfig::getInstance().addProperty("taskId",task_info.param_results.find("taskId")->second);
+            DataCheckConfig::getInstance().addProperty("branchName",task_info.param_results.find("branchName")->second);
+            DataCheckConfig::getInstance().addProperty("taskFrameId",task_info.param_results.find("taskFrameId")->second);
+            DataCheckConfig::getInstance().addProperty("projectId",task_info.param_results.find("projectId")->second);
+
+        } else {
             string checkFilePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::CHECK_FILE_PATH);
             Poco::File in_dir(checkFilePath);
             if (!in_dir.exists()) {
@@ -356,23 +364,22 @@ int main(int argc, const char *argv[]) {
             error_file.remove();
         }
 
+        string allCheckParentPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH)+subDir;
+        Poco::File allCheckParentPath_dir(allCheckParentPath);
+        if (!allCheckParentPath_dir.exists()) {
+            allCheckParentPath_dir.createDirectories();
+        }
+        errForAllCHeckPath = allCheckParentPath+checkresultforjson;
+
         int check_state = DataCheckConfig::getInstance().getPropertyI(DataCheckConfig::CHECK_STATE);
 
         auto error_output = make_shared<CheckErrorOutput>(check_state);
 
         if (check_state == DataCheckConfig::TOPO_AUTO_CHECK) {
             //拓扑自动化检查
-            string checkFilePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::CHECK_FILE_PATH);
-            Poco::File in_dir(checkFilePath);
-            if (!in_dir.exists()) {
-                LOG(ERROR) << checkFilePath << " is not exists!";
-                return 1;
-            } else {
-                CheckListConfig::getInstance().Load(checkFilePath);
-            }
             ret |= TopoAutoCheck(error_output, check_state);
             ret |= error_output->saveErrorReport(checkresult);
-            ret |= error_output->saveJsonError(DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH)+checkresultforjson);
+            ret |= error_output->saveJsonError(errForAllCHeckPath);
         } else if (check_state == DataCheckConfig::ALL_AUTO_CHECK) {
             // 创建UR路径
             Poco::File outDir(output_path);
@@ -401,6 +408,7 @@ int main(int argc, const char *argv[]) {
     } catch (std::exception &e) {
         LOG(ERROR) << "An exception occurred: " << e.what();
         ReportJsonLog::GetInstance().WriteToFile(errJsonPath, true);
+        ReportJsonLog::GetInstance().WriteToFile(errForAllCHeckPath, true);
         ret = 1;
     }
 

@@ -126,8 +126,7 @@ namespace kd {
                         }
 
 //                TaskInfoManager::GetInstance().AppendItem(task_id, task_bound_id);
-//                        DataCheckConfig::getInstance().setProperty(task_id,inputJsonData);
-
+                        DataCheckConfig::getInstance().addProperty(task_id+"_bound_id",task_bound_id);
                         shared_ptr<kd::api::TaskBound> taskBound = taskboundit->second;
                         set<long> filterNodesTemp, filterWaysTemp, filterRelsTemp;
                         multimap<long, set<long>> error_div_ids;

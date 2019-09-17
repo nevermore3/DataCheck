@@ -32,6 +32,9 @@ namespace kd {
             string sourceId;//源数据ID
             shared_ptr<DCCoord> coord;
             vector<shared_ptr<ErrNodeInfo>> errNodeInfo;
+            string model_name;//数据模型
+            string projectId;//项目ID
+            string frameId;//任务框号
         };
         struct CheckItemInfo{
             CheckItemInfo(){

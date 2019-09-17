@@ -35,6 +35,8 @@ bool LoadTaskBound(const AdjustTaskInfo task_info,map<string, shared_ptr<TaskBou
         CTaskBoundService taskBoundService("");
         return taskBoundService.ParseTaskBound(content, task_bounds);
     }
+
+
     LOG(ERROR) << "not find task bound info!";
     return false;
 }
@@ -137,6 +139,7 @@ int forAllCheck(int argc, const char *argv[]){
                 }
             }
         }
+
         InitGlog(exe_path, task_info.logs_path_);
 
         // 加载配置
@@ -147,9 +150,12 @@ int forAllCheck(int argc, const char *argv[]){
         }
         DataCheckConfig::getInstance().addProperty("taskId",task_info.param_results.find("taskId")->second);
         DataCheckConfig::getInstance().addProperty("branchName",task_info.param_results.find("branchName")->second);
+        DataCheckConfig::getInstance().addProperty("taskFrameId",task_info.param_results.find("taskFrameId")->second);
+        DataCheckConfig::getInstance().addProperty("projectId",task_info.param_results.find("projectId")->second);
+
         DataCheckConfig::getInstance().setProperty(DataCheckConfig::OUTPUT_PATH,task_info.output_path_);
         DataCheckConfig::getInstance().setProperty(DataCheckConfig::JSON_DATA_INPUT,task_info.input_path_);
-        DataCheckConfig::getInstance().setProperty(DataCheckConfig::ERR_JSON_PATH,task_info.input_path_+checkresultforjson);
+        DataCheckConfig::getInstance().setProperty(DataCheckConfig::ERR_JSON_PATH,task_info.output_path_+checkresultforjson);
 
         //检查项
         auto checkItems = task_info.param_results.find("checkItemConfig");
@@ -159,7 +165,7 @@ int forAllCheck(int argc, const char *argv[]){
         }
         CheckListConfig::getInstance().ParsseItemDesc(checkItems->second);
 
-        errJsonPath = task_info.input_path_+subDir;
+        errJsonPath = task_info.output_path_+subDir;
         Poco::File error_file(errJsonPath);
         if (!error_file.exists()) {
             error_file.createDirectories();

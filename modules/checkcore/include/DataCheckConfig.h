@@ -68,9 +68,13 @@ namespace kd {
 
             const static string LENGTH_PRECISE;
 
+            ///接边检查
+            const static string CONN_INPUTPATH;
+            const static string CONN_OUTPATH;
+            const static string CONN_TASKBOUNDPATH;
+            const static string CONN_CHECKFILEPATH;
             const static string AVG_SLOPE_ERROR;
             const static string ADAS_NODE_DIVIDER_SLOPE;
-
 
         public:
             static DataCheckConfig & getInstance() {

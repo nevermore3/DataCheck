@@ -91,11 +91,12 @@ namespace kd {
             LOG(INFO) << "task [save error] end successfully " << " costs : " << compilerTimer.elapsed_message();
             return ret;
         }
-        int CheckErrorOutput::saveJsonError(){
+        int CheckErrorOutput::saveJsonError(string err_file_name){
             int ret = 0;
             LOG(INFO) << "task [save error] start. ";
             TimerUtil compilerTimer;
             try {
+                string taskid = DataCheckConfig::getInstance().getProperty("taskId");
 
                 for (const auto &check_item : check_model_2_output_maps_) {
                     for (const auto& item : check_item.second) {
@@ -104,11 +105,13 @@ namespace kd {
                             err_type = "E1";
                             ret = 1;
                         }
-                        JsonLog::GetInstance().AppendCheckError(item.checkId,item.checkName,item.errDesc,item.taskId,err_type,item.dataKey,item.boundId,item.flag, item.coord);
+                        if(taskid.length()==0){
+                             taskid =item.taskId;
+                        }
+                        JsonLog::GetInstance().AppendCheckError(item.checkId,item.checkName,item.errDesc,taskid,err_type,item.dataKey,item.boundId,item.flag,item.sourceId, item.model_name,item.projectId,item.coord);
                     }
                 }
-                string errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::ERR_JSON_PATH);
-                JsonLog::GetInstance().WriteToFile(errJsonPath);
+                JsonLog::GetInstance().WriteToFile(err_file_name);
             } catch (std::exception &e) {
                 LOG(ERROR) << e.what();
                 ret = 1;
@@ -129,12 +132,16 @@ namespace kd {
                     error_output.level = get_error_level(error->checkId);
                     error_output.errDesc = error->toString();
                     error_output.taskId = error->taskId_;
-                    error_output.boundId = DataCheckConfig::getInstance().getProperty(error->taskId_);
+                    error_output.boundId = DataCheckConfig::getInstance().getProperty(error->taskId_+"_bound_id");
+                    error_output.projectId = DataCheckConfig::getInstance().getProperty("projectId");
                     error_output.dataKey = error->dataKey_;
                     error_output.flag = error->flag;
                     error_output.coord = error->coord;
                     error_output.errNodeInfo = error->errNodeInfo;
                     error_output.sourceId = error->sourceId;
+                    if(error_output.errNodeInfo.size()>0){
+                        error_output.model_name = error_output.errNodeInfo[0]->dataLayer;
+                    }
                     auto check_model_iter = check_model_2_output_maps_.find(error->checkId);
                     if (check_model_iter != check_model_2_output_maps_.end()) {
                         check_model_iter->second.emplace_back(error_output);

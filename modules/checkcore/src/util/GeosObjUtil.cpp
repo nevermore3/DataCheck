@@ -494,5 +494,79 @@ namespace kd {
             int min_index = 0;
             return kd::automap::KDGeoUtil::pt2LineDist(line->getCoordinates(), PtA, PtB, PtC, min_index);
         }
+        shared_ptr<geos::geom::LineString> GeosObjUtil::CreateLineString(const vector<shared_ptr<DCDividerNode>> &coords) {
+            if (coords.size() < 2) {
+//        LOG(ERROR) << "coords count less than 2";
+                return nullptr;
+            }
+
+            const geos::geom::GeometryFactory *gf = geos::geom::GeometryFactory::getDefaultInstance();
+
+            //build geos object
+            CoordinateSequence *cl = new CoordinateArraySequence();
+            for (int j = 0; j < coords.size(); j++) {
+
+                double lng = (coords[j]->coord_->x_);
+                double lat = (coords[j]->coord_->y_);
+                double z = (coords[j]->coord_->z_);
+
+                double utmX, utmY;
+                char zone[4] = {0};
+
+                kd::automap::Coordinates::ll2utm(lat, lng, utmX, utmY, zone);
+
+                cl->add(Coordinate(utmX, utmY, z));
+            }
+
+            shared_ptr<LineString> line(gf->createLineString(cl));
+
+            return line;
+        }
+        shared_ptr<geos::geom::Polygon>
+        GeosObjUtil::CreateTriGeometry(double startx, double starty, double endx, double endy, double ref_z,
+                          double trace_Angle, double trace_Length) {
+            double angle = geo::geo_util::calcAngle(startx, starty, endx, endy);
+            double angle_radian = angle; // * M_PI / 180.0;
+
+            double trace_angle_radian = trace_Angle * M_PI / 180.0;
+
+            double newx = startx + trace_Length;
+            double newy = starty;
+            double dy = atan(trace_angle_radian) * trace_Length;
+
+            const geos::geom::GeometryFactory *gf = geos::geom::GeometryFactory::getDefaultInstance();
+
+            geos::geom::CoordinateSequence *cl = new geos::geom::CoordinateArraySequence();
+            cl->add(geos::geom::Coordinate(startx, starty, ref_z));
+            double newrotatex, newrotatey;
+            rotate(startx, starty, newx, newy + dy, angle_radian, &newrotatex, &newrotatey);
+            cl->add(geos::geom::Coordinate(newrotatex, newrotatey, ref_z));
+
+            rotate(startx, starty, newx, newy - dy, angle_radian, &newrotatex, &newrotatey);
+            cl->add(geos::geom::Coordinate(newrotatex, newrotatey, ref_z));
+
+            cl->add(geos::geom::Coordinate(startx, starty, ref_z));
+            //创建三角形追踪区域
+            geos::geom::LinearRing *linearRing = gf->createLinearRing(cl);
+            shared_ptr<geos::geom::Polygon> retPolygon(gf->createPolygon(linearRing, NULL));
+
+            return retPolygon;
+        }
+        void GeosObjUtil::rotate(double centx, double centy, double x, double y, double radius, double *newx, double *newy) {
+
+
+            Eigen::Vector2d t1(centx, centy);
+            Eigen::Vector2d t2(x, y);
+            Eigen::Vector2d n1 = (t2 + (-t1)).normalized();//CLion语法解析有Bug
+            Eigen::Vector2d v_p2_origin = (t2 + -t1);
+            //左旋90度，逆时针为正
+            Eigen::Rotation2Dd rotation_left(radius);
+            Eigen::Vector2d p2_left_rotation = rotation_left * v_p2_origin;
+
+            Eigen::Vector2d p2_left_final = p2_left_rotation + t1;
+
+            *newx = p2_left_final[0];
+            *newy = p2_left_final[1];
+        }
     }
 }

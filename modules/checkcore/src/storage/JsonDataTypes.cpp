@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <fstream>
+#include <DataCheckConfig.h>
 
 void JsonLog::SetGeometry(double x, double y, double z) {
     Poco::JSON::Array ja_coordinates;
@@ -48,8 +49,17 @@ void JsonLog::SetProperties(LogProperty &log_property) {
     properties_jobj_.set("CREATEBY", log_property.create_by);
     properties_jobj_.set("EDITBY", log_property.edit_by);
     properties_jobj_.set("CHECKBY", log_property.check_by);
-    properties_jobj_.set("TASKID", log_property.task_id);
-    properties_jobj_.set("PROJECTID", log_property.project_id);
+    properties_jobj_.set("TASK_ID", log_property.task_id);
+    properties_jobj_.set("PROJECT_ID", log_property.project_id);
+    properties_jobj_.set("PROCESS_STEP","ALL_CHECK");
+    properties_jobj_.set("DATA_ID",log_property.data_id);
+    properties_jobj_.set("MODEL_NAME",log_property.model_name);
+    properties_jobj_.set("TAG_TYPE",log_property.tag_type);
+    properties_jobj_.set("EXTEND_INFO","");
+    properties_jobj_.set("STEP_NODE","");
+    properties_jobj_.set("CONN_FRAME_ID","");
+    properties_jobj_.set("LOCATION_DATA","");
+
 }
 
 
@@ -83,6 +93,9 @@ void JsonLog::AppendCheckError(
         const string& data_key,
         const string& bound_id,
         const string& flag,
+        const string& data_id,
+        const string& model_name,
+        const string& project_id,
         shared_ptr<DCCoord> node) {
     LogProperty log_property;
     log_property.flag = flag;
@@ -97,7 +110,10 @@ void JsonLog::AppendCheckError(
     log_property.err_type = err_type;
     log_property.data_key =data_key;
 //            GetKeyByTask(task_id, ORIGIN_TYPE_LANE);
-    log_property.frame_id = bound_id; //TaskInfoManager::GetInstance().GetBoundIdByTask(task_id);
+    log_property.frame_id = bound_id;//TaskInfoManager::GetInstance().GetBoundIdByTask(task_id);
+    log_property.data_id = data_id;
+    log_property.model_name = model_name;
+    log_property.project_id = project_id;
 
     AppendCheckError(log_property, node);
 }
@@ -148,9 +164,11 @@ bool JsonLog::WriteToFile(string path) {
     ofstream outfile;
 
     outfile.open(path, ios::out | ios::trunc);
-
-    outfile << ss.str();
-
+    if(ss.str().length()==0){
+        outfile << "[]";
+    } else {
+        outfile << ss.str();
+    }
     outfile.close();
 
     return true;

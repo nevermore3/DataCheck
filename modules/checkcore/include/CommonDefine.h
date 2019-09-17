@@ -6,6 +6,41 @@
 #define AUTOHDMAP_DATACHECK_COMMONDEFINE_H
 
 #include <string>
+///接边检查
+const static std::string CHECK_DIV_SPLIT_LOCATION_ERR = "CHECK_DIV_SPLIT_LOCATION_ERR";
+const static std::string CHECK_DIV_SPLIT_OVERLAP = "FEM-001";//CHECK_DIV_SPLIT_OVERLAP
+const static std::string CHECK_DIV_SPLIT_INTERSECT = "FEM-002";
+const static std::string CHECK_DIV_SPLIT_NO_CONTINUOUS_DIV = "FEM-003";
+const static std::string CHECK_DIV_SPLIT_NO_SPLIT_ATTRIBUTE = "FEM-004";
+const static std::string CHECK_DIV_SPLIT_CONTINUOUS_Z_OUT_BUFFER = "FEM-006";
+const static std::string CHECK_DIV_SPLIT_DIRECTION_ERR = "FEM-007";
+const static std::string CHECK_DIV_SPLIT_R_LINE_ERR = "FEM-008";
+const static std::string CHECK_DIV_SPLIT_TOLLFLAG_ERR = "FEM-009";
+const static std::string CHECK_DIV_SPLIT_DA_VIRTUAL_ERR = "FEM-010";
+const static std::string CHECK_DIV_SPLIT_DA_COLOR_ERR = "FEM-011";
+const static std::string CHECK_DIV_SPLIT_DA_TYPE_ERR = "FEM-012";
+const static std::string CHECK_DIV_SPLIT_DA_DRIVE_RULE_ERR = "FEM-013";
+const static std::string CHECK_DIV_SPLIT_DA_OVERLAY_ERR = "FEM-014";
+const static std::string CHECK_DIV_SPLIT_DA_MATERIAL_ERR = "FEM-015";
+const static std::string CHECK_DIV_SPLIT_DA_WIDTH_ERR = "FEM-016";
+
+const static std::string CHECK_DIV_SPLIT_LOCATION_ERR_DESC = "split点不为车道线首末点";
+const static std::string CHECK_DIV_SPLIT_OVERLAP_DESC = "相邻任务含split点的车道线出现重叠";
+const static std::string CHECK_DIV_SPLIT_INTERSECT_DESC = "相邻任务含split点的车道线相交";
+const static std::string CHECK_DIV_SPLIT_NO_CONTINUOUS_DIV_DESC = "含split点的车道线在相邻任务框中无接边车道线";
+const static std::string CHECK_DIV_SPLIT_NO_SPLIT_ATTRIBUTE_DESC = "车道线节点缺失split属性";
+const static std::string CHECK_DIV_SPLIT_CONTINUOUS_Z_OUT_BUFFER_DESC = "任务框接边处Z坐标值相差太大";
+const static std::string CHECK_DIV_SPLIT_DIRECTION_ERR_DESC = "接边DIVIDER的通行方向错误";
+const static std::string CHECK_DIV_SPLIT_R_LINE_ERR_DESC = "接边DIVIDER的是否参考线不同";
+const static std::string CHECK_DIV_SPLIT_TOLLFLAG_ERR_DESC = "接边DIVIDER的收费站分隔线不同";
+const static std::string CHECK_DIV_SPLIT_DA_VIRTUAL_ERR_DESC = "接边DA的虚拟分隔线类型不同";
+const static std::string CHECK_DIV_SPLIT_DA_COLOR_ERR_DESC = "接边DA的分隔线颜色不同";
+const static std::string CHECK_DIV_SPLIT_DA_TYPE_ERR_DESC = "接边DA的分割线类型不同";
+const static std::string CHECK_DIV_SPLIT_DA_DRIVE_RULE_ERR_DESC = "接边DA的通行类型不同";
+const static std::string CHECK_DIV_SPLIT_DA_OVERLAY_ERR_DESC = "接边DA的覆盖类型不同";
+const static std::string CHECK_DIV_SPLIT_DA_MATERIAL_ERR_DESC = "接边DA的分隔线材质不同";
+const static std::string CHECK_DIV_SPLIT_DA_WIDTH_ERR_DESC = "接边DA的分隔线宽度不同";
+
 
 // 源数据组织检查
 const static std::string CHECK_ITEM_KXS_ORG_001 = "KXS-01-001";

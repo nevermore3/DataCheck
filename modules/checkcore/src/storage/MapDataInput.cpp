@@ -44,7 +44,7 @@ namespace kd {
 
                     divider_node->id_ = to_string(id);
                     divider_node->dashType_ = dash_type;
-                    divider_node->is_split_ = is_split;
+                    divider_node->isSplit_ = is_split;
 
                     //读取坐标信息
                     int nVertices = shpObject->nVertices;
@@ -196,6 +196,7 @@ namespace kd {
                     divAtt->driveRule_ = attDbfData.readIntField(i, "DRIVE_RULE");
                     divAtt->material_ = attDbfData.readIntField(i, "MATERIAL");
                     divAtt->width_ = attDbfData.readDoubleField(i, "WIDTH");
+                    divAtt->overlay_= attDbfData.readDoubleField(i, "OVERLAY");
 
                     long dividerId = attDbfData.readIntField(i, "DIVIDER_ID");
                     long spIdx = attDbfData.readIntField(i, "SPIDX");

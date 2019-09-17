@@ -48,6 +48,14 @@ struct LogProperty {
     string task_id;
     // project info
     string project_id;
+    // 数据ID
+    string data_id;
+    //数据模型
+    string model_name;
+
+    string tag_type;
+
+
 
     // 默认值
     LogProperty() {
@@ -56,6 +64,7 @@ struct LogProperty {
         scene_id = "0";
         state = "0";
         compile_version = "v3.2.12";
+        tag_type="1";
 //        auto& cfg_ins = CompilerConfig::getInstance();
 //        branch_name = cfg_ins.getProperty(CONFIG_LOG_JSON_BRANCH_NAME);
 //        create_by = "AUTO";
@@ -82,6 +91,9 @@ public:
                           const string& data_key,
                           const string& bound_id,
                           const string& flag,
+                          const string& data_id,
+                          const string& model_name,
+                          const string& project_id,
                           shared_ptr<DCCoord> node);
 
     void AppendCheckError(LogProperty &log_propert, shared_ptr<DCCoord> node);

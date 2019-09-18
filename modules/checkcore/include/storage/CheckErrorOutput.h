@@ -91,9 +91,11 @@ namespace kd {
              */
             string get_error_level(string check_model);
 
+            void calErrorTotal();
+
         private:
             void initErrorLevel();
-
+            void outputErrorInfo();
         protected:
             map<string, vector<ErrorOutPut>> check_model_2_output_maps_;
             map<string,shared_ptr<CheckItemInfo>> check_total_;//统计检查项信息

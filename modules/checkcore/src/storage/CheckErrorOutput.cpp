@@ -80,6 +80,7 @@ namespace kd {
                     checkItem.failNum = checkItemInfo->failNum;
                     checkItem.checkItemCode = checkItemInfo->checkId;
                     ReportJsonLog::GetInstance().AppendCheckItemTotal(checkItem);
+                    LOG(INFO)<<"["+check_item.first+"]:[total]:[success]:[failed]:" <<check_item.second->totalNum<<":"<<check_item.second->successNum<<":"<<check_item.second->failNum;
                 }
                 string errJsonPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH)+err_file_name;
                 ReportJsonLog::GetInstance().WriteToFile(errJsonPath);
@@ -111,7 +112,9 @@ namespace kd {
                         JsonLog::GetInstance().AppendCheckError(item.checkId,item.checkName,item.errDesc,taskid,err_type,item.dataKey,item.boundId,item.flag,item.sourceId, item.model_name,item.projectId,item.coord);
                     }
                 }
+                calErrorTotal();
                 JsonLog::GetInstance().WriteToFile(err_file_name);
+
             } catch (std::exception &e) {
                 LOG(ERROR) << e.what();
                 ret = 1;
@@ -178,7 +181,7 @@ namespace kd {
                 auto check_id_iter = check_total_.find(checkItemInfo->checkId);
                 if (check_id_iter != check_total_.end()) {
                     check_id_iter->second->totalNum +=checkItemInfo->totalNum;
-                }else{
+                } else {
 //                    LOG(ERROR) << "totalNum:" << checkItemInfo->totalNum;
                     check_total_[checkItemInfo->checkId] = checkItemInfo;
                 }
@@ -264,7 +267,7 @@ namespace kd {
             int ret = 0;
             LOG(INFO) << "task [save error] start. ";
             TimerUtil compilerTimer;
-
+            calErrorTotal();
             try {
                 if (p_db_out_ != nullptr) {
                     p_db_out_->open(ouput_file);
@@ -310,6 +313,30 @@ namespace kd {
                     statement.finalize();
                     p_db_out_->execDML("COMMIT;");
 
+                    ////////////////////////////////checkItemTable/////////////////////////////////
+                    create_table_sql = "CREATE TABLE IF NOT EXISTS checkItemTable(   \
+                                        sequenceId INTEGER PRIMARY KEY AUTOINCREMENT,\
+                                        testId TEXT NOT NULL,\
+                                        testName TEXT,\
+                                        errorNum INTEGER NOT NULL)";
+                    p_db_out_->execDML(create_table_sql);
+
+                    insert_sql = "INSERT INTO checkItemTable VALUES(?,?,?,?);";
+                    auto statement1 = p_db_out_->compileStatement(insert_sql);
+                    p_db_out_->execDML("BEGIN;");
+                    for (const auto &check_item : check_total_) {
+                            int count = 1;
+                        statement1.bindNull(count++);
+                        statement1.bindString(count++, check_item.second->checkId);
+                        statement1.bindNull(count++);
+                        statement1.bindInt(count++, check_item.second->failNum);
+                        statement1.execDML();
+                        statement1.reset();
+                    }
+                    statement1.finalize();
+                    p_db_out_->execDML("COMMIT;");
+
+                    ////////////////////////////////dataCheckCountTable////////////////////////////////
                     create_table_sql = "CREATE TABLE IF NOT EXISTS dataCheckCountTable(   \
                                         sequenceId INTEGER PRIMARY KEY AUTOINCREMENT,\
                                         level TEXT,\
@@ -332,6 +359,39 @@ namespace kd {
 
             LOG(INFO) << "task [save error] end successfully " << " costs : " << compilerTimer.elapsed_message();
             return ret;
+        }
+
+        void CheckErrorOutput::calErrorTotal(){
+            try {
+
+                for (auto &check_item : check_total_) {
+                    ReportLogTotal checkItem;
+                    string errCode = check_item.first;
+                    shared_ptr<CheckItemInfo> checkItemInfo = check_item.second;
+                    vector<ErrorOutPut> errs_v = check_model_2_output_maps_[errCode];
+                    string errMessage = CheckListConfig::getInstance().GetCheckItemDesc(checkItemInfo->checkId);
+                    int size = errs_v.size();
+                    int failNum = 0;
+                    if(size == 0){
+                        checkItemInfo->successNum = checkItemInfo->totalNum;
+                        checkItemInfo->failNum = 0;
+
+                    }else{
+                        failNum = errs_v.size();
+                        checkItemInfo->failNum = errs_v.size();
+                        checkItemInfo->successNum = checkItemInfo->totalNum - failNum;
+                    }
+                }
+                outputErrorInfo();
+            } catch (std::exception &e) {
+                LOG(ERROR) << e.what();
+            }
+        }
+        void CheckErrorOutput::outputErrorInfo(){
+            for (auto &check_item : check_total_) {
+                LOG(INFO)<<"["+check_item.first+"]:[total]:[success]:[failed]: "
+                <<check_item.second->totalNum<<" : "<<check_item.second->successNum<<" : "<<check_item.second->failNum;
+            }
         }
 
     }

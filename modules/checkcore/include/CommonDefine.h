@@ -72,6 +72,7 @@ const static std::string CHECK_ITEM_KXS_ORG_026 = "KXS_01_026";
 const static std::string CHECK_ITEM_KXS_ORG_027 = "KXS_01_027";
 const static std::string CHECK_ITEM_KXS_ORG_028 = "KXS_01_028";
 const static std::string CHECK_ITEM_KXS_ORG_029 = "KXS_01_029";
+const static std::string CHECK_ITEM_KXS_ORG_030 = "KXS_01_030";
 
 // 分组检查
 const static std::string CHECK_ITEM_KXS_LG_001 = "KXS-03-001";

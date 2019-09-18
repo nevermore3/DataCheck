@@ -37,6 +37,10 @@ namespace kd {
             //存在没有有进入车道和退出车道的车道
             void check_JH_C_22(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput);
 
+            // HD_TOPO_LANEGROUP中的外键检查
+            void check_topo_lanegroup_foreignkey(shared_ptr<MapDataManager> mapDataManager,
+                                                 shared_ptr<CheckErrorOutput> errorOutput);
+
             const string id = "lane_topo_check";
 
         };

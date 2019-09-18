@@ -210,7 +210,7 @@ namespace kd {
             static shared_ptr<DCDividerCheckError> createByKXS_01_013(const string &divider_id,
                                                                       const vector<shared_ptr<NodeCompareError>> &ptr_error_nodes);
 
-            static shared_ptr<DCDividerCheckError> createByKXS_01_027(long dividerID, long index,
+            static shared_ptr<DCDividerCheckError> createByKXS_01_030(long dividerID, long index,
                                                                       const shared_ptr<DCCoord> &coord, int level);
 
             static shared_ptr<DCDividerCheckError> createByKXS_01_028(long dividerID, int index1, int index2,

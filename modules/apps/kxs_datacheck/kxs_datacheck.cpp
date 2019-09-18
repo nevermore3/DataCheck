@@ -390,9 +390,9 @@ int main(int argc, const char *argv[]) {
             }
 
             // KXF全要素检查
-            ret |= SqlAutoCheck(error_output);
+            //ret |= SqlAutoCheck(error_output);
             ret |= AllAutoCheck(error_output, base_path);
-            ret |= ConsistencyCheck(error_output);
+            //ret |= ConsistencyCheck(error_output);
             ret |= error_output->saveErrorToDb(output_file);
         }
 

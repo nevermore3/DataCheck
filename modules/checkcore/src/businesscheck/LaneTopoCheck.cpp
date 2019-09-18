@@ -113,6 +113,7 @@ namespace kd {
                             }
                         }
                     }
+                    total++;
                 }
 
                 if (!tag_emergency_lanes.empty()) {

@@ -97,7 +97,6 @@ namespace kd {
                 divider_ids.insert(divider.first);
             }
             const auto &laneGroups = data_manager()->laneGroups_;
-            int count = 0;
             for (const auto &lane_group_item : laneGroups) {
                 auto lane_group = lane_group_item.second;
                 for (auto lane : lane_group->lanes_) {
@@ -110,7 +109,6 @@ namespace kd {
                     if (divider_ids.find(right_div_id) != divider_ids.end()) {
                         divider_ids.erase(right_div_id);
                     }
-                    count++;
                 }
             }
 

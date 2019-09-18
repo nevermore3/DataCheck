@@ -295,7 +295,7 @@ int main(int argc, const char *argv[]) {
                     }
                 }
             }
-            InitGlog(exe_path, "/home/ubuntu/orgdata/kxf_bug_fix/out/");
+            InitGlog(exe_path, task_info.logs_path_);
         }else{
             InitGlog(exe_path, "./");
         }
@@ -323,7 +323,7 @@ int main(int argc, const char *argv[]) {
             DataCheckConfig::getInstance().setProperty(DataCheckConfig::CHECK_STATE, to_string(DataCheckConfig::ALL_AUTO_CHECK));
             DataCheckConfig::getInstance().addProperty(DataCheckConfig::UPDATE_REGION, getUpdateRegion(ur_path));
         }else if (argc == 2){
-            DataCheckConfig::getInstance().setProperty(DataCheckConfig::OUTPUT_PATH,"/home/ubuntu/orgdata/kxf_bug_fix/out/");
+            DataCheckConfig::getInstance().setProperty(DataCheckConfig::OUTPUT_PATH,task_info.output_path_);
             DataCheckConfig::getInstance().setProperty(DataCheckConfig::JSON_DATA_INPUT,task_info.input_path_);
             //检查项
             auto checkItems = task_info.param_results.find("checkItemConfig");

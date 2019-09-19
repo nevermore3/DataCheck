@@ -54,10 +54,8 @@ bool CheckListConfig::ParsseItemDesc(const string &json_result){
 //        if (strcmp(code.c_str(), "0") != 0) {
 //            return false;
 //        }
-        if(obj ->has("result")) {
-            Object::Ptr result_obj = obj->getObject("result");
-            if(result_obj->has("checkItemList")) {
-                Poco::JSON::Array::Ptr dataArray = result_obj->getArray("checkItemList");
+        if(obj ->has("checkItemList")) {
+                Poco::JSON::Array::Ptr dataArray = obj->getArray("checkItemList");
                 int totalCount = dataArray->size();
 
                 for (long i = 0; i < totalCount; i++) {
@@ -73,8 +71,9 @@ bool CheckListConfig::ParsseItemDesc(const string &json_result){
                         check_map.insert(make_pair(code, desc));
                     }
                 }
-            }
+
         }
+        LOG(INFO)<<"parse checkItemConfig success,item size is "<<check_map.size();
     } catch (Exception &e) {
         cout << e.what() << endl;
     }

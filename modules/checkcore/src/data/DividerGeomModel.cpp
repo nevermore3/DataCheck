@@ -265,6 +265,7 @@ namespace kd {
 
             if (cl->size() < 2) {
                 this->valid_ = false;
+                delete cl;
                 return false;
             }
 
@@ -272,6 +273,7 @@ namespace kd {
             geos::geom::LineString *lineString = gf->createLineString(cl);
             if (lineString) {
                 line_.reset(lineString);
+                delete cl;
                 return true;
             } else {
                 delete cl;

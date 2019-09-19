@@ -157,61 +157,45 @@ namespace kd {
 
         void LaneTopoCheck::check_topo_lanegroup_foreignkey(shared_ptr<MapDataManager> mapDataManager,
                                                             shared_ptr<CheckErrorOutput> errorOutput) {
-            string basePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::SHP_FILE_PATH);
-            string topoLaneGroupFile = basePath + "/HD_TOPO_LANEGROUP";
-            ShpData shpFile(topoLaneGroupFile);
-            if (!shpFile.isInit()) {
-                LOG(ERROR) << "Open shpFile :" << topoLaneGroupFile << " Fail";
-                return;
-            }
             string modelName = "HD_TOPO_LANEGROUP";
             string foreignTable = "HD_LANE_GROUP";
             string keyName = "ID";
-            size_t recordNums = shpFile.getRecords();
-            for (size_t i = 0; i < recordNums; i++) {
-                SHPObject *shpObject = shpFile.readShpObject(i);
-                if (!shpObject || shpObject->nSHPType != SHPT_POLYGONZ)
-                    continue;
-
-                //读取属性信息
-                string strFromLG = shpFile.readStringField(i, "FROM_LG");
-                string strToLG = shpFile.readStringField(i, "TO_LG");
-                vector<string>fromLGArray;
-                vector<string>toLGArray;
-                StringUtil::Token(strFromLG.c_str(), ",", fromLGArray);
-                StringUtil::Token(strToLG.c_str(), ",", toLGArray);
-                for (const auto &fromLG : fromLGArray) {
-                    if (fromLG == "0") {
+            unordered_map<long, shared_ptr<TopoLaneGroup>> laneGroups = mapDataManager->topo_lane_groups_;
+            for (const auto &laneGroup : laneGroups) {
+                for (const auto &fromLG : laneGroup.second->from_lanegroups_) {
+                    long id = fromLG->id_;
+                    if (id == 0) {
                         continue;
                     }
-                    if (mapDataManager->laneGroups_.find(fromLG) == mapDataManager->laneGroups_.end()) {
+                    string strID = to_string(id);
+                    if (mapDataManager->laneGroups_.find(strID) == mapDataManager->laneGroups_.end()) {
                         string foreignKeyName = "From_LG";
-                        string value = fromLG;
                         auto error = DCForeignKeyCheckError::createByKXS_01_027(modelName,
                                                                                 foreignKeyName,
-                                                                                value,
+                                                                                strID,
                                                                                 foreignTable,
                                                                                 keyName);
                         errorOutput->saveError(error);
                     }
                 }
-                for (const auto &toLG : toLGArray) {
-                    if (toLG == "0") {
+                for (const auto &toLG : laneGroup.second->to_lanegroups_) {
+                    long id = toLG->id_;
+                    if (id == 0) {
                         continue;
                     }
-                    if (mapDataManager->laneGroups_.find(toLG) == mapDataManager->laneGroups_.end()) {
+                    string strID = to_string(id);
+                    if (mapDataManager->laneGroups_.find(strID) == mapDataManager->laneGroups_.end()) {
                         string foreignKeyName = "TO_LG";
-                        string value = toLG;
                         auto error = DCForeignKeyCheckError::createByKXS_01_027(modelName,
                                                                                 foreignKeyName,
-                                                                                value,
+                                                                                strID,
                                                                                 foreignTable,
                                                                                 keyName);
                         errorOutput->saveError(error);
                     }
                 }
-
             }
+
         }
     }
 }

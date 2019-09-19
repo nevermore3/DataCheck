@@ -271,7 +271,11 @@ namespace kd {
         }
 
         void AdasCheck::Check_KXS_07_001() {
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_ADAS_001;
+            size_t total = 0;
             for (const auto &road_id2_adas_node : road_id2_adas_node_maps_) {
+                total += road_id2_adas_node.second.size();
                 long road_id = road_id2_adas_node.first;
                 auto adas_node_iter = road_id2_adas_node.second.begin();
                 auto adas_node_next_iter = ++road_id2_adas_node.second.begin();
@@ -305,8 +309,9 @@ namespace kd {
                         }
                     }
                 }
-
             }
+            checkItemInfo->totalNum = total;
+            error_output->addCheckItemInfo(checkItemInfo);
         }
 
 

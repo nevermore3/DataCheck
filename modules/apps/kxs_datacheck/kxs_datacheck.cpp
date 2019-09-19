@@ -408,7 +408,6 @@ int main(int argc, const char *argv[]) {
     } catch (std::exception &e) {
         LOG(ERROR) << "An exception occurred: " << e.what();
         ReportJsonLog::GetInstance().WriteToFile(errJsonPath, true);
-        ReportJsonLog::GetInstance().WriteToFile(errForAllCHeckPath, true);
         ret = 1;
     }
 

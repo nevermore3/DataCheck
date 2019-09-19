@@ -183,10 +183,8 @@ int forAllCheck(int argc, const char *argv[]){
 //        ret |= error_output->saveErrorReport(checkresult);
 
         LOG(INFO) << "total task costs: " << compilerTimer.elapsed_message();
-
     } catch (std::exception &e) {
         LOG(ERROR) << "An exception occurred: " << e.what();
-        ReportJsonLog::GetInstance().WriteToFile(errJsonPath+checkresultforjson,true);
         ret = 1;
     }
 

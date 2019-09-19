@@ -161,15 +161,12 @@ bool JsonLog::WriteToFile(string path) {
 
     stringstream ss;
     Stringify(ss);
-    ofstream outfile;
-
-    outfile.open(path, ios::out | ios::trunc);
-    if(ss.str().length()==0){
-        outfile << "[]";
-    } else {
+    if(ss.str().length()>0) {
+        ofstream outfile;
+        outfile.open(path, ios::out | ios::trunc);
         outfile << ss.str();
+        outfile.close();
     }
-    outfile.close();
 
     return true;
 }

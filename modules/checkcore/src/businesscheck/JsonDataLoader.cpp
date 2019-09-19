@@ -81,6 +81,7 @@ namespace kd {
             size_t file_count = file_list.size();
             const std::string config_file = "config.json";
             const std::string checklist = "checklist.json";
+            const std::string split_str = "-";
             for (int i = 0; i < file_count; i++) {
 
                 OSMDataParser parser(resource_manager);
@@ -91,6 +92,8 @@ namespace kd {
                 if (file_path.find(config_file) != std::string::npos) {
                     continue;
                 } else if (file_path.find(checklist) != std::string::npos) {
+                    continue;
+                } else if (file_path.find(split_str) == std::string::npos){
                     continue;
                 }
 

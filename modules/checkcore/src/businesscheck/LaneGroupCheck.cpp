@@ -44,6 +44,7 @@ namespace kd {
         }
 
         void LaneGroupCheck::Check_kxs_03_004() {
+
             const auto &divider2_lane_groups = data_manager()->divider2_lane_groups_;
             shared_ptr<DCError> ptr_error = nullptr;
             string taskid, flag, dataKey;
@@ -88,6 +89,10 @@ namespace kd {
                     error_output()->saveError(ptr_error);
                 }
             }
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_LG_004;
+            checkItemInfo->totalNum = divider2_lane_groups.size();
+            error_output()->addCheckItemInfo(checkItemInfo);
         }
 
         void LaneGroupCheck::Check_kxs_03_003() {

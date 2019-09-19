@@ -299,10 +299,10 @@ namespace kd {
             return error;
         }
 
-        shared_ptr<DCDividerCheckError> DCDividerCheckError::createByKXS_01_027(long dividerID, long index,
+        shared_ptr<DCDividerCheckError> DCDividerCheckError::createByKXS_01_030(long dividerID, long index,
                                                                                 const shared_ptr<DCCoord> &coord,
-                                                                                int level) {
-            shared_ptr<DCDividerCheckError> error = make_shared<DCDividerCheckError>(CHECK_ITEM_KXS_ORG_027);
+                                                                                int level){
+            shared_ptr<DCDividerCheckError> error = make_shared<DCDividerCheckError>(CHECK_ITEM_KXS_ORG_030);
             error->checkLevel_ = LEVEL_ERROR;
             error->checkName = "Divider点完备性检查.";
             error->detail_ += "Divider ID:";

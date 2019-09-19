@@ -186,12 +186,16 @@ namespace kd {
 
         void LaneCheck::check_lane_lane_intersect(shared_ptr<MapDataManager> mapDataManager,
                                                   shared_ptr<CheckErrorOutput> errorOutput) {
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_LANE_015;
+            size_t  total = 0;
             const auto &ptr_lane_groups = mapDataManager->laneGroups_;
 
             shared_ptr<DCError> ptr_error = nullptr;
             for (const auto &lg : ptr_lane_groups) {
                 check_lane_node(mapDataManager, errorOutput, lg.second);
                 auto ptr_lanes = lg.second->lanes_;
+                total += ptr_lanes.size();
                 if (ptr_lanes.size() > 1) {
                     auto ptr_left_lane = ptr_lanes.front();
                     vector<shared_ptr<DCLane>> ptr_same_node_lanes;
@@ -232,6 +236,8 @@ namespace kd {
                     }
                 }
             }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
         }
 
         void LaneCheck::lane_intersects(const shared_ptr<MapDataManager> &mapDataManager,
@@ -278,7 +284,11 @@ namespace kd {
         void LaneCheck::check_lane_node(shared_ptr<MapDataManager> mapDataManager,
                                         shared_ptr<CheckErrorOutput> errorOutput,
                                         shared_ptr<DCLaneGroup> ptr_lane_group) {
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_LANE_016;
+            size_t total = 0;
             for (const auto &ptr_lane : ptr_lane_group->lanes_) {
+                total += ptr_lane->coords_.size();
                 vector<shared_ptr<NodeError>> ptr_error_nodes;
                 auto first_node = ptr_lane->coords_.front();
                 shared_ptr<NodeError> ptr_e_node = make_shared<NodeError>();
@@ -311,13 +321,17 @@ namespace kd {
                     }
                 }
             }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
         }
 
         //同一条车道中心线上连续三个节点构成的夹角（绝对值）不能小于165度 (可配置)
         void LaneCheck::check_lane_nodes_angle(shared_ptr<MapDataManager> mapDataManager,
                                                shared_ptr<CheckErrorOutput> errorOutput) {
             double angleThreshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::LANE_NODE_ANGLE);
-
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_LANE_017;
+            size_t total = mapDataManager->lanes_.size();
             for (const auto &lane : mapDataManager->lanes_) {
                 string laneId = lane.first;
                 vector<shared_ptr<DCCoord>> coords = lane.second->coords_;
@@ -328,10 +342,15 @@ namespace kd {
                     errorOutput->saveError(error);
                 }
             }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
         }
 
         void LaneCheck::check_lane_angle(shared_ptr<MapDataManager> mapDataManager,
                                          shared_ptr<CheckErrorOutput> errorOutput) {
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_LANE_018;
+            size_t  total = mapDataManager->laneConnectivitys_.size();
 
             double angleThreshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::LANE_ANGLE);
             for (const auto &connectNode : mapDataManager->laneConnectivitys_) {
@@ -355,6 +374,8 @@ namespace kd {
                 }
 
             }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
         }
 
         void LaneCheck::LoadLaneCurvature() {
@@ -395,9 +416,12 @@ namespace kd {
         void LaneCheck::check_lane_curvature(shared_ptr<MapDataManager> mapDataManager,
                                              shared_ptr<CheckErrorOutput> errorOutput) {
             double threshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::LANE_CURVATURE);
-
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_LANE_019;
+            size_t  total = 0;
 
             for (const auto &laneSCH : map_lane_sch_) {
+                total += laneSCH.second.size();
                 for (const auto &laneNode : laneSCH.second) {
                     if (fabs(laneNode.second->curvature_) > threshold) {
                         auto error = DCLaneError::createByKXS_05_019(to_string(laneSCH.first),
@@ -407,12 +431,16 @@ namespace kd {
                     }
                 }
             }
-
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
         }
 
         // 每一Lane的形状点周围1.5米内必有一个关联该Lane的HD_LANE_SCH
         void LaneCheck::lane_relevant_lane_sch(const shared_ptr<MapDataManager> &mapDataManager,
                                                const shared_ptr<CheckErrorOutput> &errorOutput) {
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_LANE_020;
+            size_t total = 0;
             // 保存LANE形点 和 HD_LANE_SCH点之间的关系
             // key : LaneID ,value: {key: LaneNodeindex , value: {LANE_SCH}}
             unordered_map<long, map<long, vector<shared_ptr<DCLaneCurvature>>>>mapLaneNodeSCH;
@@ -440,7 +468,7 @@ namespace kd {
                 if (mapLaneNodeSCH.find(laneID) == mapLaneNodeSCH.end()) {
                     continue;
                 }
-
+                total += lane.second->coords_.size();
                 for (size_t i = 0; i < lane.second->coords_.size(); i++) {
                     if (mapLaneNodeSCH[laneID].find(i) == mapLaneNodeSCH[laneID].end()) {
                         auto error = DCLaneError::createByKXS_05_020(laneID, i, lane.second->coords_[i], 1);
@@ -471,16 +499,22 @@ namespace kd {
                     }
                 }
             }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
         }
 
         void LaneCheck::adjacent_lane_sch_node_distance(const shared_ptr<MapDataManager> &mapDataManager,
                                                         const shared_ptr<CheckErrorOutput> &errorOutput) {
 
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_LANE_021;
+            size_t total = 0;
             //相邻HD_LANE_SCH点之间距离不超过1.3m
             double distanceThreshold = 1.3;
             double distance = 0;
             for (const auto &laneSCH : map_lane_sch_) {
                 long laneID = laneSCH.first;
+                total += laneSCH.second.size();
                 map<long, shared_ptr<DCLaneCurvature>> laneNodes = laneSCH.second;
                 auto currIter = laneNodes.begin();
                 auto preIter = currIter;
@@ -497,13 +531,19 @@ namespace kd {
                     currIter++;
                 }
             }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
         }
 
         void LaneCheck::lane_sch_vertical_distance(const shared_ptr<MapDataManager> &mapDataManager,
                                                    const shared_ptr<CheckErrorOutput> &errorOutput) {
 
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_LANE_022;
+            size_t total = 0;
             for (const auto &laneSCH : map_lane_sch_) {
                 long laneID = laneSCH.first;
+                total += laneSCH.second.size();
                 string strLaneID = to_string(laneID);
                 if (mapDataManager->lanes_.find(strLaneID) == mapDataManager->lanes_.end()) {
                     continue;
@@ -518,6 +558,8 @@ namespace kd {
                     }
                 }
             }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
         }
 
     }

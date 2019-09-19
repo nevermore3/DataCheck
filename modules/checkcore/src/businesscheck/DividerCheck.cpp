@@ -132,7 +132,7 @@ namespace kd {
 
                 for (size_t i = 0; i < divider.second->nodes_.size(); i++) {
                     if (mapDividerNodeSCH[dividerID].find(i) == mapDividerNodeSCH[dividerID].end()) {
-                        auto error = DCDividerCheckError::createByKXS_01_027(dividerID, i,
+                        auto error = DCDividerCheckError::createByKXS_01_030(dividerID, i,
                                                                              divider.second->nodes_[i]->coord_, 1);
                         errorOutput->saveError(error);
                         continue;
@@ -148,7 +148,7 @@ namespace kd {
                     }
 
                     if (minDistance > distanceThreshold) {
-                        auto error = DCDividerCheckError::createByKXS_01_027(dividerID, i,
+                        auto error = DCDividerCheckError::createByKXS_01_030(dividerID, i,
                                                                              divider.second->nodes_[i]->coord_, 1);
                         errorOutput->saveError(error);
                     }
@@ -156,7 +156,7 @@ namespace kd {
                     //DIVIDER的起点和终点之处（buffer20cm）必有一个关联该DIVIDER的HD_DIVIDER_SCH
                     if (i == 0 || i == divider.second->nodes_.size() - 1) {
                         if (minDistance > 0.2) {
-                            auto error = DCDividerCheckError::createByKXS_01_027(dividerID, i,
+                            auto error = DCDividerCheckError::createByKXS_01_030(dividerID, i,
                                                                                  divider.second->nodes_[i]->coord_, 2);
                             errorOutput->saveError(error);
                         }

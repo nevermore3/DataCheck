@@ -3,6 +3,8 @@
 //
 
 #include <util/CommonUtil.h>
+#include <shp/ShpData.hpp>
+#include <util/StringUtil.h>
 #include "businesscheck/LaneTopoCheck.h"
 
 namespace kd {
@@ -15,6 +17,7 @@ namespace kd {
         bool LaneTopoCheck::execute(shared_ptr<MapDataManager> mapDataManager,
                                     shared_ptr<CheckErrorOutput> errorOutput) {
             check_JH_C_22(mapDataManager, errorOutput);
+            check_topo_lanegroup_foreignkey(mapDataManager, errorOutput);
             return true;
         }
 
@@ -151,6 +154,49 @@ namespace kd {
             if(CheckItemValid(CHECK_ITEM_KXS_LANE_013)){
                 errorOutput->addCheckItemInfo(CHECK_ITEM_KXS_LANE_013,total);
             }
+        }
+
+        void LaneTopoCheck::check_topo_lanegroup_foreignkey(shared_ptr<MapDataManager> mapDataManager,
+                                                            shared_ptr<CheckErrorOutput> errorOutput) {
+            string modelName = "HD_TOPO_LANEGROUP";
+            string foreignTable = "HD_LANE_GROUP";
+            string keyName = "ID";
+            unordered_map<long, shared_ptr<TopoLaneGroup>> laneGroups = mapDataManager->topo_lane_groups_;
+            for (const auto &laneGroup : laneGroups) {
+                for (const auto &fromLG : laneGroup.second->from_lanegroups_) {
+                    long id = fromLG->id_;
+                    if (id == 0) {
+                        continue;
+                    }
+                    string strID = to_string(id);
+                    if (mapDataManager->laneGroups_.find(strID) == mapDataManager->laneGroups_.end()) {
+                        string foreignKeyName = "From_LG";
+                        auto error = DCForeignKeyCheckError::createByKXS_01_027(modelName,
+                                                                                foreignKeyName,
+                                                                                strID,
+                                                                                foreignTable,
+                                                                                keyName);
+                        errorOutput->saveError(error);
+                    }
+                }
+                for (const auto &toLG : laneGroup.second->to_lanegroups_) {
+                    long id = toLG->id_;
+                    if (id == 0) {
+                        continue;
+                    }
+                    string strID = to_string(id);
+                    if (mapDataManager->laneGroups_.find(strID) == mapDataManager->laneGroups_.end()) {
+                        string foreignKeyName = "TO_LG";
+                        auto error = DCForeignKeyCheckError::createByKXS_01_027(modelName,
+                                                                                foreignKeyName,
+                                                                                strID,
+                                                                                foreignTable,
+                                                                                keyName);
+                        errorOutput->saveError(error);
+                    }
+                }
+            }
+
         }
     }
 }

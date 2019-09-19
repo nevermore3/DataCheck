@@ -77,7 +77,7 @@ namespace kd {
         // 坡度检查
         const string DataCheckConfig::AVG_SLOPE_ERROR = "avg_slope_error";
         const string DataCheckConfig::ADAS_NODE_DIVIDER_SLOPE = "adas_node_divider_slope";
-
+        const string DataCheckConfig::CHECK_ALL_FILE = "check_all_file";
 
         int DataCheckConfig::load(string fileName) {
             int ret = 0;
@@ -159,6 +159,22 @@ namespace kd {
             }
         }
 
+        bool DataCheckConfig::getPropertyBool(string key){
+            map<string, string>::iterator it = m_properties.find(key);
+            if (it != m_properties.end()) {
+
+                string value = it->second;
+                if(value == "t" || value == "T"){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+
+            LOG(WARNING) << "not fine " << key << " properties in config";
+
+            return false;
+        }
 
         string DataCheckConfig::getTaskId() {
             return task_id;

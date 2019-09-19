@@ -178,7 +178,8 @@ namespace kd {
             bool load_file_status = true;
             int file_count = file_list.size();
             const std::string config_file = "config.json";
-
+            const std::string split_str = "-";
+            bool parse = DataCheckConfig::getInstance().getPropertyBool(DataCheckConfig::CHECK_ALL_FILE);
             for (int i = 0; i < file_count; i++) {
                 string taskid = "";
                 string bound_id = "";
@@ -191,7 +192,10 @@ namespace kd {
                 if (file_path.find(config_file) != std::string::npos) {
                     continue;
                 }
-
+                //全库检查过滤
+                if(!parse && file_path.find(split_str) != std::string::npos){
+                    continue;
+                }
                 //load file
                 LOG(INFO) << "load file " << (i + 1) << "/" << file_count << " " << file_path;
 

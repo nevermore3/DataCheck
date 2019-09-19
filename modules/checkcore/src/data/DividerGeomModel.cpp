@@ -192,7 +192,6 @@ namespace kd {
                 }
 
                 len_ = lenTotal;
-                delete cl;
                 return true;
             } else {
                 delete cl;
@@ -273,7 +272,6 @@ namespace kd {
             geos::geom::LineString *lineString = gf->createLineString(cl);
             if (lineString) {
                 line_.reset(lineString);
-                delete cl;
                 return true;
             } else {
                 delete cl;
@@ -458,7 +456,6 @@ namespace kd {
             geos::geom::LineString *lineString = gf->createLineString(cl);
             if (lineString) {
                 line_.reset(lineString);
-                delete cl;
                 return true;
             } else {
                 delete cl;
@@ -508,7 +505,6 @@ namespace kd {
                 }
 
                 len_ = lenTotal;
-                delete cl;
                 return true;
             } else {
                 delete cl;

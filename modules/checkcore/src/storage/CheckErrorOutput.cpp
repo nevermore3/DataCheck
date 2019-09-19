@@ -119,7 +119,7 @@ namespace kd {
                 LOG(ERROR) << e.what();
                 ret = 1;
             }
-
+            LOG(INFO) <<"error file path is "<<err_file_name;
             LOG(INFO) << "task [save error] end successfully " << " costs : " << compilerTimer.elapsed_message();
             return ret;
         }

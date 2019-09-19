@@ -168,6 +168,7 @@ namespace kd {
 
             if (cl->size() < 2) {
                 this->valid_ = false;
+                delete cl;
                 return false;
             }
 
@@ -191,7 +192,7 @@ namespace kd {
                 }
 
                 len_ = lenTotal;
-
+                delete cl;
                 return true;
             } else {
                 delete cl;

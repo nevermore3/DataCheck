@@ -110,6 +110,7 @@ namespace kd {
                         if (!CommonUtil::CheckCoordValid(dc_coord)) {
                             error_node_index.emplace(i);
                         }
+                        total_01024++;
                     }
                     bool isCheck_kxs01024 = CheckListConfig::getInstance().IsNeedCheck(CHECK_ITEM_KXS_ORG_024);
                     if(isCheck_kxs01024){

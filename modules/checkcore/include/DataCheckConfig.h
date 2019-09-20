@@ -75,6 +75,7 @@ namespace kd {
             const static string CONN_CHECKFILEPATH;
             const static string AVG_SLOPE_ERROR;
             const static string ADAS_NODE_DIVIDER_SLOPE;
+            const static string CHECK_ALL_FILE;
 
         public:
             static DataCheckConfig & getInstance() {
@@ -116,7 +117,8 @@ namespace kd {
             string getTaskId();
 
             void setTaskId(string id);
-
+            //获得bool类型的参数， 如果没找到关键字则返回false
+            bool getPropertyBool(string key);
         private:
             //所有配置属性
             map<string, string> m_properties;

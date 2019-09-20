@@ -119,7 +119,7 @@ namespace kd {
                 LOG(ERROR) << e.what();
                 ret = 1;
             }
-
+            LOG(INFO) <<"error file path is "<<err_file_name;
             LOG(INFO) << "task [save error] end successfully " << " costs : " << compilerTimer.elapsed_message();
             return ret;
         }
@@ -328,7 +328,7 @@ namespace kd {
                             int count = 1;
                         statement1.bindNull(count++);
                         statement1.bindString(count++, check_item.second->checkId);
-                        statement1.bindNull(count++);
+                        statement1.bindString(count++, CheckListConfig::getInstance().GetCheckItemDesc(check_item.second->checkId));
                         statement1.bindInt(count++, check_item.second->failNum);
                         statement1.execDML();
                         statement1.reset();

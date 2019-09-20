@@ -32,17 +32,17 @@ namespace kd {
                this->valid_ = false;
                return false;
            }
-
            shared_ptr<geos::geom::LineString> lineString = GeosObjUtil::CreateLineString(nodes);
            if (lineString) {
-               line_.reset(lineString.get());
+               line_ = lineString;
 
                //计算线段距离轨迹的平均距离
                if(getLen) {
                    len = lineString->getLength();
                }
+
                return true;
-           }else{
+           } else {
                this->valid_ = false;
                return false;
            }
@@ -52,10 +52,9 @@ namespace kd {
                this->valid_ = false;
                return false;
            }
-
            shared_ptr<geos::geom::LineString> lineString = GeosObjUtil::create_line_string(coord);
            if (lineString) {
-               line_.reset(lineString.get());
+               line_ = lineString;
 
                //计算线段距离轨迹的平均距离
                if(getLen) {

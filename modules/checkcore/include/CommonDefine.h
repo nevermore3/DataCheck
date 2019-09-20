@@ -80,12 +80,6 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ORG_031 = "KXS_01_031";
         const static std::string CHECK_ITEM_KXS_ORG_032 = "KXS_01_032";
 
-        //
-        const static std::string CHECK_ITEM_KXS_ORG_001_DESC = "KXS-01-001";
-        const static std::string CHECK_ITEM_KXS_ORG_002_DESC = "KXS-01-002";
-        const static std::string CHECK_ITEM_KXS_ORG_003_DESC = "KXS-01-003";
-        const static std::string CHECK_ITEM_KXS_ORG_004_DESC = "KXS-01-004";
-        const static std::string CHECK_ITEM_KXS_ORG_029_DESC = "DIVIDER_SCH与关联DIVIDER距离检查";
 
         // 分组检查
         const static std::string CHECK_ITEM_KXS_LG_001 = "KXS-03-001";
@@ -176,38 +170,6 @@ namespace kd {
         const static std::string DIVIDER_ID = "DIVIDER_ID";
         const static std::string DIVIDER_NODE_ID = "DIVIDER_NODE_ID";
 
-
-
-
-        // 检查项信息统计
-        class MapItemInfo {
-        public:
-            static MapItemInfo &getInstance() {
-                static MapItemInfo instance;
-                return instance;
-            }
-
-            /**
-             * 获取检查项描述
-             * @param checkID 检查项ID
-             * @return 检查项目描述
-             */
-            std::string getProperty(std::string checkID);
-            /**
-             * 获取检查项数目
-             * @return 检查项目数目
-             */
-            size_t getNums();
-
-            /**
-             * 建立检查项ID和检查项描述的映射
-             */
-            void load();
-        private:
-            // 检查项ID和检查项描述的映射
-
-            std::map<std::string, std::string> map_item_info_;
-        };
 
     }
 }

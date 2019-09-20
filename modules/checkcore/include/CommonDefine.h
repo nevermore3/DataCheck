@@ -76,9 +76,48 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ORG_028 = "KXS_01_028";
         const static std::string CHECK_ITEM_KXS_ORG_029 = "KXS_01_029";
         const static std::string CHECK_ITEM_KXS_ORG_030 = "KXS_01_030";
-
         const static std::string CHECK_ITEM_KXS_ORG_031 = "KXS_01_031";
         const static std::string CHECK_ITEM_KXS_ORG_032 = "KXS_01_032";
+
+
+        const static std::string CHECK_ITEM_KXS_ORG_001_DESC = "对象ID记录重复性检查";
+        const static std::string CHECK_ITEM_KXS_ORG_002_DESC = "几何数据重复性检查";
+        const static std::string CHECK_ITEM_KXS_ORG_003_DESC = "多边形形态错误";
+        const static std::string CHECK_ITEM_KXS_ORG_004_DESC = "几何数据坐标值异常检查";
+        const static std::string CHECK_ITEM_KXS_ORG_005_DESC = "";
+        const static std::string CHECK_ITEM_KXS_ORG_006_DESC = "";
+        const static std::string CHECK_ITEM_KXS_ORG_007_DESC = "车道分割线黄白线变化不一致";
+        const static std::string CHECK_ITEM_KXS_ORG_008_DESC = "车行道边缘线在非停止线/出入口标线的地方断开";
+        const static std::string CHECK_ITEM_KXS_ORG_009_DESC = "非路口虚拟线的车道线未构成车道";
+        const static std::string CHECK_ITEM_KXS_ORG_010_DESC = "共点的车道线通行方向冲突";
+        const static std::string CHECK_ITEM_KXS_ORG_011_DESC = "车道线不平滑夹角";
+        const static std::string CHECK_ITEM_KXS_ORG_012_DESC = "存在长度小于0.2米的弧段";
+        const static std::string CHECK_ITEM_KXS_ORG_013_DESC = "车道线高程突变";
+        const static std::string CHECK_ITEM_KXS_ORG_014_DESC = "颜色、类型、通行类型属性冲突检查";
+        const static std::string CHECK_ITEM_KXS_ORG_015_DESC = "车道线没有属性变化点";
+        const static std::string CHECK_ITEM_KXS_ORG_016_DESC = "同一个divider上相邻两个DA属性完全相同";
+        const static std::string CHECK_ITEM_KXS_ORG_017_DESC = "同一个divider上相邻两个DA距离<1米";
+        const static std::string CHECK_ITEM_KXS_ORG_018_DESC = "DIVIDER的FDNODE与TDNODE应该是实际的首尾点";
+        const static std::string CHECK_ITEM_KXS_ORG_019_DESC = "字段范围检查";
+        const static std::string CHECK_ITEM_KXS_ORG_020_DESC = "缺少数据文件，或者数据为空";
+        const static std::string CHECK_ITEM_KXS_ORG_021_DESC = "数据有效性检查";
+        const static std::string CHECK_ITEM_KXS_ORG_022_DESC = "道路拓扑的数据检查";
+        const static std::string CHECK_ITEM_KXS_ORG_023_DESC = "车道组与道路关联关系检查";
+        const static std::string CHECK_ITEM_KXS_ORG_024_DESC = "结点坐标有效性检查";
+        const static std::string CHECK_ITEM_KXS_ORG_025_DESC = "字段关系检查";
+        const static std::string CHECK_ITEM_KXS_ORG_026_DESC = "外键在规格中存在, 在数据中不存在";
+        const static std::string CHECK_ITEM_KXS_ORG_027_DESC = "外键的完备性检查, 记录不可缺失";
+        const static std::string CHECK_ITEM_KXS_ORG_028_DESC = "";
+        const static std::string CHECK_ITEM_KXS_ORG_029_DESC = "DIVIDER_SCH与关联DIVIDER距离检查";
+        const static std::string CHECK_ITEM_KXS_ORG_030_DESC = "Divider点完备性检查";
+        const static std::string CHECK_ITEM_KXS_ORG_031_DESC = "属性点的曲率值检查";
+        const static std::string CHECK_ITEM_KXS_ORG_032_DESC = "属性点之间距离不超过1.3m";
+
+
+        const static std::string CHECK_ITEM_KXS_LM_001_DESC = "定位目标与道路的关联关系";
+        const static std::string CHECK_ITEM_KXS_LM_002_DESC = "定位目标POINT高度值";
+
+
 
 
         // 分组检查
@@ -110,6 +149,39 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_LG_026 = "KXS-03-026";
         const static std::string CHECK_ITEM_KXS_LG_027 = "KXS-03-027";
 
+        const static std::string CHECK_ITEM_KXS_LG_001_DESC = "同一个车道组内，单根车道线的长度同组内车道线平均长度不应该偏差超过";
+        const static std::string CHECK_ITEM_KXS_LG_002_DESC = "分组中车道编号从零开始，从内向外递增。编号连续，不缺失，不重复";
+        const static std::string CHECK_ITEM_KXS_LG_003_DESC = "车道线不存在于车道组中";
+
+        const static std::string CHECK_ITEM_KXS_LG_004_DESC = "车道线不存在于车道组中";
+        const static std::string CHECK_ITEM_KXS_LG_005_DESC = "车道线不存在于车道组中";
+        const static std::string CHECK_ITEM_KXS_LG_006_DESC = "车道线不存在于车道组中";
+        const static std::string CHECK_ITEM_KXS_LG_007_DESC = "车道线不存在于车道组中";
+        const static std::string CHECK_ITEM_KXS_LG_008_DESC = "车道线不存在于车道组中";
+        const static std::string CHECK_ITEM_KXS_LG_009_DESC = "车道线不存在于车道组中";
+        const static std::string CHECK_ITEM_KXS_LG_0010_DESC = "车道线不存在于车道组中";
+        const static std::string CHECK_ITEM_KXS_LG_0011_DESC = "车道线不存在于车道组中";
+        const static std::string CHECK_ITEM_KXS_LG_0012_DESC = "车道线不存在于车道组中";
+
+        const static std::string CHECK_ITEM_KXS_LG_011_DESC = "车道组未关联道路或关联道路无效";
+        const static std::string CHECK_ITEM_KXS_LG_012_DESC = "车道组有效性检查";
+        const static std::string CHECK_ITEM_KXS_LG_013_DESC = "车道未关联车道组";
+        const static std::string CHECK_ITEM_KXS_LG_014_DESC = "车道关联多个车道组";
+        const static std::string CHECK_ITEM_KXS_LG_015_DESC = "车道关联车道线无效";
+        const static std::string CHECK_ITEM_KXS_LG_016_DESC = "车道线关联节点无效";
+        const static std::string CHECK_ITEM_KXS_LG_017_DESC = "两个车道关联的左右车道线完全一致";
+        const static std::string CHECK_ITEM_KXS_LG_018_DESC = "车道孤立不连通";
+        const static std::string CHECK_ITEM_KXS_LG_019_DESC = "车道形态连通的关系丢失";
+        const static std::string CHECK_ITEM_KXS_LG_020_DESC = "车道拓扑关系无效";
+        const static std::string CHECK_ITEM_KXS_LG_021_DESC = "车道线冗余错误";
+        const static std::string CHECK_ITEM_KXS_LG_022_DESC = "车道冗余错误";
+        const static std::string CHECK_ITEM_KXS_LG_023_DESC = "Lane或Divider分组形态错误";
+        const static std::string CHECK_ITEM_KXS_LG_024_DESC = "车道LaneType检查";
+        const static std::string CHECK_ITEM_KXS_LG_025_DESC = "车道编号检查";
+        const static std::string CHECK_ITEM_KXS_LG_026_DESC = "DIVIDER对应DA属性检查";
+
+
+
         // 道路检查
         const static std::string CHECK_ITEM_KXS_ROAD_001 = "KXS-04-001";
         const static std::string CHECK_ITEM_KXS_ROAD_002 = "KXS-04-002";
@@ -119,6 +191,11 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ROAD_006 = "KXS-04-006";
         const static std::string CHECK_ITEM_KXS_ROAD_007 = "KXS-04-007";
         const static std::string CHECK_ITEM_KXS_ROAD_008 = "KXS-04-008";
+
+
+        const static std::string CHECK_ITEM_KXS_ROAD_004_DESC = "Road的起点终点检查";
+        const static std::string CHECK_ITEM_KXS_ROAD_005_DESC = "道路RANGE索引号检查";
+
 
         // 车道中心线
         const static std::string CHECK_ITEM_KXS_LANE_001 = "KXS-05-001";

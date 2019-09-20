@@ -30,6 +30,7 @@ namespace kd {
 
         bool JsonDataLoader::execute(shared_ptr<MapDataManager> mapDataManager,
                                      shared_ptr<CheckErrorOutput> errorOutput) {
+            LOG(INFO)<<"start LoadJsonData execute";
             bool ret = true;
             map_data_manager_ = mapDataManager;
             error_output_ = errorOutput;
@@ -38,7 +39,9 @@ namespace kd {
             if(splitCheck_){
                 ret = LoadJsonForConn(task_bounds_,resource_manager);
             }else{
+                LOG(INFO)<<"start LoadJsonData";
                 ret = LoadJsonData(resource_manager);
+                LOG(INFO)<<"end LoadJsonData";
             }
             if (ret) {
                 shared_ptr<JsonDataInput> json_data_input = make_shared<JsonDataInput>(map_data_manager_, error_output_,
@@ -48,6 +51,7 @@ namespace kd {
                 json_data_input->CheckModelField(error_output_);
                 json_data_input->CheckModelRelation();
             }
+            LOG(INFO)<<"end LoadJsonData execute";
             return ret;
         }
 
@@ -173,7 +177,7 @@ namespace kd {
                 LOG(ERROR) << json_data_path_<<" inputFileName is empty";
                 return false;
             }
-
+            LOG(ERROR) <<"LoadJsonData  test 1";
             set<long> filterNodes, filterWays, filterRels;
             bool load_file_status = true;
             int file_count = file_list.size();
@@ -186,12 +190,13 @@ namespace kd {
                 string data_key = "";
 
                 OSMDataParser parser(resource_manager);
-
+                LOG(ERROR) <<"LoadJsonData  test 2";
                 string inputJsonData;
                 const string &file_path = file_list[i];
                 if (file_path.find(config_file) != std::string::npos) {
                     continue;
                 }
+                LOG(ERROR) <<"LoadJsonData  test 3";
                 //全库检查过滤
                 if(!parse && file_path.find(split_str) != std::string::npos){
                     continue;

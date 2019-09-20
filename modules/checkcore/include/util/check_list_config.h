@@ -42,11 +42,11 @@ public:
      * 根据检查项ID获取检查项描述
      */
     string GetCheckItemDesc(string key);
+    map<string, string> check_map;
 private:
     bool ParseCheckList(const std::string &json_result);
 
     //所有检查项配置
-    map<string, string> check_map;
 
     int check_state_;
 };

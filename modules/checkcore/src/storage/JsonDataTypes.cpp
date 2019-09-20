@@ -161,7 +161,7 @@ bool JsonLog::WriteToFile(string path) {
 
     stringstream ss;
     Stringify(ss);
-    if(ss.str().length()>0) {
+    if(ss.str().length()>10) {
         ofstream outfile;
         outfile.open(path, ios::out | ios::trunc);
         outfile << ss.str();

@@ -379,7 +379,7 @@ int main(int argc, const char *argv[]) {
         if (check_state == DataCheckConfig::TOPO_AUTO_CHECK) {
             //拓扑自动化检查
             ret |= TopoAutoCheck(error_output, check_state);
-            ret |= error_output->saveErrorReport(checkresult);
+//            ret |= error_output->saveErrorReport(checkresult);
             ret |= error_output->saveJsonError(errForAllCHeckPath);
         } else if (check_state == DataCheckConfig::ALL_AUTO_CHECK) {
             // 创建UR路径

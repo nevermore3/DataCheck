@@ -7,12 +7,13 @@
 
 #include <IMapProcessor.h>
 #include "geos/index/quadtree/Quadtree.h"
+#include "SCHCheck.h"
 
 namespace kd {
     namespace dc {
-        class DividerCheck : public IMapProcessor {
+        class DividerCheck : public IMapProcessor, public SCHCheck {
         public:
-            explicit DividerCheck();
+            explicit DividerCheck(string fileName);
 
             ~DividerCheck() override;
 
@@ -21,20 +22,14 @@ namespace kd {
             bool execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) override;
 
         private:
-            bool LoadDividerSCH();
-
+            void SetMapDataManager(shared_ptr<MapDataManager> &mapDataManager);
 
             /**
              * 每一Divider的形状点周围1.5米内必有一个关联该divider的HD_DIVIDER_SCH
              * @param errorOutput
              */
-            void DividerRelevantDividerSCH(shared_ptr<CheckErrorOutput> errorOutput);
+            void DividerRelevantDividerSCH(shared_ptr<CheckErrorOutput> &errorOutput);
 
-            /**
-             * 相邻HD_DIVIDER_SCH点之间距离不能超过1.3m
-             * @param errorOutput
-             */
-            void AdjacentDividerSCHNodeDistance(shared_ptr<CheckErrorOutput> errorOutput);
 
             /**
              * HD_DIVIDER_SCH点离关联的DIVIDER的垂直距离不超过10cm
@@ -48,8 +43,6 @@ namespace kd {
 
             shared_ptr<MapDataManager> map_data_manager_;
 
-        private:
-            unordered_map<long, map<long, shared_ptr<DCDivideSCH>>> map_divider_sch_;
         };
     }
 }

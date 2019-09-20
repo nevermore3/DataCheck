@@ -213,8 +213,6 @@ namespace kd {
             static shared_ptr<DCDividerCheckError> createByKXS_01_030(long dividerID, long index,
                                                                       const shared_ptr<DCCoord> &coord, int level);
 
-            static shared_ptr<DCDividerCheckError> createByKXS_01_028(long dividerID, int index1, int index2,
-                                                                      double dis, double threshold);
 
             static shared_ptr<DCDividerCheckError> createByKXS_01_029(long nodeID, shared_ptr<DCCoord> coord);
 
@@ -430,14 +428,9 @@ namespace kd {
 
             static shared_ptr<DCLaneError> createByKXS_05_018(long fromLaneID, long toLaneID, double angle);
 
-            static shared_ptr<DCLaneError> createByKXS_05_019(const string &laneID, long curvature,
-                                                              shared_ptr<DCCoord> coord);
-
             static shared_ptr<DCLaneError> createByKXS_05_020(long laneID, long index,
                                                               const shared_ptr<DCCoord> &coord, int level);
 
-            static shared_ptr<DCLaneError> createByKXS_05_021(long laneID, int index1, int index2,
-                                                              double dis, double threshold);
 
             static shared_ptr<DCLaneError> createByKXS_05_022(long nodeID, shared_ptr<DCCoord> coord);
 
@@ -581,6 +574,22 @@ namespace kd {
             virtual string toString() override;
         public:
             string detail;
+        };
+
+        /*
+         * HD_DIVIDER_SCH  HD_LANE_SCH ADAS_NODE 属性点检查错误
+         */
+        class DCSCHInfoError : public DCError {
+        public:
+            explicit DCSCHInfoError(const string &checkModel) : DCError(checkModel) {}
+
+            string toString() override;
+            // 曲率值检查
+            static shared_ptr<DCSCHInfoError> createByKXS_01_031(string name, string objID, double value,
+                                                                 double threshold, shared_ptr<DCCoord> &coord);
+            // 属性点间的距离检查
+            static shared_ptr<DCSCHInfoError> createByKXS_01_032(long objID, int index1, int index2,
+                                                                 double dis, double threshold, string name);
         };
 
     }

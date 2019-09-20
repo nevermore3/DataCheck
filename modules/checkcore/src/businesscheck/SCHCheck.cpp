@@ -120,11 +120,11 @@ namespace kd {
          * 每个属性点坡度 和前后两个属性点的坡度的均值比较 差值不能超过0.1
          */
         void SCHCheck::SlopeCheck() {
-            double threshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::AVG_SLOPE_ERROR);
-            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
-            checkItemInfo->checkId = CHECK_ITEM_KXS_NORM_002;
-            size_t  total = 0;
-
+//            double threshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::AVG_SLOPE_ERROR);
+//            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+//            checkItemInfo->checkId = CHECK_ITEM_KXS_NORM_002;
+//            size_t  total = 0;
+//
 
         }
 

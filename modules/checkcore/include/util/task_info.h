@@ -37,7 +37,7 @@ public:
 
     string output_path_;
 
-    string logs_path_="/home/ubuntu/orgdata/check_root/";
+    string logs_path_;
 
     vector<shared_ptr<TaskInfo>> input_infos_;
 

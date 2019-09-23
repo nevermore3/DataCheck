@@ -69,65 +69,7 @@ namespace kd {
             const size_t MAXCMDLEN = 256;
             char sqlCmd[MAXCMDLEN] = {0};
             if (modelName == "HD_TOPO_LANEGROUP") {
-                // FROM_LG 和 TO_LG 中有空值或多个值，需要单独处理
-                auto modelData = modelDataManager->modelDatas_["HD_TOPO_LANEGROUP"];
-                if (modelData == nullptr) {
-                    return true;
-                }
-                string foreignTable = "HD_LANE_GROUP";
-                string keyName = "ID";
-                for (const auto &record : modelData->records) {
-                    vector<string>fromLGArray = record->text_data_maps_["FROM_LG"];
-                    if (!fromLGArray.empty()) {
-                        string foreignKeyName = "FROM_LG";
-
-                        for (const auto &fromLG : fromLGArray) {
-                            long id = stol(fromLG);
-                            if (id == 0) {
-                                continue;
-                            }
-                            memset(sqlCmd, 0, MAXCMDLEN);
-                            snprintf(sqlCmd, MAXCMDLEN - 1, "select ID from HD_LANE_GROUP "\
-                                                                 "where ID = %ld", id);
-                            CppSQLite3::Query query = pDataBase->execQuery(sqlCmd);
-                            if (query.eof()) {
-                                string value = fromLG;
-                                auto error = DCForeignKeyCheckError::createByKXS_01_027(modelName,
-                                                                                        foreignKeyName,
-                                                                                        value,
-                                                                                        foreignTable,
-                                                                                        keyName);
-                                errorOutput->saveError(error);
-                            }
-                            query.finalize();
-                        }
-                    }
-                    vector<string>toLGArray = record->text_data_maps_["TO_LG"];
-                    if (toLGArray.empty()) {
-                        continue;
-                    }
-                    string foreignKeyName = "TO_LG";
-                    for (const auto &toLG : toLGArray) {
-                        long id = stol(toLG);
-                        if (id == 0) {
-                            continue;
-                        }
-                        memset(sqlCmd, 0, MAXCMDLEN);
-                        snprintf(sqlCmd, MAXCMDLEN - 1, "select ID from HD_LANE_GROUP "\
-                                                             "where ID = %ld", id);
-                        CppSQLite3::Query query = pDataBase->execQuery(sqlCmd);
-                        if (query.eof()) {
-                            string value = toLG;
-                            auto error = DCForeignKeyCheckError::createByKXS_01_027(modelName,
-                                                                                    foreignKeyName,
-                                                                                    value,
-                                                                                    foreignTable,
-                                                                                    keyName);
-                            errorOutput->saveError(error);
-                        }
-                        query.finalize();
-                    }
-                }
+                //在lanetopocheck 里进行检查
                 return true;
             }
             if (modelName == "HD_R_LO_ROAD" || modelName == "HD_R_LO_LANE") {

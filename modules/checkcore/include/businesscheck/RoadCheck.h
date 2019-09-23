@@ -6,11 +6,12 @@
 #define AUTOHDMAP_DATACHECK_ROADCHECK_H
 
 #include <IMapProcessor.h>
-
+#include "SCHCheck.h"
 namespace kd {
     namespace dc {
-        class RoadCheck  : public IMapProcessor {
+        class RoadCheck  : public IMapProcessor, public SCHCheck {
         public:
+            RoadCheck(string fileName);
             /**
              * 获得对象唯一标识
              * @return 对象标识
@@ -42,6 +43,7 @@ namespace kd {
 
 
         private:
+            void SetMapDataManager(shared_ptr<MapDataManager> &mapDataManager);
             /**
              * 结点重复
              * @param errorOutput
@@ -73,6 +75,8 @@ namespace kd {
                                         const shared_ptr<DCDivider> &ptr_divider);
         private:
             const string id = "road_check";
+
+            shared_ptr<MapDataManager> map_data_manager_;
         };
     }
 }

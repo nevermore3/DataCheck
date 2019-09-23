@@ -7,6 +7,7 @@
 
 #include <IMapProcessor.h>
 #include "geos/index/quadtree/Quadtree.h"
+#include "SCHCheck.h"
 namespace kd {
     namespace dc {
 
@@ -14,10 +15,10 @@ namespace kd {
          * 车道线拓扑关系检查
          * 对应检查项：JH_C_22
          */
-        class LaneCheck : public IMapProcessor {
+        class LaneCheck : public IMapProcessor, public SCHCheck {
 
         public:
-
+            LaneCheck(string fileName);
             /**
              * 获得对象唯一标识
              * @return 对象标识
@@ -77,17 +78,11 @@ namespace kd {
             void check_lane_angle(shared_ptr<MapDataManager> mapDataManager,
                                   shared_ptr<CheckErrorOutput> errorOutput);
 
-            /**
-           * 车道中心线曲率检查
-           * 车道中心线的曲率绝对值最大不超过 0.4 (可配置)
-           * @param mapDataManager
-           * @param errorOutput
-           */
-            void check_lane_curvature(shared_ptr<MapDataManager> mapDataManager,
-                                      shared_ptr<CheckErrorOutput> errorOutput);
 
 
         private:
+            void SetMapDataManager(shared_ptr<MapDataManager> &mapDataManager);
+
             /**
              * lane与divider是否相交
              * @param mapDataManager
@@ -127,29 +122,19 @@ namespace kd {
              * @param mapDataManager
              * @param errorOutput
              */
-            void lane_relevant_lane_sch(const shared_ptr<MapDataManager> &mapDataManager,
-                                        const shared_ptr<CheckErrorOutput> &errorOutput);
-
-
-            void adjacent_lane_sch_node_distance(const shared_ptr<MapDataManager> &mapDataManager,
-                                                 const shared_ptr<CheckErrorOutput> &errorOutput);
+            void LaneRelevantLaneSCH(shared_ptr<CheckErrorOutput> &errorOutput);
 
             /**
              * HD_LANE_SCH点离LANE的垂直距离不超过10cm
              * @param mapDataManager
              * @param errorOutput
              */
-             void lane_sch_vertical_distance(const shared_ptr<MapDataManager> &mapDataManager,
-                                             const shared_ptr<CheckErrorOutput> &errorOutput);
+             void LaneSCHVerticalDistance(shared_ptr<CheckErrorOutput> &errorOutput);
         private:
 
             const string id = "lane_check";
 
-            void LoadLaneCurvature();
-
-            unordered_map<long, map<long, shared_ptr<DCLaneCurvature>>> map_lane_sch_;
-
-            shared_ptr<geos::index::quadtree::Quadtree> lane_node_quadtree_;
+            shared_ptr<MapDataManager> map_data_manager_;
 
         };
     }

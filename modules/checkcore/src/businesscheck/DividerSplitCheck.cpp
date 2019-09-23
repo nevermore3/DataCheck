@@ -36,7 +36,7 @@ namespace kd {
 
             ExportErrSplitNode();
 
-            ShowStatisticsInfo();
+//            ShowStatisticsInfo();
 
             EndCheck();
             return !HasErrors();

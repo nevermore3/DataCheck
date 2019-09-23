@@ -53,7 +53,7 @@ void JsonLog::SetProperties(LogProperty &log_property) {
     properties_jobj_.set("PROJECT_ID", log_property.project_id);
     properties_jobj_.set("PROCESS_STEP","ALL_CHECK");
     properties_jobj_.set("DATA_ID",log_property.data_id);
-    properties_jobj_.set("MODEL_NAME",log_property.model_name);
+    properties_jobj_.set("DATA_MODEL",log_property.model_name);
     properties_jobj_.set("TAG_TYPE",log_property.tag_type);
     properties_jobj_.set("EXTEND_INFO","");
     properties_jobj_.set("STEP_NODE","");
@@ -161,15 +161,12 @@ bool JsonLog::WriteToFile(string path) {
 
     stringstream ss;
     Stringify(ss);
-    ofstream outfile;
-
-    outfile.open(path, ios::out | ios::trunc);
-    if(ss.str().length()==0){
-        outfile << "[]";
-    } else {
+    if(ss.str().length()>0) {
+        ofstream outfile;
+        outfile.open(path, ios::out | ios::trunc);
         outfile << ss.str();
+        outfile.close();
     }
-    outfile.close();
 
     return true;
 }

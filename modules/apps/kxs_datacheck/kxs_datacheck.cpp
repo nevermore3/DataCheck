@@ -45,6 +45,7 @@ using namespace kd::dc;
 const char kCheckListFile[] = "check_list.json";
 const char checkresult[] = "checkresult.json";
 const char checkresultforjson[] = "kxs_check_error.json";
+const char subDir[] = "COMPILE_CHECK_TAG/";
 shared_ptr<ResourceDataManager> ResourceDataManager::instance_ = nullptr;
 
 int TopoAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, int check_state) {
@@ -79,7 +80,7 @@ int TopoAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, int check_sta
     shared_ptr<LaneTopoCheck> laneTopoCheck = make_shared<LaneTopoCheck>();
     mapProcessManager->registerProcessor(laneTopoCheck);
 
-    shared_ptr<RoadCheck> road_check = make_shared<RoadCheck>();
+    shared_ptr<RoadCheck> road_check = make_shared<RoadCheck>("ADAS_NODE");
     mapProcessManager->registerProcessor(road_check);
 
     shared_ptr<LaneGroupRelationCheck> lanegroup_rel_check = make_shared<LaneGroupRelationCheck>();
@@ -182,10 +183,10 @@ int AllAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, const string& 
     shared_ptr<LaneTopoCheck> laneTopoCheck = make_shared<LaneTopoCheck>();
     map_process_manager->registerProcessor(laneTopoCheck);
 
-    shared_ptr<LaneCheck> lane_check = make_shared<LaneCheck>();
+    shared_ptr<LaneCheck> lane_check = make_shared<LaneCheck>("HD_LANE_SCH");
     map_process_manager->registerProcessor(lane_check);
 
-    shared_ptr<RoadCheck> road_check = make_shared<RoadCheck>();
+    shared_ptr<RoadCheck> road_check = make_shared<RoadCheck>("ADAS_NODE");
     map_process_manager->registerProcessor(road_check);
 
     shared_ptr<LaneGroupCheck> lanegroup_check = make_shared<LaneGroupCheck>();
@@ -202,7 +203,7 @@ int AllAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, const string& 
     map_process_manager->registerProcessor(slopeCheck);
 
     // divider检查
-    shared_ptr<DividerCheck> dividerCheck = make_shared<DividerCheck>();
+    shared_ptr<DividerCheck> dividerCheck = make_shared<DividerCheck>("HD_DIVIDER_SCH");
     map_process_manager->registerProcessor(dividerCheck);
 
     //执行已注册检查项
@@ -273,6 +274,7 @@ int main(int argc, const char *argv[]) {
 
     KDSDivider::FLAG;
     string errJsonPath = "";
+    string errForAllCHeckPath="";
     try {
         exe_path = argv[0];
 
@@ -320,6 +322,8 @@ int main(int argc, const char *argv[]) {
             DataCheckConfig::getInstance().setProperty(DataCheckConfig::DB_INPUT_FILE, db_file_name);
             DataCheckConfig::getInstance().setProperty(DataCheckConfig::CHECK_STATE, to_string(DataCheckConfig::ALL_AUTO_CHECK));
             DataCheckConfig::getInstance().addProperty(DataCheckConfig::UPDATE_REGION, getUpdateRegion(ur_path));
+            DataCheckConfig::getInstance().setProperty(DataCheckConfig::SHP_FILE_PATH,base_path);
+            CheckListConfig::getInstance().CheckID2CheckDesc();
         }else if (argc == 2){
             DataCheckConfig::getInstance().setProperty(DataCheckConfig::OUTPUT_PATH,task_info.output_path_);
             DataCheckConfig::getInstance().setProperty(DataCheckConfig::JSON_DATA_INPUT,task_info.input_path_);
@@ -330,7 +334,13 @@ int main(int argc, const char *argv[]) {
                 return 3;
             }
             CheckListConfig::getInstance().ParsseItemDesc(checkItems->second);
-        }else{
+
+            DataCheckConfig::getInstance().addProperty("taskId",task_info.param_results.find("taskId")->second);
+            DataCheckConfig::getInstance().addProperty("branchName",task_info.param_results.find("branchName")->second);
+            DataCheckConfig::getInstance().addProperty("taskFrameId",task_info.param_results.find("taskFrameId")->second);
+            DataCheckConfig::getInstance().addProperty("projectId",task_info.param_results.find("projectId")->second);
+
+        } else {
             string checkFilePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::CHECK_FILE_PATH);
             Poco::File in_dir(checkFilePath);
             if (!in_dir.exists()) {
@@ -356,23 +366,22 @@ int main(int argc, const char *argv[]) {
             error_file.remove();
         }
 
+        string allCheckParentPath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH)+subDir;
+        Poco::File allCheckParentPath_dir(allCheckParentPath);
+        if (!allCheckParentPath_dir.exists()) {
+            allCheckParentPath_dir.createDirectories();
+        }
+        errForAllCHeckPath = allCheckParentPath+checkresultforjson;
+
         int check_state = DataCheckConfig::getInstance().getPropertyI(DataCheckConfig::CHECK_STATE);
 
         auto error_output = make_shared<CheckErrorOutput>(check_state);
 
         if (check_state == DataCheckConfig::TOPO_AUTO_CHECK) {
             //拓扑自动化检查
-            string checkFilePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::CHECK_FILE_PATH);
-            Poco::File in_dir(checkFilePath);
-            if (!in_dir.exists()) {
-                LOG(ERROR) << checkFilePath << " is not exists!";
-                return 1;
-            } else {
-                CheckListConfig::getInstance().Load(checkFilePath);
-            }
             ret |= TopoAutoCheck(error_output, check_state);
-            ret |= error_output->saveErrorReport(checkresult);
-            ret |= error_output->saveJsonError(DataCheckConfig::getInstance().getProperty(DataCheckConfig::OUTPUT_PATH)+checkresultforjson);
+//            ret |= error_output->saveErrorReport(checkresult);
+            ret |= error_output->saveJsonError(errForAllCHeckPath);
         } else if (check_state == DataCheckConfig::ALL_AUTO_CHECK) {
             // 创建UR路径
             Poco::File outDir(output_path);

@@ -102,7 +102,6 @@ namespace kd {
 
         };
 
-
         /**
          * 坐标
          */
@@ -146,6 +145,21 @@ namespace kd {
         class DCRoad;
 
 
+        class GeomModel : public DCModel{
+        public:
+            /**
+             * 构建LineString，并计算长度
+             * @param nodes
+             * @param getLen 是否需要计算长度
+             * @param len 长度结果
+             * @return
+             */
+            bool buildGeometry(const vector<shared_ptr<DCDividerNode>> &nodes,bool getLen,double &len);
+            bool buildGeometry(const std::vector<shared_ptr<DCCoord>> coord,bool getLen,double &len);
+        public:
+            //geos线对象，用于空间运算判断
+            shared_ptr<geos::geom::LineString> line_;
+        };
         /**
          * 道路分隔线节点
          */
@@ -167,7 +181,7 @@ namespace kd {
         /**
          * 道路分隔线
          */
-        class DCDivider : public DCModel {
+        class DCDivider : public GeomModel {
         public:
             DCDivider() {
                 dividerNo_ = -1;
@@ -241,10 +255,6 @@ namespace kd {
 
             //所有属性变化点，最终是按照节点的顺序，从索引小到大排序
             std::vector<shared_ptr<DCDividerAttribute>> atts_;
-
-            //geos线对象，用于空间运算判断
-            shared_ptr<geos::geom::LineString> line_;
-
             //对象的长度
             double len_;
         };
@@ -319,7 +329,7 @@ namespace kd {
         /**
          * 车道对象
          */
-        class DCLane : public DCModel {
+        class DCLane : public GeomModel {
         public:
             DCLane():road_(nullptr), leftDivider_(nullptr), rightDivider_(nullptr),
                      leftDivSNode_(nullptr), leftDivENode_(nullptr),
@@ -370,9 +380,6 @@ namespace kd {
 
             //线坐标对象
             vector<shared_ptr<DCCoord>> coords_;
-
-            //geos线对象，用于空间运算判断
-            shared_ptr<geos::geom::LineString> line_;
 
         private:
             shared_ptr<DCDividerNode> leftDivSNode_;
@@ -448,7 +455,7 @@ namespace kd {
         /**
          * 道路对象
          */
-        class DCRoad : public DCModel {
+        class DCRoad : public GeomModel {
         public:
             DCRoad():fNode_(nullptr), tNode_(nullptr){}
 
@@ -482,9 +489,6 @@ namespace kd {
 
             //节点
             vector<shared_ptr<DCCoord>> nodes_;
-
-            //geos线对象，用于空间运算判断
-            shared_ptr<geos::geom::LineString> line_;
 
             //对象的长度
             double len_;
@@ -575,7 +579,7 @@ namespace kd {
         /**
          * 线对象信息
          */
-        class DCObjectPL : public DCModel{
+        class DCObjectPL : public GeomModel{
 
         public:
             /**
@@ -599,9 +603,6 @@ namespace kd {
 
             //所有坐标信息
             vector<shared_ptr<DCCoord>> coords_;
-
-            //geos线对象，用于空间运算判断
-            shared_ptr<geos::geom::LineString> line_;
         };
 
         /**
@@ -819,6 +820,8 @@ namespace kd {
             shared_ptr<DCCoord> coord_;
         };
 
+
+
         /*
          * 车道线属性信息 HD_DIVIDE_SCH
          */
@@ -841,6 +844,37 @@ namespace kd {
             shared_ptr<DCCoord> coord_;
 
         };
+
+        /*
+         * 保存DividerSCH、LaneSCH、AdasNode 属性点信息
+         */
+        class DCSCHInfo : public DCModel {
+        public:
+            // 相关连的 divider、lane、road对象的 ID
+            long obj_id_;
+
+            // 形点索引: 关联到divider、lane、road对象中的第几个形点
+            long obj_index_;
+
+            // 属性点索引: 关联到同一个对象中的属性点 中的索引 (从0开始)
+            long index_;
+
+            //坡度
+            double slope_;
+
+            //曲率
+            double curvature_;
+
+            //航向角
+            double heading_;
+
+            //横坡
+            double superlevation_;
+
+            //属性点坐标
+            shared_ptr<DCCoord> coord_;
+        };
+
     }
 }
 

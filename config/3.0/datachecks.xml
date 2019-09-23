@@ -99,7 +99,7 @@
                    INFO="表HD_DIVIDERNODE数据有缺失,车道线Divider关联的节点DividerNode编号在HD_DIVIDERNODE表无法找到"
                    SQL="select * from (SELECT distinct fdnode nodeid FROM HD_DIVIDER union 
                    select distinct tdnode from hd_divider) where nodeid not in(select id from hd_divider_node);"/>
-    <datacheckitem ID="KXS-03-017"
+    <!--datacheckitem ID="KXS-03-017"
                    NAME="两个车道关联的左右车道线完全一致"
                    LEVEL="warning"
                    INFO="表HD_LANE数据错误,非出入口两条车道Lane关联的左右车道线Divider完全相同"
@@ -108,7 +108,7 @@
                    (a.divider_l=b.divider_r and a.divider_r=b.divider_l))) L 
                    JOIN HD_LANE_GEOTOPO A ON L.firstLaneId=A.FID JOIN HD_LANE_GEOTOPO B ON L.secLaneId=B.FID AND 
                    NOT (A.SGEONODEID=B.SGEONODEID OR A.SGEONODEID=B.EGEONODEID OR A.EGEONODEID=B.EGEONODEID OR 
-                   A.EGEONODEID=B.SGEONODEID);"/>
+                   A.EGEONODEID=B.SGEONODEID);"/-->
     <datacheckitem ID="KXS-03-018"
                    NAME="车道孤立不连通"
                    LEVEL="warning"

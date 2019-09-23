@@ -50,8 +50,8 @@ public:
 private:
     bool ParseCheckList(const std::string &json_result);
 
-    //所有检查项配置
     map<string, string> check_map;
+    //所有检查项配置
 
     int check_state_;
 };

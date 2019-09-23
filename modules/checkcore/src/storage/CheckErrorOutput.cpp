@@ -100,16 +100,22 @@ namespace kd {
                 string taskid = DataCheckConfig::getInstance().getProperty("taskId");
 
                 for (const auto &check_item : check_model_2_output_maps_) {
-                    for (const auto& item : check_item.second) {
+                    for (auto& item : check_item.second) {
                         string err_type = "E2";
                         if (item.level == LEVEL_ERROR) {
                             err_type = "E1";
                             ret = 1;
                         }
                         if(taskid.length()==0){
-                             taskid =item.taskId;
+                             taskid = item.taskId;
                         }
-                        JsonLog::GetInstance().AppendCheckError(item.checkId,item.checkName,item.errDesc,taskid,err_type,item.dataKey,item.boundId,item.flag,item.sourceId, item.model_name,item.projectId,item.coord);
+
+                        string errMessage = CheckListConfig::getInstance().GetCheckItemDesc(item.checkId);
+                        if(errMessage.length()==0){
+                             errMessage = item.checkName;
+                        }
+
+                        JsonLog::GetInstance().AppendCheckError(item.checkId,errMessage,item.errDesc,taskid,err_type,item.dataKey,item.boundId,item.flag,item.sourceId, item.model_name,item.projectId,item.coord);
                     }
                 }
                 calErrorTotal();

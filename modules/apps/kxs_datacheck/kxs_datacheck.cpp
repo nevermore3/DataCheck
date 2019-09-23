@@ -322,6 +322,7 @@ int main(int argc, const char *argv[]) {
             DataCheckConfig::getInstance().setProperty(DataCheckConfig::DB_INPUT_FILE, db_file_name);
             DataCheckConfig::getInstance().setProperty(DataCheckConfig::CHECK_STATE, to_string(DataCheckConfig::ALL_AUTO_CHECK));
             DataCheckConfig::getInstance().addProperty(DataCheckConfig::UPDATE_REGION, getUpdateRegion(ur_path));
+            DataCheckConfig::getInstance().setProperty(DataCheckConfig::SHP_FILE_PATH,base_path);
             CheckListConfig::getInstance().CheckID2CheckDesc();
         }else if (argc == 2){
             DataCheckConfig::getInstance().setProperty(DataCheckConfig::OUTPUT_PATH,task_info.output_path_);
@@ -379,7 +380,7 @@ int main(int argc, const char *argv[]) {
         if (check_state == DataCheckConfig::TOPO_AUTO_CHECK) {
             //拓扑自动化检查
             ret |= TopoAutoCheck(error_output, check_state);
-            ret |= error_output->saveErrorReport(checkresult);
+//            ret |= error_output->saveErrorReport(checkresult);
             ret |= error_output->saveJsonError(errForAllCHeckPath);
         } else if (check_state == DataCheckConfig::ALL_AUTO_CHECK) {
             // 创建UR路径
@@ -409,7 +410,6 @@ int main(int argc, const char *argv[]) {
     } catch (std::exception &e) {
         LOG(ERROR) << "An exception occurred: " << e.what();
         ReportJsonLog::GetInstance().WriteToFile(errJsonPath, true);
-        ReportJsonLog::GetInstance().WriteToFile(errForAllCHeckPath, true);
         ret = 1;
     }
 

@@ -278,6 +278,7 @@ void DividerAttribCheck::Check_kxs_01_015() {
         checkItemInfo->totalNum = data_manager()->dividers_.size();
         for (auto recordit : data_manager()->dividers_) {
             shared_ptr<DCDivider> div = recordit.second;
+            string div_id = div->id_;
             if (!div->valid_)
                 continue;
 

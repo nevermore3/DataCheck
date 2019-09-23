@@ -15,6 +15,7 @@ using namespace geos::geom;
 #include <core/structure/KCoordinates.h>
 #include <mvg/Coordinates.hpp>
 #include <data/DividerGeomModel.h>
+#include <util/GeosObjUtil.h>
 
 #include "geom/geo_util.h"
 
@@ -23,7 +24,48 @@ using namespace kd::automap;
 
 namespace kd {
    namespace dc {
+       /////////////////////////////////////////////////////////////////////////////////////////
+       //  GeomModel
+       /////////////////////////////////////////////////////////////////////////////////////////
+       bool GeomModel::buildGeometry(const vector<shared_ptr<DCDividerNode>> &nodes,bool getLen,double &len){
+           if (nodes.size() < 2) {
+               this->valid_ = false;
+               return false;
+           }
+           shared_ptr<geos::geom::LineString> lineString = GeosObjUtil::CreateLineString(nodes);
+           if (lineString) {
+               line_ = lineString;
 
+               //计算线段距离轨迹的平均距离
+               if(getLen) {
+                   len = lineString->getLength();
+               }
+
+               return true;
+           } else {
+               this->valid_ = false;
+               return false;
+           }
+       }
+       bool GeomModel::buildGeometry(std::vector<shared_ptr<DCCoord>> coord,bool getLen,double &len){
+           if (coord.size() < 2) {
+               this->valid_ = false;
+               return false;
+           }
+           shared_ptr<geos::geom::LineString> lineString = GeosObjUtil::create_line_string(coord);
+           if (lineString) {
+               line_ = lineString;
+
+               //计算线段距离轨迹的平均距离
+               if(getLen) {
+                   len = lineString->getLength();
+               }
+               return true;
+           }else{
+               this->valid_ = false;
+               return false;
+           }
+       }
         /////////////////////////////////////////////////////////////////////////////////////////
         //  KDDividerAttribute
         /////////////////////////////////////////////////////////////////////////////////////////
@@ -154,51 +196,7 @@ namespace kd {
         }
 
         bool DCDivider::buildGeometryInfo() {
-
-            //创建linestring
-            CoordinateSequence *cl = new CoordinateArraySequence();
-            for (shared_ptr<DCDividerNode> node : nodes_) {
-                double X0, Y0;
-                char zone0[8] = {0};
-
-                Coordinates::ll2utm(node->coord_->y_, node->coord_->x_, X0, Y0, zone0);
-
-                cl->add(geos::geom::Coordinate(X0, Y0, node->coord_->z_));
-            }
-
-            if (cl->size() < 2) {
-                this->valid_ = false;
-                delete cl;
-                return false;
-            }
-
-            const GeometryFactory *gf = GeometryFactory::getDefaultInstance();
-            geos::geom::LineString *lineString = gf->createLineString(cl);
-            if (lineString) {
-                line_.reset(lineString);
-
-                //计算线段距离轨迹的平均距离
-                double lenTotal = 0.0;
-                int segmentCount = cl->size() - 1;
-                for (int i = 0; i < segmentCount; i++) {
-                    const Coordinate &coord1 = cl->getAt(i);
-                    const Coordinate &coord2 = cl->getAt(i + 1);
-
-                    double dx = coord1.x - coord2.x;
-                    double dy = coord1.y - coord2.y;
-
-                    double lenTemp = sqrt(dx*dx + dy*dy);
-                    lenTotal += lenTemp;
-                }
-
-                len_ = lenTotal;
-                //delete cl;
-                return true;
-            } else {
-                delete cl;
-                this->valid_ = false;
-                return false;
-            }
+            return buildGeometry(nodes_,true,len_);
         }
 
 
@@ -252,34 +250,8 @@ namespace kd {
         }
 
         bool DCLane::buildGeometryInfo() {
-            //创建linestring
-            CoordinateSequence *cl = new CoordinateArraySequence();
-            for (const auto &node : coords_) {
-                double X0, Y0;
-                char zone0[8] = {0};
-
-                Coordinates::ll2utm(node->y_, node->x_, X0, Y0, zone0);
-
-                cl->add(geos::geom::Coordinate(X0, Y0, node->z_));
-            }
-
-            if (cl->size() < 2) {
-                this->valid_ = false;
-                delete cl;
-                return false;
-            }
-
-            const GeometryFactory *gf = GeometryFactory::getDefaultInstance();
-            geos::geom::LineString *lineString = gf->createLineString(cl);
-            if (lineString) {
-                line_.reset(lineString);
-                //delete cl;
-                return true;
-            } else {
-                delete cl;
-                this->valid_ = false;
-                return false;
-            }
+           double len;
+            return buildGeometry(coords_,false,len);
         }
 
         shared_ptr<DCDividerNode> DCLane::getPassDividerNode(bool left, bool start) {
@@ -437,84 +409,16 @@ namespace kd {
         //  DCObjectPL
         /////////////////////////////////////////////////////////////////////////////////////////
         bool DCObjectPL::buildGeometryInfo(){
-            //创建linestring
-            CoordinateSequence *cl = new CoordinateArraySequence();
-            for (shared_ptr<DCCoord> coord : coords_) {
-                double X0, Y0;
-                char zone0[8] = {0};
-
-                Coordinates::ll2utm(coord->y_, coord->x_, X0, Y0, zone0);
-
-                cl->add(geos::geom::Coordinate(X0, Y0, coord->z_));
-            }
-
-            if (cl->size() < 2) {
-                this->valid_ = false;
-                delete cl;
-                return false;
-            }
-
-            const GeometryFactory *gf = GeometryFactory::getDefaultInstance();
-            geos::geom::LineString *lineString = gf->createLineString(cl);
-            if (lineString) {
-                line_.reset(lineString);
-                delete cl;
-                return true;
-            } else {
-                delete cl;
-                this->valid_ = false;
-                return false;
-            }
+           double len_;
+            return buildGeometry(coords_,true,len_);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////
         //  DCRoad
         /////////////////////////////////////////////////////////////////////////////////////////
         bool DCRoad::buildGeometryInfo() {
-            //创建linestring
-            CoordinateSequence *cl = new CoordinateArraySequence();
-            for (const auto &node : nodes_) {
-                double X0, Y0;
-                char zone0[8] = {0};
+           return buildGeometry(nodes_,true,len_);
 
-                Coordinates::ll2utm(node->y_, node->x_, X0, Y0, zone0);
-
-                cl->add(geos::geom::Coordinate(X0, Y0, node->z_));
-            }
-
-            if (cl->size() < 2) {
-                this->valid_ = false;
-                delete cl;
-                return false;
-            }
-
-            const GeometryFactory *gf = GeometryFactory::getDefaultInstance();
-            geos::geom::LineString *lineString = gf->createLineString(cl);
-            if (lineString) {
-                line_.reset(lineString);
-
-                //计算线段距离轨迹的平均距离
-                double lenTotal = 0.0;
-                size_t segmentCount = cl->size() - 1;
-                for (size_t i = 0; i < segmentCount; i++) {
-                    const Coordinate &coord1 = cl->getAt(i);
-                    const Coordinate &coord2 = cl->getAt(i + 1);
-
-                    double dx = coord1.x - coord2.x;
-                    double dy = coord1.y - coord2.y;
-
-                    double lenTemp = sqrt(dx*dx + dy*dy);
-                    lenTotal += lenTemp;
-                }
-
-                len_ = lenTotal;
-                //delete cl;
-                return true;
-            } else {
-                delete cl;
-                this->valid_ = false;
-                return false;
-            }
         }
     }
 }

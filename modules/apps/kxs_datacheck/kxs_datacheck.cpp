@@ -80,7 +80,7 @@ int TopoAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, int check_sta
     shared_ptr<LaneTopoCheck> laneTopoCheck = make_shared<LaneTopoCheck>();
     mapProcessManager->registerProcessor(laneTopoCheck);
 
-    shared_ptr<RoadCheck> road_check = make_shared<RoadCheck>();
+    shared_ptr<RoadCheck> road_check = make_shared<RoadCheck>("ADAS_NODE");
     mapProcessManager->registerProcessor(road_check);
 
     shared_ptr<LaneGroupRelationCheck> lanegroup_rel_check = make_shared<LaneGroupRelationCheck>();
@@ -183,10 +183,10 @@ int AllAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, const string& 
     shared_ptr<LaneTopoCheck> laneTopoCheck = make_shared<LaneTopoCheck>();
     map_process_manager->registerProcessor(laneTopoCheck);
 
-    shared_ptr<LaneCheck> lane_check = make_shared<LaneCheck>();
+    shared_ptr<LaneCheck> lane_check = make_shared<LaneCheck>("HD_LANE_SCH");
     map_process_manager->registerProcessor(lane_check);
 
-    shared_ptr<RoadCheck> road_check = make_shared<RoadCheck>();
+    shared_ptr<RoadCheck> road_check = make_shared<RoadCheck>("ADAS_NODE");
     map_process_manager->registerProcessor(road_check);
 
     shared_ptr<LaneGroupCheck> lanegroup_check = make_shared<LaneGroupCheck>();
@@ -203,7 +203,7 @@ int AllAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, const string& 
     map_process_manager->registerProcessor(slopeCheck);
 
     // divider检查
-    shared_ptr<DividerCheck> dividerCheck = make_shared<DividerCheck>();
+    shared_ptr<DividerCheck> dividerCheck = make_shared<DividerCheck>("HD_DIVIDER_SCH");
     map_process_manager->registerProcessor(dividerCheck);
 
     //执行已注册检查项
@@ -323,6 +323,7 @@ int main(int argc, const char *argv[]) {
             DataCheckConfig::getInstance().setProperty(DataCheckConfig::CHECK_STATE, to_string(DataCheckConfig::ALL_AUTO_CHECK));
             DataCheckConfig::getInstance().addProperty(DataCheckConfig::UPDATE_REGION, getUpdateRegion(ur_path));
             DataCheckConfig::getInstance().setProperty(DataCheckConfig::SHP_FILE_PATH,base_path);
+            CheckListConfig::getInstance().CheckID2CheckDesc();
         }else if (argc == 2){
             DataCheckConfig::getInstance().setProperty(DataCheckConfig::OUTPUT_PATH,task_info.output_path_);
             DataCheckConfig::getInstance().setProperty(DataCheckConfig::JSON_DATA_INPUT,task_info.input_path_);

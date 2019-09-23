@@ -11,11 +11,28 @@
 
 namespace kd {
     namespace dc {
+
+        RoadCheck::RoadCheck(string fileName) : SCHCheck(fileName) {}
+
         string RoadCheck::getId() {
             return id;
         }
 
+        void RoadCheck::SetMapDataManager(shared_ptr<MapDataManager> &mapDataManager) {
+            map_data_manager_ = mapDataManager;
+        }
+
         bool RoadCheck::execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) {
+
+            SetMapDataManager(mapDataManager);
+
+            //adasNode曲率检查
+            CurvatureValueCheck(errorOutput);
+
+            // 属性点间距离检查
+            CheckAdjacentNodeDistance(errorOutput);
+
+
             if(CheckItemValid(CHECK_ITEM_KXS_ROAD_002)){
                 check_road_divider_intersect(mapDataManager, errorOutput);
             }

@@ -418,6 +418,7 @@ namespace kd {
         /////////////////////////////////////////////////////////////////////////////////////////
         bool DCRoad::buildGeometryInfo() {
            return buildGeometry(nodes_,true,len_);
+
         }
     }
 }

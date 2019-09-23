@@ -318,23 +318,6 @@ namespace kd {
             return error;
         }
 
-        shared_ptr<DCDividerCheckError> DCDividerCheckError::createByKXS_01_028(long dividerID, int index1, int index2,
-                                                                                double dis, double threshold) {
-            shared_ptr<DCDividerCheckError> error = make_shared<DCDividerCheckError>(CHECK_ITEM_KXS_ORG_028);
-            error->checkLevel_ = LEVEL_ERROR;
-            error->checkName = "相邻HD_DIVIDER_SCH点之间距离不超过1.3m";
-            error->detail_ += "Divider ID: ";
-            error->detail_ += std::to_string(dividerID);
-            error->detail_ += ",属性点索引: ";
-            error->detail_ += to_string(index1);
-            error->detail_ += "和";
-            error->detail_ += to_string(index2);
-            error->detail_ += ", 的距离为: ";
-            error->detail_ += to_string(dis);
-            error->detail_ += ", 超过规定的 ";
-            error->detail_ += to_string(threshold);
-            return error;
-        }
 
         shared_ptr<DCDividerCheckError> DCDividerCheckError::createByKXS_01_029(long nodeID,
                                                                                 shared_ptr<DCCoord> coord) {
@@ -989,20 +972,6 @@ namespace kd {
             return error;
         }
 
-        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_019(const string &laneID, long curvature,
-                                                                shared_ptr<DCCoord> coord) {
-            shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_019);
-            error->checkLevel_ = LEVEL_ERROR;
-            error->checkName = "车道中心线的曲率(绝对值)不能超过 0.4 (可配置)";
-            error->detail += "lane_id :";
-            error->detail += laneID;
-            error->detail += ", 曲率为 :";
-            error->detail += to_string(curvature);
-            error->detail += ";";
-
-            error->coord = std::move(coord);
-            return error;
-        }
 
         shared_ptr<DCLaneError> DCLaneError::createByKXS_05_020(long laneID, long index,
                                                                 const shared_ptr<DCCoord> &coord, int level) {
@@ -1023,23 +992,6 @@ namespace kd {
             return error;
         }
 
-        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_021(long laneID, int index1, int index2, double dis,
-                                                                double threshold) {
-            shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_021);
-            error->checkLevel_ = LEVEL_ERROR;
-            error->checkName = "相邻HD_LANE_SCH点之间距离不超过1.3m";
-            error->detail += "Lane_id: ";
-            error->detail += std::to_string(laneID);
-            error->detail += ",属性点索引: ";
-            error->detail += to_string(index1);
-            error->detail += "和";
-            error->detail += to_string(index2);
-            error->detail += ", 的距离为: ";
-            error->detail += to_string(dis);
-            error->detail += ", 超过规定的 ";
-            error->detail += to_string(threshold);
-            return error;
-        }
 
         shared_ptr<DCLaneError> DCLaneError::createByKXS_05_022(long nodeID, shared_ptr<DCCoord> coord) {
             shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_022);
@@ -1308,6 +1260,48 @@ namespace kd {
             error->detail = detail;
             return error;
         }
+
+        string DCSCHInfoError::toString() {
+            return detail_;
+        }
+
+        shared_ptr<DCSCHInfoError> DCSCHInfoError::createByKXS_01_031(string name, string objID, double value,
+                                                                      double threshold, shared_ptr<DCCoord> &coord) {
+            shared_ptr<DCSCHInfoError> error = make_shared<DCSCHInfoError>(CHECK_ITEM_KXS_ORG_031);
+            error->checkLevel_ = LEVEL_ERROR;
+            error->checkName = "属性点的曲率值检查";
+            error->detail_ += "表名: ";
+            error->detail_ += name;
+            error->detail_ += "相关联的对象ID :";
+            error->detail_ += objID;
+            error->detail_ += ", 曲率为 :";
+            error->detail_ += to_string(value);
+            error->detail_ +=", 超过了阈值 :";
+            error->detail_ += to_string(threshold);
+            error->coord = coord;
+            return error;
+        }
+
+        shared_ptr<DCSCHInfoError> DCSCHInfoError::createByKXS_01_032(long objID, int index1, int index2, double dis,
+                                                                      double threshold, string name) {
+            shared_ptr<DCSCHInfoError> error = make_shared<DCSCHInfoError>(CHECK_ITEM_KXS_ORG_032);
+            error->checkLevel_ = LEVEL_ERROR;
+            error->checkName = "属性点之间距离不超过1.3m";
+            error->detail_ += "表名 :";
+            error->detail_ += name;
+            error->detail_ += ", Object ID: ";
+            error->detail_ += std::to_string(objID);
+            error->detail_ += ",属性点索引: ";
+            error->detail_ += to_string(index1);
+            error->detail_ += "和";
+            error->detail_ += to_string(index2);
+            error->detail_ += ", 的距离为: ";
+            error->detail_ += to_string(dis);
+            error->detail_ += ", 超过规定的 ";
+            error->detail_ += to_string(threshold);
+            return error;
+        }
+
     }
 }
 

@@ -820,6 +820,8 @@ namespace kd {
             shared_ptr<DCCoord> coord_;
         };
 
+
+
         /*
          * 车道线属性信息 HD_DIVIDE_SCH
          */
@@ -842,6 +844,37 @@ namespace kd {
             shared_ptr<DCCoord> coord_;
 
         };
+
+        /*
+         * 保存DividerSCH、LaneSCH、AdasNode 属性点信息
+         */
+        class DCSCHInfo : public DCModel {
+        public:
+            // 相关连的 divider、lane、road对象的 ID
+            long obj_id_;
+
+            // 形点索引: 关联到divider、lane、road对象中的第几个形点
+            long obj_index_;
+
+            // 属性点索引: 关联到同一个对象中的属性点 中的索引 (从0开始)
+            long index_;
+
+            //坡度
+            double slope_;
+
+            //曲率
+            double curvature_;
+
+            //航向角
+            double heading_;
+
+            //横坡
+            double superlevation_;
+
+            //属性点坐标
+            shared_ptr<DCCoord> coord_;
+        };
+
     }
 }
 

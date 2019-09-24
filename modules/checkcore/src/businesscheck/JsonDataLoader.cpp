@@ -196,7 +196,7 @@ namespace kd {
                 if (file_path.find(config_file) != std::string::npos) {
                     continue;
                 }
-                LOG(ERROR) <<"LoadJsonData  test 3";
+                LOG(ERROR) <<"LoadJsonData  test 3 "<<parse<<"_"<<file_path;
                 //全库检查过滤
                 if(!parse && file_path.find(split_str) != std::string::npos){
                     continue;

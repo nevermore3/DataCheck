@@ -184,9 +184,9 @@
         "modelName": "ROAD_FACILITIES"
       },
       {
-        "fileName": "Tollgate",
+        "fileName": "TOLLGATE",
         "fileType": "dbf",
-        "modelName": "Tollgate"
+        "modelName": "TOLLGATE"
       }
     ]
 }

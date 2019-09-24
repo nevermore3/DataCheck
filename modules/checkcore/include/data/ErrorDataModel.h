@@ -434,6 +434,7 @@ namespace kd {
 
             static shared_ptr<DCLaneError> createByKXS_05_022(long nodeID, shared_ptr<DCCoord> coord);
 
+            static shared_ptr<DCLaneError> createByKXS_05_023(string lane_id,string divider_id);
         public:
 
             //错误详细信息描述

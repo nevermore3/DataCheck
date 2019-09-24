@@ -217,6 +217,7 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_LANE_020 = "KXS-05-020";
         const static std::string CHECK_ITEM_KXS_LANE_021 = "KXS-05-021";
         const static std::string CHECK_ITEM_KXS_LANE_022 = "KXS-05-022";
+        const static std::string CHECK_ITEM_KXS_LANE_023 = "KXS-05-023";
 
         const static std::string CHECK_ITEM_KXS_LANE_001_DESC = "如果车道组之间是“封闭”的，则车道组之间的车道不会存在孤立的车道";
         const static std::string CHECK_ITEM_KXS_LANE_002_DESC = "车道中心线与车道线在5米内不能存在两个交点（只检查组内车道线有共点的做检查）";
@@ -240,6 +241,7 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_LANE_020_DESC = "LANE点完备性检查";
         const static std::string CHECK_ITEM_KXS_LANE_021_DESC = "";
         const static std::string CHECK_ITEM_KXS_LANE_022_DESC = "LANE_SCH与关联LANE距离检查";
+        const static std::string CHECK_ITEM_KXS_LANE_023_DESC = "车道中心线与车行道边缘线距离检查";
 
 
         // 定位目标

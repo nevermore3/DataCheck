@@ -130,12 +130,17 @@ namespace kd {
              * @param errorOutput
              */
              void LaneSCHVerticalDistance(shared_ptr<CheckErrorOutput> &errorOutput);
+             /**
+              * 车道中心线与车行道边缘线距离检查
+              */
+             void CheckLaneGroupEgde(shared_ptr<CheckErrorOutput> &errorOutput);
         private:
 
             const string id = "lane_check";
 
             shared_ptr<MapDataManager> map_data_manager_;
-
+            //车道组到中心线到边线最小距离
+            const double lane_to_edge_die_buffer = 1.0;
         };
     }
 }

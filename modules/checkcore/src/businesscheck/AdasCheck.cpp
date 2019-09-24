@@ -45,17 +45,17 @@ namespace kd {
 
                 Check_KXS_07_003();
 
-                for (auto road_adas : road_id2_adas_node_maps_) {
-                    for (auto adas_node : road_adas.second) {
-                        if (adas_node.second) {
-                            Check_KXS_07_005(adas_node.second);
-
-                            Check_KXS_07_007(adas_node.second);
-
-                            Check_KXS_07_008(adas_node.second);
-                        }
-                    }
-                }
+//                for (auto road_adas : road_id2_adas_node_maps_) {
+//                    for (auto adas_node : road_adas.second) {
+//                        if (adas_node.second) {
+//                            Check_KXS_07_005(adas_node.second);
+//
+//                            Check_KXS_07_007(adas_node.second);
+//
+//                            Check_KXS_07_008(adas_node.second);
+//                        }
+//                    }
+//                }
 
             } else {
                 ret = false;

@@ -52,6 +52,8 @@ namespace kd {
 
             //HD_LANE_SCH点离关联的LANE的垂直距离不超过10cm
             LaneSCHVerticalDistance(errorOutput);
+
+            CheckLaneGroupEgde(errorOutput);
             return true;
         }
 
@@ -471,6 +473,33 @@ namespace kd {
             }
             checkItemInfo->totalNum = total;
             errorOutput->addCheckItemInfo(checkItemInfo);
+        }
+        void LaneCheck::CheckLaneGroupEgde(shared_ptr<CheckErrorOutput> &errorOutput){
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_LANE_023;
+            checkItemInfo->totalNum = map_data_manager_->laneGroups_.size() * 2;
+            errorOutput->addCheckItemInfo(checkItemInfo);
+
+            auto lanegroup = map_data_manager_->laneGroups_;
+            for(auto groupItem:lanegroup){
+
+                ///车道组最左侧车道线检查
+                auto firstLane = groupItem.second->lanes_[0];
+                shared_ptr<geos::geom::Geometry> geom_buffer(firstLane->line_->buffer(lane_to_edge_die_buffer));
+                bool res = KDGeoUtil::isLineInBuffer(firstLane->line_.get(),geom_buffer.get(),firstLane->leftDivider_->line_.get(),10);
+                if(res){
+                    auto error = DCLaneError::createByKXS_05_023(firstLane->id_,firstLane->leftDivider_->id_);
+                    errorOutput->saveError(error);
+                }
+                ///车道组最右侧车道线检查
+                auto lastLane = groupItem.second->lanes_[ groupItem.second->lanes_.size()-1];
+                shared_ptr<geos::geom::Geometry> last_geom_buffer(lastLane->line_->buffer(lane_to_edge_die_buffer));
+                res = KDGeoUtil::isLineInBuffer(lastLane->line_.get(),last_geom_buffer.get(),lastLane->rightDivider_->line_.get(),10);
+                if(res){
+                    auto error = DCLaneError::createByKXS_05_023(lastLane->id_,lastLane->rightDivider_->id_);
+                    errorOutput->saveError(error);
+                }
+            }
         }
 
     }

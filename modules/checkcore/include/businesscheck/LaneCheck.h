@@ -140,7 +140,7 @@ namespace kd {
 
             shared_ptr<MapDataManager> map_data_manager_;
             //车道组到中心线到边线最小距离
-            const double lane_to_edge_die_buffer = 1.0;
+            const double lane_to_edge_die_buffer = 1.2;
         };
     }
 }

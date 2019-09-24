@@ -1009,7 +1009,7 @@ namespace kd {
             error->checkName = CHECK_ITEM_KXS_LANE_023_DESC;
             error->checkLevel_ = LEVEL_ERROR;
             error->detail += "车道中心线 "+lane_id;
-            error->detail += "距离车行道边缘线"+divider_id+"小于1米!";
+            error->detail += "距离车行道边缘线"+divider_id+"小于1.2米!";
             shared_ptr<DCCoord> coord = make_shared<DCCoord>();
             coord->x_=0;
             coord->y_=0;

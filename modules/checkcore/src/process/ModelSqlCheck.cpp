@@ -32,6 +32,8 @@ namespace kd {
                             if (e_DataCheckKind::DCK_STATISTICS == dcItem.Kind && !m_bCompare)
                                 continue;
 
+                            errorOutput->addCheckItemInfo(dcItem.ID,0);
+
                             std::map<int, std::string> mFieldNameIndex; //error fields info
                             std::vector<std::vector<std::string>> mCheckResults; //errorlist;
                             std::vector<string> details;

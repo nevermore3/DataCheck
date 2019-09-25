@@ -91,11 +91,13 @@ namespace kd {
 
                 string inputJsonData;
                 const string &file_path = file_list[i];
+                string file_name = file_path.substr(file_path.find_last_of("/")+1);
+
                 if (file_path.find(config_file) != std::string::npos) {
                     continue;
                 } else if (file_path.find(checklist) != std::string::npos) {
                     continue;
-                } else if (file_path.find(split_str) == std::string::npos){
+                } else if (file_name.find(split_str) == std::string::npos){
                     continue;
                 }
 

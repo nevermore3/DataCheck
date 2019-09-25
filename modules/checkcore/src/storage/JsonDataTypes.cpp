@@ -51,12 +51,13 @@ void JsonLog::SetProperties(LogProperty &log_property) {
     properties_jobj_.set("CHECKBY", log_property.check_by);
     properties_jobj_.set("TASK_ID", log_property.task_id);
     properties_jobj_.set("PROJECT_ID", log_property.project_id);
-    properties_jobj_.set("PROCESS_STEP","ALL_CHECK");
+    properties_jobj_.set("PROCESS_STEP",DataCheckConfig::getInstance().getProperty("stepCode"));
     properties_jobj_.set("DATA_ID",log_property.data_id);
     properties_jobj_.set("DATA_MODEL",log_property.model_name);
     properties_jobj_.set("TAG_TYPE",log_property.tag_type);
     properties_jobj_.set("EXTEND_INFO","");
-    properties_jobj_.set("STEP_NODE","");
+    properties_jobj_.set("STEP_NODE",DataCheckConfig::getInstance().getProperty("nodeCode"));
+    properties_jobj_.set("STAGE",DataCheckConfig::getInstance().getProperty("position"));
     properties_jobj_.set("CONN_FRAME_ID","");
     properties_jobj_.set("LOCATION_DATA","");
 

@@ -104,7 +104,7 @@ namespace kd {
                         string err_type = "E2";
                         if (item.level == LEVEL_ERROR) {
                             err_type = "E1";
-                            ret = 1;
+//                            ret = 1;
                         }
                         if(taskid.length()==0){
                              taskid = item.taskId;

@@ -176,7 +176,7 @@ int forAllCheck(int argc, const char *argv[]){
         auto error_output = make_shared<CheckErrorOutput>(check_state);
 
         //数据质量检查
-        ret |= dataCheck(task_info, error_output);
+        dataCheck(task_info, error_output);
 
         ret |= error_output->saveJsonError(errJsonPath+checkresultforjson);
 

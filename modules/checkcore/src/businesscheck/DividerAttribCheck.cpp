@@ -199,25 +199,25 @@ void DividerAttribCheck::Check_kxs_01_014(){
         for( auto att : div->atts_){
             total++;
             //虚拟分隔线（1、2、3）时，分隔线类型为0，颜色类型为0，通行类型为0；
-            if (att->virtual_ == 1 || att->virtual_ == 2 || att->virtual_ == 3) {
-                if (att->type_ == 36 && (att->color_ == 0 || att->color_ == 1) &&
-                    (att->driveRule_ == 0 || att->driveRule_ == 1)) {
-                    // true;
-                } else {
-                    if (att->type_ != 0 || att->color_ != 0 || att->driveRule_ != 0) {
-                        shared_ptr<DCDividerCheckError> error =
-                                DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_014, div, att);
-                        stringstream ss;
-                        ss << "divider:" << div->id_;
-                        ss << ",virtual divider att error. type:" << att->type_ << ",color:";
-                        ss << att->color_ << ",dirveRule:" << att->driveRule_;
-                        error->checkName = "颜色、类型、通行类型属性冲突检查";
-                        error->errorDesc_ = ss.str();
-
-                        error_output()->saveError(error);
-                    }
-                }
-            }
+//            if (att->virtual_ == 1 || att->virtual_ == 2 || att->virtual_ == 3) {
+//                if (att->type_ == 36 && (att->color_ == 0 || att->color_ == 1) &&
+//                    (att->driveRule_ == 0 || att->driveRule_ == 1)) {
+//                    // true;
+//                } else {
+//                    if (att->type_ != 0 || att->color_ != 0 || att->driveRule_ != 0) {
+//                        shared_ptr<DCDividerCheckError> error =
+//                                DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_014, div, att);
+//                        stringstream ss;
+//                        ss << "divider:" << div->id_;
+//                        ss << ",virtual divider att error. type:" << att->type_ << ",color:";
+//                        ss << att->color_ << ",dirveRule:" << att->driveRule_;
+//                        error->checkName = "颜色、类型、通行类型属性冲突检查";
+//                        error->errorDesc_ = ss.str();
+//
+//                        error_output()->saveError(error);
+//                    }
+//                }
+//            }
 
             // 颜色为1时，分割线类型为1、2、3、4、5、6、7、11、14、16、18；
             // 颜色为2时，分隔线类型为8、9、10、12、13、15、17、11；

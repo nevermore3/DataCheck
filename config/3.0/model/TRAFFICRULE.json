@@ -31,7 +31,7 @@
       "inputLimit" : "1",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "NODECONN_I",
+      "name" : "NODECONN_ID",
       "type" : "1",
       "valueLimit" : ""
     },

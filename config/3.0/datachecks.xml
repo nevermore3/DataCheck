@@ -99,6 +99,7 @@
                    INFO="表HD_DIVIDERNODE数据有缺失,车道线Divider关联的节点DividerNode编号在HD_DIVIDERNODE表无法找到"
                    SQL="select * from (SELECT distinct fdnode nodeid FROM HD_DIVIDER union 
                    select distinct tdnode from hd_divider) where nodeid not in(select id from hd_divider_node);"/>
+    <!--由于实际数据存在此情况且合理，经产品确认下线,add by wcb 20190924-->
     <!--datacheckitem ID="KXS-03-017"
                    NAME="两个车道关联的左右车道线完全一致"
                    LEVEL="warning"

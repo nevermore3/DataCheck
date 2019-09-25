@@ -19,21 +19,6 @@
         "modelName": "ROAD"
       },
       {
-        "fileName": "Speed_Profile",
-        "fileType": "dbf",
-        "modelName": "Speed_Profile"
-      },
-      {
-        "fileName": "ADAS_Sign",
-        "fileType": "point",
-        "modelName": "ADAS_Sign"
-      },
-      {
-        "fileName": "ADAS_LA",
-        "fileType": "point",
-        "modelName": "ADAS_LA"
-      },
-      {
         "fileName": "ADAS_NODE",
         "fileType": "point",
         "modelName": "ADAS_NODE"
@@ -77,11 +62,6 @@
         "fileName": "HD_DIVIDER",
         "fileType": "arc",
         "modelName": "HD_DIVIDER"
-      },
-      {
-        "fileName": "HD_Divider_SCH",
-        "fileType": "point",
-        "modelName": "HD_Divider_SCH"
       },
       {
         "fileName": "HD_DIVIDER_NODE",
@@ -204,9 +184,9 @@
         "modelName": "ROAD_FACILITIES"
       },
       {
-        "fileName": "Tollgate",
+        "fileName": "TOLLGATE",
         "fileType": "dbf",
-        "modelName": "Tollgate"
+        "modelName": "TOLLGATE"
       }
     ]
 }

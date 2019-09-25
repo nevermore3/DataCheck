@@ -260,6 +260,15 @@ namespace kd {
             error_check_levels_.insert(CHECK_ITEM_KXS_LANE_012);
             error_check_levels_.insert(CHECK_ITEM_KXS_LANE_013);
             error_check_levels_.insert(CHECK_ITEM_KXS_LANE_014);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LANE_015);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LANE_016);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LANE_017);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LANE_018);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LANE_019);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LANE_020);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LANE_021);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LANE_022);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LANE_023);
 
             error_check_levels_.insert(CHECK_ITEM_KXS_LM_001);
             error_check_levels_.insert(CHECK_ITEM_KXS_LM_002);

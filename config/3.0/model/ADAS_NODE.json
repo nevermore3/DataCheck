@@ -31,7 +31,7 @@
       "inputLimit" : "0",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "R_NodeIdx",
+      "name" : "R_NODEIDX",
       "type" : "1",
       "valueLimit" : ""
     },
@@ -40,7 +40,7 @@
       "inputLimit" : "0",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "A_NodeID",
+      "name" : "A_NODEID",
       "type" : "1",
       "valueLimit" : ""
     },
@@ -50,7 +50,7 @@
       "inputType" : "",
       "lenLimit" : "0",
       "name" : "CURVATURE",
-      "type" : "3",
+      "type" : "2",
       "valueLimit" : ""
     },
     {
@@ -59,7 +59,7 @@
       "inputType" : "",
       "lenLimit" : "0",
       "name" : "SLOPE",
-      "type" : "3",
+      "type" : "2",
       "valueLimit" : ""
     },
     {
@@ -68,7 +68,7 @@
       "inputType" : "",
       "lenLimit" : "0",
       "name" : "HEADING",
-      "type" : "3",
+      "type" : "2",
       "valueLimit" : ""
     },
     {
@@ -77,7 +77,7 @@
       "inputType" : "",
       "lenLimit" : "0",
       "name" : "SUPERELEVATION",
-      "type" : "3",
+      "type" : "2",
       "valueLimit" : ""
     }
   ],

@@ -236,6 +236,7 @@ namespace kd {
             error_check_levels_.insert(CHECK_ITEM_KXS_LG_014);
             error_check_levels_.insert(CHECK_ITEM_KXS_LG_015);
             error_check_levels_.insert(CHECK_ITEM_KXS_LG_016);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LG_018);
             error_check_levels_.insert(CHECK_ITEM_KXS_LG_019);
             error_check_levels_.insert(CHECK_ITEM_KXS_LG_020);
             error_check_levels_.insert(CHECK_ITEM_KXS_LG_021);

@@ -39,7 +39,7 @@ namespace kd {
             if (CheckItemValid(CHECK_ITEM_KXS_LG_004)) {
                 Check_kxs_03_004();
             }
-            if (CheckItemValid(CHECK_ITEM_KXS_LG_028)) {
+            if (CheckItemValid(CHECK_ITEM_KXS_LG_028) || CheckItemValid(CHECK_ITEM_KXS_LG_029)) {
                 check_kxs_03_028_029();
             }
             return false;
@@ -351,7 +351,7 @@ namespace kd {
                         auto leftDa = laneitem->leftDivider_->atts_;
                         for(auto da:leftDa){
                             findErr = checkDaTypeAndVirtual(da->type_,da->virtual_,is_vir);
-                            if(findErr){
+                            if(CheckItemValid(CHECK_ITEM_KXS_LG_028)  && findErr){
                                 DCLaneGroupCheckError::createByKXS_03_028(laneGroup,da->id_,laneitem->leftDivider_->nodes_[0]->coord_);
                                 break;
                             }
@@ -363,7 +363,7 @@ namespace kd {
                         auto rightDa = laneitem->rightDivider_->atts_;
                         for (auto da:rightDa) {
                             findErr = checkDaTypeAndVirtual(da->type_, da->virtual_, is_vir);
-                            if(findErr){
+                            if(CheckItemValid(CHECK_ITEM_KXS_LG_028) && findErr){
                                 DCLaneGroupCheckError::createByKXS_03_028(laneGroup,da->id_,laneitem->leftDivider_->nodes_[0]->coord_);
                                 break;
                             }
@@ -398,7 +398,7 @@ namespace kd {
                                         }
                                     }
                                 }
-                                if (!find)
+                                if (CheckItemValid(CHECK_ITEM_KXS_LG_029) && !find)
                                     DCLaneGroupCheckError::createByKXS_03_029(lanegroup.find(lane_group1_id)->second,
                                                                               lanegroup.find(lane_group2_id)->second);
                             }
@@ -407,16 +407,18 @@ namespace kd {
                 }
             }
 
-
-            shared_ptr<CheckItemInfo> checkItem_028 = make_shared<CheckItemInfo>();
-            checkItem_028->checkId = CHECK_ITEM_KXS_LG_028;
-            checkItem_028->totalNum = lanegroup.size();
-            error_output()->addCheckItemInfo(checkItem_028);
-
-            shared_ptr<CheckItemInfo> checkItem_029 = make_shared<CheckItemInfo>();
-            checkItem_029->checkId = CHECK_ITEM_KXS_LG_029;
-            checkItem_029->totalNum = size;
-            error_output()->addCheckItemInfo(checkItem_029);
+            if(CheckItemValid(CHECK_ITEM_KXS_LG_028)) {
+                shared_ptr<CheckItemInfo> checkItem_028 = make_shared<CheckItemInfo>();
+                checkItem_028->checkId = CHECK_ITEM_KXS_LG_028;
+                checkItem_028->totalNum = lanegroup.size();
+                error_output()->addCheckItemInfo(checkItem_028);
+            }
+            if(CheckItemValid(CHECK_ITEM_KXS_LG_029)) {
+                shared_ptr<CheckItemInfo> checkItem_029 = make_shared<CheckItemInfo>();
+                checkItem_029->checkId = CHECK_ITEM_KXS_LG_029;
+                checkItem_029->totalNum = size;
+                error_output()->addCheckItemInfo(checkItem_029);
+            }
 
         }
         bool LaneGroupCheck::checkDaTypeAndVirtual(long type_,long virtual_,long is_vir_){

@@ -31,7 +31,8 @@ namespace kd {
             }
 
             bool operator ==(const DCField& dcf) const {
-                return (dcf.Name == Name && dcf.Type == Type && dcf.Width == Width && dcf.Decimal == Decimal);
+                return (dcf.Name == Name && dcf.Type == Type);
+                //return (dcf.Name == Name && dcf.Type == Type && dcf.Width == Width && dcf.Decimal == Decimal);
             }
         };
 
@@ -152,6 +153,12 @@ namespace kd {
                     switch (field->type) {
                         case DC_FIELD_TYPE_VARCHAR: {
                             string value = shpData.readStringField(i, fieldName);
+                            if (field->inputLimit == 1 && value.empty()) {
+                                stringstream ss;
+                                ss << "文件 " << fileName << " 中的字段 "<< fieldName << " 不能为空";
+                                shared_ptr<DCError> error = DCFieldError::createByKXS_01_019(ss.str());
+                                errorOutput->saveError(error);
+                            }
                             record->textDatas.insert(pair<string, string>(fieldName, value));
                         }
                             break;
@@ -167,6 +174,12 @@ namespace kd {
                             break;
                         case DC_FIELD_TYPE_TEXT: {
                             string value = shpData.readStringField(i, fieldName);
+                            if (field->inputLimit == 1 && value.empty()) {
+                                stringstream ss;
+                                ss << "文件 " << fileName << " 中的字段 "<< fieldName << " 不能为空";
+                                shared_ptr<DCError> error = DCFieldError::createByKXS_01_019(ss.str());
+                                errorOutput->saveError(error);
+                            }
                             record->textDatas.insert(pair<string, string>(fieldName, value));
                         }
                             break;

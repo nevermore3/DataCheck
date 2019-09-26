@@ -85,6 +85,7 @@ namespace kd {
                                                                     table.first.c_str(),
                                                                     table.second,
                                                                     table.first.c_str());
+                    LOG(INFO)<<"SQL："<<sqlCmd;
                     CppSQLite3::Query query = pDataBase->execQuery(sqlCmd);
                     string foreignKeyName = "LO_ID";
                     string keyName = "ID";

@@ -31,7 +31,7 @@
       "inputLimit" : "1",
       "inputType" : "",
       "lenLimit" : "0",
-      "name" : "NODECONN_ID",
+      "name" : "NODECONN_I",
       "type" : "1",
       "valueLimit" : ""
     },
@@ -68,12 +68,12 @@
   "relation" : [
     {
       "member" : "NODECONN",
-      "rule" : "NODECONN_ID",
+      "rule" : "NODECONN_I",
       "name" : "ID"
     },
     {
       "member" : "C_NODECONN",
-      "rule" : "NODECONN_ID",
+      "rule" : "NODECONN_I",
       "name" : "ID"
     }
   ],

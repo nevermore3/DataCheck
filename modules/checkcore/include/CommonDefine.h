@@ -142,7 +142,8 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_LG_025 = "KXS-03-025";
         const static std::string CHECK_ITEM_KXS_LG_026 = "KXS-03-026";
         const static std::string CHECK_ITEM_KXS_LG_027 = "KXS-03-027";
-
+        const static std::string CHECK_ITEM_KXS_LG_028 = "KXS-03-028";
+        const static std::string CHECK_ITEM_KXS_LG_029 = "KXS-03-029";
 
         const static std::string CHECK_ITEM_KXS_LG_001_DESC = "同一个车道组内，单根车道线的长度同组内车道线平均长度不应该偏差超过";
         const static std::string CHECK_ITEM_KXS_LG_002_DESC = "分组中车道编号从零开始，从内向外递增。编号连续，不缺失，不重复";
@@ -171,7 +172,7 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_LG_025_DESC = "车道编号检查";
         const static std::string CHECK_ITEM_KXS_LG_026_DESC = "DIVIDER对应DA属性检查";
         const static std::string CHECK_ITEM_KXS_LG_027_DESC = "车道组没有打断，不应该存在既是入口又是出口的组";
-
+        const static std::string CHECK_ITEM_KXS_LG_028_DESC = "车道组是否属于虚拟路口检查";
 
 
         // 道路检查

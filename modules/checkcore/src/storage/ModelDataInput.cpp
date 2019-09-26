@@ -133,6 +133,9 @@ namespace kd {
             if (record_nums <= 0) {
                 return false;
             }
+            // 数据不能为空， 防止过多打印，只打印一次
+            bool strNotNull = false;
+            bool textNotNull = false;
             for (int i = 0; i < record_nums; i++) {
                 SHPObject *shpObject = shpData.readShpObject(i);
                 if (!shpObject || !(shpObject->nSHPType == SHPT_POINT || shpObject->nSHPType == SHPT_POINTZ)) {
@@ -141,7 +144,6 @@ namespace kd {
                     errorOutput->writeInfo(ss.str());
                     continue;
                 }
-
                 //遍历各个字段
                 shared_ptr<DCModelRecord> record = make_shared<DCModelRecord>();
                 for (shared_ptr<DCFieldDefine> field : vecFieldDefines) {
@@ -153,11 +155,12 @@ namespace kd {
                     switch (field->type) {
                         case DC_FIELD_TYPE_VARCHAR: {
                             string value = shpData.readStringField(i, fieldName);
-                            if (field->inputLimit == 1 && value.empty()) {
+                            if (!strNotNull && field->inputLimit == 1 && value.empty()) {
                                 stringstream ss;
                                 ss << "文件 " << fileName << " 中的字段 "<< fieldName << " 不能为空";
                                 shared_ptr<DCError> error = DCFieldError::createByKXS_01_019(ss.str());
                                 errorOutput->saveError(error);
+                                strNotNull = true;
                             }
                             record->textDatas.insert(pair<string, string>(fieldName, value));
                         }
@@ -174,11 +177,12 @@ namespace kd {
                             break;
                         case DC_FIELD_TYPE_TEXT: {
                             string value = shpData.readStringField(i, fieldName);
-                            if (field->inputLimit == 1 && value.empty()) {
+                            if (!textNotNull && field->inputLimit == 1 && value.empty()) {
                                 stringstream ss;
                                 ss << "文件 " << fileName << " 中的字段 "<< fieldName << " 不能为空";
                                 shared_ptr<DCError> error = DCFieldError::createByKXS_01_019(ss.str());
                                 errorOutput->saveError(error);
+                                textNotNull = true;
                             }
                             record->textDatas.insert(pair<string, string>(fieldName, value));
                         }

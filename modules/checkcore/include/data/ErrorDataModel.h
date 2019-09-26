@@ -342,6 +342,9 @@ namespace kd {
 
             static shared_ptr<DCLaneGroupCheckError> createByKXS_03_027(string lane_group_id);
 
+            static shared_ptr<DCLaneGroupCheckError> createByKXS_03_028(shared_ptr<DCLaneGroup> lanelaneGroup,string daId, shared_ptr<DCCoord> coord);
+
+            static shared_ptr<DCLaneGroupCheckError> createByKXS_03_029(shared_ptr<DCLaneGroup> lanelaneGroup1,shared_ptr<DCLaneGroup> lanelaneGroup2);
         public:
 
             //错误详细信息描述

@@ -68,7 +68,7 @@
       "inputType" : "",
       "lenLimit" : "0",
       "name" : "HEADING",
-      "type" : "3",
+      "type" : "2",
       "valueLimit" : ""
     },
     {
@@ -77,7 +77,7 @@
       "inputType" : "",
       "lenLimit" : "0",
       "name" : "SUPERELEVATION",
-      "type" : "3",
+      "type" : "2",
       "valueLimit" : ""
     }
   ],

@@ -30,6 +30,7 @@ namespace kd {
 
         bool JsonDataLoader::execute(shared_ptr<MapDataManager> mapDataManager,
                                      shared_ptr<CheckErrorOutput> errorOutput) {
+            LOG(INFO)<<"start LoadJsonData execute";
             bool ret = true;
             map_data_manager_ = mapDataManager;
             error_output_ = errorOutput;
@@ -48,6 +49,7 @@ namespace kd {
                 json_data_input->CheckModelField(error_output_);
                 json_data_input->CheckModelRelation();
             }
+            LOG(INFO)<<"end LoadJsonData execute";
             return ret;
         }
 
@@ -89,11 +91,13 @@ namespace kd {
 
                 string inputJsonData;
                 const string &file_path = file_list[i];
+                string file_name = file_path.substr(file_path.find_last_of("/")+1);
+
                 if (file_path.find(config_file) != std::string::npos) {
                     continue;
                 } else if (file_path.find(checklist) != std::string::npos) {
                     continue;
-                } else if (file_path.find(split_str) == std::string::npos){
+                } else if (file_name.find(split_str) == std::string::npos){
                     continue;
                 }
 
@@ -173,7 +177,6 @@ namespace kd {
                 LOG(ERROR) << json_data_path_<<" inputFileName is empty";
                 return false;
             }
-
             set<long> filterNodes, filterWays, filterRels;
             bool load_file_status = true;
             int file_count = file_list.size();
@@ -186,14 +189,14 @@ namespace kd {
                 string data_key = "";
 
                 OSMDataParser parser(resource_manager);
-
                 string inputJsonData;
                 const string &file_path = file_list[i];
                 if (file_path.find(config_file) != std::string::npos) {
                     continue;
                 }
+                string file_name = file_path.substr(file_path.find_last_of("/")+1);
                 //全库检查过滤
-                if(!parse && file_path.find(split_str) != std::string::npos){
+                if(!parse && file_name.find(split_str) != std::string::npos){
                     continue;
                 }
                 //load file

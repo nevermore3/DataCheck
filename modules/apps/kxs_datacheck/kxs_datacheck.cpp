@@ -339,6 +339,15 @@ int main(int argc, const char *argv[]) {
             DataCheckConfig::getInstance().addProperty("branchName",task_info.param_results.find("branchName")->second);
             DataCheckConfig::getInstance().addProperty("taskFrameId",task_info.param_results.find("taskFrameId")->second);
             DataCheckConfig::getInstance().addProperty("projectId",task_info.param_results.find("projectId")->second);
+            if(task_info.param_results.find("stepCode") != task_info.param_results.end()){
+                DataCheckConfig::getInstance().addProperty("stepCode",task_info.param_results.find("stepCode")->second);
+            }
+            if(task_info.param_results.find("nodeCode") != task_info.param_results.end()){
+                DataCheckConfig::getInstance().addProperty("nodeCode",task_info.param_results.find("nodeCode")->second);
+            }
+            if(task_info.param_results.find("position") != task_info.param_results.end()){
+               DataCheckConfig::getInstance().addProperty("position",task_info.param_results.find("position")->second);
+            }
 
         } else {
             string checkFilePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::CHECK_FILE_PATH);
@@ -379,7 +388,7 @@ int main(int argc, const char *argv[]) {
 
         if (check_state == DataCheckConfig::TOPO_AUTO_CHECK) {
             //拓扑自动化检查
-            ret |= TopoAutoCheck(error_output, check_state);
+            TopoAutoCheck(error_output, check_state);
 //            ret |= error_output->saveErrorReport(checkresult);
             ret |= error_output->saveJsonError(errForAllCHeckPath);
         } else if (check_state == DataCheckConfig::ALL_AUTO_CHECK) {

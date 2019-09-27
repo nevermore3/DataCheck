@@ -52,6 +52,9 @@ namespace kd {
 
             //HD_LANE_SCH点离关联的LANE的垂直距离不超过10cm
             LaneSCHVerticalDistance(errorOutput);
+
+            //每个HD_LANE_SCH点的坡度和关联的LANE对象中距离最近的两个形点计算出的坡度对比
+            LaneSCHRelevantLaneSlope(errorOutput);
             return true;
         }
 
@@ -471,6 +474,23 @@ namespace kd {
             }
             checkItemInfo->totalNum = total;
             errorOutput->addCheckItemInfo(checkItemInfo);
+        }
+
+        void LaneCheck::LaneSCHRelevantLaneSlope(shared_ptr<CheckErrorOutput> &errorOutput) {
+
+            for (const auto &laneSCH : map_obj_schs_) {
+                long laneID = laneSCH.first;
+                string strLaneID = to_string(laneID);
+                vector<shared_ptr<DCSCHInfo>> schNodes = laneSCH.second;
+
+                // get relevent lane
+                if (map_data_manager_->lanes_.find(strLaneID) == map_data_manager_->lanes_.end()) {
+                    continue;
+                }
+                auto lane = map_data_manager_->lanes_[strLaneID];
+                SCHNodeRelevantObjectSlope(laneID, schNodes, lane->coords_, errorOutput);
+            }
+
         }
 
     }

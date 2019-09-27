@@ -7,6 +7,8 @@
 #include <util/KDGeoUtil.hpp>
 #include <util/GeosObjUtil.h>
 #include <util/CommonCheck.h>
+#include "util/product_shp_util.h"
+#include <shp/ShpData.hpp>
 
 
 namespace kd {
@@ -22,6 +24,130 @@ namespace kd {
             map_data_manager_ = mapDataManager;
         }
 
+        bool RoadCheck::LoadLGLaneGroupIndex() {
+            string basePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::SHP_FILE_PATH);
+            string filePath = basePath + "/" + kLgRoadNodeIndex;
+
+            DbfData dbfFile(filePath);
+            if (!dbfFile.isInit()) {
+                LOG(ERROR) << "Open dbfFile :" << filePath << " Fail";
+                return false;
+            }
+
+            size_t recordNums = dbfFile.getRecords();
+            long roadID = 0;
+            long lgID = 0;
+            long fIndex = 0;
+            long tIndex = 0;
+            for (size_t i = 0; i < recordNums; i++) {
+
+                //读取属性信息
+                lgID = dbfFile.readLongField(i, "LG_ID");
+                roadID = dbfFile.readLongField(i, "ROAD_ID");
+                fIndex = dbfFile.readLongField(i, "F_INDEX");
+                tIndex = dbfFile.readLongField(i, "T_INDEX");
+                if (map_road_lg_index_.find(roadID) == map_road_lg_index_.end()) {
+//                    map<long, vector<long>> mapTIndexLG;
+//                    vector<long>lg;
+//                    lg.push_back(lgID);
+//                    mapTIndexLG.insert(make_pair(tIndex, lg));
+//                    map_road_lg_index_.insert(make_pair(roadID, mapTIndexLG));
+                    map<long, vector<pair<long, long>>> mapToIndexLG;
+                    vector<pair<long,long>> fIndexLG;
+                    fIndexLG.emplace_back(make_pair(fIndex, lgID));
+                    mapToIndexLG.insert(make_pair(tIndex, fIndexLG));
+                    map_road_lg_index_.insert(make_pair(roadID, mapToIndexLG));
+
+                } else {
+//                    map<long, vector<long>> &mapTIndexLG = map_road_lg_index_[roadID];
+//                    if (mapTIndexLG.find(tIndex) == mapTIndexLG.end()) {
+//                        vector<long>lg;
+//                        lg.push_back(lgID);
+//                        mapTIndexLG.insert(make_pair(tIndex, lg));
+//                    } else {
+//                        mapTIndexLG[tIndex].push_back(lgID);
+//                    }
+                    map<long, vector<pair<long, long>>> &mapToIndexLG = map_road_lg_index_[roadID];
+                    if (mapToIndexLG.find(tIndex) == mapToIndexLG.end()) {
+                        vector<pair<long, long>> fIndexLG;
+                        fIndexLG.emplace_back(make_pair(fIndex, lgID));
+                        mapToIndexLG.insert(make_pair(tIndex, fIndexLG));
+                    } else {
+                        mapToIndexLG[tIndex].emplace_back(make_pair(fIndex, lgID));
+                    }
+                }
+            }
+            return true;
+        }
+
+        vector<shared_ptr<DCCoord>> GetRelevantDivider(long roadID) {
+            //
+        }
+
+        shared_ptr<DCDivider> RoadCheck::GetRelevantDivider(long roadID, long roadIndex) {
+            // get relevant lanegroup
+            if (map_road_lg_index_.find(roadID) == map_road_lg_index_.end()) {
+                return nullptr;
+            }
+            map<long, vector<pair<long, long>>>mapToIndexLG = map_road_lg_index_[roadID];
+            long lgID = 0;
+            for (const auto &iter : mapToIndexLG) {
+                if (iter.first > roadIndex) {
+                    // 可能对应路口虚拟组
+                    if (iter.second.size() > 1) {
+                        return nullptr;
+                    }
+                    lgID = iter.second.front().second;
+                    break;
+                }
+            }
+            if (lgID == 0) {
+                return nullptr;
+            }
+
+            string strLGID = to_string(lgID);
+            map<string, shared_ptr<DCLaneGroup>>laneGroups = map_data_manager_->laneGroups_;
+            shared_ptr<DCLaneGroup> laneGroup = nullptr;
+            if (laneGroups.find(strLGID) == laneGroups.end()) {
+                return nullptr;
+            }
+            laneGroup = laneGroups[strLGID];
+            vector<shared_ptr<DCLane>> lanes = laneGroup->lanes_;
+            shared_ptr<DCLane> lane = lanes[lanes.size() / 2];
+
+            return lane->leftDivider_;
+
+
+
+        }
+
+        void RoadCheck::AdasNodeRelevantDividerSlope(shared_ptr<CheckErrorOutput> &errorOutput) {
+            //形点索引
+            long index = 0;
+
+            for (const auto &adasNode : map_obj_schs_) {
+                long roadID = adasNode.first;
+                vector<shared_ptr<DCSCHInfo>>nodes = adasNode.second;
+                size_t size = nodes.size();
+                if (size <= 2) {
+                    index = nodes.front()->obj_index_;
+                } else {
+                    index = nodes[size / 2]->obj_index_;
+                }
+
+
+                auto divider = GetRelevantDivider(roadID, index);
+                if (divider->id_ == "2147483550") {
+                    cout<<"h";
+                }
+                if (divider == nullptr) {
+                    continue;
+                }
+                SCHNodeRelevantObjectSlope(stol(divider->id_), nodes, divider->nodes_, errorOutput);
+            }
+
+        }
+
         bool RoadCheck::execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) {
 
             SetMapDataManager(mapDataManager);
@@ -31,6 +157,10 @@ namespace kd {
 
             // 属性点间距离检查
             CheckAdjacentNodeDistance(errorOutput);
+
+            if (LoadLGLaneGroupIndex()) {
+                AdasNodeRelevantDividerSlope(errorOutput);
+            }
 
 
             if(CheckItemValid(CHECK_ITEM_KXS_ROAD_002)){

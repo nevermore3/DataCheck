@@ -130,6 +130,11 @@ namespace kd {
              * @param errorOutput
              */
              void LaneSCHVerticalDistance(shared_ptr<CheckErrorOutput> &errorOutput);
+
+             /*
+              * 每个HD_LANE_SCH点的坡度和关联的LANE对象中距离最近的两个形点计算出的坡度对比
+              */
+             void LaneSCHRelevantLaneSlope(shared_ptr<CheckErrorOutput> &errorOutput);
         private:
 
             const string id = "lane_check";

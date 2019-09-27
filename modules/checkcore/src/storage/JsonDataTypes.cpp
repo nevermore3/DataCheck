@@ -49,8 +49,8 @@ void JsonLog::SetProperties(LogProperty &log_property) {
     properties_jobj_.set("CREATEBY", log_property.create_by);
     properties_jobj_.set("EDITBY", log_property.edit_by);
     properties_jobj_.set("CHECKBY", log_property.check_by);
-    properties_jobj_.set("TASK_ID", log_property.task_id);
-    properties_jobj_.set("PROJECT_ID", log_property.project_id);
+    properties_jobj_.set("TASKID", log_property.task_id);
+    properties_jobj_.set("PROJECTID", log_property.project_id);
     properties_jobj_.set("PROCESS_STEP",DataCheckConfig::getInstance().getProperty("stepCode"));
     properties_jobj_.set("DATA_ID",log_property.data_id);
     properties_jobj_.set("DATA_MODEL",log_property.model_name);

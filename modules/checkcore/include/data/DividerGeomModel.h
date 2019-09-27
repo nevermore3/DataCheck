@@ -842,6 +842,42 @@ namespace kd {
             shared_ptr<DCCoord> coord_;
 
         };
+        /**
+         * 线对象，HD_POLYLINE
+         */
+        class DCPolyline : public GeomModel{
+        public:
+            /**
+             * 0：未调查1：停车让行线2：减速让行线3：停止线4：道路边缘5：左道路边缘
+             * 6：右道路边缘7：纵向减速标线8：公交车道专用线9：实线10：虚线
+             * 11：可变导向线12：路缘石13：防护栏14：沟99：其它
+             */
+            long type_;
+
+            //节点
+            std::vector<shared_ptr<DCCoord>> coords;
+        };
+        /**
+         * 定位目标与道路关联表 HD_R_LO_ROAD
+         */
+         class DCRLORoad : public DCModel{
+             //定位目标
+             long lo_id;
+             //定位目标类型
+             long type_;
+             //关联road
+             long road_id_;
+             //关联road线段上点经度坐标
+             double x;
+             //关联road线段上点纬度坐标
+             double y;
+             //关联road的起点ID
+             long s_spidx;
+             //关联road的尾点ID
+             long e_spidx;
+             //方向
+             long direction;
+         };
     }
 }
 

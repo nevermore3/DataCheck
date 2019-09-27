@@ -31,7 +31,8 @@ namespace kd {
             }
 
             bool operator ==(const DCField& dcf) const {
-                return (dcf.Name == Name && dcf.Type == Type && dcf.Width == Width && dcf.Decimal == Decimal);
+                return (dcf.Name == Name && dcf.Type == Type);
+                //return (dcf.Name == Name && dcf.Type == Type && dcf.Width == Width && dcf.Decimal == Decimal);
             }
         };
 
@@ -55,9 +56,11 @@ namespace kd {
                 if (defFields.find(fldName) == defFields.end()){
                     defFields.insert(make_pair(fldName, DCField(fldName, GetDBFFieldType(itFld->type), itFld->len, 0)));
                 } else {
+                    // 配置文件中字段冗余
                     stringstream ss;
-                    ss << "[ERROR]: the Config field name '" << fldName << "' is repeat. file:" << fileName.c_str();
-                    errorOutput->writeInfo(ss.str());
+                    ss << "配置文件 " << fileName << " 中的字段 "<< fldName << " 冗余";
+                    shared_ptr<DCError> error = DCFieldError::createByKXS_01_019(ss.str());
+                    errorOutput->saveError(error);
                 }
             }
 
@@ -70,31 +73,37 @@ namespace kd {
                 if (dbfFields.find(fldName) == dbfFields.end()){
                     dbfFields.insert(make_pair(fldName, DCField(fldName, fldType, fldWidth, fldDecimal)));
                 } else {
+                    // 字段重复
                     stringstream ss;
-                    ss << "[ERROR]: the DBF field name '" << fldName << "' is repeat. file:" << fileName.c_str();
-                    errorOutput->writeInfo(ss.str());
+                    ss << "文件 " << fileName << " 中的字段 "<< fldName << " 是重复字段";
+                    shared_ptr<DCError> error = DCFieldError::createByKXS_01_019(ss.str());
+                    errorOutput->saveError(error);
                 }
 
                 if (defFields.find(fldName) == defFields.end()){
+                    // 字段冗余
                     stringstream ss;
-
-                    ss << "[ERROR]: the DBF field '" << fldName << "' is not in Config Fields. file:" << fileName.c_str();
-                    errorOutput->writeInfo(ss.str());
+                    ss << "文件 " << fileName << " 中的字段 "<< fldName << " 冗余, 在规格中该字段不存在";
+                    shared_ptr<DCError> error = DCFieldError::createByKXS_01_019(ss.str());
+                    errorOutput->saveError(error);
                 } else {
-                    if(!(defFields[fldName] == defFields[fldName])){
+                    // 字段类型和规格中的不相等
+                    if(!(defFields[fldName] == dbfFields[fldName])){
                         stringstream ss;
-                        ss << "[ERROR]: the DBF and Config fields '" << fldName << "' is not equal. file:" << fileName.c_str();
-                        errorOutput->writeInfo(ss.str());
+                        ss << "文件 " << fileName << " 中的字段 "<< fldName << "  的类型和规格中的不同";
+                        shared_ptr<DCError> error = DCFieldError::createByKXS_01_019(ss.str());
+                        errorOutput->saveError(error);
                     }
                 }
             }
 
             for (auto itDefFld : defFields) {
                 if (dbfFields.find(itDefFld.first) == dbfFields.end()){
+                    // 缺少字段
                     stringstream ss;
-
-                    ss << "[ERROR]: the Config field '" << itDefFld.first << "' is not in DBF Fields. file:" << fileName.c_str();
-                    errorOutput->writeInfo(ss.str());
+                    ss << "文件 " << fileName << " 中缺少字段 "<< itDefFld.first;
+                    shared_ptr<DCError> error = DCFieldError::createByKXS_01_019(ss.str());
+                    errorOutput->saveError(error);
                 } else {
                     dbfFieldNames.push_back(itDefFld.first);
                 }
@@ -124,6 +133,9 @@ namespace kd {
             if (record_nums <= 0) {
                 return false;
             }
+            // 数据不能为空， 防止过多打印，只打印一次
+            bool strNotNull = false;
+            bool textNotNull = false;
             for (int i = 0; i < record_nums; i++) {
                 SHPObject *shpObject = shpData.readShpObject(i);
                 if (!shpObject || !(shpObject->nSHPType == SHPT_POINT || shpObject->nSHPType == SHPT_POINTZ)) {
@@ -132,7 +144,6 @@ namespace kd {
                     errorOutput->writeInfo(ss.str());
                     continue;
                 }
-
                 //遍历各个字段
                 shared_ptr<DCModelRecord> record = make_shared<DCModelRecord>();
                 for (shared_ptr<DCFieldDefine> field : vecFieldDefines) {
@@ -144,6 +155,13 @@ namespace kd {
                     switch (field->type) {
                         case DC_FIELD_TYPE_VARCHAR: {
                             string value = shpData.readStringField(i, fieldName);
+                            if (!strNotNull && field->inputLimit == 1 && value.empty()) {
+                                stringstream ss;
+                                ss << "文件 " << fileName << " 中的字段 "<< fieldName << " 不能为空";
+                                shared_ptr<DCError> error = DCFieldError::createByKXS_01_019(ss.str());
+                                errorOutput->saveError(error);
+                                strNotNull = true;
+                            }
                             record->textDatas.insert(pair<string, string>(fieldName, value));
                         }
                             break;
@@ -159,6 +177,13 @@ namespace kd {
                             break;
                         case DC_FIELD_TYPE_TEXT: {
                             string value = shpData.readStringField(i, fieldName);
+                            if (!textNotNull && field->inputLimit == 1 && value.empty()) {
+                                stringstream ss;
+                                ss << "文件 " << fileName << " 中的字段 "<< fieldName << " 不能为空";
+                                shared_ptr<DCError> error = DCFieldError::createByKXS_01_019(ss.str());
+                                errorOutput->saveError(error);
+                                textNotNull = true;
+                            }
                             record->textDatas.insert(pair<string, string>(fieldName, value));
                         }
                             break;

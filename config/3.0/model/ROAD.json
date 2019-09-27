@@ -122,7 +122,7 @@
       "inputType" : "",
       "lenLimit" : "0",
       "name" : "LENGTH",
-      "type" : "1",
+      "type" : "2",
       "valueLimit" : ""
     },
     {
@@ -167,7 +167,7 @@
       "inputType" : "",
       "lenLimit" : "6",
       "name" : "S_LANES",
-      "type" : "0",
+      "type" : "1",
       "valueLimit" : "1,2,3,4,5,6,7,8"
     }
   ],

@@ -39,7 +39,9 @@ namespace kd {
             if (CheckItemValid(CHECK_ITEM_KXS_LG_004)) {
                 Check_kxs_03_004();
             }
-
+            if (CheckItemValid(CHECK_ITEM_KXS_LG_028) || CheckItemValid(CHECK_ITEM_KXS_LG_029)) {
+                check_kxs_03_028_029();
+            }
             return false;
         }
 
@@ -306,6 +308,124 @@ namespace kd {
                 ptr_error->coord->z_ = 0;
                 error_output()->saveError(ptr_error);
             }
+        }
+        void LaneGroupCheck::check_kxs_03_028_029(){
+
+            ///车道组是否属于虚拟路口检查
+            map<string,set<string>> vir_lane_group;
+            vector<string> lane_group_ids;
+            auto lanegroup = data_manager()->laneGroups_;
+            for(auto groupItem:lanegroup) {
+                auto laneGroup = groupItem.second;
+                long is_vir = laneGroup->is_virtual_;
+                if(is_vir == 1){
+                    set<string> node_ids;
+                    for (auto laneitem:laneGroup->lanes_) {
+                        if(laneitem->laneNo_ == 1) {
+                            ///收集虚拟车道组div端点
+                            if (node_ids.find(laneitem->leftDivider_->fromNodeId_) == node_ids.end()) {
+                                node_ids.insert(laneitem->leftDivider_->fromNodeId_);
+                            }
+                            if (node_ids.find(laneitem->leftDivider_->toNodeId_) == node_ids.end()) {
+                                node_ids.insert(laneitem->leftDivider_->toNodeId_);
+                            }
+
+                        }
+                        ///检查Lane的右侧车道线
+                        if (node_ids.find(laneitem->rightDivider_->fromNodeId_) == node_ids.end()) {
+                            node_ids.insert(laneitem->rightDivider_->fromNodeId_);
+                        }
+                        if (node_ids.find(laneitem->rightDivider_->toNodeId_) == node_ids.end()) {
+                            node_ids.insert(laneitem->rightDivider_->toNodeId_);
+                        }
+                    }
+                    vir_lane_group.insert(make_pair(groupItem.first,node_ids));
+                    lane_group_ids.emplace_back(groupItem.first);
+                }
+
+
+                for (auto laneitem:laneGroup->lanes_) {
+                    bool findErr = false;
+                    if(laneitem->laneNo_ == 1){
+                        ///最左侧车道两条DIV都需要遍历
+                        auto leftDa = laneitem->leftDivider_->atts_;
+                        for(auto da:leftDa){
+                            findErr = checkDaTypeAndVirtual(da->type_,da->virtual_,is_vir);
+                            if(CheckItemValid(CHECK_ITEM_KXS_LG_028)  && findErr){
+                                DCLaneGroupCheckError::createByKXS_03_028(laneGroup,da->id_,laneitem->leftDivider_->nodes_[0]->coord_);
+                                break;
+                            }
+                        }
+
+                    }
+                    if(!findErr) {
+                        ///检查Lane的右侧车道线
+                        auto rightDa = laneitem->rightDivider_->atts_;
+                        for (auto da:rightDa) {
+                            findErr = checkDaTypeAndVirtual(da->type_, da->virtual_, is_vir);
+                            if(CheckItemValid(CHECK_ITEM_KXS_LG_028) && findErr){
+                                DCLaneGroupCheckError::createByKXS_03_028(laneGroup,da->id_,laneitem->leftDivider_->nodes_[0]->coord_);
+                                break;
+                            }
+                        }
+                    }
+                    if(findErr){
+                        break;
+                    }
+                }
+            }
+            ///虚拟车道组之间的连通性检查
+            int size = lane_group_ids.size();
+            if(size>1) {
+                for (int i = 0; i < size - 1; i++) {
+                    string lane_group1_id = lane_group_ids[i];
+                    auto lane1_node_ids = vir_lane_group.find(lane_group1_id)->second;
+                    for (int j = i + 1; j < size; j++) {
+                        string lane_group2_id = lane_group_ids[j];
+                        auto lane2_node_ids = vir_lane_group.find(lane_group2_id)->second;
+                        for (auto node_id:lane1_node_ids) {
+                            ///查找是否共点
+                            if (lane2_node_ids.find(node_id) != lane2_node_ids.end()) {
+                                ///排除双线车道线情况
+                                bool find = false;
+                                auto node_to_div = data_manager()->node_id2_dividers_maps_;
+                                auto node_topo = node_to_div.find(node_id);
+                                if (node_topo != node_to_div.end()) {
+                                    for (auto divider : node_topo->second) {
+                                        if (divider->direction_ == 1) {
+                                            find = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (CheckItemValid(CHECK_ITEM_KXS_LG_029) && !find)
+                                    DCLaneGroupCheckError::createByKXS_03_029(lanegroup.find(lane_group1_id)->second,
+                                                                              lanegroup.find(lane_group2_id)->second);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if(CheckItemValid(CHECK_ITEM_KXS_LG_028)) {
+                shared_ptr<CheckItemInfo> checkItem_028 = make_shared<CheckItemInfo>();
+                checkItem_028->checkId = CHECK_ITEM_KXS_LG_028;
+                checkItem_028->totalNum = lanegroup.size();
+                error_output()->addCheckItemInfo(checkItem_028);
+            }
+            if(CheckItemValid(CHECK_ITEM_KXS_LG_029)) {
+                shared_ptr<CheckItemInfo> checkItem_029 = make_shared<CheckItemInfo>();
+                checkItem_029->checkId = CHECK_ITEM_KXS_LG_029;
+                checkItem_029->totalNum = size;
+                error_output()->addCheckItemInfo(checkItem_029);
+            }
+
+        }
+        bool LaneGroupCheck::checkDaTypeAndVirtual(long type_,long virtual_,long is_vir_){
+            if(( type_ == 6 || virtual_ == 1) && is_vir_ != 1){
+                return true;
+            }
+            return false;
         }
     }
 }

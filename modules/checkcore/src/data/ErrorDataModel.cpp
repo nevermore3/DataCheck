@@ -651,7 +651,50 @@ namespace kd {
             error->errNodeInfo.emplace_back(errNodeInfo);
             return error;
         }
-
+        shared_ptr<DCLaneGroupCheckError>
+        DCLaneGroupCheckError::createByKXS_03_028(shared_ptr<DCLaneGroup> laneGroup,string daId, shared_ptr<DCCoord> coord) {
+            shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>(CHECK_ITEM_KXS_LG_028);
+            error->checkName = "车道组是否属于虚拟路口检查";
+            error->detail += "车道组[";
+            error->detail += laneGroup->id_;
+            error->detail += "]的IS_VIR需为1（虚拟路口）,";
+            error->detail += "辅助DA为["+daId+"]";
+            error->taskId_ = laneGroup->task_id_;
+            error->flag = laneGroup->flag_;
+            error->coord = make_shared<DCCoord>();
+            shared_ptr<ErrNodeInfo> errNodeInfo;
+            error->coord = coord;
+            errNodeInfo = make_shared<ErrNodeInfo>(error->coord);
+            errNodeInfo->dataId = laneGroup->id_;
+            errNodeInfo->dataType = DATA_TYPE_WAY;
+            errNodeInfo->dataLayer = MODEL_NAME_LANE;
+            error->errNodeInfo.emplace_back(errNodeInfo);
+            return error;
+        }
+        shared_ptr<DCLaneGroupCheckError>
+        DCLaneGroupCheckError::createByKXS_03_029(shared_ptr<DCLaneGroup> laneGroup1,shared_ptr<DCLaneGroup> laneGroup2) {
+        shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>(CHECK_ITEM_KXS_LG_029);
+        error->checkName = "车道组是否属于虚拟路口检查";
+        error->detail += "车道组[";
+        error->detail += laneGroup1->id_;
+        error->detail += "]和车道组[";
+        error->detail += laneGroup2->id_;
+        error->detail += "]都是虚拟路口，不能相连";
+        error->taskId_ = laneGroup1->task_id_;
+        error->flag = laneGroup1->flag_;
+        error->coord = make_shared<DCCoord>();
+        shared_ptr<ErrNodeInfo> errNodeInfo;
+        error->coord = make_shared<DCCoord>();
+        error->coord->x_ = 0;
+        error->coord->y_ = 0;
+        error->coord->z_ = 0;
+        errNodeInfo = make_shared<ErrNodeInfo>(error->coord);
+        errNodeInfo->dataId = laneGroup1->id_;
+        errNodeInfo->dataType = DATA_TYPE_WAY;
+        errNodeInfo->dataLayer = MODEL_NAME_LANE;
+        error->errNodeInfo.emplace_back(errNodeInfo);
+        return error;
+    }
         /////////////////////////////////////////////////////////////////////////////////////////
         // DCLaneGroupTopoCheckError
         /////////////////////////////////////////////////////////////////////////////////////////
@@ -1000,6 +1043,20 @@ namespace kd {
             error->detail += std::to_string(nodeID);
             error->detail += ",LANE_SCH点离LANE的垂直距离超过10cm";
 
+            error->coord = coord;
+            return error;
+        }
+
+        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_023(string lane_id,string divider_id){
+            shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_023);
+            error->checkName = CHECK_ITEM_KXS_LANE_023_DESC;
+            error->checkLevel_ = LEVEL_ERROR;
+            error->detail += "车道中心线 "+lane_id;
+            error->detail += "距离车行道边缘线"+divider_id+"小于1.2米!";
+            shared_ptr<DCCoord> coord = make_shared<DCCoord>();
+            coord->x_=0;
+            coord->y_=0;
+            coord->z_=0;
             error->coord = coord;
             return error;
         }

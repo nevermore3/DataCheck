@@ -9,8 +9,8 @@
 #include <util/CommonCheck.h>
 #include "util/product_shp_util.h"
 #include <shp/ShpData.hpp>
-
-
+#include <util/KDGeoUtil.hpp>
+using namespace kd::automap;
 namespace kd {
     namespace dc {
 
@@ -47,105 +47,185 @@ namespace kd {
                 fIndex = dbfFile.readLongField(i, "F_INDEX");
                 tIndex = dbfFile.readLongField(i, "T_INDEX");
                 if (map_road_lg_index_.find(roadID) == map_road_lg_index_.end()) {
-//                    map<long, vector<long>> mapTIndexLG;
-//                    vector<long>lg;
-//                    lg.push_back(lgID);
-//                    mapTIndexLG.insert(make_pair(tIndex, lg));
-//                    map_road_lg_index_.insert(make_pair(roadID, mapTIndexLG));
-                    map<long, vector<pair<long, long>>> mapToIndexLG;
-                    vector<pair<long,long>> fIndexLG;
-                    fIndexLG.emplace_back(make_pair(fIndex, lgID));
-                    mapToIndexLG.insert(make_pair(tIndex, fIndexLG));
-                    map_road_lg_index_.insert(make_pair(roadID, mapToIndexLG));
+
+                    map<long, vector<pair<long, long>>> mapFromIndexLG;
+                    vector<pair<long,long>> tIndexLG;
+                    tIndexLG.emplace_back(make_pair(tIndex, lgID));
+                    mapFromIndexLG.insert(make_pair(fIndex, tIndexLG));
+                    map_road_lg_index_.insert(make_pair(roadID, mapFromIndexLG));
 
                 } else {
-//                    map<long, vector<long>> &mapTIndexLG = map_road_lg_index_[roadID];
-//                    if (mapTIndexLG.find(tIndex) == mapTIndexLG.end()) {
-//                        vector<long>lg;
-//                        lg.push_back(lgID);
-//                        mapTIndexLG.insert(make_pair(tIndex, lg));
-//                    } else {
-//                        mapTIndexLG[tIndex].push_back(lgID);
-//                    }
-                    map<long, vector<pair<long, long>>> &mapToIndexLG = map_road_lg_index_[roadID];
-                    if (mapToIndexLG.find(tIndex) == mapToIndexLG.end()) {
-                        vector<pair<long, long>> fIndexLG;
-                        fIndexLG.emplace_back(make_pair(fIndex, lgID));
-                        mapToIndexLG.insert(make_pair(tIndex, fIndexLG));
+
+                    map<long, vector<pair<long, long>>> &mapFromIndexLG = map_road_lg_index_[roadID];
+                    if (mapFromIndexLG.find(fIndex) == mapFromIndexLG.end()) {
+                        vector<pair<long, long>> tIndexLG;
+                        tIndexLG.emplace_back(make_pair(tIndex, lgID));
+                        mapFromIndexLG.insert(make_pair(fIndex, tIndexLG));
                     } else {
-                        mapToIndexLG[tIndex].emplace_back(make_pair(fIndex, lgID));
+                        mapFromIndexLG[fIndex].emplace_back(make_pair(tIndex, lgID));
                     }
                 }
             }
             return true;
         }
 
-        vector<shared_ptr<DCCoord>> GetRelevantDivider(long roadID) {
-            //
+        map<long, pair<long, long>> RoadCheck::GetLaneGroupsIndex(long roadID) {
+            /*
+             * 进入和退出虚拟路口的lanegroup 丢弃
+             */
+            map<long, pair<long, long>> fromToIndexLG;
+            if (map_road_lg_index_.find(roadID) == map_road_lg_index_.end()) {
+                return fromToIndexLG;
+            }
+            map<long, vector<pair<long, long>>> roadLaneGroup = map_road_lg_index_[roadID];
+            auto iter = roadLaneGroup.begin();
+            // 去除进入虚拟路口的laneGroup
+            while (iter->second.size() != 1) {
+                iter++;
+            }
+
+            long start = iter->first;
+            while (iter != roadLaneGroup.end()) {
+                // 去除退出虚拟路口的laneGroup
+                if (iter->second.size() == 1 && iter->first == start) {
+                    fromToIndexLG.insert(make_pair(iter->first, make_pair(iter->second.front().first, iter->second.front().second)));
+                    start = iter->second.front().first;
+                }
+                iter++;
+            }
+            return fromToIndexLG;
         }
 
-        shared_ptr<DCDivider> RoadCheck::GetRelevantDivider(long roadID, long roadIndex) {
-            // get relevant lanegroup
-            if (map_road_lg_index_.find(roadID) == map_road_lg_index_.end()) {
-                return nullptr;
+
+
+        void RoadCheck::DoNode2DividerSlope(long lgID, long fromIndex, long toIndex, vector<shared_ptr<DCSCHInfo>> &nodes,
+                                            shared_ptr<CheckErrorOutput> &errorOutput) {
+
+            if (map_data_manager_->laneGroups_.find(to_string(lgID)) == map_data_manager_->laneGroups_.end()) {
+                return;
             }
-            map<long, vector<pair<long, long>>>mapToIndexLG = map_road_lg_index_[roadID];
-            long lgID = 0;
-            for (const auto &iter : mapToIndexLG) {
-                if (iter.first > roadIndex) {
-                    // 可能对应路口虚拟组
-                    if (iter.second.size() > 1) {
-                        return nullptr;
+            double threshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::NODE_RELEVANT_OBJ_SLOPE_ERROR);
+            auto laneGroup = map_data_manager_->laneGroups_[to_string(lgID)];
+            vector<shared_ptr<DCDivider>> dividers;
+            for (const auto &lane : laneGroup->lanes_) {
+                dividers.push_back(lane->leftDivider_);
+                //dividers.push_back(lane->rightDivider_);
+            }
+            // adasnode 在该lanegroup中的起始位置
+            long start = 0;
+            // adasnode 在该lanegroup中的终止位置
+            long end = 0;
+            long tempIndex = 0;
+            while (tempIndex < nodes.size()) {
+                if (nodes[tempIndex]->obj_index_ == fromIndex) {
+                    start = tempIndex;
+                    break;
+                }
+                tempIndex++;
+            }
+
+            while (tempIndex < nodes.size()) {
+                if (nodes[tempIndex]->obj_index_ == toIndex) {
+                    end = tempIndex;
+                    if (tempIndex < nodes.size() - 1 && nodes[tempIndex + 1]->obj_index_ != toIndex) {
+                        break;
                     }
-                    lgID = iter.second.front().second;
+                }
+                tempIndex++;
+            }
+            // adasnode点 距离 divider小于50厘米 就认为关联此divider
+            double distance = 50;
+
+            shared_ptr<DCDivider>divider = dividers.front();
+            char zone[8] = {0};
+            auto nodeCoord = GeosObjUtil::create_coordinate(nodes[start]->coord_, zone);
+            double PtA[2] = {nodeCoord->x,  nodeCoord->y};
+            double PtB[2] = {0};
+            double PtC[4] = {0};
+            int index = 0;
+            for (const auto & iter : dividers) {
+                double dis = KDGeoUtil::pt2LineDist(const_cast<CoordinateSequence*>(iter->line_->getCoordinatesRO()),
+                                                    PtA, PtB, PtC, index);
+                if (dis < distance) {
+                    divider = iter;
                     break;
                 }
             }
-            if (lgID == 0) {
-                return nullptr;
+
+            for (size_t i = start; i <= end; i++) {
+                nodeCoord = GeosObjUtil::create_coordinate(nodes[i]->coord_, zone);
+                PtA[0] = nodeCoord->x;
+                PtA[1] = nodeCoord->y;
+
+                double dis = KDGeoUtil::pt2LineDist(const_cast<CoordinateSequence*>(divider->line_->getCoordinatesRO()),
+                                                    PtA, PtB, PtC, index);
+                if (dis > distance) {
+                    //重新选择divider
+                    double minDistance = DBL_MAX;
+                    for (const auto &iter : dividers) {
+                        dis = KDGeoUtil::pt2LineDist(const_cast<CoordinateSequence*>(iter->line_->getCoordinatesRO()),
+                                                     PtA, PtB, PtC, index);
+                        if (dis < distance) {
+                            divider = iter;
+                            break;
+                        }
+                        if (dis < minDistance) {
+                            minDistance = dis;
+                            divider = iter;
+                        }
+                    }
+                }
+                shared_ptr<DCCoord>coordA = nullptr;
+                shared_ptr<DCCoord>coordB = nullptr;
+                // 比较adas node点和关联divider 最近两个点的坡度
+                if (index >= divider->nodes_.size() - 1) {
+                    coordA = divider->nodes_[index - 1]->coord_;
+                    coordB = divider->nodes_[index]->coord_;
+                } else {
+                    coordA = divider->nodes_[index]->coord_;
+                    coordB = divider->nodes_[index + 1]->coord_;
+                }
+
+                double distanceAB = GeosObjUtil::get_length_of_node(coordA, coordB);
+                double avgSlope = (coordB->z_ - coordA->z_) / distanceAB;
+                double diffSlope = fabs(avgSlope - nodes[i]->slope_);
+                if (diffSlope > threshold) {
+                    auto error = DCSCHInfoError::createByKXS_01_035("ADAS_NODE", stol(divider->id_), i,
+                                                                    nodes[i]->slope_, avgSlope, threshold);
+                    errorOutput->saveError(error);
+                }
+
             }
-
-            string strLGID = to_string(lgID);
-            map<string, shared_ptr<DCLaneGroup>>laneGroups = map_data_manager_->laneGroups_;
-            shared_ptr<DCLaneGroup> laneGroup = nullptr;
-            if (laneGroups.find(strLGID) == laneGroups.end()) {
-                return nullptr;
-            }
-            laneGroup = laneGroups[strLGID];
-            vector<shared_ptr<DCLane>> lanes = laneGroup->lanes_;
-            shared_ptr<DCLane> lane = lanes[lanes.size() / 2];
-
-            return lane->leftDivider_;
-
-
-
         }
 
+        /*
+         * 每个AdasNode点的坡度和关联的Divider对象中距离最近的两个形点计算出的坡度对比
+         */
         void RoadCheck::AdasNodeRelevantDividerSlope(shared_ptr<CheckErrorOutput> &errorOutput) {
-            //形点索引
-            long index = 0;
 
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_ORG_035;
+            size_t  total = 0;
+            //形点索引
             for (const auto &adasNode : map_obj_schs_) {
                 long roadID = adasNode.first;
-                vector<shared_ptr<DCSCHInfo>>nodes = adasNode.second;
-                size_t size = nodes.size();
-                if (size <= 2) {
-                    index = nodes.front()->obj_index_;
-                } else {
-                    index = nodes[size / 2]->obj_index_;
-                }
-
-
-                auto divider = GetRelevantDivider(roadID, index);
-                if (divider->id_ == "2147483550") {
-                    cout<<"h";
-                }
-                if (divider == nullptr) {
+                vector<shared_ptr<DCSCHInfo>> nodes = adasNode.second;
+                total += nodes.size();
+                // 得到和该roadID想关联的laneGroup集合
+                map<long, pair<long, long>> mapLgIndex = GetLaneGroupsIndex(roadID);
+                if (mapLgIndex.empty()) {
                     continue;
                 }
-                SCHNodeRelevantObjectSlope(stol(divider->id_), nodes, divider->nodes_, errorOutput);
-            }
 
+                for (const auto &iter : mapLgIndex) {
+                    long lgID = iter.second.second;
+                    long fromIndex = iter.first;
+                    long toIndex = iter.second.first;
+                    DoNode2DividerSlope(lgID, fromIndex, toIndex, nodes, errorOutput);
+                }
+            }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
         }
 
         bool RoadCheck::execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) {

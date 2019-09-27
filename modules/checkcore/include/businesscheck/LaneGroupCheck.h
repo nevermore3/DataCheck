@@ -33,8 +33,10 @@ private:
      * 车道组与DIVIDER关系检查
      */
     void Check_kxs_03_004();
-
-
+    /**
+     * 车道组是否属于虚拟路口检查
+     */
+    void check_kxs_03_028_029();
     /**
      * 车道组编号检查
      * @param mapDataManager
@@ -55,6 +57,8 @@ private:
      * @param ptr_dividers
      */
     void check_divider_length(const string &lane_group, const vector<shared_ptr<DCDivider>> &ptr_dividers);
+
+    bool checkDaTypeAndVirtual(long type_,long virtual_,long is_vir_);
 private:
     string id_ = "lane_group_check";
 };

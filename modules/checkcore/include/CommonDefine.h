@@ -144,7 +144,8 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_LG_025 = "KXS-03-025";
         const static std::string CHECK_ITEM_KXS_LG_026 = "KXS-03-026";
         const static std::string CHECK_ITEM_KXS_LG_027 = "KXS-03-027";
-
+        const static std::string CHECK_ITEM_KXS_LG_028 = "KXS-03-028";
+        const static std::string CHECK_ITEM_KXS_LG_029 = "KXS-03-029";
 
         const static std::string CHECK_ITEM_KXS_LG_001_DESC = "同一个车道组内，单根车道线的长度同组内车道线平均长度不应该偏差超过";
         const static std::string CHECK_ITEM_KXS_LG_002_DESC = "分组中车道编号从零开始，从内向外递增。编号连续，不缺失，不重复";
@@ -173,7 +174,7 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_LG_025_DESC = "车道编号检查";
         const static std::string CHECK_ITEM_KXS_LG_026_DESC = "DIVIDER对应DA属性检查";
         const static std::string CHECK_ITEM_KXS_LG_027_DESC = "车道组没有打断，不应该存在既是入口又是出口的组";
-
+        const static std::string CHECK_ITEM_KXS_LG_028_DESC = "车道组是否属于虚拟路口检查";
 
 
         // 道路检查
@@ -219,6 +220,7 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_LANE_020 = "KXS-05-020";
         const static std::string CHECK_ITEM_KXS_LANE_021 = "KXS-05-021";
         const static std::string CHECK_ITEM_KXS_LANE_022 = "KXS-05-022";
+        const static std::string CHECK_ITEM_KXS_LANE_023 = "KXS-05-023";
 
         const static std::string CHECK_ITEM_KXS_LANE_001_DESC = "如果车道组之间是“封闭”的，则车道组之间的车道不会存在孤立的车道";
         const static std::string CHECK_ITEM_KXS_LANE_002_DESC = "车道中心线与车道线在5米内不能存在两个交点（只检查组内车道线有共点的做检查）";
@@ -242,6 +244,7 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_LANE_020_DESC = "LANE点完备性检查";
         const static std::string CHECK_ITEM_KXS_LANE_021_DESC = "";
         const static std::string CHECK_ITEM_KXS_LANE_022_DESC = "LANE_SCH与关联LANE距离检查";
+        const static std::string CHECK_ITEM_KXS_LANE_023_DESC = "车道中心线与车行道边缘线距离检查";
 
 
         // 定位目标

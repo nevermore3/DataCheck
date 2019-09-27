@@ -29,7 +29,7 @@ namespace kd {
             bool CheckForeignKey(shared_ptr<ModelDataManager> modelDataManager,
                                  shared_ptr<CheckErrorOutput> errorOutput,
                                  string modelName);
-
+            void PreCheck();
         private:
             const string id_ = "foreign key check";
 

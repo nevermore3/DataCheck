@@ -479,26 +479,31 @@ namespace kd {
             checkItemInfo->checkId = CHECK_ITEM_KXS_LANE_023;
             checkItemInfo->totalNum = map_data_manager_->laneGroups_.size() * 2;
             errorOutput->addCheckItemInfo(checkItemInfo);
-
             auto lanegroup = map_data_manager_->laneGroups_;
             for(auto groupItem:lanegroup){
-
                 ///车道组最左侧车道线检查
                 auto firstLane = groupItem.second->lanes_[0];
-                shared_ptr<geos::geom::Geometry> geom_buffer(firstLane->line_->buffer(lane_to_edge_die_buffer));
-                bool res = KDGeoUtil::isLineInBuffer(firstLane->line_.get(),geom_buffer.get(),firstLane->leftDivider_->line_.get(),10);
-                if(res){
-                    auto error = DCLaneError::createByKXS_05_023(firstLane->id_,firstLane->leftDivider_->id_);
-                    errorOutput->saveError(error);
-                }
+                checkLaneDividerDis(firstLane,firstLane->rightDivider_,errorOutput);
                 ///车道组最右侧车道线检查
                 auto lastLane = groupItem.second->lanes_[ groupItem.second->lanes_.size()-1];
-                shared_ptr<geos::geom::Geometry> last_geom_buffer(lastLane->line_->buffer(lane_to_edge_die_buffer));
-                res = KDGeoUtil::isLineInBuffer(lastLane->line_.get(),last_geom_buffer.get(),lastLane->rightDivider_->line_.get(),10);
-                if(res){
-                    auto error = DCLaneError::createByKXS_05_023(lastLane->id_,lastLane->rightDivider_->id_);
-                    errorOutput->saveError(error);
+                checkLaneDividerDis(lastLane,lastLane->rightDivider_,errorOutput);
+            }
+        }
+        void LaneCheck::checkLaneDividerDis(shared_ptr<DCLane> lane,shared_ptr<DCDivider> divider,shared_ptr<CheckErrorOutput> &errorOutput){
+            if(divider->atts_.size()>0){
+                long type = divider->atts_[0]->type_;
+                ///应急车道
+                if(type == 36){
+                    lane_to_edge_die_buffer = 0.9;
+                } else {
+                    lane_to_edge_die_buffer = 1.2;
                 }
+            }
+            shared_ptr<geos::geom::Geometry> last_geom_buffer(lane->line_->buffer(lane_to_edge_die_buffer));
+            bool res = KDGeoUtil::isLineInBuffer(lane->line_.get(),last_geom_buffer.get(),divider->line_.get(),10);
+            if(res){
+                auto error = DCLaneError::createByKXS_05_023(lane->id_,divider->id_,lane_to_edge_die_buffer);
+                errorOutput->saveError(error);
             }
         }
 

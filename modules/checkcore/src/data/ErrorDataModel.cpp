@@ -936,6 +936,12 @@ namespace kd {
             error->sourceId = divider_id;
             error->taskId_ = taskid;
             error->dataKey_ = dataKey;
+            if(coord == nullptr){
+                coord = make_shared<DCCoord>();
+                coord->x_ = 0;
+                coord->y_ = 0;
+                coord->z_ = 0;
+            }
             error->coord = coord;
             shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(coord);
             errNodeInfo->dataType = DATA_TYPE_NODE;

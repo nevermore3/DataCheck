@@ -93,7 +93,7 @@ namespace kd {
              */
             bool lane_divider_intersect(const shared_ptr<MapDataManager> &mapDataManager,
                                         const shared_ptr<DCLane> &ptr_lane,
-                                        const shared_ptr<DCDivider> &ptr_divider,CoordinateSequence *intersections);
+                                        const shared_ptr<DCDivider> &ptr_divider,CoordinateSequence **intersections);
 
             /**
              * lane与divider多个交点情况

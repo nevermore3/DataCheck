@@ -1,4 +1,5 @@
 //module
+#include <businesscheck/PolylineCheck.h>
 #include "data/DataManager.h"
 #include "storage/CheckTaskInput.h"
 #include "storage/ModelDataInput.h"
@@ -205,6 +206,10 @@ int AllAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, const string& 
     // divider检查
     shared_ptr<DividerCheck> dividerCheck = make_shared<DividerCheck>("HD_DIVIDER_SCH");
     map_process_manager->registerProcessor(dividerCheck);
+
+//    shared_ptr<PolylineCheck> polylineCheck = make_shared<PolylineCheck>();
+//    map_process_manager->registerProcessor(polylineCheck);
+
 
     //执行已注册检查项
     shared_ptr<MapDataManager> mapDataManager = make_shared<MapDataManager>();

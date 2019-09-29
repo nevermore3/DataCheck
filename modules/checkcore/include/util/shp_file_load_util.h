@@ -20,6 +20,7 @@
 using namespace std;
 using namespace kd::dc;
 class ShpFileLoad {
+public:
     /**
      * 获取线要素对象
      * @param type  线对象类型
@@ -30,7 +31,7 @@ class ShpFileLoad {
      */
     static void GetPolyline(long type,std::map<string,shared_ptr<DCPolyline>> &polylines);
 
-
+    static void GetRLoRoad(long type,set<string> line_id,map<string,shared_ptr<DCRLORoad>> &r_lo_road);
 };
 
 

@@ -290,10 +290,10 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_NORM_002_DESC = "坡度变化的平滑检查";
         const static std::string CHECK_ITEM_KXS_NORM_003_DESC = "";
 
-        const static std::string ID = "ID";
-        const static std::string DIVIDER_ID = "DIVIDER_ID";
-        const static std::string DIVIDER_NODE_ID = "DIVIDER_NODE_ID";
+        ///polyine类型数据相关检查
+        const static std::string CHECK_ITEM_KXS_LINE_001 ="KXS-11-01";
 
+        const static std::string CHECK_ITEM_KXS_LINE_001_DESC = "停止线与道路的关联关系正确性检查";
 
     }
 }

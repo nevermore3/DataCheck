@@ -77,9 +77,9 @@ namespace kd {
                                     if (CheckItemValid(CHECK_ITEM_KXS_LANE_013) && check) {
                                         shared_ptr<DCLaneCheckError> error =
                                                 DCLaneCheckError::createByNode(CHECK_ITEM_KXS_LANE_013, lane, nullptr);
-                                        error->errorDesc_ = "lane_id:";
-                                        error->errorDesc_ += lane->id_;
-                                        error->errorDesc_ += "没有退出车道连接";
+                                        error->detail_ = "lane_id:";
+                                        error->detail_ += lane->id_;
+                                        error->detail_ += "没有退出车道连接";
                                         error->checkName = "没有退出车道,divider拓扑存在,检查lane_connectivity是否正确";
                                         errorOutput->saveError(error);
                                     }
@@ -106,9 +106,9 @@ namespace kd {
                                     if (CheckItemValid(CHECK_ITEM_KXS_LANE_014) && check) {
                                         shared_ptr<DCLaneCheckError> error =
                                                 DCLaneCheckError::createByNode(CHECK_ITEM_KXS_LANE_014, lane, nullptr);
-                                        error->errorDesc_ = "lane_id:";
-                                        error->errorDesc_ += lane->id_;
-                                        error->errorDesc_ += "没有进入车道连接";
+                                        error->detail_ = "lane_id:";
+                                        error->detail_ += lane->id_;
+                                        error->detail_ += "没有进入车道连接";
                                         error->checkName = "没有进入车道,divider拓扑存在,检查lane_connectivity是否正确";
                                         errorOutput->saveError(error);
                                     }
@@ -134,9 +134,9 @@ namespace kd {
                             if (CheckItemValid(CHECK_ITEM_KXS_LANE_012) && (!is_emergency)) {
                                 shared_ptr<DCLaneCheckError> error =
                                         DCLaneCheckError::createByNode(CHECK_ITEM_KXS_LANE_012, lane, nullptr);
-                                error->errorDesc_ = "lane_id:";
-                                error->errorDesc_ += lane->id_;
-                                error->errorDesc_ += "孤立车道,没有进入车道和退出车道";
+                                error->detail_ = "lane_id:";
+                                error->detail_ += lane->id_;
+                                error->detail_ += "孤立车道,没有进入车道和退出车道";
                                 error->checkName = "孤立车道,没有进入和退出车道连接,并且没有标注应急车道属性";
                                 errorOutput->saveError(error);
                             }

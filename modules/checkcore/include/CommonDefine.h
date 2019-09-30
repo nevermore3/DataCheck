@@ -86,7 +86,7 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ORG_003_DESC = "多边形形态错误";
         const static std::string CHECK_ITEM_KXS_ORG_004_DESC = "几何数据坐标值异常检查";
         const static std::string CHECK_ITEM_KXS_ORG_005_DESC = "";
-        const static std::string CHECK_ITEM_KXS_ORG_006_DESC = "";
+        const static std::string CHECK_ITEM_KXS_ORG_006_DESC = "检查车道线节点间距判定是否中间有虚线丢失";
         const static std::string CHECK_ITEM_KXS_ORG_007_DESC = "车道分割线黄白线变化不一致";
         const static std::string CHECK_ITEM_KXS_ORG_008_DESC = "车行道边缘线在非停止线/出入口标线的地方断开";
         const static std::string CHECK_ITEM_KXS_ORG_009_DESC = "非路口虚拟线的车道线未构成车道";

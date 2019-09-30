@@ -1,0 +1,54 @@
+{
+  "model" : "LG_ROADNODE_INDEX",
+  "checks" : [
+    {
+      "name":"ID",
+      "func":"ID",
+      "refValue":""
+    }
+  ],
+  "fields" : [
+    {
+      "defaultValue" : "",
+      "inputLimit" : "1",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "LG_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "ROAD_ID",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "F_INDEX",
+      "type" : "1",
+      "valueLimit" : ""
+    },
+    {
+      "defaultValue" : "",
+      "inputLimit" : "",
+      "inputType" : "",
+      "lenLimit" : "0",
+      "name" : "T_INDEX",
+      "type" : "1",
+      "valueLimit" : ""
+    }
+  ],
+  "members" : [
+  ],
+  "relation" : [
+  ],
+  "relationcheck" : [
+  ]
+}

@@ -94,7 +94,7 @@ void DividerShapeDefectCheck::checkShapeDefect(
             stringstream ss;
             ss << "node_id:" << node1->id_ << "与node_id:" << node2->id_
                << "距离" << distance << "米";
-            error->errorDesc_ = ss.str();
+            error->detail_ = ss.str();
             error->checkLevel_ = LEVEL_WARNING;
 
             error_output()->saveError(error);

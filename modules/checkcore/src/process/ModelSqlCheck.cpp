@@ -43,7 +43,7 @@ namespace kd {
                                             dcItem.ID);
                                     sql_check_error->checkName = dcItem.Info;
                                     sql_check_error->checkLevel_ = dcItem.Level;
-                                    sql_check_error->detail = detail;
+                                    sql_check_error->detail_ = detail;
                                     errorOutput->saveError(sql_check_error);
                                 }
                             }

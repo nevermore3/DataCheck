@@ -147,6 +147,8 @@ namespace kd {
             shared_ptr<MapDataManager> map_data_manager_;
             //车道组到中心线到边线最小距离
             double lane_to_edge_die_buffer = 1.2;
+            ///set<lane_id_lane_id>
+            set <string> error_set;
         };
     }
 }

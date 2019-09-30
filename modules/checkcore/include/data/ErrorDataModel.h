@@ -420,8 +420,7 @@ namespace kd {
             static shared_ptr<DCLaneError> createByKXS_05_003(const string taskid,const string dataKey,const string dataType,const string dataLayer,shared_ptr<DCCoord>  coord,const string &lane_id,
                                                               const string &divider_id);
 
-            static shared_ptr<DCLaneError> createByKXS_05_015(const string &lane_id1,
-                                                              const string &lane_id2);
+            static shared_ptr<DCLaneError> createByKXS_05_015(const string &lane_id1,const string &lane_id2,const shared_ptr<DCCoord> coord);
 
             static shared_ptr<DCLaneError> createByKXS_05_016(const string &lane_id,
                                                               const vector<shared_ptr<NodeError>> &ptr_error_nodes);

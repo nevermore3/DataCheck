@@ -163,6 +163,18 @@ namespace kd {
             }
         }
 
+        bool GeosObjUtil::has_same_coord(CoordinateSequence *line,Coordinate coord){
+            int size = line->size();
+            bool res;
+            for(int i=0;i<size;i++){
+                 res = GeosObjUtil::is_same_coord(line->getAt(i),coord,0.01);
+                 if(res){
+                     return true;
+                 }
+            }
+            return false;
+        }
+
         bool GeosObjUtil::is_same_coord(const shared_ptr<DCCoord> &coord1, const shared_ptr<DCCoord> &coord2,
                                         double precise) {
             if (fabs(coord1->x_ - coord2->x_) < precise && fabs(coord1->y_ - coord2->y_) < precise &&

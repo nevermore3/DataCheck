@@ -950,15 +950,15 @@ namespace kd {
             return error;
         }
 
-        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_015(const string &lane_id1, const string &lane_id2) {
-            shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_015);
+        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_015(const string &lane_id1, const string &lane_id2,shared_ptr<DCCoord> coord) {
+            shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_015 );
             error->checkLevel_ = LEVEL_ERROR;
             error->checkName = "检查同组内中心线与中心线是否存在交叉问题（组内有共点的中心线做检查）。";
             error->detail += "lane_id:";
             error->detail += lane_id1;
             error->detail += ",lane_id:";
             error->detail += lane_id2;
-            error->detail += "有交点";
+            error->detail += "有交点："+to_string(coord->x_)+","+to_string(coord->y_);
 
             return error;
         }

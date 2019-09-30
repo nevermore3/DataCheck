@@ -68,7 +68,7 @@ namespace kd {
              */
             static bool is_same_coord(const shared_ptr<DCCoord> &coord1, const shared_ptr<DCCoord> &coord2,
                                       double precise = 0.0000001);
-
+            static bool has_same_coord(CoordinateSequence *line,Coordinate coord);
             /**
              * 在线上找到指定距离的插值点
              * @param line 参考线对象

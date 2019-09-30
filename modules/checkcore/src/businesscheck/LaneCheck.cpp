@@ -237,7 +237,7 @@ namespace kd {
                     ptr_same_node_lanes.emplace_back(ptr_left_lane);
                     for (int i = 1; i < ptr_lanes.size(); i++) {
                         if (ptr_left_lane && ptr_lanes[i]) {
-                            // 如果首点相同
+                            // 如果尾点相同
                             if (GeosObjUtil::is_same_coord(ptr_left_lane->coords_.back(),
                                                            ptr_lanes[i]->coords_.back())) {
                                 ptr_same_node_lanes.emplace_back(ptr_lanes[i]);
@@ -260,15 +260,6 @@ namespace kd {
                                         const shared_ptr<CheckErrorOutput> &errorOutput,
                                         const vector<shared_ptr<DCLane>> &ptr_lanes) {
             char zone[8] = {0};
-            auto ptr_f_coord = GeosObjUtil::create_coordinate(ptr_lanes.front()->coords_.front(), zone);
-            auto ptr_t_coord = GeosObjUtil::create_coordinate(ptr_lanes.front()->coords_.back(), zone);
-
-            if (ptr_f_coord == nullptr) {
-                return;
-            }
-            if (ptr_t_coord == nullptr) {
-                return;
-            }
 
             for (int i = 0; i < ptr_lanes.size() - 1; i++) {
                 for (int j = i + 1; j < ptr_lanes.size(); j++) {
@@ -277,17 +268,24 @@ namespace kd {
                     auto ptr_intersects_geos = ptr_left_line->intersection(ptr_right_line.get());
                     auto coord_size = ptr_intersects_geos->getCoordinates()->size();
                     if (coord_size > 1 && coord_size < 4) {
+
                         auto ptr_intersect_coords = ptr_intersects_geos->getCoordinates();
                         for (int k = 0; k < ptr_intersect_coords->size(); k++) {
                             // 如果不是第一个点
-                            if (!GeosObjUtil::is_same_coord(*ptr_f_coord.get(), ptr_intersect_coords->getAt(k)) &&
-                                !GeosObjUtil::is_same_coord(*ptr_t_coord.get(), ptr_intersect_coords->getAt(k))) {
-                                auto ptr_error = DCLaneError::createByKXS_05_015(ptr_lanes[i]->id_, ptr_lanes[j]->id_);
+                            CoordinateSequence *line_i = ptr_left_line->getCoordinates();
+                            CoordinateSequence *line_j = ptr_right_line->getCoordinates();
+                            bool same_i = GeosObjUtil::has_same_coord(line_i,ptr_intersect_coords->getAt(k));
+                            bool same_j = GeosObjUtil::has_same_coord(line_j,ptr_intersect_coords->getAt(k));
+                            if (! same_i && !same_j) {
+
+                                GeosObjUtil::create_coordinate(ptr_lanes[i]->coords_[0], zone,true);
+                                shared_ptr<DCCoord> coord  = GeosObjUtil::get_coord(make_shared<geos::geom::Coordinate>(ptr_intersect_coords->getAt(k)),zone,true);
+
+                                auto ptr_error = DCLaneError::createByKXS_05_015(ptr_lanes[i]->id_, ptr_lanes[j]->id_,coord );
 
                                 ptr_error->taskId_ = ptr_lanes[i]->task_id_;
                                 ptr_error->flag = ptr_lanes[i]->flag_;
                                 ptr_error->dataKey_ = DATA_TYPE_LANE+ptr_lanes[i]->task_id_+DATA_TYPE_LAST_NUM;
-
                                 errorOutput->saveError(ptr_error);
                             }
                         }

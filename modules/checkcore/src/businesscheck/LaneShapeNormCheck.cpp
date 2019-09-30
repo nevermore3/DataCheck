@@ -170,7 +170,7 @@ namespace kd {
                             error->checkName = "车道面和其他车道面相交";
                             stringstream ss;
                             ss << "lane_id:" << curLane->id_ << "与lane_id:" << nxtLane->id_ << "相交";
-                            error->errorDesc_ = ss.str();
+                            error->detail_ = ss.str();
                             errorOutput->saveError(error);
                         }
                     }
@@ -284,7 +284,7 @@ namespace kd {
                     stringstream ss;
                     ss << "lane_id:" << lane->id_ << ",left_divider:" << lane->leftDivider_->id_ << ",right_divider:"
                        << lane->rightDivider_->id_;
-                    error->errorDesc_ = ss.str();
+                    error->detail_ = ss.str();
                     errorOutput->saveError(error);
                     lane->valid_ = false;
                 }
@@ -346,7 +346,7 @@ namespace kd {
                                 stringstream ss;
                                 ss << "divider:" << rightDiv->id_ << ",nodeid:" << dcNode->id_ << "与divider:"
                                    << leftDiv->id_ << "距离" << length;
-                                error->errorDesc_ = ss.str();
+                                error->detail_ = ss.str();
 
                                 errorOutput->saveError(error);
                                 break;
@@ -385,7 +385,7 @@ namespace kd {
                                 stringstream ss;
                                 ss << "divider:" << rightDiv->id_ << "，nodeid:" << dcNode->id_ << "与divider:"
                                    << leftDiv->id_ << "距离" << length;
-                                error->errorDesc_ = ss.str();
+                                error->detail_ = ss.str();
 
                                 errorOutput->saveError(error);
                                 break;

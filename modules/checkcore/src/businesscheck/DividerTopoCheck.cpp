@@ -123,7 +123,7 @@ namespace kd {
                 error->checkName = "车行道边缘线在非停止线/出入口标线的地方断开";
                 stringstream ss;
                 ss << "divider:" << div->id_ << ",from node_id:" << fromNodeId << "断开.";
-                error->errorDesc_ = ss.str();
+                error->detail_ = ss.str();
                 errorOutput->saveError(error);
             }
 
@@ -135,7 +135,7 @@ namespace kd {
                 error->checkName = "车行道边缘线在非停止线/出入口标线的地方断开";
                 stringstream ss;
                 ss << "divider:" << div->id_ << ",from node_id:" << fromNodeId << "断开.";
-                error->errorDesc_ = ss.str();
+                error->detail_ = ss.str();
                 errorOutput->saveError(error);
             }
         }
@@ -227,9 +227,9 @@ namespace kd {
                     shared_ptr<DCDividerCheckError> error =
                             DCDividerCheckError::createByNode(CHECK_ITEM_KXS_ORG_009, div, nullptr);
                     error->checkName = "非路口虚拟线的车道线未构成车道";
-                    error->errorDesc_ = "divider:";
-                    error->errorDesc_ += div->id_;
-                    error->errorDesc_ += "没有构成车道";
+                    error->detail_ = "divider:";
+                    error->detail_ += div->id_;
+                    error->detail_ += "没有构成车道";
                     errorOutput->saveError(error);
                 }
             }
@@ -310,7 +310,7 @@ namespace kd {
             error->checkName = "共点的车道线通行方向冲突";
             stringstream ss;
             ss << "divider_node:" << topoNode->nodeId_ << " has no TDNODE relation.";
-            error->errorDesc_ = ss.str();
+            error->detail_ = ss.str();
 
             errorOutput->saveError(error);
         }

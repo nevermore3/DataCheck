@@ -140,7 +140,7 @@ namespace kd {
                         error->checkName = "DIVIDER的FDNODE与TDNODE应该是实际的首尾点";
                         stringstream ss;
                         ss << "divider:" << divider->id_ << ",from node_id:" << divider->fromNodeId_ << "标记错误";
-                        error->errorDesc_ = ss.str();
+                        error->detail_ = ss.str();
                         error_output_->saveError(error);
                     }
 
@@ -151,7 +151,7 @@ namespace kd {
                         error->checkName = "DIVIDER的FDNODE与TDNODE应该是实际的首尾点";
                         stringstream ss;
                         ss << "divider:" << divider->id_ << ",to node_id:" << divider->fromNodeId_ << "标记错误";
-                        error->errorDesc_ = ss.str();
+                        error->detail_ = ss.str();
                         error_output_->saveError(error);
                     }
                     dividers.insert(make_pair(divider->id_, divider));

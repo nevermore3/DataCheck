@@ -235,7 +235,7 @@ void DividerAttribCheck::Check_kxs_01_014(){
                     ss << "divider:" << div->id_;
                     ss << ",divider color & type not match. color:" << att->color_ << ",type:";
                     ss << att->type_;
-                    error->errorDesc_ = ss.str();
+                    error->detail_ = ss.str();
 
                     error_output()->saveError(error);
                 }
@@ -259,7 +259,7 @@ void DividerAttribCheck::Check_kxs_01_014(){
                     ss << "divider:" << div->id_;
                     ss << "divider driverule & type not match. driveRule:" << att->driveRule_ << ",type:";
                     ss << att->type_;
-                    error->errorDesc_ = ss.str();
+                    error->detail_ = ss.str();
                     error_output()->saveError(error);
                 }
             }
@@ -288,8 +288,8 @@ void DividerAttribCheck::Check_kxs_01_015() {
                 //车道线没有属性变化点
                 shared_ptr<DCDividerCheckError> error =
                         DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_015, div, nullptr);
-                error->errorDesc_ = "divider:";
-                error->errorDesc_ += div->id_;
+                error->detail_ = "divider:";
+                error->detail_ += div->id_;
                 error->checkName = "车道线没有属性变化点";
                 error_output()->saveError(error);
                 continue;
@@ -313,8 +313,8 @@ void DividerAttribCheck::Check_kxs_01_015() {
                     //车道线起点没有属性变化点
                     shared_ptr<DCDividerCheckError> error =
                             DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_015, div, nullptr);
-                    error->errorDesc_ = "divider:";
-                    error->errorDesc_ += div->id_;
+                    error->detail_ = "divider:";
+                    error->detail_ += div->id_;
                     error->checkName = "车道线起点没有属性变化点";
                     error_output()->saveError(error);
                     continue;
@@ -331,8 +331,8 @@ void DividerAttribCheck::Check_kxs_01_015() {
                     //车道线起点和终点都有属性变化点
                     shared_ptr<DCDividerCheckError> error =
                             DCDividerCheckError::createByAtt(CHECK_ITEM_KXS_ORG_015, div, nullptr);
-                    error->errorDesc_ = "divider:";
-                    error->errorDesc_ += div->id_;
+                    error->detail_ = "divider:";
+                    error->detail_ += div->id_;
                     error->checkName = "车道线起点和终点都有属性变化点";
                     error_output()->saveError(error);
                     continue;
@@ -368,7 +368,7 @@ void DividerAttribCheck::Check_kxs_01_016(){
                 stringstream ss;
                 ss << "divider:" << div->id_;
                 ss << ",da_id:"<< da1->id_ << "与da_id:" << da2->id_ << "属性相同";
-                error->errorDesc_ = ss.str();
+                error->detail_ = ss.str();
                 error_output()->saveError(error);
             }
         }
@@ -424,7 +424,7 @@ void DividerAttribCheck::Check_kxs_01_017(){
                 ss << "divider:" << div->id_;
                 ss << ",da_id:"<< da1->id_ << "与da_id:" << da2->id_ << "距离"
                    << distance << "米";
-                error->errorDesc_ = ss.str();
+                error->detail_ = ss.str();
                 error_output()->saveError(error);
             }
         }
@@ -482,7 +482,7 @@ void DividerAttribCheck::CheckDivCompatibility(shared_ptr<DCDivider> div,
                        << div->atts_[j - 1]->type_;
                     ss << "第二个属性索引点：" << j << ",type: "
                        << div->atts_[j]->type_;
-                    error->errorDesc_ = ss.str();
+                    error->detail_ = ss.str();
                     error->coord = div->atts_[j-1]->dividerNode_->coord_;
                     shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(div->atts_[j-1]->dividerNode_->coord_);
                     errNodeInfo->dataId = div->atts_[j-1]->dividerNode_->id_;

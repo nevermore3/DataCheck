@@ -100,7 +100,7 @@
       },
       {
         "fileName": "HD_TOPO_LANEGROUP",
-        "fileType": "dbf",
+        "fileType": "shp",
         "modelName": "HD_TOPO_LANEGROUP"
       },
       {
@@ -187,6 +187,11 @@
         "fileName": "TOLLGATE",
         "fileType": "dbf",
         "modelName": "TOLLGATE"
+      },
+      {
+        "fileName": "LG_ROADNODE_INDEX",
+        "fileType": "dbf",
+        "modelName": "LG_ROADNODE_INDEX"
       }
     ]
 }

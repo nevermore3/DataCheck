@@ -277,6 +277,8 @@ namespace kd {
             //数据一致性检查
             error_check_levels_.insert(CHECK_ITEM_KXS_LENGTH_001);
             error_check_levels_.insert(CHECK_ITEM_KXS_COUNT_001);
+
+            error_check_levels_.insert(CHECK_ITEM_KXS_LINE_001);
         }
 
         int CheckErrorOutput::saveErrorToDb(const string &ouput_file) {

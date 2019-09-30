@@ -124,8 +124,8 @@ namespace kd {
                     shared_ptr<DCLaneCheckError> error =
                             DCLaneCheckError::createByAtt(CHECK_ITEM_KXS_LANE_010, lane, nullptr);
                     error->checkName = "车道右侧车道线起点没有LA";
-                    error->errorDesc_ = "lane_id:";
-                    error->errorDesc_ += lane->id_;
+                    error->detail_ = "lane_id:";
+                    error->detail_ += lane->id_;
 
                     errorOutput->saveError(error);
                     continue;
@@ -137,8 +137,8 @@ namespace kd {
                     shared_ptr<DCLaneCheckError> error =
                             DCLaneCheckError::createByAtt(CHECK_ITEM_KXS_LANE_010, lane, nullptr);
                     error->checkName = "车道线起点没有属性变化点";
-                    error->errorDesc_ = "lane_id:";
-                    error->errorDesc_ += lane->id_;
+                    error->detail_ = "lane_id:";
+                    error->detail_ += lane->id_;
 
                     errorOutput->saveError(error);
                     continue;
@@ -169,7 +169,7 @@ namespace kd {
                         error->checkName = "同一Divider上相邻两个LA属性完全相同";
                         stringstream ss;
                         ss << "la_id:" << la1->id_ << "与la_id:" << la2->id_ << "属性相同";
-                        error->errorDesc_ = ss.str();
+                        error->detail_ = ss.str();
                         errorOutput->saveError(error);
                     }
                 }
@@ -211,7 +211,7 @@ namespace kd {
                         error->checkName = "同一Divider上相邻两个LA距离<1米";
                         stringstream ss;
                         ss << "la_id:" << la1->id_ << "与la_id：" << la2->id_ << "相距" << distance << "米";
-                        error->errorDesc_ = ss.str();
+                        error->detail_ = ss.str();
                         errorOutput->saveError(error);
                     }
                 }

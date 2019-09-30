@@ -11,6 +11,7 @@
 #include "util/KDGeoUtil.hpp"
 #include "util/CommonCheck.h"
 #include <shp/ShpData.hpp>
+#include <util/geos_obj_relation_util.h>
 
 using namespace kd::automap;
 
@@ -484,9 +485,15 @@ namespace kd {
             for(auto groupItem:lanegroup){
                 ///车道组最左侧车道线检查
                 auto firstLane = groupItem.second->lanes_[0];
-                checkLaneDividerDis(firstLane,firstLane->rightDivider_,errorOutput);
+                if(firstLane->id_=="2702"){
+                    LOG(INFO)<<"firstLane";
+                }
+                checkLaneDividerDis(firstLane,firstLane->leftDivider_,errorOutput);
                 ///车道组最右侧车道线检查
                 auto lastLane = groupItem.second->lanes_[ groupItem.second->lanes_.size()-1];
+                if(lastLane->id_=="2702"){
+                    LOG(INFO)<<"firstLane";
+                }
                 checkLaneDividerDis(lastLane,lastLane->rightDivider_,errorOutput);
             }
         }
@@ -500,10 +507,14 @@ namespace kd {
                     lane_to_edge_die_buffer = 1.2;
                 }
             }
-            shared_ptr<geos::geom::Geometry> last_geom_buffer(lane->line_->buffer(lane_to_edge_die_buffer));
-            bool res = KDGeoUtil::isLineInBuffer(lane->line_.get(),last_geom_buffer.get(),divider->line_.get(),10);
-            if(res){
-                auto error = DCLaneError::createByKXS_05_023(lane->id_,divider->id_,lane_to_edge_die_buffer);
+            string lane_id = lane->id_;
+            shared_ptr<geos::geom::Geometry> geom_buffer(lane->line_->buffer(lane_to_edge_die_buffer));
+            auto intersects_geos  = geom_buffer->intersection(divider->line_.get());
+            if(intersects_geos->getCoordinates()->size()>0){
+                char zone[8]={0};
+                GeosObjUtil::create_coordinate(divider->nodes_.front()->coord_, zone,true);
+                shared_ptr<DCCoord> coord  = GeosObjUtil::get_coord(make_shared<geos::geom::Coordinate>(intersects_geos->getCoordinates()->front()),zone,true);
+                auto error = DCLaneError::createByKXS_05_023(lane->id_,divider->id_,lane_to_edge_die_buffer,coord);
                 errorOutput->saveError(error);
             }
         }

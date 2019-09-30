@@ -1053,17 +1053,14 @@ namespace kd {
             return error;
         }
 
-        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_023(string lane_id,string divider_id,double dis){
+        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_023(string lane_id,string divider_id,double dis,shared_ptr<DCCoord> coord){
             shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_023);
             error->checkName = CHECK_ITEM_KXS_LANE_023_DESC;
             error->checkLevel_ = LEVEL_ERROR;
             error->detail += "车道中心线 "+lane_id;
             error->detail += "距离车行道边缘线"+divider_id;
-            error->detail += "小于"+to_string(dis)+"米!";
-            shared_ptr<DCCoord> coord = make_shared<DCCoord>();
-            coord->x_=0;
-            coord->y_=0;
-            coord->z_=0;
+            error->detail += "小于"+to_string(dis)+"米";
+            error->detail +=",位置:"+to_string(coord->x_)+","+to_string(coord->y_);
             error->coord = coord;
             return error;
         }

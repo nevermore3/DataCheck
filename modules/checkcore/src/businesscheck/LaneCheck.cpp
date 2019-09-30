@@ -48,10 +48,10 @@ namespace kd {
             CheckAdjacentNodeDistance(errorOutput);
 
             // 每一Lane的形状点周围1.5米内必有一个关联该Lane的HD_LANE_SCH
-//            LaneRelevantLaneSCH(errorOutput);
-//
-//            //HD_LANE_SCH点离关联的LANE的垂直距离不超过10cm
-//            LaneSCHVerticalDistance(errorOutput);
+            LaneRelevantLaneSCH(errorOutput);
+
+            //HD_LANE_SCH点离关联的LANE的垂直距离不超过10cm
+            LaneSCHVerticalDistance(errorOutput);
 
             CheckLaneGroupEgde(errorOutput);
             return true;

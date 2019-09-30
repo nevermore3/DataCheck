@@ -37,20 +37,26 @@ void PolylineCheck::preCheck() {
     for (auto polyline:polylines) {
         line_ids.insert(polyline.first);
     }
-    ShpFileLoad::GetRLoRoad(2, line_ids, rloroad);
+    ShpFileLoad::GetRLoRoad(2, rloroad);
 }
 
 void PolylineCheck::check_kxs_011_02() {
     auto roads = data_manager()->roads_;
     for (auto polyline:polylines) {
+        string polyline_id = polyline.first;
         auto lo_road = rloroad.find(polyline.first);
         if (lo_road == rloroad.end()) {
             shared_ptr<PolyLineError> polylineError = PolyLineError::createByKXS_011_02(polyline.first,
                                                                                         polyline.second->coords[0]);
             error_output()->saveError(polylineError);
-            return;
+            continue;
         }
+        string road_id = lo_road->second->road_id_;
         auto road = roads.find(lo_road->second->road_id_);
+        if(road == roads.end()){
+            LOG(INFO)<<"not find road "<<road_id;
+            continue;
+        }
         CoordinateSequence *intersections = nullptr;
         bool iscross = KDGeoUtil::isLineCross(road->second->line_.get(), polyline.second->line_.get(), &intersections);
         if (!iscross) {

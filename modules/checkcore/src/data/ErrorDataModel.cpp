@@ -1370,10 +1370,11 @@ namespace kd {
             shared_ptr<PolyLineError> error = make_shared<PolyLineError>(CHECK_ITEM_KXS_LINE_001);
             error->checkLevel_ = LEVEL_ERROR;
             error->checkName = CHECK_ITEM_KXS_LINE_001_DESC;
-            error->detail_ += "HD_R_LO_ROAD表中停止线[";
+            error->detail_ += "HD_R_LO_ROAD表中停止线TYPE=2,LO_ID=[";
             error->detail_ +=line_id;
             error->detail_ +="]关联的ROAD错误!";
             error->coord = coord;
+            return error;
         }
 
         string PolyLineError::toString() {

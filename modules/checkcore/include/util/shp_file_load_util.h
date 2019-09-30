@@ -31,7 +31,7 @@ public:
      */
     static void GetPolyline(long type,std::map<string,shared_ptr<DCPolyline>> &polylines);
 
-    static void GetRLoRoad(long type,set<string> line_id,map<string,shared_ptr<DCRLORoad>> &r_lo_road);
+    static void GetRLoRoad(long type,map<string,shared_ptr<DCRLORoad>> &r_lo_road);
 };
 
 

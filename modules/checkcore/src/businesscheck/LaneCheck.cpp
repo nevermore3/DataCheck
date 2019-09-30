@@ -485,15 +485,9 @@ namespace kd {
             for(auto groupItem:lanegroup){
                 ///车道组最左侧车道线检查
                 auto firstLane = groupItem.second->lanes_[0];
-                if(firstLane->id_=="2702"){
-                    LOG(INFO)<<"firstLane";
-                }
                 checkLaneDividerDis(firstLane,firstLane->leftDivider_,errorOutput);
                 ///车道组最右侧车道线检查
                 auto lastLane = groupItem.second->lanes_[ groupItem.second->lanes_.size()-1];
-                if(lastLane->id_=="2702"){
-                    LOG(INFO)<<"firstLane";
-                }
                 checkLaneDividerDis(lastLane,lastLane->rightDivider_,errorOutput);
             }
         }

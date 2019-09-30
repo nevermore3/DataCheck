@@ -81,7 +81,7 @@ namespace kd {
              * 获得错误信息
              * @return 错误信息字符串
              */
-            virtual string toString() = 0;
+            virtual string toString();
 
 
         public:
@@ -159,7 +159,6 @@ namespace kd {
             static shared_ptr<DCRelationCheckError> createByKXS_01_25(string model_name, string field,
                                                                       string relation_name);
 
-            virtual string toString() override;
 
         public:
             //模型名称
@@ -177,11 +176,6 @@ namespace kd {
             //原始记录值
             string recordValue_;
 
-            //错误描述
-            string errorDesc_;
-
-            //错误详细信息描述
-            string detail_;
         };
 
 
@@ -217,8 +211,6 @@ namespace kd {
             static shared_ptr<DCDividerCheckError> createByKXS_01_029(long nodeID, shared_ptr<DCCoord> coord);
 
 
-        public:
-            virtual string toString() override;
 
         public:
             //车道线id
@@ -230,8 +222,6 @@ namespace kd {
             //节点id
             string nodeId_;
 
-            //错误描述
-            string errorDesc_;
         };
 
 
@@ -247,9 +237,6 @@ namespace kd {
             static shared_ptr<DCLaneCheckError> createByKXS_05_008(string checkModel, shared_ptr<DCLane> lane, shared_ptr<DCDivider> leftDiv, shared_ptr<DCDivider> rightDiv);
             static shared_ptr<DCLaneCheckError>
             createByNode(string checkModel, shared_ptr<DCLane> lane, shared_ptr<DCDividerNode> node);
-
-        public:
-            virtual string toString() override;
 
         public:
             //车道id
@@ -275,9 +262,6 @@ namespace kd {
 
             //节点、属性变化点对应的高度
             double z_;
-
-            //错误描述
-            string errorDesc_;
         };
 
         /**
@@ -290,7 +274,6 @@ namespace kd {
 
             DCSqlCheckError(string checkModel, string modelName, string fieldName, string recordId);
 
-            virtual string toString() override;
 
         public:
             //模型名称，或表名
@@ -304,9 +287,6 @@ namespace kd {
 
             //错误描述
             string errorDesc_;
-
-            //错误详细信息描述
-            string detail;
         };
 
         /**
@@ -316,8 +296,6 @@ namespace kd {
         public:
             explicit DCLaneGroupCheckError(const string &checkModel);
 
-        public:
-            string toString() override;
 
         public:
             static shared_ptr<DCLaneGroupCheckError> createByKXS_03_005(string road_id, long s_index, long e_index,
@@ -345,10 +323,7 @@ namespace kd {
             static shared_ptr<DCLaneGroupCheckError> createByKXS_03_028(shared_ptr<DCLaneGroup> lanelaneGroup,string daId, shared_ptr<DCCoord> coord);
 
             static shared_ptr<DCLaneGroupCheckError> createByKXS_03_029(shared_ptr<DCLaneGroup> lanelaneGroup1,shared_ptr<DCLaneGroup> lanelaneGroup2);
-        public:
 
-            //错误详细信息描述
-            string detail;
         };
 
         /**
@@ -359,17 +334,10 @@ namespace kd {
             explicit DCLaneGroupTopoCheckError(const string &checkModel);
 
         public:
-            string toString() override;
-
-        public:
             static shared_ptr<DCLaneGroupTopoCheckError> createByKXS_04_001(string lg_id1, string lg_id2);
 
             static shared_ptr<DCLaneGroupTopoCheckError> createByKXS_05_001(string lg_id1, string lg_id2);
 
-        public:
-
-            //错误详细信息描述
-            string detail;
         };
 
         /**
@@ -378,9 +346,6 @@ namespace kd {
         class DCRoadCheckError : public DCError {
         public:
             explicit DCRoadCheckError(const string &checkModel);
-
-        public:
-            string toString() override;
 
         public:
             static shared_ptr<DCRoadCheckError> createByKXS_04_002(const string &road_id,
@@ -397,10 +362,6 @@ namespace kd {
 
             static shared_ptr<DCRoadCheckError> createByKXS_04_008(const string &road_id,
                                                                    const vector<shared_ptr<NodeCompareError>> &ptr_error_nodes);
-        public:
-
-            //错误详细信息描述
-            string detail;
         };
 
         /**
@@ -409,9 +370,6 @@ namespace kd {
         class DCLaneError : public DCError {
         public:
             explicit DCLaneError(const string &checkModel);
-
-        public:
-            string toString() override;
 
         public:
             static shared_ptr<DCLaneError> createByKXS_05_002(const string &lane_id,
@@ -437,10 +395,7 @@ namespace kd {
             static shared_ptr<DCLaneError> createByKXS_05_022(long nodeID, shared_ptr<DCCoord> coord);
 
             static shared_ptr<DCLaneError> createByKXS_05_023(string lane_id,string divider_id,double dis,shared_ptr<DCCoord> coord);
-        public:
 
-            //错误详细信息描述
-            string detail;
         };
 
         /**
@@ -449,9 +404,6 @@ namespace kd {
         class DCAdasError : public DCError {
         public:
             explicit DCAdasError(const string &checkModel);
-
-        public:
-            string toString() override;
 
         public:
             static shared_ptr<DCAdasError> createByKXS_07_001(long road_id, string f_adas_node_id,
@@ -468,11 +420,6 @@ namespace kd {
             static shared_ptr<DCAdasError> createByKXS_07_007(long adas_node_id, shared_ptr<DCCoord> ptr_coord);
 
             static shared_ptr<DCAdasError> createByKXS_07_008(long adas_node_id, shared_ptr<DCCoord> ptr_coord);
-
-        public:
-
-            //错误详细信息描述
-            string detail;
         };
 
         /**
@@ -482,13 +429,8 @@ namespace kd {
         public:
             explicit DCTableDescError(const string &checkModel) : DCError(checkModel) {}
 
-            string toString() override;
         public:
             static shared_ptr<DCTableDescError> createByKXS_10_001(const string &detail);
-
-        public:
-            //错误信息描述
-            string detail;
         };
 
 
@@ -500,9 +442,6 @@ namespace kd {
             explicit DCFieldError(const string &checkModel);
 
         public:
-            string toString() override;
-
-        public:
             static shared_ptr<DCFieldError> createByKXS_01_019(const string &detail);
 
             static shared_ptr<DCFieldError> createByKXS_01_020(const string &file);
@@ -512,11 +451,6 @@ namespace kd {
 
         public:
             bool check_file(const string &file);
-
-        public:
-
-            //错误详细信息描述
-            string detail;
         };
 
 
@@ -525,7 +459,6 @@ namespace kd {
         class DCLengthCheckError : public DCError {
         public:
             explicit DCLengthCheckError(const string &checkModel) : DCError(checkModel) {}
-            string toString() override;
 
         public:
             static shared_ptr<DCLengthCheckError> createByLength(const double osmLength, const double kxfLength,
@@ -537,7 +470,6 @@ namespace kd {
         class DCCountCheckError : public DCError {
         public:
             explicit DCCountCheckError(const string &checkModel) : DCError(checkModel) {}
-            string toString() override ;
 
             static shared_ptr<DCCountCheckError> createByKXS_09_001(size_t osmCount, size_t kxfCount, const string &name);
         };
@@ -560,12 +492,6 @@ namespace kd {
                                                                          string &value,
                                                                          string &relationTableName,
                                                                          string &relationFieldName);
-
-            virtual string toString() override;
-
-        public:
-            //错误详细信息描述
-            string detail;
         };
 
         class DCAttributeCheckError : public DCError {
@@ -573,10 +499,6 @@ namespace kd {
             explicit DCAttributeCheckError(const string &checkModel) : DCError(checkModel) {};
 
             static shared_ptr<DCAttributeCheckError> createByKXS_10_002(const string &detail);
-
-            virtual string toString() override;
-        public:
-            string detail;
         };
 
         /*
@@ -586,7 +508,6 @@ namespace kd {
         public:
             explicit DCSCHInfoError(const string &checkModel) : DCError(checkModel) {}
 
-            string toString() override;
             // 曲率值检查
             static shared_ptr<DCSCHInfoError> createByKXS_01_031(string name, string objID, double value,
                                                                  double threshold, shared_ptr<DCCoord> &coord);

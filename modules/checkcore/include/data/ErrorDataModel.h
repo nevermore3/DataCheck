@@ -230,8 +230,6 @@ namespace kd {
             //节点id
             string nodeId_;
 
-            //错误描述
-            string errorDesc_;
         };
 
 

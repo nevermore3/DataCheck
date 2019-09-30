@@ -88,9 +88,7 @@ namespace kd {
         }
 
         string DCDividerCheckError::toString() {
-            stringstream ss;
-            ss << errorDesc_;
-            return ss.str();
+            return detail_;
         }
 
         shared_ptr<DCDividerCheckError>

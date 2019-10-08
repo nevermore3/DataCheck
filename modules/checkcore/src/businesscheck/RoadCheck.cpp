@@ -100,7 +100,7 @@ namespace kd {
 
         void RoadCheck::DoNode2DividerSlope(long lgID, long fromIndex, long toIndex, vector<shared_ptr<DCSCHInfo>> &nodes,
                                             shared_ptr<CheckErrorOutput> &errorOutput) {
-
+            
             if (map_data_manager_->laneGroups_.find(to_string(lgID)) == map_data_manager_->laneGroups_.end()) {
                 return;
             }
@@ -133,8 +133,8 @@ namespace kd {
                 }
                 tempIndex++;
             }
-            // adasnode点 距离 divider小于50厘米 就认为关联此divider
-            double distance = 50;
+            // adasnode点 距离 divider小于1.7米(根据测试数据集配置的) 就认为关联此divider
+            double distance = 1.7;
 
             shared_ptr<DCDivider>divider = dividers.front();
             char zone[8] = {0};
@@ -143,12 +143,19 @@ namespace kd {
             double PtB[2] = {0};
             double PtC[4] = {0};
             int index = 0;
+            double minDistance = DBL_MAX;
+            // 若adasNode点到divider的距离小于distance，则认为和此divider关联
+            // 若adasNode到所有divid的距离都大于distance，则取距离最小的divider
             for (const auto & iter : dividers) {
                 double dis = KDGeoUtil::pt2LineDist(const_cast<CoordinateSequence*>(iter->line_->getCoordinatesRO()),
                                                     PtA, PtB, PtC, index);
                 if (dis < distance) {
                     divider = iter;
                     break;
+                }
+                if (dis < minDistance) {
+                    minDistance = dis;
+                    divider = iter;
                 }
             }
 
@@ -161,7 +168,7 @@ namespace kd {
                                                     PtA, PtB, PtC, index);
                 if (dis > distance) {
                     //重新选择divider
-                    double minDistance = DBL_MAX;
+                    minDistance = DBL_MAX;
                     for (const auto &iter : dividers) {
                         dis = KDGeoUtil::pt2LineDist(const_cast<CoordinateSequence*>(iter->line_->getCoordinatesRO()),
                                                      PtA, PtB, PtC, index);
@@ -174,6 +181,11 @@ namespace kd {
                             divider = iter;
                         }
                     }
+                }
+                // 距离都大于distance，重新选择的divider，需要重新计算index
+                if (dis > distance) {
+                    dis = KDGeoUtil::pt2LineDist(const_cast<CoordinateSequence*>(divider->line_->getCoordinatesRO()),
+                                                 PtA, PtB, PtC, index);
                 }
                 shared_ptr<DCCoord>coordA = nullptr;
                 shared_ptr<DCCoord>coordB = nullptr;

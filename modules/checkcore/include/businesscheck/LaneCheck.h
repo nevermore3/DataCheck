@@ -93,7 +93,7 @@ namespace kd {
              */
             bool lane_divider_intersect(const shared_ptr<MapDataManager> &mapDataManager,
                                         const shared_ptr<DCLane> &ptr_lane,
-                                        const shared_ptr<DCDivider> &ptr_divider,CoordinateSequence *intersections);
+                                        const shared_ptr<DCDivider> &ptr_divider,CoordinateSequence **intersections);
 
             /**
              * lane与divider多个交点情况
@@ -134,13 +134,21 @@ namespace kd {
               * 车道中心线与车行道边缘线距离检查
               */
              void CheckLaneGroupEgde(shared_ptr<CheckErrorOutput> &errorOutput);
+             /**
+              * 检查lane到divider的距离。
+              * @param lane
+              * @param divider
+              */
+            void checkLaneDividerDis(shared_ptr<DCLane> lane,shared_ptr<DCDivider> divider,shared_ptr<CheckErrorOutput> &errorOutput);
         private:
 
             const string id = "lane_check";
 
             shared_ptr<MapDataManager> map_data_manager_;
             //车道组到中心线到边线最小距离
-            const double lane_to_edge_die_buffer = 1.2;
+            double lane_to_edge_die_buffer = 1.2;
+            ///set<lane_id_lane_id>
+            set <string> error_set;
         };
     }
 }

@@ -169,7 +169,11 @@ namespace kd {
             checkItemInfo->totalNum = total;
             errorOutput->addCheckItemInfo(checkItemInfo);
         }
-
+        void ForeignKeyCheck::PreCheck(){
+            string sqlCmd = "create index HD_R_LO_ROAD_TYPE_INDEX on HD_R_LO_ROAD(TYPE);";
+            LOG(INFO)<<"SQL："<<sqlCmd;
+            pDataBase->execQuery(sqlCmd);
+        }
         bool ForeignKeyCheck::execute(shared_ptr<ModelDataManager> modelDataManager,
                                       shared_ptr<CheckErrorOutput> errorOutput) {
 
@@ -181,6 +185,8 @@ namespace kd {
                     LOG(ERROR) << "Open DataBase Error";
                     return false;
                 }
+                PreCheck();
+                LOG(INFO) << "PreCheck finished!";
                 //检查外键是否存在
                 CheckForeignKeyExist(modelDataManager, errorOutput);
                 //外键数据完备性检查

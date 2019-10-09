@@ -218,5 +218,10 @@
                     JOIN(SELECT ROAD_ID,MAX(MAX(F_INDEX),MAX(T_INDEX)) MAXIDX,MIN(MIN(F_INDEX),MIN(T_INDEX))
                     MINIDX FROM LG_ROADNODE_INDEX GROUP BY ROAD_ID) MIDX
                     ON RD.ID=MIDX.ROAD_ID AND (MIDX.MAXIDX>=RD.NUMVERTEX OR MINIDX<0);"/>
+    <datacheckitem ID="KXS-11-01"
+                   NAME="停止线与道路的关联关系正确性检查"
+                   LEVEL="error"
+                   INFO="HD_R_LO_ROAD表中停止线不能与多条ROAD关联"
+                   SQL="select LO_ID FROM HD_R_LO_ROAD where TYPE=2 group by LO_ID having COUNT(LO_ID)>1;"/>
   </datacheck>
 </datachecks>

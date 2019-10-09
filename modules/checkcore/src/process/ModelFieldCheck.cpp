@@ -5,7 +5,7 @@
 #include <data/DataManager.h>
 #include "process/ModelCheckFunc.h"
 #include "process/ModelFieldCheck.h"
-
+#include "util/product_shp_util.h"
 
 namespace kd {
     namespace dc {
@@ -86,9 +86,10 @@ namespace kd {
 
                 double recordValue = valuepair->second;
                 if (!IsValid<double>(fieldDef->valueLimit, recordValue)) {
+                    long id_ = record->longDatas.find(ID)->second;
                     stringstream ss;
                     ss << task_name << " 检查double类型 : " << fieldName << "=" << recordValue << " not in '"
-                       << fieldDef->valueLimit << "'";
+                       << fieldDef->valueLimit << "',ID="<<id_;
                     shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
                     errorOutput->saveError(ptr_error);
                 }
@@ -101,7 +102,6 @@ namespace kd {
                                                const shared_ptr<CheckErrorOutput> &errorOutput) {
 
             for (shared_ptr<DCModelRecord> record : modelData->records) {
-
                 auto valuepair = record->longDatas.find(fieldName);
                 if (valuepair == record->longDatas.end()) {
                     stringstream ss;
@@ -114,9 +114,10 @@ namespace kd {
 
                 long recordValue = valuepair->second;
                 if (!IsValid<long>(fieldDef->valueLimit, recordValue)) {
+                    long id_ = record->longDatas.find(ID)->second;
                     stringstream ss;
                     ss << task_name << "检查long类型 : " << fieldName << "=" << recordValue << " not in '"
-                       << fieldDef->valueLimit << "'";
+                       << fieldDef->valueLimit << "'，ID="<<id_;
                     shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
                     errorOutput->saveError(ptr_error);
                     //                    errorOutput->writeInfo(ss.str());
@@ -164,9 +165,10 @@ namespace kd {
 
                 //判断值是否超限
                 if (len > 0 && !IsValid<string>(fieldDef->valueLimit, recordValue)) {
+                    long id_ = record->longDatas.find(ID)->second;
                     stringstream ss;
                     ss << task_name << "检查string类型 : " << fieldName << "=" << recordValue << " not in '"
-                       << fieldDef->valueLimit << "'";
+                       << fieldDef->valueLimit << "',ID="<<id_;
                     shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
                     errorOutput->saveError(ptr_error);
 //                    errorOutput->writeInfo(ss.str());

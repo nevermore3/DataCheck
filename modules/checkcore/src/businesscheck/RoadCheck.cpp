@@ -618,5 +618,17 @@ namespace kd {
             }
         }
 
+        void RoadCheck::CheckNodesandCNodeRelation() {
+            auto roads = map_data_manager_->roads_;
+            for (const auto &iter : roads) {
+                if (iter.second->fow_ != 2) {
+                    continue;
+                }
+            }
+
+
+
+        }
+
     }
 }

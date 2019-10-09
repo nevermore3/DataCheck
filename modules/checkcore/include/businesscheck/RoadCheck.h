@@ -89,6 +89,9 @@ namespace kd {
 
             void BuildNodeID2Road();
 
+            //
+            void CheckNodesandCNodeRelation();
+
         private:
             const string id = "road_check";
 

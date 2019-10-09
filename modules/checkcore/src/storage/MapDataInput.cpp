@@ -592,6 +592,7 @@ namespace kd {
                     ptr_road->sLanes_ = lg_road_data.readIntField(i, "S_LANES");
                     ptr_road->f_node_id = to_string(lg_road_data.readIntField(i, "SNODE_ID"));
                     ptr_road->t_node_id = to_string(lg_road_data.readIntField(i, "ENODE_ID"));
+                    ptr_road->fow_ = lg_road_data.readLongField(i, "FOW");
                     ptr_road->fNode_ = nullptr;
                     ptr_road->tNode_ = nullptr;
 

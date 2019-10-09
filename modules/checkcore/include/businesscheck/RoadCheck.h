@@ -73,10 +73,40 @@ namespace kd {
                                         const shared_ptr<DCRoad> &ptr_road,
                                         const string &lane_group_id,
                                         const shared_ptr<DCDivider> &ptr_divider);
+
+            bool LoadTrafficRule();
+
+            bool LoadRoadNode();
+
+            bool LoadCNode();
+
+            bool LoadCNodeConn();
+
+            bool LoadNodeConn();
+
+            void BuildInfo();
+
+
         private:
             const string id = "road_check";
 
             shared_ptr<MapDataManager> map_data_manager_;
+
+
+            map<long, shared_ptr<DCTrafficRule>> map_traffic_rule_;
+
+            // roadnode
+            map<long, shared_ptr<DCRoadNode>> map_road_nodes_;
+
+            //cnode
+            map<long, shared_ptr<DCCNode>> map_cnodes_;
+
+            // nodeconn
+            map<long, shared_ptr<DCNodeConn>> map_node_conn_;
+
+            // cnodeconn
+            map<long, shared_ptr<DCCNodeConn>> map_cnode_conn_;
+
         };
     }
 }

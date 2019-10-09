@@ -327,6 +327,7 @@ namespace kd {
         }
         void RoadCheck::checkCNode(){
             for(auto cnode:map_cnodes_){
+                auto cnode_nodes = map_cnode_node.find(cnode.first);
 
             }
         }
@@ -471,6 +472,15 @@ namespace kd {
                 cNodeConn->fRoad_id_ = shpFile.readLongField(i, "EROAD_ID");
                 cNodeConn->tRoad_id_ = shpFile.readLongField(i, "QROAD_ID");
                 cNodeConn->cNode_id_ = shpFile.readLongField(i, "C_NODE_ID");
+
+                auto froad_troads = map_froad_troad.find(cNodeConn->fRoad_id_);
+                if(froad_troads!= map_froad_troad.end()){
+                    froad_troads->second.emplace_back(cNodeConn->tRoad_id_);
+                }else{
+                    vector<long> troad_ids;
+                    troad_ids.emplace_back(cNodeConn->tRoad_id_);
+                    map_froad_troad.insert(make_pair(cNodeConn->fRoad_id_,troad_ids));
+                }
 
                 size_t nVertices = shpObject->nVertices;
                 if (nVertices == 1) {

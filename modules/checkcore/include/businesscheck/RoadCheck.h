@@ -109,6 +109,8 @@ namespace kd {
             map<long, shared_ptr<DCCNodeConn>> map_cnode_conn_;
             ///map<cnode_id,vector<road_node_id>>
             map<long,vector<long>> map_cnode_node;
+            ///map<froad_id,vector<troad_id>>,需要对比的cconn表数据
+            map<long,vector<long>> map_froad_troad;
 
         };
     }

@@ -11,6 +11,7 @@
 #include <util/CommonUtil.h>
 #include "util/StringUtil.h"
 #include "util/check_list_config.h"
+#include "util/product_shp_util.h"
 namespace kd {
     namespace dc {
 

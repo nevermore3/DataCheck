@@ -899,6 +899,12 @@ namespace kd {
             error->sourceId = divider_id;
             error->taskId_ = taskid;
             error->dataKey_ = dataKey;
+            if(coord == nullptr){
+                coord = make_shared<DCCoord>();
+                coord->x_ = 0;
+                coord->y_ = 0;
+                coord->z_ = 0;
+            }
             error->coord = coord;
             shared_ptr<ErrNodeInfo> errNodeInfo = make_shared<ErrNodeInfo>(coord);
             errNodeInfo->dataType = DATA_TYPE_NODE;
@@ -907,16 +913,15 @@ namespace kd {
             return error;
         }
 
-        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_015(const string &lane_id1, const string &lane_id2) {
-            shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_015);
+        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_015(const string &lane_id1, const string &lane_id2,shared_ptr<DCCoord> coord) {
+            shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_015 );
             error->checkLevel_ = LEVEL_ERROR;
             error->checkName = "检查同组内中心线与中心线是否存在交叉问题（组内有共点的中心线做检查）。";
             error->detail_ += "lane_id:";
             error->detail_ += lane_id1;
             error->detail_ += ",lane_id:";
             error->detail_ += lane_id2;
-            error->detail_ += "有交点";
-
+            error->detail_ += "有交点："+to_string(coord->x_)+","+to_string(coord->y_);
             return error;
         }
 
@@ -1010,16 +1015,15 @@ namespace kd {
             return error;
         }
 
-        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_023(string lane_id,string divider_id){
+        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_023(string lane_id,string divider_id,double dis,shared_ptr<DCCoord> coord){
             shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_023);
             error->checkName = CHECK_ITEM_KXS_LANE_023_DESC;
             error->checkLevel_ = LEVEL_ERROR;
+
             error->detail_ += "车道中心线 "+lane_id;
-            error->detail_ += "距离车行道边缘线"+divider_id+"小于1.2米!";
-            shared_ptr<DCCoord> coord = make_shared<DCCoord>();
-            coord->x_=0;
-            coord->y_=0;
-            coord->z_=0;
+            error->detail_ += "距离车行道边缘线"+divider_id;
+            error->detail_ += "小于"+to_string(dis)+"米";
+            error->detail_ +=",位置:"+to_string(coord->x_)+","+to_string(coord->y_);
             error->coord = coord;
             return error;
         }
@@ -1293,6 +1297,20 @@ namespace kd {
             return error;
         }
 
+        shared_ptr<PolyLineError> PolyLineError::createByKXS_011_02(string line_id,shared_ptr<DCCoord> coord){
+            shared_ptr<PolyLineError> error = make_shared<PolyLineError>(CHECK_ITEM_KXS_LINE_002);
+            error->checkLevel_ = LEVEL_ERROR;
+            error->checkName = CHECK_ITEM_KXS_LINE_001_DESC;
+            error->detail_ += "HD_R_LO_ROAD表中停止线TYPE=2,LO_ID=[";
+            error->detail_ +=line_id;
+            error->detail_ +="]关联的ROAD错误!";
+            error->coord = coord;
+            return error;
+        }
+
+        string PolyLineError::toString() {
+            return detail_;
+        }
     }
 }
 

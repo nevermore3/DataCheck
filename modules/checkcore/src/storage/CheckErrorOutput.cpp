@@ -104,7 +104,7 @@ namespace kd {
                         string err_type = "E2";
                         if (item.level == LEVEL_ERROR) {
                             err_type = "E1";
-                            ret = 1;
+//                            ret = 1;
                         }
                         if(taskid.length()==0){
                              taskid = item.taskId;
@@ -236,6 +236,7 @@ namespace kd {
             error_check_levels_.insert(CHECK_ITEM_KXS_LG_014);
             error_check_levels_.insert(CHECK_ITEM_KXS_LG_015);
             error_check_levels_.insert(CHECK_ITEM_KXS_LG_016);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LG_018);
             error_check_levels_.insert(CHECK_ITEM_KXS_LG_019);
             error_check_levels_.insert(CHECK_ITEM_KXS_LG_020);
             error_check_levels_.insert(CHECK_ITEM_KXS_LG_021);
@@ -245,7 +246,6 @@ namespace kd {
             error_check_levels_.insert(CHECK_ITEM_KXS_LG_025);
             error_check_levels_.insert(CHECK_ITEM_KXS_LG_026);
             error_check_levels_.insert(CHECK_ITEM_KXS_LG_027);
-
 
             error_check_levels_.insert(CHECK_ITEM_KXS_ROAD_001);
             error_check_levels_.insert(CHECK_ITEM_KXS_ROAD_002);
@@ -276,6 +276,9 @@ namespace kd {
             //数据一致性检查
             error_check_levels_.insert(CHECK_ITEM_KXS_LENGTH_001);
             error_check_levels_.insert(CHECK_ITEM_KXS_COUNT_001);
+
+            error_check_levels_.insert(CHECK_ITEM_KXS_LINE_001);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LINE_002);
         }
 
         int CheckErrorOutput::saveErrorToDb(const string &ouput_file) {

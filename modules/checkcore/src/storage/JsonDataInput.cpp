@@ -7,7 +7,7 @@
 #include <shp/shapefil.h>
 #include <shp/ShpData.hpp>
 #include <util/KDSUtil.h>
-
+#include "util/product_shp_util.h"
 namespace kd {
     namespace dc {
 

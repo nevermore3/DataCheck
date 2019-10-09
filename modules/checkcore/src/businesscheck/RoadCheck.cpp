@@ -545,7 +545,77 @@ namespace kd {
                     iter.second->cNode_ = map_cnodes_[cNodeID];
                 }
             }
-            
+        }
+
+        void RoadCheck::BuildNodeID2Road() {
+            auto roads = map_data_manager_->roads_;
+            for (const auto &iter : roads) {
+                long fNodeID = stol(iter.second->f_node_id);
+                long tNodeID = stol(iter.second->t_node_id);
+
+                if (iter.second->direction_ == 1 || iter.second->direction_ == 2) {
+                    // 入度
+                    if (node_id_to_froad_.find(tNodeID) == node_id_to_froad_.end()) {
+                        vector<shared_ptr<DCRoad>> vRoad;
+                        vRoad.emplace_back(iter.second);
+                        node_id_to_froad_.insert(make_pair(tNodeID, vRoad));
+                    } else {
+                        node_id_to_froad_[tNodeID].emplace_back(iter.second);
+                    }
+
+                    // 出度
+                    if (node_id_to_troad_.find(fNodeID) == node_id_to_troad_.end()) {
+                        vector<shared_ptr<DCRoad>> vRoad;
+                        vRoad.emplace_back(iter.second);
+                        node_id_to_troad_.insert(make_pair(fNodeID, vRoad));
+                    } else {
+                        node_id_to_troad_[fNodeID].emplace_back(iter.second);
+                    }
+
+                    if (iter.second->direction_ == 2) {
+                        // 入度
+                        if (node_id_to_froad_.find(fNodeID) == node_id_to_froad_.end()) {
+                            vector<shared_ptr<DCRoad>> vRoad;
+                            vRoad.emplace_back(iter.second);
+                            node_id_to_froad_.insert(make_pair(fNodeID, vRoad));
+                        } else {
+                            node_id_to_froad_[fNodeID].emplace_back(iter.second);
+                        }
+
+                        // 出度
+                        if (node_id_to_troad_.find(tNodeID) == node_id_to_troad_.end()) {
+                            vector<shared_ptr<DCRoad>> vRoad;
+                            vRoad.emplace_back(iter.second);
+                            node_id_to_troad_.insert(make_pair(tNodeID, vRoad));
+                        } else {
+                            node_id_to_troad_[tNodeID].emplace_back(iter.second);
+                        }
+                    }
+
+                } else if (iter.second->direction_ == 3) {
+                    // 逆向
+                    // 入度
+                    if (node_id_to_froad_.find(fNodeID) == node_id_to_froad_.end()) {
+                        vector<shared_ptr<DCRoad>> vRoad;
+                        vRoad.emplace_back(iter.second);
+                        node_id_to_froad_.insert(make_pair(fNodeID, vRoad));
+                    } else {
+                        node_id_to_froad_[fNodeID].emplace_back(iter.second);
+                    }
+
+                    // 出度
+                    if (node_id_to_troad_.find(tNodeID) == node_id_to_troad_.end()) {
+                        vector<shared_ptr<DCRoad>> vRoad;
+                        vRoad.emplace_back(iter.second);
+                        node_id_to_troad_.insert(make_pair(tNodeID, vRoad));
+                    } else {
+                        node_id_to_troad_[tNodeID].emplace_back(iter.second);
+                    }
+
+                } else {
+                    LOG(ERROR) << "Road's direction Error, road id is :"<< iter.first;
+                }
+            }
         }
 
     }

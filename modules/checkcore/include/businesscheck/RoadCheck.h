@@ -84,8 +84,10 @@ namespace kd {
 
             bool LoadNodeConn();
 
+
             void BuildInfo();
 
+            void BuildNodeID2Road();
 
         private:
             const string id = "road_check";
@@ -106,6 +108,11 @@ namespace kd {
 
             // cnodeconn
             map<long, shared_ptr<DCCNodeConn>> map_cnode_conn_;
+
+            // key : nodeID, value: {roads}
+            map<long, vector<shared_ptr<DCRoad>>> node_id_to_froad_;
+
+            map<long, vector<shared_ptr<DCRoad>>> node_id_to_troad_;
 
         };
     }

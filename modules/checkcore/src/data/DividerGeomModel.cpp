@@ -410,7 +410,7 @@ namespace kd {
         /////////////////////////////////////////////////////////////////////////////////////////
         bool DCObjectPL::buildGeometryInfo(){
            double len_;
-            return buildGeometry(coords_,true,len_);
+            return buildGeometry(coords_,false,len_);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////
@@ -420,5 +420,12 @@ namespace kd {
            return buildGeometry(nodes_,true,len_);
 
         }
+        /////////////////////////////////////////////////////////////////////////////////////////
+        //  DCPolyline
+        /////////////////////////////////////////////////////////////////////////////////////////
+        bool DCPolyline::buildGeometryInfo() {
+            double len_;
+            return buildGeometry(coords,false,len_);
+       }
     }
 }

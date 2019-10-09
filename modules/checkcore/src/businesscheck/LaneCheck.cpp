@@ -11,6 +11,7 @@
 #include "util/KDGeoUtil.hpp"
 #include "util/CommonCheck.h"
 #include <shp/ShpData.hpp>
+#include <util/geos_obj_relation_util.h>
 
 using namespace kd::automap;
 
@@ -89,12 +90,11 @@ namespace kd {
                     for (const auto &ptr_lane : ptr_lanes) {
                         total++;
                         CoordinateSequence *intersections_left = nullptr;
-                        if (check_kxs05003 && lane_divider_intersect(mapDataManager, ptr_lane, left_ptr_divider,intersections_left)) {
-                            shared_ptr<DCCoord>  coord;
-                            if(intersections_left->size()>0){
-                                GeosObjUtil::create_coordinate(left_ptr_divider->nodes_.front()->coord_, zone);
-                                shared_ptr<DCCoord>  coord  = GeosObjUtil::get_coord(make_shared<geos::geom::Coordinate>(intersections_left->front()),zone);
-                                ptr_error->coord = coord;
+                        if (check_kxs05003 && lane_divider_intersect(mapDataManager, ptr_lane, left_ptr_divider,&intersections_left)) {
+                            shared_ptr<DCCoord>  coord = nullptr;
+                            if( intersections_left->size()>0){
+                                GeosObjUtil::create_coordinate(left_ptr_divider->nodes_.front()->coord_, zone,true);
+                                coord  = GeosObjUtil::get_coord(make_shared<geos::geom::Coordinate>(intersections_left->front()),zone,true);
                             }
                             ptr_error = DCLaneError::createByKXS_05_003(ptr_lane->task_id_,DATA_TYPE_LANE+ptr_lane->task_id_+DATA_TYPE_LAST_NUM
                                     , DATA_TYPE_NODE,MODEL_NAME_DIVIDER, coord,ptr_lane->id_, left_ptr_divider->id_);
@@ -102,11 +102,11 @@ namespace kd {
                             errorOutput->saveError(ptr_error);
                         }
                         CoordinateSequence *intersections_right = nullptr;
-                        if (check_kxs05003 && lane_divider_intersect(mapDataManager, ptr_lane, right_ptr_divider,intersections_right)) {
-                            shared_ptr<DCCoord>  coord;
+                        if (check_kxs05003 && lane_divider_intersect(mapDataManager, ptr_lane, right_ptr_divider,&intersections_right)) {
+                            shared_ptr<DCCoord>  coord = nullptr;
                             if(intersections_right->size()>0){
-                                GeosObjUtil::create_coordinate(left_ptr_divider->nodes_.front()->coord_, zone);
-                                coord  = GeosObjUtil::get_coord(make_shared<geos::geom::Coordinate>(intersections_right->front()),zone);
+                                GeosObjUtil::create_coordinate(left_ptr_divider->nodes_.front()->coord_, zone,true);
+                                coord  = GeosObjUtil::get_coord(make_shared<geos::geom::Coordinate>(intersections_right->front()),zone,true);
 
                             }
                             ptr_error = DCLaneError::createByKXS_05_003(ptr_lane->task_id_,DATA_TYPE_LANE+ptr_lane->task_id_+DATA_TYPE_LAST_NUM
@@ -164,13 +164,15 @@ namespace kd {
 
         bool LaneCheck::lane_divider_intersect(const shared_ptr<MapDataManager> &mapDataManager,
                                                const shared_ptr<DCLane> &ptr_lane,
-                                               const shared_ptr<DCDivider> &ptr_divider,CoordinateSequence *intersections) {
+                                               const shared_ptr<DCDivider> &ptr_divider,CoordinateSequence **intersections) {
             bool ret = false;
             auto ptr_div_line_string = CommonUtil::get_divider_line_string(ptr_divider->nodes_);
             auto ptr_lane_line_string = CommonUtil::get_line_string(ptr_lane->coords_);
             if (ptr_lane_line_string && ptr_div_line_string) {
 
-                ret = KDGeoUtil::isLineCross(ptr_lane_line_string.get(), ptr_div_line_string.get(),&intersections);
+                ret = KDGeoUtil::isLineCross(ptr_lane_line_string.get(), ptr_div_line_string.get(),intersections);
+            }else{
+                LOG(INFO)<<ptr_lane->id_;
             }
             return ret;
         }
@@ -240,7 +242,7 @@ namespace kd {
                     ptr_same_node_lanes.emplace_back(ptr_left_lane);
                     for (int i = 1; i < ptr_lanes.size(); i++) {
                         if (ptr_left_lane && ptr_lanes[i]) {
-                            // 如果首点相同
+                            // 如果尾点相同
                             if (GeosObjUtil::is_same_coord(ptr_left_lane->coords_.back(),
                                                            ptr_lanes[i]->coords_.back())) {
                                 ptr_same_node_lanes.emplace_back(ptr_lanes[i]);
@@ -263,15 +265,6 @@ namespace kd {
                                         const shared_ptr<CheckErrorOutput> &errorOutput,
                                         const vector<shared_ptr<DCLane>> &ptr_lanes) {
             char zone[8] = {0};
-            auto ptr_f_coord = GeosObjUtil::create_coordinate(ptr_lanes.front()->coords_.front(), zone);
-            auto ptr_t_coord = GeosObjUtil::create_coordinate(ptr_lanes.front()->coords_.back(), zone);
-
-            if (ptr_f_coord == nullptr) {
-                return;
-            }
-            if (ptr_t_coord == nullptr) {
-                return;
-            }
 
             for (int i = 0; i < ptr_lanes.size() - 1; i++) {
                 for (int j = i + 1; j < ptr_lanes.size(); j++) {
@@ -280,17 +273,24 @@ namespace kd {
                     auto ptr_intersects_geos = ptr_left_line->intersection(ptr_right_line.get());
                     auto coord_size = ptr_intersects_geos->getCoordinates()->size();
                     if (coord_size > 1 && coord_size < 4) {
+
                         auto ptr_intersect_coords = ptr_intersects_geos->getCoordinates();
                         for (int k = 0; k < ptr_intersect_coords->size(); k++) {
                             // 如果不是第一个点
-                            if (!GeosObjUtil::is_same_coord(*ptr_f_coord.get(), ptr_intersect_coords->getAt(k)) &&
-                                !GeosObjUtil::is_same_coord(*ptr_t_coord.get(), ptr_intersect_coords->getAt(k))) {
-                                auto ptr_error = DCLaneError::createByKXS_05_015(ptr_lanes[i]->id_, ptr_lanes[j]->id_);
+                            CoordinateSequence *line_i = ptr_left_line->getCoordinates();
+                            CoordinateSequence *line_j = ptr_right_line->getCoordinates();
+                            bool same_i = GeosObjUtil::has_same_coord(line_i,ptr_intersect_coords->getAt(k));
+                            bool same_j = GeosObjUtil::has_same_coord(line_j,ptr_intersect_coords->getAt(k));
+                            if (! same_i && !same_j) {
+
+                                GeosObjUtil::create_coordinate(ptr_lanes[i]->coords_[0], zone,true);
+                                shared_ptr<DCCoord> coord  = GeosObjUtil::get_coord(make_shared<geos::geom::Coordinate>(ptr_intersect_coords->getAt(k)),zone,true);
+
+                                auto ptr_error = DCLaneError::createByKXS_05_015(ptr_lanes[i]->id_, ptr_lanes[j]->id_,coord );
 
                                 ptr_error->taskId_ = ptr_lanes[i]->task_id_;
                                 ptr_error->flag = ptr_lanes[i]->flag_;
                                 ptr_error->dataKey_ = DATA_TYPE_LANE+ptr_lanes[i]->task_id_+DATA_TYPE_LAST_NUM;
-
                                 errorOutput->saveError(ptr_error);
                             }
                         }
@@ -485,26 +485,35 @@ namespace kd {
             checkItemInfo->checkId = CHECK_ITEM_KXS_LANE_023;
             checkItemInfo->totalNum = map_data_manager_->laneGroups_.size() * 2;
             errorOutput->addCheckItemInfo(checkItemInfo);
-
             auto lanegroup = map_data_manager_->laneGroups_;
             for(auto groupItem:lanegroup){
-
                 ///车道组最左侧车道线检查
                 auto firstLane = groupItem.second->lanes_[0];
-                shared_ptr<geos::geom::Geometry> geom_buffer(firstLane->line_->buffer(lane_to_edge_die_buffer));
-                bool res = KDGeoUtil::isLineInBuffer(firstLane->line_.get(),geom_buffer.get(),firstLane->leftDivider_->line_.get(),10);
-                if(res){
-                    auto error = DCLaneError::createByKXS_05_023(firstLane->id_,firstLane->leftDivider_->id_);
-                    errorOutput->saveError(error);
-                }
+                checkLaneDividerDis(firstLane,firstLane->leftDivider_,errorOutput);
                 ///车道组最右侧车道线检查
                 auto lastLane = groupItem.second->lanes_[ groupItem.second->lanes_.size()-1];
-                shared_ptr<geos::geom::Geometry> last_geom_buffer(lastLane->line_->buffer(lane_to_edge_die_buffer));
-                res = KDGeoUtil::isLineInBuffer(lastLane->line_.get(),last_geom_buffer.get(),lastLane->rightDivider_->line_.get(),10);
-                if(res){
-                    auto error = DCLaneError::createByKXS_05_023(lastLane->id_,lastLane->rightDivider_->id_);
-                    errorOutput->saveError(error);
+                checkLaneDividerDis(lastLane,lastLane->rightDivider_,errorOutput);
+            }
+        }
+        void LaneCheck::checkLaneDividerDis(shared_ptr<DCLane> lane,shared_ptr<DCDivider> divider,shared_ptr<CheckErrorOutput> &errorOutput){
+            if(divider->atts_.size()>0){
+                long type = divider->atts_[0]->type_;
+                ///应急车道
+                if(type == 36){
+                    lane_to_edge_die_buffer = 0.9;
+                } else {
+                    lane_to_edge_die_buffer = 1.2;
                 }
+            }
+            string lane_id = lane->id_;
+            shared_ptr<geos::geom::Geometry> geom_buffer(lane->line_->buffer(lane_to_edge_die_buffer));
+            auto intersects_geos  = geom_buffer->intersection(divider->line_.get());
+            if(intersects_geos->getCoordinates()->size()>0){
+                char zone[8]={0};
+                GeosObjUtil::create_coordinate(divider->nodes_.front()->coord_, zone,true);
+                shared_ptr<DCCoord> coord  = GeosObjUtil::get_coord(make_shared<geos::geom::Coordinate>(intersects_geos->getCoordinates()->front()),zone,true);
+                auto error = DCLaneError::createByKXS_05_023(lane->id_,divider->id_,lane_to_edge_die_buffer,coord);
+                errorOutput->saveError(error);
             }
         }
 

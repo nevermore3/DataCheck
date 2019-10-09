@@ -378,8 +378,7 @@ namespace kd {
             static shared_ptr<DCLaneError> createByKXS_05_003(const string taskid,const string dataKey,const string dataType,const string dataLayer,shared_ptr<DCCoord>  coord,const string &lane_id,
                                                               const string &divider_id);
 
-            static shared_ptr<DCLaneError> createByKXS_05_015(const string &lane_id1,
-                                                              const string &lane_id2);
+            static shared_ptr<DCLaneError> createByKXS_05_015(const string &lane_id1,const string &lane_id2,const shared_ptr<DCCoord> coord);
 
             static shared_ptr<DCLaneError> createByKXS_05_016(const string &lane_id,
                                                               const vector<shared_ptr<NodeError>> &ptr_error_nodes);
@@ -395,7 +394,7 @@ namespace kd {
 
             static shared_ptr<DCLaneError> createByKXS_05_022(long nodeID, shared_ptr<DCCoord> coord);
 
-            static shared_ptr<DCLaneError> createByKXS_05_023(string lane_id,string divider_id);
+            static shared_ptr<DCLaneError> createByKXS_05_023(string lane_id,string divider_id,double dis,shared_ptr<DCCoord> coord);
 
         };
 
@@ -519,6 +518,14 @@ namespace kd {
             // 属性点的坡度和关联对象的距离最近的两个形点计算的坡度对比
             static shared_ptr<DCSCHInfoError> createByKXS_01_035(string name, long objID, long index, double value1,
                                                                  double value2, double threshold);
+        };
+
+        class PolyLineError : public DCError{
+        public:
+            explicit PolyLineError(const string &checkModel) : DCError(checkModel) {}
+            string toString() override;
+
+            static shared_ptr<PolyLineError> createByKXS_011_02(string line_id,shared_ptr<DCCoord> coord);
         };
 
     }

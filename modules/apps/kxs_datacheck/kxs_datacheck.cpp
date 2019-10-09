@@ -1,4 +1,5 @@
 //module
+#include <businesscheck/PolylineCheck.h>
 #include "data/DataManager.h"
 #include "storage/CheckTaskInput.h"
 #include "storage/ModelDataInput.h"
@@ -206,6 +207,10 @@ int AllAutoCheck(const shared_ptr<CheckErrorOutput> &errorOutput, const string& 
     shared_ptr<DividerCheck> dividerCheck = make_shared<DividerCheck>("HD_DIVIDER_SCH");
     map_process_manager->registerProcessor(dividerCheck);
 
+//    shared_ptr<PolylineCheck> polylineCheck = make_shared<PolylineCheck>();
+//    map_process_manager->registerProcessor(polylineCheck);
+
+
     //执行已注册检查项
     shared_ptr<MapDataManager> mapDataManager = make_shared<MapDataManager>();
     if (!map_process_manager->execute(mapDataManager, errorOutput)) {
@@ -339,6 +344,15 @@ int main(int argc, const char *argv[]) {
             DataCheckConfig::getInstance().addProperty("branchName",task_info.param_results.find("branchName")->second);
             DataCheckConfig::getInstance().addProperty("taskFrameId",task_info.param_results.find("taskFrameId")->second);
             DataCheckConfig::getInstance().addProperty("projectId",task_info.param_results.find("projectId")->second);
+            if(task_info.param_results.find("stepCode") != task_info.param_results.end()){
+                DataCheckConfig::getInstance().addProperty("stepCode",task_info.param_results.find("stepCode")->second);
+            }
+            if(task_info.param_results.find("nodeCode") != task_info.param_results.end()){
+                DataCheckConfig::getInstance().addProperty("nodeCode",task_info.param_results.find("nodeCode")->second);
+            }
+            if(task_info.param_results.find("position") != task_info.param_results.end()){
+               DataCheckConfig::getInstance().addProperty("position",task_info.param_results.find("position")->second);
+            }
 
         } else {
             string checkFilePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::CHECK_FILE_PATH);
@@ -379,7 +393,7 @@ int main(int argc, const char *argv[]) {
 
         if (check_state == DataCheckConfig::TOPO_AUTO_CHECK) {
             //拓扑自动化检查
-            ret |= TopoAutoCheck(error_output, check_state);
+            TopoAutoCheck(error_output, check_state);
 //            ret |= error_output->saveErrorReport(checkresult);
             ret |= error_output->saveJsonError(errForAllCHeckPath);
         } else if (check_state == DataCheckConfig::ALL_AUTO_CHECK) {

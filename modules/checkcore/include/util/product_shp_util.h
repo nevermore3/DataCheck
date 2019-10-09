@@ -5,6 +5,8 @@
 #ifndef AUTOHDMAP_COMPILE_PRODUCT_SHP_UTIL_H
 #define AUTOHDMAP_COMPILE_PRODUCT_SHP_UTIL_H
 
+#include <string>
+using namespace std;
 //添加静态字符串常量
 const static string ID="ID";
 const static string NODE_TYPE = "NODE_TYPE";
@@ -221,5 +223,6 @@ const char kTrafficRule[] = "TRAFFICRULE";
 const char kTurnGuidance[] = "TURN_GUIDANCE";
 const char kTopoLaneGroup[] ="HD_TOPO_LANEGROUP";
 const char kLgRoadNodeIndex[] = "LG_ROADNODE_INDEX";
+const char kRLoRoad[]  = "HD_R_LO_ROAD";
 
 #endif //AUTOHDMAP_COMPILE_PRODUCT_SHP_UTIL_H

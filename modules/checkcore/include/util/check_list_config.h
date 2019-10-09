@@ -47,11 +47,12 @@ public:
      * 建立检查项ID 和 检查项描述的映射
      */
     void CheckID2CheckDesc();
+
 private:
     bool ParseCheckList(const std::string &json_result);
 
-    map<string, string> check_map;
     //所有检查项配置
+    map<string, string> check_map;
 
     int check_state_;
 };

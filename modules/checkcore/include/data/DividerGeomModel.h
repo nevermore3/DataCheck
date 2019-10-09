@@ -513,6 +513,8 @@ namespace kd {
 
             //对象的长度
             double len_;
+            //道路构成
+            long fow;
         };
 
         /**

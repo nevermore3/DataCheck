@@ -1298,7 +1298,7 @@ namespace kd {
         }
 
         shared_ptr<PolyLineError> PolyLineError::createByKXS_011_02(string line_id,shared_ptr<DCCoord> coord){
-            shared_ptr<PolyLineError> error = make_shared<PolyLineError>(CHECK_ITEM_KXS_LINE_001);
+            shared_ptr<PolyLineError> error = make_shared<PolyLineError>(CHECK_ITEM_KXS_LINE_002);
             error->checkLevel_ = LEVEL_ERROR;
             error->checkName = CHECK_ITEM_KXS_LINE_001_DESC;
             error->detail_ += "HD_R_LO_ROAD表中停止线TYPE=2,LO_ID=[";

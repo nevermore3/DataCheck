@@ -292,7 +292,7 @@ namespace kd {
 
         ///polyine类型数据相关检查
         const static std::string CHECK_ITEM_KXS_LINE_001 ="KXS-11-01";
-
+        const static std::string CHECK_ITEM_KXS_LINE_002 ="KXS-11-02";
         const static std::string CHECK_ITEM_KXS_LINE_001_DESC = "停止线与道路的关联关系正确性检查";
 
     }

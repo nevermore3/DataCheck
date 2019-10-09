@@ -65,5 +65,5 @@ void PolylineCheck::check_kxs_011_02() {
             error_output()->saveError(polylineError);
         }
     }
-    error_output()->addCheckItemInfo(CHECK_ITEM_KXS_LINE_001, polylines.size());
+    error_output()->addCheckItemInfo(CHECK_ITEM_KXS_LINE_002, polylines.size());
 }

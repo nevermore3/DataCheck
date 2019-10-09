@@ -41,8 +41,6 @@ namespace kd {
             void check_road_node(shared_ptr<MapDataManager> mapDataManager,
                                  shared_ptr<CheckErrorOutput> errorOutput);
 
-
-        private:
             void SetMapDataManager(shared_ptr<MapDataManager> &mapDataManager);
             /**
              * 结点重复
@@ -87,7 +85,13 @@ namespace kd {
 
             void BuildInfo();
 
+
             void BuildNodeID2Road();
+
+            //检查联通关系前数据加载
+            void preCheckConn();
+            //检查联通关系
+            void checkCNode();
 
         private:
             const string id = "road_check";
@@ -108,6 +112,10 @@ namespace kd {
 
             // cnodeconn
             map<long, shared_ptr<DCCNodeConn>> map_cnode_conn_;
+            ///map<cnode_id,vector<road_node_id>>
+            map<long,vector<long>> map_cnode_node;
+            ///map<froad_id,vector<troad_id>>,需要对比的cconn表数据
+            map<long,vector<long>> map_froad_troad;
 
             // key : nodeID, value: {roads}
             map<long, vector<shared_ptr<DCRoad>>> node_id_to_froad_;

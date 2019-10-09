@@ -985,6 +985,7 @@ namespace kd {
              //方向
              long direction_;
          };
+
     }
 }
 

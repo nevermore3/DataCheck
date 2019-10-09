@@ -39,6 +39,11 @@ namespace kd {
             }
             check_road_node_height(mapDataManager, errorOutput);
             check_road_node(mapDataManager, errorOutput);
+
+            preCheckConn();
+
+             checkCNode();
+
             return true;
         }
 
@@ -307,6 +312,24 @@ namespace kd {
                 errorOutput->saveError(ptr_error);
             }
         }
+        void RoadCheck::preCheckConn(){
+            LoadTrafficRule();
+
+            LoadRoadNode();
+
+            LoadCNode();
+
+            LoadCNodeConn();
+
+            LoadNodeConn();
+
+            BuildInfo();
+        }
+        void RoadCheck::checkCNode(){
+            for(auto cnode:map_cnodes_){
+
+            }
+        }
 
         bool RoadCheck::LoadTrafficRule() {
             string basePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::SHP_FILE_PATH);
@@ -368,7 +391,6 @@ namespace kd {
                 roadNode->id_ = std::to_string(shpFile.readIntField(i, "ID"));
                 roadNode->cnode_id_ = shpFile.readLongField(i, "C_NODE_ID");
 
-
                 size_t nVertices = shpObject->nVertices;
                 if (nVertices == 1) {
                     shared_ptr<DCCoord> coord = make_shared<DCCoord>();
@@ -376,6 +398,16 @@ namespace kd {
                     coord->y_ = shpObject->padfY[0];
                     coord->z_ = shpObject->padfZ[0];
                     roadNode->coord_ = coord;
+                }
+                if(roadNode->cnode_id_>0){
+                    auto cnode_nodes = map_cnode_node.find(roadNode->cnode_id_);
+                    if(cnode_nodes!=map_cnode_node.end()){
+                        cnode_nodes->second.emplace_back(roadNode->id_);
+                    } else{
+                        vector<long> node_ids;
+                        node_ids.emplace_back(roadNode->id_);
+                        map_cnode_node.insert(make_pair(roadNode->cnode_id_,node_ids));
+                    }
                 }
                 map_road_nodes_.insert(make_pair(stol(roadNode->id_), roadNode));
                 SHPDestroyObject(shpObject);

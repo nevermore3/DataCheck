@@ -897,6 +897,15 @@ namespace kd {
             return error;
         }
 
+        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_011(long roadID) {
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_011);
+            error->checkName = CHECK_ITEM_KXS_ROAD_011_DESC;
+            error->detail_ += "road ID 是: ";
+            error->detail_ += to_string(roadID);
+            error->detail_ += ", 其被孤立";
+            return error;
+        }
+
         /////////////////////////////////////////////////////////////////////////////////////////
         // DCLaneError
         /////////////////////////////////////////////////////////////////////////////////////////

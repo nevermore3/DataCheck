@@ -267,6 +267,8 @@ namespace kd {
 
             CheckNodesAndCNodeRelation(errorOutput);
 
+            // 检查是否有通行孤立的道路
+            CheckIsolatedRoad();
             return true;
         }
 
@@ -1042,6 +1044,34 @@ namespace kd {
             errorOutput->addCheckItemInfo(checkItemInfo);
         }
 
+        void RoadCheck::CheckIsolatedRoad() {
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            auto roads = data_manager()->roads_;
+            size_t total = roads.size();
+
+            for (const auto &iter : roads) {
+                long fNodeID = stol(iter.second->f_node_id);
+                long tNodeID = stol(iter.second->t_node_id);
+                if (iter.second->direction_ == 2) {
+                    if (map_node_id_to_froad_.find(fNodeID) == map_node_id_to_froad_.end() &&
+                        map_node_id_to_troad_.find(tNodeID) == map_node_id_to_troad_.end()) {
+                        // 起点的入度和终点的出度同时为空，则为孤立的道路
+                        auto error = DCRoadCheckError::createByKXS_04_011(stol(iter.first));
+                        error_output()->saveError(error);
+                    }
+
+                } else if (iter.second->direction_ == 3) {
+                    if (map_node_id_to_froad_.find(tNodeID) == map_node_id_to_froad_.end() &&
+                        map_node_id_to_troad_.find(fNodeID) == map_node_id_to_troad_.end()) {
+                        // 起点的出度和终点的入库同时为空， 则孤立
+                        auto error = DCRoadCheckError::createByKXS_04_011(stol(iter.first));
+                        error_output()->saveError(error);
+                    }
+                }
+            }
+            checkItemInfo->totalNum = total;
+            error_output()->addCheckItemInfo(checkItemInfo);
+        }
 
     }
 }

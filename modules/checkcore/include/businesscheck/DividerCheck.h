@@ -36,6 +36,9 @@ namespace kd {
              * @param errorOutput
              */
             void DividerSCHVerticalDistance(shared_ptr<CheckErrorOutput> errorOutput);
+
+            //每个HD_DIVIDER_SCH点的坡度和关联的DIVIDER对象中距离最近的两个形点计算出的坡度对比
+            void DividerSCHRelevantDividerSlope(shared_ptr<CheckErrorOutput> &errorOutput);
         private:
             const string id_ = "divider_check";
 

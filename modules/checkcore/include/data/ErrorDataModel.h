@@ -362,6 +362,8 @@ namespace kd {
 
             static shared_ptr<DCRoadCheckError> createByKXS_04_008(const string &road_id,
                                                                    const vector<shared_ptr<NodeCompareError>> &ptr_error_nodes);
+
+            static shared_ptr<DCRoadCheckError> createByKXS_04_010(long nodeID1, long nodeID2, long cNodeID1, long cNodeID2);
         };
 
         /**
@@ -514,6 +516,10 @@ namespace kd {
             // 属性点间的距离检查
             static shared_ptr<DCSCHInfoError> createByKXS_01_032(long objID, int index1, int index2,
                                                                  double dis, double threshold, string name);
+
+            // 属性点的坡度和关联对象的距离最近的两个形点计算的坡度对比
+            static shared_ptr<DCSCHInfoError> createByKXS_01_035(string name, long objID, long index, double value1,
+                                                                 double value2, double threshold);
         };
 
         class PolyLineError : public DCError{

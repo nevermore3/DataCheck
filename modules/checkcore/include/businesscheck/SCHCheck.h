@@ -29,6 +29,20 @@ namespace kd {
 
             bool LoadData();
 
+            /*
+             * 属性点的坡度
+             * 和 属性点关联对象 最近的两个形点计算出的坡度 对比
+             * 相差不能超过0.035
+             */
+            void SCHNodeRelevantObjectSlope(long objID,
+                                            vector<shared_ptr<DCSCHInfo>> &nodes,
+                                            vector<shared_ptr<DCCoord>> &coords,
+                                            shared_ptr<CheckErrorOutput> &errorOutput);
+
+            void SCHNodeRelevantObjectSlope(long objID,
+                                            vector<shared_ptr<DCSCHInfo>> &nodes,
+                                            vector<shared_ptr<DCDividerNode>> &coords,
+                                            shared_ptr<CheckErrorOutput> &errorOutput);
         public:
             // key: 对象ID,  value : 和对象关联的 属性点集合
             map<long, vector<shared_ptr<DCSCHInfo>>> map_obj_schs_;

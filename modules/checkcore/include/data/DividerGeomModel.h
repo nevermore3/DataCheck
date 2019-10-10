@@ -513,8 +513,9 @@ namespace kd {
 
             //对象的长度
             double len_;
+
             //道路构成
-            long fow;
+            long fow_;
         };
 
         /**
@@ -921,7 +922,7 @@ namespace kd {
             //属性点坐标
             shared_ptr<DCCoord> coord_;
         };
-        
+
 
         class DCTrafficRule : public DCModel {
         public:

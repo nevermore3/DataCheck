@@ -861,10 +861,11 @@ namespace kd {
             return error;
         }
 
+
         shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_009(int type , const string &from_road_id,const string &to_road_id,shared_ptr<DCCoord> &coord) {
             shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_009);
             error->checkName = CHECK_ITEM_KXS_ROAD_009_DESC;
-            switch(type){
+            switch (type) {
                 case 1:
                     error->detail_ += "C_NODECONN中缺少一条记录";
                     break;
@@ -875,10 +876,24 @@ namespace kd {
                     error->detail_ += "C_NODECONN记录的C_NODE_ID错误";
                     break;
             }
-            error->detail_ += "from_road_id:"+ from_road_id;
-            error->detail_ += ",to_road_id:"+ to_road_id;
+            error->detail_ += "from_road_id:" + from_road_id;
+            error->detail_ += ",to_road_id:" + to_road_id;
 
             error->coord = coord;
+            return error;
+        }
+        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_010(long nodeID1, long nodeID2, long cNodeID1, long cNodeID2) {
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_010);
+            error->checkName = CHECK_ITEM_KXS_ROAD_010_DESC;
+            error->detail_ += "nodeID1 是: ";
+            error->detail_ += to_string(nodeID1);
+            error->detail_ += ", 关联的 CNodeID1 是 : ";
+            error->detail_ += to_string(cNodeID1);
+            error->detail_ += ",nodeID2 是: ";
+            error->detail_ += to_string(nodeID2);
+            error->detail_ += ", 关联的 CNodeID2 是 : ";
+            error->detail_ += to_string(cNodeID2);
+
             return error;
         }
 
@@ -1314,6 +1329,27 @@ namespace kd {
             error->detail_ += ", 的距离为: ";
             error->detail_ += to_string(dis);
             error->detail_ += ", 超过规定的 ";
+            error->detail_ += to_string(threshold);
+            return error;
+        }
+
+
+        shared_ptr<DCSCHInfoError> DCSCHInfoError::createByKXS_01_035(string name, long objID, long index,
+                                                                      double value1, double value2, double threshold) {
+            shared_ptr <DCSCHInfoError> error = make_shared<DCSCHInfoError>(CHECK_ITEM_KXS_ORG_035);
+            error->checkLevel_ = LEVEL_ERROR;
+            error->checkName = CHECK_ITEM_KXS_ORG_035_DESC;
+            error->detail_ += "表名 :";
+            error->detail_ += name;
+            error->detail_ += ", Object ID: ";
+            error->detail_ += to_string(objID);
+            error->detail_ += ",属性点索引: ";
+            error->detail_ += to_string(index);
+            error->detail_ += ", 的坡度为 : ";
+            error->detail_ += to_string(value1);
+            error->detail_ += ", 两个形点的坡度为 :";
+            error->detail_ += to_string(value2);
+            error->detail_ += ", 超过了规定的阈值 :";
             error->detail_ += to_string(threshold);
             return error;
         }

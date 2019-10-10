@@ -78,6 +78,7 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ORG_030 = "KXS_01_030";
         const static std::string CHECK_ITEM_KXS_ORG_031 = "KXS_01_031";
         const static std::string CHECK_ITEM_KXS_ORG_032 = "KXS_01_032";
+        const static std::string CHECK_ITEM_KXS_ORG_035 = "KXS_01_035";
 
 
         const static std::string CHECK_ITEM_KXS_ORG_001_DESC = "对象ID记录重复性检查";
@@ -112,6 +113,7 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ORG_030_DESC = "Divider点完备性检查";
         const static std::string CHECK_ITEM_KXS_ORG_031_DESC = "属性点的曲率值检查";
         const static std::string CHECK_ITEM_KXS_ORG_032_DESC = "属性点之间距离不超过1.3m";
+        const static std::string CHECK_ITEM_KXS_ORG_035_DESC = "属性点的坡度和该属性点关联对象中距离最近的两个形点计算出的坡度对比";
 
 
         // 分组检查
@@ -185,6 +187,8 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ROAD_007 = "KXS-04-007";
         const static std::string CHECK_ITEM_KXS_ROAD_008 = "KXS-04-008";
         const static std::string CHECK_ITEM_KXS_ROAD_009 = "KXS-04-009";
+        const static std::string CHECK_ITEM_KXS_ROAD_010 = "KXS-04-010";
+
 
         const static std::string CHECK_ITEM_KXS_ROAD_001_DESC = "若车道组之间连通，则其内部的道路必然连通";
         const static std::string CHECK_ITEM_KXS_ROAD_002_DESC = "道路与车道组的两个车道边缘线应无交叉点。双向道路除外";
@@ -195,6 +199,8 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ROAD_007_DESC = "道路结点出现拐点，或者角度过大";
         const static std::string CHECK_ITEM_KXS_ROAD_008_DESC = "道路形态点间距过近";
         const static std::string CHECK_ITEM_KXS_ROAD_009_DESC = "综合交叉点道路拓扑关系完备性检查";
+        const static std::string CHECK_ITEM_KXS_ROAD_010_DESC = "C_NODE与ROAD_NODE的关联关系错误";
+
 
         // 车道中心线
         const static std::string CHECK_ITEM_KXS_LANE_001 = "KXS-05-001";

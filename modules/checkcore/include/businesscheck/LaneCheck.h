@@ -130,10 +130,18 @@ namespace kd {
              * @param errorOutput
              */
              void LaneSCHVerticalDistance(shared_ptr<CheckErrorOutput> &errorOutput);
+
+
+             /*
+              * 每个HD_LANE_SCH点的坡度和关联的LANE对象中距离最近的两个形点计算出的坡度对比
+              */
+             void LaneSCHRelevantLaneSlope(shared_ptr<CheckErrorOutput> &errorOutput);
+
              /**
               * 车道中心线与车行道边缘线距离检查
               */
              void CheckLaneGroupEgde(shared_ptr<CheckErrorOutput> &errorOutput);
+
              /**
               * 检查lane到divider的距离。
               * @param lane

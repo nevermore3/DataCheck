@@ -50,6 +50,7 @@ namespace kd {
             //HD_DIVIDER_SCH点离关联的DIVIDER的垂直距离不超过10cm
             DividerSCHVerticalDistance(errorOutput);
 
+            DividerSCHRelevantDividerSlope(errorOutput);
             return true;
         }
 
@@ -137,6 +138,23 @@ namespace kd {
             }
             checkItemInfo->totalNum = total;
             errorOutput->addCheckItemInfo(checkItemInfo);
+        }
+
+        void DividerCheck::DividerSCHRelevantDividerSlope(shared_ptr<CheckErrorOutput> &errorOutput) {
+
+            for (const auto &dividerSCH : map_obj_schs_) {
+                long dividerID = dividerSCH.first;
+                string strDividerID = to_string(dividerID);
+                vector<shared_ptr<DCSCHInfo>> schNodes = dividerSCH.second;
+
+                //get relevant divider
+                if (map_data_manager_->dividers_.find(strDividerID) == map_data_manager_->dividers_.end()) {
+                    continue;
+                }
+                auto divider = map_data_manager_->dividers_[strDividerID];
+                SCHNodeRelevantObjectSlope(dividerID, schNodes, divider->nodes_, errorOutput);
+            }
+
         }
 
     }

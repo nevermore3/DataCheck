@@ -587,12 +587,12 @@ namespace kd {
                     SHPObject *shp_object = lg_road_data.readShpObject(i);
 
                     shared_ptr<DCRoad> ptr_road = make_shared<DCRoad>();
-                    ptr_road->id_ = lg_road_data.readStringField(i, ID);
-                    ptr_road->direction_ = lg_road_data.readIntField(i, DIRECTION);
-                    ptr_road->sLanes_ = lg_road_data.readIntField(i, S_LANES);
-                    ptr_road->f_node_id = to_string(lg_road_data.readIntField(i, SNODE_ID));
-                    ptr_road->t_node_id = to_string(lg_road_data.readIntField(i, ENODE_ID));
-                    ptr_road->fow = lg_road_data.readIntField(i, FOW);
+                    ptr_road->id_ = lg_road_data.readStringField(i, "ID");
+                    ptr_road->direction_ = lg_road_data.readIntField(i, "DIRECTION");
+                    ptr_road->sLanes_ = lg_road_data.readIntField(i, "S_LANES");
+                    ptr_road->f_node_id = to_string(lg_road_data.readIntField(i, "SNODE_ID"));
+                    ptr_road->t_node_id = to_string(lg_road_data.readIntField(i, "ENODE_ID"));
+                    ptr_road->fow_ = lg_road_data.readLongField(i, "FOW");
                     ptr_road->fNode_ = nullptr;
                     ptr_road->tNode_ = nullptr;
 

@@ -517,7 +517,8 @@ namespace kd {
 
         void SlopeCheck::CheckAdasNodeToClosestDividerSlope(shared_ptr<CheckErrorOutput> errorOutput) {
 
-            double slopeThreshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::ADAS_NODE_DIVIDER_SLOPE);
+            //double slopeThreshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::ADAS_NODE_DIVIDER_SLOPE);
+            double slopeThreshold = 0.038;
             shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
             checkItemInfo->checkId = CHECK_ITEM_KXS_NORM_002;
             size_t  total = 0;

@@ -117,12 +117,12 @@ namespace kd {
              * @param from_road_id 进入道路
              * @param insideRoad 内部道路
              * @param t_road_ids 需要对比的退出道路集合
-             * @param checkedRoads 已经遍历过的内部道路集合
+             * @param checkedNodes 已经遍历过的内部道路集合
              */
-            void findAccessibleRoad(long cnode_id,long from_road_id,shared_ptr<DCRoad> insideRoad,long t_road_end_node_id,set<long> &t_road_ids,set<long> &checkedRoads);
+            void findAccessibleRoad(long cnode_id,long from_road_id,shared_ptr<DCRoad> insideRoad,long t_road_end_node_id,set<long> &t_road_ids,set<long> &checkedNodes);
         private:
             const string id = "road_check";
-
+            int item_data_total=0;
             map<long, shared_ptr<DCTrafficRule>> map_traffic_rule_;
 
             // roadnode
@@ -146,9 +146,9 @@ namespace kd {
 
             map<long, vector<shared_ptr<DCRoad>>> map_node_id_to_troad_;
             ///map<froad_id,cnode_id>
-            map<long,long> map_froad_to_cnode;
+            map<long,set<long>> map_froad_to_cnode;
             ///map<troad,cnode_id>
-            map<long,long> map_troad_to_cnode;
+            map<long,set<long>> map_troad_to_cnode;
 
 
             // key: roadID, value:{key : from_index, value {pair<to_index, lgID>} }

@@ -551,6 +551,7 @@ namespace kd {
             // 建立Node 和 road、之间的拓扑关系
             BuildNodeID2Road();
         }
+
         void RoadCheck::checkCNode(){
             for(auto cnode:map_cnodes_){
                 ///cnode 关联的roadnode集合
@@ -569,10 +570,11 @@ namespace kd {
                             set<long> t_road_ids;
                             long from_road_id = stol(road_it->id_);
                             getTRoadByFRoad(from_road_id,t_road_ids);
-                            set<long> checkedRoads;
+                            set<long> checkedNodes;
                             auto road_to_v = map_node_id_to_troad_.find(node_id);
+                            checkedNodes.insert(node_id);
                             for(auto road_t_it:road_to_v->second){
-                                findAccessibleRoad(cnode.first,from_road_id,road_t_it,node_id,t_road_ids,checkedRoads);
+                                findAccessibleRoad(cnode.first,from_road_id,road_t_it,node_id,t_road_ids,checkedNodes);
                             }
                             ///未遍历到的多余记录
                             if(t_road_ids.size()!=0){
@@ -589,34 +591,36 @@ namespace kd {
                     }
                 }
             }
+
+            error_output()->addCheckItemInfo(CHECK_ITEM_KXS_ROAD_009,item_data_total);
         }
-        void RoadCheck::findAccessibleRoad(long cnode_id,long from_road_id,shared_ptr<DCRoad> t_road,long t_road_start_node_id,set<long> &t_road_ids,set<long> &checkedRoads){
+        void RoadCheck::findAccessibleRoad(long cnode_id,long from_road_id,shared_ptr<DCRoad> t_road,long t_road_start_node_id,set<long> &t_road_ids,set<long> &checkedNodes){
             if(t_road->fow_ == 2){
-                if(checkedRoads.find(stol(t_road->id_))!= checkedRoads.end()){
+                long road_t_it_end_node_id = stol(t_road->f_node_id) == t_road_start_node_id ? stol(t_road->t_node_id) : stol(t_road->f_node_id);
+                if(checkedNodes.find(road_t_it_end_node_id)!= checkedNodes.end()){
                     ///避免重复循环
                     return;
                 }
-                checkedRoads.insert(stol(t_road->id_));
-                long road_t_it_end_node_id = stol(t_road->f_node_id) == t_road_start_node_id ? stol(t_road->t_node_id) : stol(t_road->f_node_id);
-
+                checkedNodes.insert(road_t_it_end_node_id);
                 auto road_to_v = map_node_id_to_troad_.find(road_t_it_end_node_id);
                 for(auto road_t_it:road_to_v->second){
-                    findAccessibleRoad(cnode_id,from_road_id,road_t_it,road_t_it_end_node_id,t_road_ids,checkedRoads);
+                    findAccessibleRoad(cnode_id,from_road_id,road_t_it,road_t_it_end_node_id,t_road_ids,checkedNodes);
                 }
 
             } else {
+                item_data_total++;
                 auto t_road_id = t_road_ids.find(stol(t_road->id_));
                 if(t_road_id == t_road_ids.end()){
                     auto ptr_error = DCRoadCheckError::createByKXS_04_009(1,to_string(from_road_id),t_road->id_,t_road->fNode_->coord_);
                     error_output()->saveError(ptr_error);
                 }else{
                     auto froad_to_cnode = map_froad_to_cnode.find(from_road_id);
-                    if(froad_to_cnode ==map_froad_to_cnode.end() || froad_to_cnode->second != cnode_id){
+                    if(froad_to_cnode ==map_froad_to_cnode.end() || froad_to_cnode->second.find(cnode_id) == froad_to_cnode->second.end()){
                         auto ptr_error = DCRoadCheckError::createByKXS_04_009(3,to_string(from_road_id),t_road->id_,t_road->fNode_->coord_);
                         error_output()->saveError(ptr_error);
                     }
                     auto troad_to_cnode = map_troad_to_cnode.find(stol(t_road->id_));
-                    if(troad_to_cnode ==map_froad_to_cnode.end() || troad_to_cnode->second != cnode_id){
+                    if(troad_to_cnode ==map_troad_to_cnode.end() || troad_to_cnode->second.find(cnode_id) == troad_to_cnode->second.end()){
                         auto ptr_error = DCRoadCheckError::createByKXS_04_009(3,to_string(from_road_id),t_road->id_,t_road->fNode_->coord_);
                         error_output()->saveError(ptr_error);
                     }
@@ -786,12 +790,26 @@ namespace kd {
 
                 auto fraod_cnode = map_froad_to_cnode.find(cNodeConn->fRoad_id_);
                 if(fraod_cnode == map_froad_to_cnode.end()){
-                    map_froad_to_cnode.insert(make_pair(cNodeConn->fRoad_id_,cNodeConn->cNode_id_));
+                    set<long> cNode_ids;
+                    cNode_ids.insert(cNodeConn->cNode_id_);
+                    map_froad_to_cnode.insert(make_pair(cNodeConn->fRoad_id_,cNode_ids));
+                }else{
+                    auto cnode = fraod_cnode->second.find(cNodeConn->cNode_id_);
+                    if(cnode == fraod_cnode->second.end()){
+                        fraod_cnode->second.insert(cNodeConn->cNode_id_);
+                    }
                 }
 
                 auto traod_cnode = map_troad_to_cnode.find(cNodeConn->tRoad_id_);
                 if(traod_cnode == map_troad_to_cnode.end()){
-                    map_troad_to_cnode.insert(make_pair(cNodeConn->tRoad_id_,cNodeConn->cNode_id_));
+                    set<long> cNode_ids;
+                    cNode_ids.insert(cNodeConn->cNode_id_);
+                    map_troad_to_cnode.insert(make_pair(cNodeConn->tRoad_id_,cNode_ids));
+                }else{
+                    auto cnode = traod_cnode->second.find(cNodeConn->cNode_id_);
+                    if(cnode == traod_cnode->second.end()){
+                        traod_cnode->second.insert(cNodeConn->cNode_id_);
+                    }
                 }
 
                 size_t nVertices = shpObject->nVertices;
@@ -926,7 +944,7 @@ namespace kd {
                         map_node_id_to_troad_[fNodeID].emplace_back(iter.second);
                     }
 
-                    if (iter.second->direction_ == 2) {
+                    if (iter.second->direction_ == 1) {
                         // 入度
                         if (map_node_id_to_froad_.find(fNodeID) == map_node_id_to_froad_.end()) {
                             vector<shared_ptr<DCRoad>> vRoad;

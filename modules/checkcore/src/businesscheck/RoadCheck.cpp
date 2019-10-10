@@ -19,14 +19,10 @@ namespace kd {
             return id;
         }
 
-        void RoadCheck::SetMapDataManager(shared_ptr<MapDataManager> &mapDataManager) {
-            map_data_manager_ = mapDataManager;
-        }
-
         bool RoadCheck::execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) {
 
-            SetMapDataManager(mapDataManager);
-
+            set_data_manager(mapDataManager);
+            set_error_output(errorOutput);
             //adasNode曲率检查
             CurvatureValueCheck(errorOutput);
 
@@ -324,16 +320,92 @@ namespace kd {
             LoadNodeConn();
 
             BuildInfo();
+
+            BuildNodeID2Road();
         }
         void RoadCheck::checkCNode(){
             for(auto cnode:map_cnodes_){
+                ///cnode 关联的roadnode集合
                 auto cnode_nodes = map_cnode_node.find(cnode.first);
                 for(auto node_id:cnode_nodes->second){
-
+                    auto road_topo_from = map_node_id_to_froad_.find(node_id);
+                    if(road_topo_from!=map_node_id_to_froad_.end()){
+                        ///road_node关联的所有road
+                        auto road_from_v = road_topo_from->second;
+                        for(auto road_it:road_from_v){
+                            if(road_it->fow == 2){
+                                ///跳过交叉点内道路
+                                continue;
+                            }
+                            ///需要对比的数据
+                            set<long> t_road_ids;
+                            long from_road_id = stol(road_it->id_);
+                            getTRoadByFRoad(from_road_id,t_road_ids);
+                            set<long> checkedRoads;
+                            auto road_to_v = map_node_id_to_troad_.find(node_id);
+                            for(auto road_t_it:road_to_v->second){
+                                findAccessibleRoad(cnode.first,from_road_id,road_t_it,node_id,t_road_ids,checkedRoads);
+                            }
+                            ///未遍历到的多余记录
+                            if(t_road_ids.size()!=0){
+                                for(auto t_road_id:t_road_ids){
+                                    if(road_it->direction_==1 && from_road_id == t_road_id){
+                                        continue;
+                                    }
+                                    auto road_node = map_road_nodes_.find(node_id);
+                                    auto ptr_error = DCRoadCheckError::createByKXS_04_009(2,road_it->id_,to_string(t_road_id),road_node->second->coord_);
+                                    error_output()->saveError(ptr_error);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
+        void RoadCheck::findAccessibleRoad(long cnode_id,long from_road_id,shared_ptr<DCRoad> t_road,long t_road_start_node_id,set<long> &t_road_ids,set<long> &checkedRoads){
+            if(t_road->fow == 2){
+                if(checkedRoads.find(stol(t_road->id_))!= checkedRoads.end()){
+                    ///避免重复循环
+                    return;
+                }
+                checkedRoads.insert(stol(t_road->id_));
+                long road_t_it_end_node_id = stol(t_road->f_node_id) == t_road_start_node_id ? stol(t_road->t_node_id) : stol(t_road->f_node_id);
 
+                auto road_to_v = map_node_id_to_troad_.find(road_t_it_end_node_id);
+                for(auto road_t_it:road_to_v->second){
+                    findAccessibleRoad(from_road_id,road_t_it,road_t_it_end_node_id,t_road_ids,checkedRoads);
+                }
+
+            } else {
+                auto t_road_id = t_road_ids.find(stol(t_road->id_));
+                if(t_road_id == t_road_ids.end()){
+                    auto ptr_error = DCRoadCheckError::createByKXS_04_009(1,to_string(from_road_id),t_road->id_,t_road->fNode_->coord_);
+                    error_output()->saveError(ptr_error);
+                }else{
+                    auto froad_to_cnode = map_froad_to_cnode.find(from_road_id);
+                    if(froad_to_cnode ==map_froad_to_cnode.end() || froad_to_cnode->second != cnode_id){
+                        auto ptr_error = DCRoadCheckError::createByKXS_04_009(3,to_string(from_road_id),t_road->id_,t_road->fNode_->coord_);
+                        error_output()->saveError(ptr_error);
+                    }
+                    auto troad_to_cnode = map_troad_to_cnode.find(stol(t_road->id_));
+                    if(troad_to_cnode ==map_froad_to_cnode.end() || troad_to_cnode->second != cnode_id){
+                        auto ptr_error = DCRoadCheckError::createByKXS_04_009(3,to_string(from_road_id),t_road->id_,t_road->fNode_->coord_);
+                        error_output()->saveError(ptr_error);
+                    }
+
+                    t_road_ids.erase(stol(t_road->id_));
+                }
+            }
+        }
+        void RoadCheck::getTRoadByFRoad(long from_road_id,set<long> &t_road_set){
+            auto t_road_v = map_froad_troad.find(from_road_id);
+            if(t_road_v!= map_froad_troad.end())
+            for(auto road_id:t_road_v->second){
+                if(t_road_set.find(road_id) == t_road_set.end()){
+                   t_road_set.insert(road_id);
+                }
+            }
+        }
         bool RoadCheck::LoadTrafficRule() {
             string basePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::SHP_FILE_PATH);
             string filePath = basePath + "/" + "TRAFFICRULE";
@@ -484,6 +556,16 @@ namespace kd {
                     map_froad_troad.insert(make_pair(cNodeConn->fRoad_id_,troad_ids));
                 }
 
+                auto fraod_cnode = map_froad_to_cnode.find(cNodeConn->fRoad_id_);
+                if(fraod_cnode == map_froad_to_cnode.end()){
+                    map_froad_to_cnode.insert(make_pair(cNodeConn->fRoad_id_,cNodeConn->cNode_id_));
+                }
+
+                auto traod_cnode = map_troad_to_cnode.find(cNodeConn->tRoad_id_);
+                if(traod_cnode == map_troad_to_cnode.end()){
+                    map_troad_to_cnode.insert(make_pair(cNodeConn->tRoad_id_,cNodeConn->cNode_id_));
+                }
+
                 size_t nVertices = shpObject->nVertices;
                 if (nVertices == 1) {
                     shared_ptr<DCCoord> coord = make_shared<DCCoord>();
@@ -537,7 +619,7 @@ namespace kd {
 
         void RoadCheck::BuildInfo() {
             // 填充road的 fnode 和 tnode
-            auto roads = map_data_manager_->roads_;
+            auto roads =  data_manager()->roads_;
             for (auto &iter : roads) {
                 long fNodeID = stol(iter.second->f_node_id);
                 long tNodeID = stol(iter.second->t_node_id);
@@ -592,68 +674,68 @@ namespace kd {
         }
 
         void RoadCheck::BuildNodeID2Road() {
-            auto roads = map_data_manager_->roads_;
+            auto roads = data_manager()->roads_;
             for (const auto &iter : roads) {
                 long fNodeID = stol(iter.second->f_node_id);
                 long tNodeID = stol(iter.second->t_node_id);
 
                 if (iter.second->direction_ == 1 || iter.second->direction_ == 2) {
                     // 入度
-                    if (node_id_to_froad_.find(tNodeID) == node_id_to_froad_.end()) {
+                    if (map_node_id_to_froad_.find(tNodeID) == map_node_id_to_froad_.end()) {
                         vector<shared_ptr<DCRoad>> vRoad;
                         vRoad.emplace_back(iter.second);
-                        node_id_to_froad_.insert(make_pair(tNodeID, vRoad));
+                        map_node_id_to_froad_.insert(make_pair(tNodeID, vRoad));
                     } else {
-                        node_id_to_froad_[tNodeID].emplace_back(iter.second);
+                        map_node_id_to_froad_[tNodeID].emplace_back(iter.second);
                     }
 
                     // 出度
-                    if (node_id_to_troad_.find(fNodeID) == node_id_to_troad_.end()) {
+                    if (map_node_id_to_troad_.find(fNodeID) == map_node_id_to_troad_.end()) {
                         vector<shared_ptr<DCRoad>> vRoad;
                         vRoad.emplace_back(iter.second);
-                        node_id_to_troad_.insert(make_pair(fNodeID, vRoad));
+                        map_node_id_to_troad_.insert(make_pair(fNodeID, vRoad));
                     } else {
-                        node_id_to_troad_[fNodeID].emplace_back(iter.second);
+                        map_node_id_to_troad_[fNodeID].emplace_back(iter.second);
                     }
 
                     if (iter.second->direction_ == 2) {
                         // 入度
-                        if (node_id_to_froad_.find(fNodeID) == node_id_to_froad_.end()) {
+                        if (map_node_id_to_froad_.find(fNodeID) == map_node_id_to_froad_.end()) {
                             vector<shared_ptr<DCRoad>> vRoad;
                             vRoad.emplace_back(iter.second);
-                            node_id_to_froad_.insert(make_pair(fNodeID, vRoad));
+                            map_node_id_to_froad_.insert(make_pair(fNodeID, vRoad));
                         } else {
-                            node_id_to_froad_[fNodeID].emplace_back(iter.second);
+                            map_node_id_to_froad_[fNodeID].emplace_back(iter.second);
                         }
 
                         // 出度
-                        if (node_id_to_troad_.find(tNodeID) == node_id_to_troad_.end()) {
+                        if (map_node_id_to_troad_.find(tNodeID) == map_node_id_to_troad_.end()) {
                             vector<shared_ptr<DCRoad>> vRoad;
                             vRoad.emplace_back(iter.second);
-                            node_id_to_troad_.insert(make_pair(tNodeID, vRoad));
+                            map_node_id_to_troad_.insert(make_pair(tNodeID, vRoad));
                         } else {
-                            node_id_to_troad_[tNodeID].emplace_back(iter.second);
+                            map_node_id_to_troad_[tNodeID].emplace_back(iter.second);
                         }
                     }
 
                 } else if (iter.second->direction_ == 3) {
                     // 逆向
                     // 入度
-                    if (node_id_to_froad_.find(fNodeID) == node_id_to_froad_.end()) {
+                    if (map_node_id_to_froad_.find(fNodeID) == map_node_id_to_froad_.end()) {
                         vector<shared_ptr<DCRoad>> vRoad;
                         vRoad.emplace_back(iter.second);
-                        node_id_to_froad_.insert(make_pair(fNodeID, vRoad));
+                        map_node_id_to_froad_.insert(make_pair(fNodeID, vRoad));
                     } else {
-                        node_id_to_froad_[fNodeID].emplace_back(iter.second);
+                        map_node_id_to_froad_[fNodeID].emplace_back(iter.second);
                     }
 
                     // 出度
-                    if (node_id_to_troad_.find(tNodeID) == node_id_to_troad_.end()) {
+                    if (map_node_id_to_troad_.find(tNodeID) == map_node_id_to_troad_.end()) {
                         vector<shared_ptr<DCRoad>> vRoad;
                         vRoad.emplace_back(iter.second);
-                        node_id_to_troad_.insert(make_pair(tNodeID, vRoad));
+                        map_node_id_to_troad_.insert(make_pair(tNodeID, vRoad));
                     } else {
-                        node_id_to_troad_[tNodeID].emplace_back(iter.second);
+                        map_node_id_to_troad_[tNodeID].emplace_back(iter.second);
                     }
 
                 } else {

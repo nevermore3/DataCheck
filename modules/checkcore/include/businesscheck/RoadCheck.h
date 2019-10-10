@@ -41,7 +41,6 @@ namespace kd {
             void check_road_node(shared_ptr<MapDataManager> mapDataManager,
                                  shared_ptr<CheckErrorOutput> errorOutput);
 
-            void SetMapDataManager(shared_ptr<MapDataManager> &mapDataManager);
             /**
              * 结点重复
              * @param errorOutput
@@ -92,12 +91,22 @@ namespace kd {
             void preCheckConn();
             //检查联通关系
             void checkCNode();
-
+            /**
+             * 根据进入road获取关联的退出道路
+             * @param from_road_id
+             * @param t_road_set
+             */
+            void getTRoadByFRoad(long from_road_id,set<long> &t_road_set);
+            /**
+             * 查找复杂路口内部道路可通达的道路
+             * @param from_road_id 进入道路
+             * @param insideRoad 内部道路
+             * @param t_road_ids 需要对比的退出道路集合
+             * @param checkedRoads 已经遍历过的内部道路集合
+             */
+            void findAccessibleRoad(long cnode_id,long from_road_id,shared_ptr<DCRoad> insideRoad,long t_road_end_node_id,set<long> &t_road_ids,set<long> &checkedRoads);
         private:
             const string id = "road_check";
-
-            shared_ptr<MapDataManager> map_data_manager_;
-
 
             map<long, shared_ptr<DCTrafficRule>> map_traffic_rule_;
 
@@ -118,9 +127,13 @@ namespace kd {
             map<long,vector<long>> map_froad_troad;
 
             // key : nodeID, value: {roads}
-            map<long, vector<shared_ptr<DCRoad>>> node_id_to_froad_;
+            map<long, vector<shared_ptr<DCRoad>>> map_node_id_to_froad_;
 
-            map<long, vector<shared_ptr<DCRoad>>> node_id_to_troad_;
+            map<long, vector<shared_ptr<DCRoad>>> map_node_id_to_troad_;
+            ///map<froad_id,cnode_id>
+            map<long,long> map_froad_to_cnode;
+            ///map<troad,cnode_id>
+            map<long,long> map_troad_to_cnode;
 
         };
     }

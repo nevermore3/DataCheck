@@ -861,6 +861,27 @@ namespace kd {
             return error;
         }
 
+        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_009(int type , const string &from_road_id,const string &to_road_id,shared_ptr<DCCoord> &coord) {
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_009);
+            error->checkName = CHECK_ITEM_KXS_ROAD_009_DESC;
+            switch(type){
+                case 1:
+                    error->detail_ += "C_NODECONN中缺少一条记录";
+                    break;
+                case 2:
+                    error->detail_ += "C_NODECONN中多出一条记录";
+                    break;
+                case 3:
+                    error->detail_ += "C_NODECONN记录的C_NODE_ID错误";
+                    break;
+            }
+            error->detail_ += "from_road_id:"+ from_road_id;
+            error->detail_ += ",to_road_id:"+ to_road_id;
+
+            error->coord = coord;
+            return error;
+        }
+
         /////////////////////////////////////////////////////////////////////////////////////////
         // DCLaneError
         /////////////////////////////////////////////////////////////////////////////////////////

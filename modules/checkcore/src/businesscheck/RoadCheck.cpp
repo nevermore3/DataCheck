@@ -556,7 +556,9 @@ namespace kd {
         void RoadCheck::checkCNode(){
             for(auto cnode:map_cnodes_){
                 auto cnode_nodes = map_cnode_node.find(cnode.first);
+                for(auto node_id:cnode_nodes->second){
 
+                }
             }
         }
 

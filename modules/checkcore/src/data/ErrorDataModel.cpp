@@ -1332,7 +1332,7 @@ namespace kd {
             error->detail_ += to_string(threshold);
             return error;
         }
-        
+
         shared_ptr<PolyLineError> PolyLineError::createByKXS_011_02(string line_id,shared_ptr<DCCoord> coord){
             shared_ptr<PolyLineError> error = make_shared<PolyLineError>(CHECK_ITEM_KXS_LINE_002);
             error->checkLevel_ = LEVEL_ERROR;

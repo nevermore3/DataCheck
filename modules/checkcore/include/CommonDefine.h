@@ -186,7 +186,9 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ROAD_006 = "KXS-04-006";
         const static std::string CHECK_ITEM_KXS_ROAD_007 = "KXS-04-007";
         const static std::string CHECK_ITEM_KXS_ROAD_008 = "KXS-04-008";
+        const static std::string CHECK_ITEM_KXS_ROAD_009 = "KXS-04-009";
         const static std::string CHECK_ITEM_KXS_ROAD_010 = "KXS-04-010";
+
 
         const static std::string CHECK_ITEM_KXS_ROAD_001_DESC = "若车道组之间连通，则其内部的道路必然连通";
         const static std::string CHECK_ITEM_KXS_ROAD_002_DESC = "道路与车道组的两个车道边缘线应无交叉点。双向道路除外";
@@ -196,6 +198,7 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ROAD_006_DESC = "道路前后结点重复,前后点xy坐标相同（z值可能相同）";
         const static std::string CHECK_ITEM_KXS_ROAD_007_DESC = "道路结点出现拐点，或者角度过大";
         const static std::string CHECK_ITEM_KXS_ROAD_008_DESC = "道路形态点间距过近";
+        const static std::string CHECK_ITEM_KXS_ROAD_009_DESC = "综合交叉点道路拓扑关系完备性检查";
         const static std::string CHECK_ITEM_KXS_ROAD_010_DESC = "C_NODE与ROAD_NODE的关联关系错误";
 
 

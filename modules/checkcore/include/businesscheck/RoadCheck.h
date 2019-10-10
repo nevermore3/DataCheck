@@ -104,7 +104,9 @@ namespace kd {
             //检查联通关系前数据加载
             void preCheckConn();
             //检查联通关系
-            void checkCNode();
+            void checkCNodeConn();
+            ///
+            void checkNodeConn();
             /**
              * 根据进入road获取关联的退出道路
              * @param from_road_id
@@ -162,7 +164,8 @@ namespace kd {
 
             // key: roadID, value:{key : from_index, value {pair<to_index, lgID>} }
             map<long, map<long, vector<pair<long, long>>>> map_road_lg_index_;
-
+            ///map<froad_id_troad_id,node_id>
+            map<string,long> map_ft_road_id_to_node_id;
         };
     }
 }

@@ -25,7 +25,6 @@ namespace kd {
         SlopeCheck::SlopeCheck() {
             slope_threshold_ = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::AVG_SLOPE_ERROR);
             base_path_ = DataCheckConfig::getInstance().getProperty(DataCheckConfig::SHP_FILE_PATH);
-            divider_quadtree_ = make_shared<geos::index::quadtree::Quadtree>();
         }
 
         SlopeCheck::~SlopeCheck() {
@@ -47,11 +46,6 @@ namespace kd {
 
             // 检查每个LANE_SCH 与其前后两个node(跨lane) 坡度的平均值比较
             CheckLaneSCH(mapDataManager, errorOutput);
-
-            //BuildDividerGeometryInfo();
-
-            //获取ADAS_NODE最近的一条DIVIDER上最近的2个节点，根据这两个节点计算一个坡度，和ADAS_NODE记录的坡度对比
-            CheckAdasNodeToClosestDividerSlope(errorOutput);
 
             return true;
         }
@@ -483,88 +477,6 @@ namespace kd {
             errorOutput->addCheckItemInfo(checkItemInfo);
         }
 
-        void SlopeCheck::BuildDividerGeometryInfo() {
-            // 建立查询divider的数据结构
-            for (const auto &divider : data_manager_->dividers_) {
-                if (divider.second->line_ == nullptr) {
-                    continue;
-                }
-                divider_quadtree_->insert(divider.second->line_->getEnvelopeInternal(), divider.second.get());
-            }
-        }
-
-
-        shared_ptr<DCDivider> SlopeCheck::GetRelevantDivider(long roadID) {
-            shared_ptr<DCDivider> divider = nullptr;
-            string strRoadID = to_string(roadID);
-            map<string, shared_ptr<DCLaneGroup>>laneGroups = data_manager_->laneGroups_;
-            shared_ptr<DCLaneGroup> laneGroup = nullptr;
-            for (const auto &lg : laneGroups) {
-                if (lg.second->road_->id_ == strRoadID) {
-                    laneGroup = lg.second;
-                    break;
-                }
-            }
-            if (laneGroup == nullptr) {
-                return divider;
-            }
-            vector<shared_ptr<DCLane>> lanes = laneGroup->lanes_;
-            shared_ptr<DCLane> lane = lanes[lanes.size() / 2];
-            divider = lane->leftDivider_;
-            return divider;
-        }
-
-
-        void SlopeCheck::CheckAdasNodeToClosestDividerSlope(shared_ptr<CheckErrorOutput> errorOutput) {
-
-            //double slopeThreshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::ADAS_NODE_DIVIDER_SLOPE);
-            double slopeThreshold = 0.038;
-            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
-            checkItemInfo->checkId = CHECK_ITEM_KXS_NORM_002;
-            size_t  total = 0;
-            for (const auto &roadAdasNode : map_road_adas_node_) {
-                map<long, shared_ptr<AdasNode>> roadAdasNodeObj = roadAdasNode.second;
-                total += roadAdasNodeObj.size();
-                long roadID = roadAdasNode.first;
-
-                shared_ptr<DCDivider> divider = GetRelevantDivider(roadID);
-                if (divider == nullptr) {
-                    continue;
-                }
-
-                size_t  i = 1;
-                size_t  num = divider->nodes_.size();
-                for (const auto &adasNode : roadAdasNodeObj) {
-                    if (i  < num - 1) {
-                        double distance1 = Distance::distance(adasNode.second->coord_, divider->nodes_[i - 1]->coord_);
-                        double distance2 = Distance::distance(adasNode.second->coord_, divider->nodes_[i + 1]->coord_);
-                        if (distance1 > distance2) {
-                            i++;
-                        }
-                    }
-
-                    auto nodeA = divider->nodes_[i];
-                    auto nodeB = divider->nodes_[i - 1];
-
-                    double distanceAB = Distance::distance(nodeA->coord_, nodeB->coord_) / 100;
-                    double avgSlope = (nodeA->coord_->z_ - nodeB->coord_->z_) / distanceAB;
-                    double diffSlope = fabs(avgSlope - adasNode.second->slope_);
-                    if (diffSlope > slopeThreshold) {
-                        stringstream ss;
-                        ss << "当前的 ADAS_NODE 的 ID 是 " << adasNode.second->id_;
-                        ss << ", 与其关联的车道线 ID 是 " << divider->id_;
-                        ss << ", 的坡度相差为 "<< diffSlope;
-                        ss << ", 超过了规定的坡度误差 " << slopeThreshold;
-                        ss << ", 其中 ADASNODE 坡度为 :" << adasNode.second->slope_;
-                        ss << ", divier两点的坡度为 :"<<avgSlope;
-                        auto error = DCAttributeCheckError::createByKXS_10_002(ss.str());
-                        errorOutput->saveError(error);
-                    }
-                }
-            }
-            checkItemInfo->totalNum = total;
-            errorOutput->addCheckItemInfo(checkItemInfo);
-        }
 
     }
 }

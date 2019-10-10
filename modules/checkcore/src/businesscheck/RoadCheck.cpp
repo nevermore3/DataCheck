@@ -574,7 +574,7 @@ namespace kd {
             size_t recordNums = shpFile.getRecords();
             for (size_t i = 0; i < recordNums; i++) {
                 SHPObject *shpObject = shpFile.readShpObject(i);
-                if (!shpObject || shpObject->nSHPType != SHPT_POINTZ)
+                if (!shpObject || shpObject->nSHPType != SHPT_POINT)
                     continue;
 
                 shared_ptr<DCTrafficRule> trafficRule = make_shared<DCTrafficRule>();
@@ -613,7 +613,7 @@ namespace kd {
             size_t recordNums = shpFile.getRecords();
             for (size_t i = 0; i < recordNums; i++) {
                 SHPObject *shpObject = shpFile.readShpObject(i);
-                if (!shpObject || shpObject->nSHPType != SHPT_POINTZ)
+                if (!shpObject || shpObject->nSHPType != SHPT_POINT)
                     continue;
 
                 shared_ptr<DCRoadNode> roadNode = make_shared<DCRoadNode>();
@@ -658,7 +658,7 @@ namespace kd {
             size_t recordNums = shpFile.getRecords();
             for (size_t i = 0; i < recordNums; i++) {
                 SHPObject *shpObject = shpFile.readShpObject(i);
-                if (!shpObject || shpObject->nSHPType != SHPT_POINTZ)
+                if (!shpObject || shpObject->nSHPType != SHPT_POINT)
                     continue;
 
                 shared_ptr<DCCNode> cNode = make_shared<DCCNode>();
@@ -692,7 +692,7 @@ namespace kd {
             size_t recordNums = shpFile.getRecords();
             for (size_t i = 0; i < recordNums; i++) {
                 SHPObject *shpObject = shpFile.readShpObject(i);
-                if (!shpObject || shpObject->nSHPType != SHPT_POINTZ)
+                if (!shpObject || shpObject->nSHPType != SHPT_POINT)
                     continue;
 
                 shared_ptr<DCCNodeConn> cNodeConn = make_shared<DCCNodeConn>();
@@ -738,7 +738,7 @@ namespace kd {
             size_t recordNums = shpFile.getRecords();
             for (size_t i = 0; i < recordNums; i++) {
                 SHPObject *shpObject = shpFile.readShpObject(i);
-                if (!shpObject || shpObject->nSHPType != SHPT_POINTZ)
+                if (!shpObject || shpObject->nSHPType != SHPT_POINT)
                     continue;
 
                 shared_ptr<DCNodeConn> nodeConn = make_shared<DCNodeConn>();

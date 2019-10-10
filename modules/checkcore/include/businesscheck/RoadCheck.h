@@ -120,6 +120,11 @@ namespace kd {
              * @param checkedRoads 已经遍历过的内部道路集合
              */
             void findAccessibleRoad(long cnode_id,long from_road_id,shared_ptr<DCRoad> insideRoad,long t_road_end_node_id,set<long> &t_road_ids,set<long> &checkedRoads);
+
+            /*
+             * 道路通行方向孤立检查
+             */
+            void CheckIsolatedRoad();
         private:
             const string id = "road_check";
 

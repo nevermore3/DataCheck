@@ -1046,6 +1046,7 @@ namespace kd {
 
         void RoadCheck::CheckIsolatedRoad() {
             shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_ROAD_011;
             auto roads = data_manager()->roads_;
             size_t total = roads.size();
 

@@ -926,7 +926,7 @@ namespace kd {
                         map_node_id_to_troad_[fNodeID].emplace_back(iter.second);
                     }
 
-                    if (iter.second->direction_ == 2) {
+                    if (iter.second->direction_ == 1) {
                         // 入度
                         if (map_node_id_to_froad_.find(fNodeID) == map_node_id_to_froad_.end()) {
                             vector<shared_ptr<DCRoad>> vRoad;

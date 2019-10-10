@@ -523,7 +523,6 @@ namespace kd {
         class PolyLineError : public DCError{
         public:
             explicit PolyLineError(const string &checkModel) : DCError(checkModel) {}
-            string toString() override;
 
             static shared_ptr<PolyLineError> createByKXS_011_02(string line_id,shared_ptr<DCCoord> coord);
         };

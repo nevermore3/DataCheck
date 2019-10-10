@@ -1315,7 +1315,8 @@ namespace kd {
             error->detail_ += to_string(value2);
             error->detail_ += ", 超过了规定的阈值 :";
             error->detail_ += to_string(threshold);
-            return  error;
+            return error;
+        }
 
         shared_ptr<PolyLineError> PolyLineError::createByKXS_011_02(string line_id,shared_ptr<DCCoord> coord){
             shared_ptr<PolyLineError> error = make_shared<PolyLineError>(CHECK_ITEM_KXS_LINE_002);
@@ -1328,9 +1329,6 @@ namespace kd {
             return error;
         }
 
-        string PolyLineError::toString() {
-            return detail_;
-        }
     }
 }
 

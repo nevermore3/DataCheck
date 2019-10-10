@@ -516,6 +516,9 @@ namespace kd {
 
             //道路构成
             long fow_;
+
+            //道路等级
+            long r_class_;
         };
 
         /**

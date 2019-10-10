@@ -1074,5 +1074,16 @@ namespace kd {
             error_output()->addCheckItemInfo(checkItemInfo);
         }
 
+        void RoadCheck::CheckRoadGradesInterConnection() {
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_ROAD_013;
+            auto roads = data_manager()->roads_;
+            size_t total = roads.size();
+
+            for (const auto &iter : roads) {
+
+            }
+        }
+
     }
 }

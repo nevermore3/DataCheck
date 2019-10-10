@@ -97,7 +97,6 @@ namespace kd {
 
             void BuildInfo();
 
-
             void BuildNodeID2Road();
 
             //

@@ -436,20 +436,41 @@ namespace kd {
          */
         class DCCNode : public DCModel{
         public:
+            // 名称
+            string name_chn_;
 
+            // 拼音
+            string name_py_;
+
+            // 英文名称
+            string name_eng_;
+
+            // 交通灯
+            long tlight_;
+
+            // 铁道路口
+            long rcrossing_;
+
+            // 坐标
+            shared_ptr<DCCoord> coord_;
         };
 
         /**
          * 道路节点对象
          */
-        class DCRoadNode{
+        class DCRoadNode : public DCModel {
         public:
             DCRoadNode():cNode_(nullptr){}
         public:
 
+            // 复杂路口id
+            long cnode_id_;
+
             //关联复杂路口
             shared_ptr<DCCNode> cNode_;
 
+            // 坐标
+            shared_ptr<DCCoord> coord_;
         };
 
         /**
@@ -511,8 +532,20 @@ namespace kd {
             //退出道路
             shared_ptr<DCRoad> tRoad_;
 
+            // 进入道路id
+            long fRoad_id_;
+
+            // 退出道路id
+            long tRoad_id_;
+
+            // 关联节点id
+            long cNode_id_;
+
             //通达标识 "0：能通达（默认）, 1：不能通达"
-            long accessabel_;
+            long flag_;
+
+            // 坐标
+            shared_ptr<DCCoord> coord_;
         };
 
         /**
@@ -532,8 +565,20 @@ namespace kd {
             //退出道路
             shared_ptr<DCRoad> tRoad_;
 
+            // 进入道路id
+            long fRoad_id_;
+
+            // 退出道路id
+            long tRoad_id_;
+
+            // 关联nodeid
+            long node_id_;
+
             //通达标识 "0：能通达（默认）, 1：不能通达"
-            long accessabel_;
+            long flag_;
+
+            // 坐标
+            shared_ptr<DCCoord> coord_;
 
         };
 
@@ -918,6 +963,28 @@ namespace kd {
              //方向
              long direction_;
          };
+
+        class DCTrafficRule : public DCModel {
+        public:
+            // 节点类型： 1、简单路口 2、复杂路口
+            long node_type_;
+
+            // 关联拓扑关系
+            long node_conn_id_;
+
+            // 转向禁止类型 1、强制禁止信息 2、门禁禁止 3、交通管制
+            long type_;
+
+            // 限制车辆类型
+            string vehicle_;
+
+            // 限制时间
+            string time_;
+
+            // 坐标
+            shared_ptr<DCCoord> coord_;
+        };
+
     }
 }
 

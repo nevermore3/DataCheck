@@ -611,8 +611,13 @@ namespace kd {
                             set<long> checkedNodes;
                             auto road_to_v = map_node_id_to_troad_.find(node_id);
                             checkedNodes.insert(node_id);
-                            for(auto road_t_it:road_to_v->second){
-                                findAccessibleRoad(cnode.first,from_road_id,road_t_it,node_id,t_road_ids,checkedNodes);
+                            if(road_to_v!=map_node_id_to_troad_.end()) {
+                                for (auto road_t_it:road_to_v->second) {
+                                    findAccessibleRoad(cnode.first, from_road_id, road_t_it, node_id, t_road_ids,
+                                                       checkedNodes);
+                                }
+                            }else{
+                                LOG(INFO) << "node id:" << node_id << " not find to road!";
                             }
                             ///未遍历到的多余记录
                             if(t_road_ids.size()!=0){
@@ -641,8 +646,12 @@ namespace kd {
                 }
                 checkedNodes.insert(road_t_it_end_node_id);
                 auto road_to_v = map_node_id_to_troad_.find(road_t_it_end_node_id);
-                for(auto road_t_it:road_to_v->second){
-                    findAccessibleRoad(cnode_id,from_road_id,road_t_it,road_t_it_end_node_id,t_road_ids,checkedNodes);
+                if(road_to_v!=map_node_id_to_troad_.end()){
+                    for(auto road_t_it:road_to_v->second){
+                        findAccessibleRoad(cnode_id,from_road_id,road_t_it,road_t_it_end_node_id,t_road_ids,checkedNodes);
+                    }
+                }else{
+                    LOG(INFO) << "node id:" << road_t_it_end_node_id << " not find to road!";
                 }
 
             } else {
@@ -1102,17 +1111,32 @@ namespace kd {
                 long fNodeID = stol(iter.second->f_node_id);
                 long tNodeID = stol(iter.second->t_node_id);
                 if (iter.second->direction_ == 2) {
-                    if (map_node_id_to_froad_.find(fNodeID) == map_node_id_to_froad_.end() &&
-                        map_node_id_to_troad_.find(tNodeID) == map_node_id_to_troad_.end()) {
+                    auto from_road = map_node_id_to_froad_.find(tNodeID);
+                    if(map_node_id_to_troad_.find(tNodeID) == map_node_id_to_troad_.end()&& from_road!=map_node_id_to_froad_.end() &&from_road->second.size()>1){
+                        // 起点的入度和终点的出度同时为空，则为孤立的道路
+                        auto error = DCRoadCheckError::createByKXS_04_011(stol(iter.first));
+                        error_output()->saveError(error);
+                    }
+
+                    auto to_road = map_node_id_to_troad_.find(fNodeID);
+                    if(map_node_id_to_froad_.find(fNodeID) == map_node_id_to_froad_.end()&& to_road!=map_node_id_to_troad_.end() &&to_road->second.size()>1){
                         // 起点的入度和终点的出度同时为空，则为孤立的道路
                         auto error = DCRoadCheckError::createByKXS_04_011(stol(iter.first));
                         error_output()->saveError(error);
                     }
 
                 } else if (iter.second->direction_ == 3) {
-                    if (map_node_id_to_froad_.find(tNodeID) == map_node_id_to_froad_.end() &&
-                        map_node_id_to_troad_.find(fNodeID) == map_node_id_to_troad_.end()) {
-                        // 起点的出度和终点的入库同时为空， 则孤立
+
+                    auto from_road = map_node_id_to_froad_.find(fNodeID);
+                    if(map_node_id_to_troad_.find(fNodeID) == map_node_id_to_troad_.end()&& from_road!=map_node_id_to_froad_.end() &&from_road->second.size()>1){
+                        // 起点的入度和终点的出度同时为空，则为孤立的道路
+                        auto error = DCRoadCheckError::createByKXS_04_011(stol(iter.first));
+                        error_output()->saveError(error);
+                    }
+
+                    auto to_road = map_node_id_to_troad_.find(tNodeID);
+                    if(map_node_id_to_froad_.find(tNodeID) == map_node_id_to_froad_.end()&& to_road!=map_node_id_to_troad_.end() &&to_road->second.size()>1){
+                        // 起点的入度和终点的出度同时为空，则为孤立的道路
                         auto error = DCRoadCheckError::createByKXS_04_011(stol(iter.first));
                         error_output()->saveError(error);
                     }

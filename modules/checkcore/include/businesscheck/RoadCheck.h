@@ -127,6 +127,10 @@ namespace kd {
              */
             void CheckIsolatedRoad();
 
+            /*
+             * 道路等级连通性检查
+             */
+            void CheckRoadGradesInterConnection();
         private:
             const string id = "road_check";
             int item_data_total=0;

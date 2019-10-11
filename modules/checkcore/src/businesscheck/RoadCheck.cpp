@@ -269,6 +269,9 @@ namespace kd {
 
             // 检查是否有通行孤立的道路
             CheckIsolatedRoad();
+
+            // 检查道路等级通行
+            CheckRoadGradesInterConnection();
             return true;
         }
 
@@ -1114,6 +1117,56 @@ namespace kd {
                         error_output()->saveError(error);
                     }
                 }
+            }
+            checkItemInfo->totalNum = total;
+            error_output()->addCheckItemInfo(checkItemInfo);
+        }
+
+        void RoadCheck::CheckRoadGradesInterConnection() {
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_ROAD_013;
+            auto roads = data_manager()->roads_;
+            size_t total = roads.size();
+
+            for (const auto &iter : roads) {
+                long roadClass = iter.second->r_class_;
+                long fNodeID = stol(iter.second->f_node_id);
+                long tNodeID = stol(iter.second->t_node_id);
+                // 入度
+                vector<shared_ptr<DCRoad>> fromRoads;
+                //出度
+                vector<shared_ptr<DCRoad>> toRoads;
+                if (iter.second->direction_ == 3) {
+                    //逆向
+                    fromRoads = map_node_id_to_froad_[tNodeID];
+                    toRoads = map_node_id_to_troad_[fNodeID];
+                } else {
+                    fromRoads = map_node_id_to_froad_[fNodeID];
+                    toRoads = map_node_id_to_troad_[tNodeID];
+                }
+                if (fromRoads.empty() && toRoads.empty()) {
+                    continue;
+                }
+                // 若两端道路有一个等级比他高的，则认为联通
+                int flag = 0;
+                for (auto &road : fromRoads) {
+                    if (road->r_class_ <=  roadClass) {
+                        flag = 1;
+                        break;
+                    }
+                }
+                for (auto &road : toRoads) {
+                    if (road->r_class_ <= roadClass) {
+                        flag = 1;
+                        break;
+                    }
+                }
+                if (flag == 1) {
+                    continue;
+                }
+
+                auto error = DCRoadCheckError::createByKXS_04_013(stol(iter.first), roadClass);
+                error_output()->saveError(error);
             }
             checkItemInfo->totalNum = total;
             error_output()->addCheckItemInfo(checkItemInfo);

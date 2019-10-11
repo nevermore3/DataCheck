@@ -98,7 +98,8 @@ namespace kd {
             void BuildInfo();
 
             void BuildNodeID2Road();
-
+            ///禁止通行信息MAP
+            void BuildProhibitionMap();
             //
             void CheckNodesAndCNodeRelation(shared_ptr<CheckErrorOutput> &errorOutput);
             //检查联通关系前数据加载
@@ -112,7 +113,7 @@ namespace kd {
              * @param from_road_id
              * @param t_road_set
              */
-            void getTRoadByFRoad(long from_road_id,set<long> &t_road_set);
+            void getTRoadByFRoad(long cnode_id,long from_road_id,set<long> &t_road_set);
             /**
              * 查找复杂路口内部道路可通达的道路
              * @param from_road_id 进入道路
@@ -131,6 +132,8 @@ namespace kd {
              * 道路等级连通性检查
              */
             void CheckRoadGradesInterConnection();
+            ///禁止通行信息检查
+            void CheckProhibition();
         private:
             const string id = "road_check";
             int item_data_total=0;
@@ -149,9 +152,12 @@ namespace kd {
             map<long, shared_ptr<DCCNodeConn>> map_cnode_conn_;
             ///map<cnode_id,vector<road_node_id>>
             map<long,vector<long>> map_cnode_node;
-            ///map<froad_id,vector<troad_id>>,需要对比的cconn表数据
-            map<long,vector<long>> map_froad_troad;
-
+            ///map<froad_id_cnode,vector<troad_id>>,需要对比的cconn表数据
+            map<string,vector<long>> map_froad_troad;
+            ///map<troad_id,vector<froad_id>>,需要对比的cconn表数据
+            map<long,vector<long>> map_cconn_troad_froad;
+            ///map<troad_id,vector<froad_id>>,需要对比的conn表数据
+            map<long,vector<long>> map_conn_troad_froad;
             // key : nodeID, value: {roads}
             map<long, vector<shared_ptr<DCRoad>>> map_node_id_to_froad_;
 
@@ -161,13 +167,14 @@ namespace kd {
             ///map<troad,cnode_id>
             map<long,set<long>> map_troad_to_cnode;
 
-
             // key: roadID, value:{key : from_index, value {pair<to_index, lgID>} }
             map<long, map<long, vector<pair<long, long>>>> map_road_lg_index_;
-            ///map<froad_id_troad_id,node_id>
+            ///map<froad_id_troad_id,node_id> 使用过程中有删除数据
             map<string,long> map_ft_road_id_node_id_to_conn_id;
-
-//            map<string,string> map_ft_road_id_to_conn_id;
+            ///map<troad_id,vector<froad_id>>
+            map<long,vector<long>> map_prohibition_cconn;
+            ///map<troad_id,vector<froad_id>>
+            map<long,vector<long>> map_prohibition_conn;
         };
     }
 }

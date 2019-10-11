@@ -941,7 +941,19 @@ namespace kd {
             error->detail_ += ", 不连通";
             return error;
         }
+        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_014(long type,long roadID) {
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_014);
+            error->checkName = CHECK_ITEM_KXS_ROAD_014_DESC;
+            if(type == 1){
+                error->detail_ += "简单路口的禁止通行道路孤立,";
+            }else{
+                error->detail_ += "复杂路口的禁止通行道路孤立,";
+            }
+            error->detail_ += "road ID 是: ";
+            error->detail_ += to_string(roadID);
 
+            return error;
+        }
         /////////////////////////////////////////////////////////////////////////////////////////
         // DCLaneError
         /////////////////////////////////////////////////////////////////////////////////////////

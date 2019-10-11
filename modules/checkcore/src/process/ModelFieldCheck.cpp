@@ -76,8 +76,9 @@ namespace kd {
 
                 auto valuepair = record->doubleDatas.find(fieldName);
                 if (valuepair == record->doubleDatas.end()) {
+                    long id_ = record->longDatas.find(ID)->second;
                     stringstream ss;
-                    ss << task_name << " 没有找到字段" << fieldName << " value.";
+                    ss << task_name << " 没有找到字段" << fieldName << " value."<< "',ID="<<id_;
 //                    errorOutput->writeInfo(ss.str());
                     shared_ptr<DCError> ptr_error = DCFieldError::createByKXS_01_019(ss.str());
                     errorOutput->saveError(ptr_error);

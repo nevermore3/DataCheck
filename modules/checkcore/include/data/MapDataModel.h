@@ -176,6 +176,18 @@ namespace kd {
             string name;
         };
 
+        class KxsData{
+        public:
+            KxsData() {}
+
+        public:
+            long id_;
+            string task_id_;
+            string flag_;
+        private :
+            map
+        };
+
     }
 }
 

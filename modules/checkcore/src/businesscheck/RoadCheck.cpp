@@ -264,7 +264,7 @@ namespace kd {
             preCheckConn();
 
             checkCNodeConn();
-
+            checkNodeConn();
             CheckNodesAndCNodeRelation(errorOutput);
 
             // 检查是否有通行孤立的道路
@@ -560,14 +560,31 @@ namespace kd {
                 if(troad_v!=map_node_id_to_troad_.end()) {
                     for (auto froad:froad_v) {
                         for (auto troad:troad_v->second) {
-                            string froad_id_troad_id=froad->id_+"_"+troad->id_;
-                            auto nodeconn = map_ft_road_id_to_node_id.find(froad_id_troad_id);
-
+                            string froad_id_troad_id=froad->id_+"_"+troad->id_+"_"+to_string(node_id_to_froad_.first);
+                            auto nodeconn = map_ft_road_id_node_id_to_conn_id.find(froad_id_troad_id);
+                            if(nodeconn == map_ft_road_id_node_id_to_conn_id.end()){
+                                auto ptr_error = DCRoadCheckError::createByKXS_04_012(1,"0",froad->id_,troad->id_,froad->tNode_->coord_);
+                                error_output()->saveError(ptr_error);
+                            }else{
+//                                long node_id = nodeconn->second;
+//                                if(node_id_to_froad_.first!=node_id){
+//                                    auto ptr_error = DCRoadCheckError::createByKXS_04_012(3,"0",froad->id_,troad->id_,froad->tNode_->coord_);
+//                                    error_output()->saveError(ptr_error);
+//                                }
+                                map_ft_road_id_node_id_to_conn_id.erase(froad_id_troad_id);
+                            }
                         }
                     }
                 }else{
-                    LOG(ERROR) << "not find to road for node,node id is"<<node_id_to_froad_.first;
+                    LOG(INFO) << "not find to road for node,node id is "<<node_id_to_froad_.first;
                 }
+            }
+            ///遍历多余的记录
+
+            for(auto conn:map_ft_road_id_node_id_to_conn_id){
+                auto node_conn = map_node_conn_.find(conn.second);
+                auto ptr_error = DCRoadCheckError::createByKXS_04_012(2,node_conn->second->id_,to_string(node_conn->second->fRoad_id_),to_string(node_conn->second->tRoad_id_),node_conn->second->coord_);
+                error_output()->saveError(ptr_error);
             }
         }
         void RoadCheck::checkCNodeConn(){
@@ -863,6 +880,7 @@ namespace kd {
 
                 //读取属性信息
                 nodeConn->id_ = std::to_string(shpFile.readIntField(i, "ID"));
+                long id = stol(nodeConn->id_);
                 nodeConn->fRoad_id_ = shpFile.readLongField(i, "EROAD_ID");
                 nodeConn->tRoad_id_ = shpFile.readLongField(i, "QROAD_ID");
                 nodeConn->node_id_ = shpFile.readLongField(i, "NODE_ID");
@@ -877,18 +895,18 @@ namespace kd {
                 }
 
                 map_node_conn_.insert(make_pair(stol(nodeConn->id_), nodeConn));
-
-                string froad_id_to_troad_id = to_string(nodeConn->fRoad_id_)+"_"+to_string(nodeConn->tRoad_id_);
-                if(map_ft_road_id_to_node_id.find(froad_id_to_troad_id) != map_ft_road_id_to_node_id.end()){
-                    auto ptr_error = DCRoadCheckError::createByKXS_04_012(4,to_string(nodeConn->fRoad_id_),to_string(nodeConn->tRoad_id_),nodeConn->coord_);
+                ///避免双向道路记录重复,增加node_id_
+                string froad_id_to_troad_id = to_string(nodeConn->fRoad_id_)+"_"+to_string(nodeConn->tRoad_id_)+"_"+to_string(nodeConn->node_id_);
+                if(map_ft_road_id_node_id_to_conn_id.find(froad_id_to_troad_id) != map_ft_road_id_node_id_to_conn_id.end()){
+                    auto ptr_error = DCRoadCheckError::createByKXS_04_012(4,"0",to_string(nodeConn->fRoad_id_),to_string(nodeConn->tRoad_id_),nodeConn->coord_);
                     error_output()->saveError(ptr_error);
                 }else{
-                    map_ft_road_id_to_node_id.insert(make_pair(froad_id_to_troad_id,nodeConn->node_id_));
+                    map_ft_road_id_node_id_to_conn_id.insert(make_pair(froad_id_to_troad_id,stol(nodeConn->id_)));
                 }
 
                 SHPDestroyObject(shpObject);
             }
-            error_output()->addCheckItemInfo(CHECK_ITEM_KXS_ROAD_012,map_ft_road_id_to_node_id.size());
+            error_output()->addCheckItemInfo(CHECK_ITEM_KXS_ROAD_012,map_ft_road_id_node_id_to_conn_id.size());
             return true;
         }
 

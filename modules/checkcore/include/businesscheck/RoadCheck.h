@@ -161,7 +161,9 @@ namespace kd {
             // key: roadID, value:{key : from_index, value {pair<to_index, lgID>} }
             map<long, map<long, vector<pair<long, long>>>> map_road_lg_index_;
             ///map<froad_id_troad_id,node_id>
-            map<string,long> map_ft_road_id_to_node_id;
+            map<string,long> map_ft_road_id_node_id_to_conn_id;
+
+//            map<string,string> map_ft_road_id_to_conn_id;
         };
     }
 }

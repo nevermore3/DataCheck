@@ -182,6 +182,7 @@ namespace kd {
             long getPropertyLong(const string &columnName, const string &defValue = "");
             double getPropertyDouble(string columnName,const string &defValue = "");
             string getProperty(const string &columnName, const string &defValue = "");
+            void addProperty(const string &columnName,const string &value);
         public:
             long id_;
             string task_id_;
@@ -212,7 +213,9 @@ namespace kd {
 
         class Polygon :public PolyLine{};
 
-        class Node :public KxsData{
+        class KxfNode :public KxsData{
+        public:
+            KxfNode() {}
             shared_ptr<DCCoord> coord_;
         };
 

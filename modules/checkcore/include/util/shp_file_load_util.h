@@ -12,11 +12,13 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <shp/ShpData.hpp>
 #include <glog/logging.h>
 #include <glog/log_severity.h>
 #include <Poco/StringTokenizer.h>
 #include <Poco/File.h>
 #include "data/DividerGeomModel.h"
+#include "data/MapDataModel.h"
 using namespace std;
 using namespace kd::dc;
 class ShpFileLoad {
@@ -32,6 +34,14 @@ public:
     static void GetPolyline(long type,std::map<string,shared_ptr<DCPolyline>> &polylines);
 
     static void GetRLoRoad(long type,map<string,shared_ptr<DCRLORoad>> &r_lo_road);
+
+    static void GetNodeData(string modelName,map<string, map<long, shared_ptr<KxsData>>> &kxfdata);
+
+    static void GetLineData(string modelName,map<string, map<long, shared_ptr<KxsData>>> &kxfdata,bool initGeom = false);
+
+    static void GetRelationData(string modelName,map<string, map<long, shared_ptr<KxsData>>> &kxfdata);
+
+    static void GetFieldInfo(DBFHandle dbfHandle,vector<string> &fieldNames,vector<DBFFieldType> &field_defs);
 };
 
 

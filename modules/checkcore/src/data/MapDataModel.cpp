@@ -55,5 +55,8 @@ namespace kd {
             }
             return defValue.empty() ? 0.0 : stod(defValue);
         }
+        void KxsData::addProperty(const string &columnName,const string &value){
+            kxf_data_map_.insert(make_pair(columnName,value));
+        }
     }
 }

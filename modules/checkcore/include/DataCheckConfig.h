@@ -57,6 +57,7 @@ namespace kd {
             const static string ERR_JSON_PATH;
             const static string OUTPUT_PATH;
             const static string CHECK_FILE_PATH;
+            const static string NODE_RELEVANT_OBJ_SLOPE_ERROR;
 
             const static string SHP_FILE_PATH;
             const static string DB_INPUT_FILE;
@@ -74,7 +75,6 @@ namespace kd {
             const static string CONN_TASKBOUNDPATH;
             const static string CONN_CHECKFILEPATH;
             const static string AVG_SLOPE_ERROR;
-            const static string ADAS_NODE_DIVIDER_SLOPE;
             const static string CHECK_ALL_FILE;
 
         public:

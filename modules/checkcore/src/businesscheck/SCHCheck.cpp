@@ -149,5 +149,75 @@ namespace kd {
             errorOutput->addCheckItemInfo(checkItemInfo);
         }
 
+        void SCHCheck::SCHNodeRelevantObjectSlope(long objID,
+                                                  vector<shared_ptr<DCSCHInfo>> &nodes,
+                                                  vector<shared_ptr<DCCoord>> &coords,
+                                                  shared_ptr<CheckErrorOutput> &errorOutput) {
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_ORG_035;
+            size_t total = nodes.size();
+
+            double threshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::NODE_RELEVANT_OBJ_SLOPE_ERROR);
+            size_t  i = 1;
+            size_t  num = coords.size();
+
+            for (const auto &node : nodes) {
+                if (i < num - 1) {
+                    double distance1 = GeosObjUtil::get_length_of_node(node->coord_, coords[i - 1]);
+                    double distance2 = GeosObjUtil::get_length_of_node(node->coord_, coords[i + 1]);
+                    if (distance1 > distance2) {
+                        i++;
+                    }
+                }
+                auto coordA = coords[i];
+                auto coordB = coords[i - 1];
+                double distanceAB = GeosObjUtil::get_length_of_node(coordA, coordB);
+                double avgSlope = (coordA->z_ - coordB->z_) / distanceAB;
+                double diffSlope = fabs(avgSlope - node->slope_);
+                if (diffSlope > threshold) {
+                    auto error = DCSCHInfoError::createByKXS_01_035(file_name_, objID, stol(node->id_),
+                                                                    node->slope_, avgSlope, threshold);
+                    errorOutput->saveError(error);
+                }
+            }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
+        }
+
+
+        void SCHCheck::SCHNodeRelevantObjectSlope(long objID,
+                                                  vector<shared_ptr<DCSCHInfo>> &nodes,
+                                                  vector<shared_ptr<DCDividerNode>> &coords,
+                                                  shared_ptr<CheckErrorOutput> &errorOutput) {
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_ORG_035;
+            size_t total = nodes.size();
+
+            double threshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::NODE_RELEVANT_OBJ_SLOPE_ERROR);
+            size_t  i = 1;
+            size_t  num = coords.size();
+
+            for (const auto &node : nodes) {
+                if (i < num - 1) {
+                    double distance1 = GeosObjUtil::get_length_of_node(node->coord_, coords[i - 1]->coord_);
+                    double distance2 = GeosObjUtil::get_length_of_node(node->coord_, coords[i + 1]->coord_);
+                    if (distance1 > distance2) {
+                        i++;
+                    }
+                }
+                auto coordA = coords[i]->coord_;
+                auto coordB = coords[i - 1]->coord_;
+                double distanceAB = GeosObjUtil::get_length_of_node(coordA, coordB);
+                double avgSlope = (coordA->z_ - coordB->z_) / distanceAB;
+                double diffSlope = fabs(avgSlope - node->slope_);
+                if (diffSlope > threshold) {
+                    auto error = DCSCHInfoError::createByKXS_01_035(file_name_, objID, stol(node->id_),
+                                                                    node->slope_, avgSlope, threshold);
+                    errorOutput->saveError(error);
+                }
+            }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
+        }
     }
 }

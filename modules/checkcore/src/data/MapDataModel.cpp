@@ -3,7 +3,7 @@
 //
 
 #include "data/MapDataModel.h"
-
+#include "util/GeosObjUtil.h"
 namespace kd {
     namespace dc {
         shared_ptr<DCFieldDefine> DCModelDefine::getFieldDefine(string fieldName) {
@@ -57,6 +57,23 @@ namespace kd {
         }
         void KxsData::addProperty(const string &columnName,const string &value){
             kxf_data_map_.insert(make_pair(columnName,value));
+        }
+        bool GeomLineModel::buildGeometry(const std::vector<shared_ptr<DCCoord>> coord,bool getLen,double &len){
+            if (coord.size() < 2) {
+                return false;
+            }
+            shared_ptr<geos::geom::LineString> lineString = GeosObjUtil::create_line_string(coord);
+            if (lineString) {
+                line_ = lineString;
+
+                //计算线段距离轨迹的平均距离
+                if(getLen) {
+                    len = lineString->getLength();
+                }
+                return true;
+            }else{
+                return false;
+            }
         }
     }
 }

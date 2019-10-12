@@ -5,10 +5,7 @@
 #ifndef AUTOHDMAP_FUSIONCORE_DATAMANAGER_H
 #define AUTOHDMAP_FUSIONCORE_DATAMANAGER_H
 
-#include "CommonInclude.h"
-
 #include "MapDataModel.h"
-#include "DividerGeomModel.h"
 #include "TaskDataModel.h"
 #include "data/data_type.h"
 

@@ -7,6 +7,7 @@
 
 #include "CommonInclude.h"
 #include "DividerGeomModel.h"
+
 namespace kd {
     namespace dc {
 
@@ -209,6 +210,7 @@ namespace kd {
         class PolyLine :public GeomLineModel{
         public:
             vector<shared_ptr<DCCoord>> coords_;
+
         };
 
         class Polygon :public PolyLine{};

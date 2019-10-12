@@ -77,6 +77,8 @@ namespace kd {
            // lane_group2_roads_maps_插入
            void insert_lane_group2_roads(string lane_group_id, string road_id);
 
+           map<long,shared_ptr<KxsData>> getKxfData(string modelName);
+
        public:
            // 所有的道路
            map<string, shared_ptr<DCRoad>> roads_;

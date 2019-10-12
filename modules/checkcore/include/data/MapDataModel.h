@@ -6,7 +6,7 @@
 #define AUTOHDMAP_DATACHECK_MAPDATAMODEL_H
 
 #include "CommonInclude.h"
-
+#include "DividerGeomModel.h"
 namespace kd {
     namespace dc {
 
@@ -179,14 +179,44 @@ namespace kd {
         class KxsData{
         public:
             KxsData() {}
-
+            long getPropertyLong(const string &columnName, const string &defValue = "");
+            double getPropertyDouble(string columnName,const string &defValue = "");
+            string getProperty(const string &columnName, const string &defValue = "");
         public:
             long id_;
             string task_id_;
             string flag_;
         private :
-            map
+            map<string,string> kxf_data_map_;
         };
+
+        class GeomLineModel :public KxsData{
+        public:
+            /**
+             * 构建LineString，并计算长度
+             * @param coord
+             * @param getLen 是否需要计算长度
+             * @param len 长度结果
+             * @return
+             */
+            bool buildGeometry(const std::vector<shared_ptr<DCCoord>> coord,bool getLen,double &len);
+        public:
+            //geos线对象，用于空间运算判断
+            shared_ptr<geos::geom::LineString> line_;
+        };
+
+        class PolyLine :public GeomLineModel{
+        public:
+            vector<shared_ptr<DCCoord>> coords_;
+        };
+
+        class Polygon :public PolyLine{};
+
+        class Node :public KxsData{
+            shared_ptr<DCCoord> coord_;
+        };
+
+        class Relation :public KxsData{};
 
     }
 }

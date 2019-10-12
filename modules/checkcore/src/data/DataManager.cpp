@@ -77,5 +77,8 @@ namespace kd {
                 lane_group2_roads_maps_.insert(make_pair(lane_group_id, road_vec));
             }
        }
+       map<long,shared_ptr<KxsData>> MapDataManager::getKxfData(string modelName){
+
+       }
    }
 }

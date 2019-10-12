@@ -40,9 +40,7 @@ namespace kd {
             check_road_node_height(mapDataManager, errorOutput);
             check_road_node(mapDataManager, errorOutput);
 
-            preCheckConn();
 
-             checkCNode();
 
             return true;
         }
@@ -403,10 +401,10 @@ namespace kd {
                 if(roadNode->cnode_id_>0){
                     auto cnode_nodes = map_cnode_node.find(roadNode->cnode_id_);
                     if(cnode_nodes!=map_cnode_node.end()){
-                        cnode_nodes->second.emplace_back(roadNode->id_);
+                        cnode_nodes->second.emplace_back(stol(roadNode->id_));
                     } else{
                         vector<long> node_ids;
-                        node_ids.emplace_back(roadNode->id_);
+                        node_ids.emplace_back(stol(roadNode->id_));
                         map_cnode_node.insert(make_pair(roadNode->cnode_id_,node_ids));
                     }
                 }

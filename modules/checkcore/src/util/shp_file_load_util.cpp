@@ -91,7 +91,24 @@ void ShpFileLoad::GetRLoRoad(long type, map<string, shared_ptr<DCRLORoad>> &r_lo
          }
      }
 }
-
+string ShpFileLoad::GetFieldValue(string fieldName,DBFFieldType dbfFieldType,DbfData dbfData,int index){
+    switch (dbfFieldType){
+        case FTString:
+            return dbfData.readStringField(index,fieldName);
+        case FTInteger:
+            return to_string(dbfData.readIntField(index,fieldName));
+            break;
+        case FTLong:
+            return to_string(dbfData.readLongField(index,fieldName));
+            break;
+        case FTDouble:
+            return to_string(dbfData.readDoubleField(index,fieldName));
+            break;
+        default:
+            cout << "error type not support" <<dbfFieldType<< endl;
+            return "";
+    }
+}
 void ShpFileLoad::GetNodeData(string modelName,map<string, map<long, shared_ptr<KxsData>>> &kxfdata){
     string basePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::SHP_FILE_PATH);
     string filePath = basePath + "/" + modelName;
@@ -118,22 +135,7 @@ void ShpFileLoad::GetNodeData(string modelName,map<string, map<long, shared_ptr<
         int fieldSize = fieldName.size();
         node->id_ = shpFile.readIntField(i, ID);
         for(int j = 0;j<fieldSize;j++){
-            switch (field_defs[j]){
-                case FTString:
-                    node->addProperty(fieldName[j],shpFile.readStringField(i,fieldName[j]));
-                    break;
-                case FTInteger:
-                    node->addProperty(fieldName[j],to_string(shpFile.readIntField(i,fieldName[j])));
-                    break;
-                case FTLong:
-                    node->addProperty(fieldName[j],to_string(shpFile.readLongField(i,fieldName[j])));
-                    break;
-                case FTDouble:
-                    node->addProperty(fieldName[j],to_string(shpFile.readDoubleField(i,fieldName[j])));
-                    break;
-                default:
-                    cout << "error type not support" << field_defs[j] << endl;
-            }
+            GetFieldValue(fieldName[j],field_defs[j],shpFile,i);
         }
 
         size_t nVertices = shpObject->nVertices;
@@ -174,22 +176,7 @@ void ShpFileLoad::GetLineData(string modelName,map<string, map<long, shared_ptr<
             shared_ptr<PolyLine> kxsdata = make_shared<PolyLine>();
             kxsdata->id_ = shpFile.readIntField(i, ID);
             for(int j = 0;j<fieldSize;j++){
-                switch (field_defs[j]){
-                    case FTString:
-                        kxsdata->addProperty(fieldName[j],shpFile.readStringField(i,fieldName[j]));
-                        break;
-                    case FTInteger:
-                        kxsdata->addProperty(fieldName[j],to_string(shpFile.readIntField(i,fieldName[j])));
-                        break;
-                    case FTLong:
-                        kxsdata->addProperty(fieldName[j],to_string(shpFile.readLongField(i,fieldName[j])));
-                        break;
-                    case FTDouble:
-                        kxsdata->addProperty(fieldName[j],to_string(shpFile.readDoubleField(i,fieldName[j])));
-                        break;
-                    default:
-                        cout << "error type not support" << field_defs[j] << endl;
-                }
+                GetFieldValue(fieldName[j],field_defs[j],shpFile,i);
             }
 
             SHPObject *shpObject = shpFile.readShpObject(i);
@@ -243,22 +230,7 @@ void ShpFileLoad::GetRelationData(string modelName,map<string, map<long, shared_
             shared_ptr<Relation> kxsdata = make_shared<Relation>();
             kxsdata->id_ = attDbfData.readIntField(i, ID);
             for(int j = 0;j<fieldSize;j++){
-                switch (field_defs[j]){
-                    case FTString:
-                        kxsdata->addProperty(fieldName[j],attDbfData.readStringField(i,fieldName[j]));
-                        break;
-                    case FTInteger:
-                        kxsdata->addProperty(fieldName[j],to_string(attDbfData.readIntField(i,fieldName[j])));
-                        break;
-                    case FTLong:
-                        kxsdata->addProperty(fieldName[j],to_string(attDbfData.readLongField(i,fieldName[j])));
-                        break;
-                    case FTDouble:
-                        kxsdata->addProperty(fieldName[j],to_string(attDbfData.readDoubleField(i,fieldName[j])));
-                        break;
-                    default:
-                        cout << "error type not support" << field_defs[j] << endl;
-                }
+                GetFieldValue(fieldName[j],field_defs[j],attDbfData,i);
             }
             model_data.insert(make_pair(kxsdata->id_,kxsdata));
         }

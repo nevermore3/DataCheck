@@ -41,7 +41,10 @@ public:
 
     static void GetRelationData(string modelName,map<string, map<long, shared_ptr<KxsData>>> &kxfdata);
 
+private:
     static void GetFieldInfo(DBFHandle dbfHandle,vector<string> &fieldNames,vector<DBFFieldType> &field_defs);
+
+    static string GetFieldValue(string fieldName,DBFFieldType dbfFieldType,DbfData dbfData,int index);
 };
 
 

@@ -1297,6 +1297,27 @@ namespace kd {
             return error;
         }
 
+
+        shared_ptr<DCSCHInfoError> DCSCHInfoError::createByKXS_01_035(string name, long objID, long index,
+                                                                      double value1, double value2, double threshold) {
+            shared_ptr<DCSCHInfoError> error = make_shared<DCSCHInfoError>(CHECK_ITEM_KXS_ORG_035);
+            error->checkLevel_ = LEVEL_ERROR;
+            error->checkName = CHECK_ITEM_KXS_ORG_035_DESC;
+            error->detail_ += "表名 :";
+            error->detail_ += name;
+            error->detail_ += ", Object ID: ";
+            error->detail_ += to_string(objID);
+            error->detail_ += ",属性点索引: ";
+            error->detail_ += to_string(index);
+            error->detail_ += ", 的坡度为 : ";
+            error->detail_ += to_string(value1);
+            error->detail_ += ", 两个形点的坡度为 :";
+            error->detail_ += to_string(value2);
+            error->detail_ += ", 超过了规定的阈值 :";
+            error->detail_ += to_string(threshold);
+            return error;
+        }
+
         shared_ptr<PolyLineError> PolyLineError::createByKXS_011_02(string line_id,shared_ptr<DCCoord> coord){
             shared_ptr<PolyLineError> error = make_shared<PolyLineError>(CHECK_ITEM_KXS_LINE_002);
             error->checkLevel_ = LEVEL_ERROR;
@@ -1308,9 +1329,6 @@ namespace kd {
             return error;
         }
 
-        string PolyLineError::toString() {
-            return detail_;
-        }
     }
 }
 

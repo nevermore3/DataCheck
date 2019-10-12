@@ -42,6 +42,20 @@ namespace kd {
                                  shared_ptr<CheckErrorOutput> errorOutput);
 
             void SetMapDataManager(shared_ptr<MapDataManager> &mapDataManager);
+
+            bool LoadLGLaneGroupIndex();
+
+            void DoNode2DividerSlope(long lgID, long fromIndex, long toIndex, vector<shared_ptr<DCSCHInfo>> &nodes,
+                                     shared_ptr<CheckErrorOutput> &errorOutput);
+
+            map<long, pair<long, long>> GetLaneGroupsIndex(long roadID);
+
+
+            /*
+             * 每个AdasNode点的坡度和关联的Divider对象中距离最近的两个形点计算出的坡度对比
+             */
+            void AdasNodeRelevantDividerSlope(shared_ptr<CheckErrorOutput> &errorOutput);
+
             /**
              * 结点重复
              * @param errorOutput
@@ -93,7 +107,6 @@ namespace kd {
 
             shared_ptr<MapDataManager> map_data_manager_;
 
-
             map<long, shared_ptr<DCTrafficRule>> map_traffic_rule_;
 
             // roadnode
@@ -112,6 +125,8 @@ namespace kd {
             ///map<froad_id,vector<troad_id>>,需要对比的cconn表数据
             map<long,vector<long>> map_froad_troad;
 
+            // key: roadID, value:{key : from_index, value {pair<to_index, lgID>} }
+            map<long, map<long, vector<pair<long, long>>>> map_road_lg_index_;
         };
     }
 }

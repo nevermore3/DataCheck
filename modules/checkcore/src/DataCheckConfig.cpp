@@ -57,6 +57,7 @@ namespace kd {
         const string DataCheckConfig::ERR_JSON_PATH = "err_json_path";
         const string DataCheckConfig::OUTPUT_PATH = "output_path";
         const string DataCheckConfig::CHECK_FILE_PATH ="check_file_path";
+        const string DataCheckConfig::NODE_RELEVANT_OBJ_SLOPE_ERROR = "node_relevant_obj_slope_error";
 
         const string DataCheckConfig::SHP_FILE_PATH ="shp_data_input";
         const string DataCheckConfig::DB_INPUT_FILE ="db_input_file";
@@ -76,7 +77,6 @@ namespace kd {
 
         // 坡度检查
         const string DataCheckConfig::AVG_SLOPE_ERROR = "avg_slope_error";
-        const string DataCheckConfig::ADAS_NODE_DIVIDER_SLOPE = "adas_node_divider_slope";
         const string DataCheckConfig::CHECK_ALL_FILE = "check_all_file";
 
         int DataCheckConfig::load(string fileName) {

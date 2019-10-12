@@ -46,9 +46,6 @@ namespace kd {
             void CheckLaneSCH(shared_ptr<MapDataManager> modelDataManager,
                               shared_ptr<CheckErrorOutput> errorOutput);
 
-            void CheckAdasNodeToClosestDividerSlope(shared_ptr<CheckErrorOutput> errorOutput);
-
-            shared_ptr<DCDivider> GetRelevantDivider(long roadID);
 
             bool LoadNodeConn();
 
@@ -70,8 +67,6 @@ namespace kd {
 
             shared_ptr<DCDivideSCH> GetNextDivideAdasNode(long divideID);
 
-            //创建几何信息,用于距离判断
-            void BuildDividerGeometryInfo();
 
 
         private:
@@ -91,7 +86,6 @@ namespace kd {
 
             unordered_map<long, map<long, shared_ptr<DCDivideSCH>>> map_divider_sch_;
 
-            shared_ptr<geos::index::quadtree::Quadtree> divider_quadtree_;
 
         };
 

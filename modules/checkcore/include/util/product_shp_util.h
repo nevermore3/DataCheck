@@ -225,5 +225,4 @@ const char kTopoLaneGroup[] ="HD_TOPO_LANEGROUP";
 const char kLgRoadNodeIndex[] = "LG_ROADNODE_INDEX";
 const char kRLoRoad[]  = "HD_R_LO_ROAD";
 
-
 #endif //AUTOHDMAP_COMPILE_PRODUCT_SHP_UTIL_H

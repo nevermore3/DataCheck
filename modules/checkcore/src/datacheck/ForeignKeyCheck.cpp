@@ -72,17 +72,54 @@ namespace kd {
                 //在lanetopocheck 里进行检查
                 return true;
             }
+
+            // trafficrule 表中的 外键 nodeconn_i 根据nodetype的值 决定是简单路口或者复杂路口
+            if (modelName == "TRAFFICRULE") {
+                map<string, long> tables {{"NODECONN", 1},
+                                          {"C_NODECONN", 2}};
+
+                for (const auto &table : tables) {
+                    memset(sqlCmd, 0, MAXCMDLEN);
+
+                    snprintf(sqlCmd, MAXCMDLEN - 1, "select  a.NODECONN_I from %s a " \
+                                                    "where a.NODE_TYPE = %ld and a.NODECONN_I not in "\
+                                                    "(select ID from %s)",
+                                                     modelName.c_str(),
+                                                     table.second,
+                                                     table.first.c_str());
+
+                    LOG(INFO) << "SQL：" << sqlCmd;
+                    CppSQLite3::Query query = pDataBase->execQuery(sqlCmd);
+                    string foreignKeyName = "NODECONN_I";
+                    string keyName = "ID";
+                    string foreignTable = table.first;
+                    while (!query.eof()) {
+                        int value = query.getInt64Field(foreignKeyName);
+                        string strValue = to_string(value);
+                        auto error = DCForeignKeyCheckError::createByKXS_01_027(modelName,
+                                                                                foreignKeyName,
+                                                                                strValue,
+                                                                                foreignTable,
+                                                                                keyName);
+                        errorOutput->saveError(error);
+                        query.nextRow();
+                    }
+                    query.finalize();
+                }
+                return true;
+            }
+
+
             if (modelName == "HD_R_LO_ROAD" || modelName == "HD_R_LO_LANE") {
                 // HD_R_LO_ROAD 和 HD_R_LO_LANE中相关联的表单独考虑
                 map<string, long> tables {{"HD_POLYGON", 1},
                                           {"HD_TRAFFIC_LIGHT", 5}};
                 for (const auto &table : tables) {
                     memset(sqlCmd, 0, MAXCMDLEN);
-                    snprintf(sqlCmd, MAXCMDLEN - 1, "select a.LO_ID from %s a, %s b "\
+                    snprintf(sqlCmd, MAXCMDLEN - 1, "select a.LO_ID from %s a "\
                                                                     "where a.TYPE = %ld and a.LO_ID not in "\
                                                                     "(select ID from %s)",
                                                                     modelName.c_str(),
-                                                                    table.first.c_str(),
                                                                     table.second,
                                                                     table.first.c_str());
                     LOG(INFO)<<"SQL："<<sqlCmd;
@@ -125,7 +162,7 @@ namespace kd {
                 shared_ptr<DCModelDefine> modelDefine = model.second;
                 vector<shared_ptr<DCRelationDefine>> relations = modelDefine->vecRelation;
 
-                if (relations.empty()) {
+                if (relations.empty() || !pDataBase->tableExists(modelName)) {
                     continue;
                 }
                 if (CheckForeignKey(modelDataManager, errorOutput, modelName)) {
@@ -170,6 +207,10 @@ namespace kd {
             errorOutput->addCheckItemInfo(checkItemInfo);
         }
         void ForeignKeyCheck::PreCheck(){
+            string modelName = "HD_R_LO_ROAD";
+            if (!pDataBase->tableExists(modelName)) {
+                return;
+            }
             string sqlCmd = "create index HD_R_LO_ROAD_TYPE_INDEX on HD_R_LO_ROAD(TYPE);";
             LOG(INFO)<<"SQL："<<sqlCmd;
             pDataBase->execQuery(sqlCmd);

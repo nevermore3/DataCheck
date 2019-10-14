@@ -71,14 +71,14 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ORG_023 = "KXS-01-023";
         const static std::string CHECK_ITEM_KXS_ORG_024 = "KXS-01-024";
         const static std::string CHECK_ITEM_KXS_ORG_025 = "KXS-01-025";
-        const static std::string CHECK_ITEM_KXS_ORG_026 = "KXS_01_026";
-        const static std::string CHECK_ITEM_KXS_ORG_027 = "KXS_01_027";
-        const static std::string CHECK_ITEM_KXS_ORG_028 = "KXS_01_028";
-        const static std::string CHECK_ITEM_KXS_ORG_029 = "KXS_01_029";
-        const static std::string CHECK_ITEM_KXS_ORG_030 = "KXS_01_030";
-        const static std::string CHECK_ITEM_KXS_ORG_031 = "KXS_01_031";
-        const static std::string CHECK_ITEM_KXS_ORG_032 = "KXS_01_032";
-        const static std::string CHECK_ITEM_KXS_ORG_035 = "KXS_01_035";
+        const static std::string CHECK_ITEM_KXS_ORG_026 = "KXS-01-026";
+        const static std::string CHECK_ITEM_KXS_ORG_027 = "KXS-01-027";
+        const static std::string CHECK_ITEM_KXS_ORG_028 = "KXS-01-028";
+        const static std::string CHECK_ITEM_KXS_ORG_029 = "KXS-01-029";
+        const static std::string CHECK_ITEM_KXS_ORG_030 = "KXS-01-030";
+        const static std::string CHECK_ITEM_KXS_ORG_031 = "KXS-01-031";
+        const static std::string CHECK_ITEM_KXS_ORG_032 = "KXS-01-032";
+        const static std::string CHECK_ITEM_KXS_ORG_035 = "KXS-01-035";
 
 
         const static std::string CHECK_ITEM_KXS_ORG_001_DESC = "对象ID记录重复性检查";

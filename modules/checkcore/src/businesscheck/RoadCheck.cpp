@@ -7,6 +7,7 @@
 #include <util/KDGeoUtil.hpp>
 #include <util/GeosObjUtil.h>
 #include <util/CommonCheck.h>
+#include <shp/ShpData.hpp>
 #include "util/product_shp_util.h"
 #include <shp/ShpData.hpp>
 #include <util/KDGeoUtil.hpp>
@@ -260,6 +261,9 @@ namespace kd {
             }
             check_road_node_height(mapDataManager, errorOutput);
             check_road_node(mapDataManager, errorOutput);
+
+
+
             return true;
         }
 
@@ -528,5 +532,278 @@ namespace kd {
                 errorOutput->saveError(ptr_error);
             }
         }
+        void RoadCheck::preCheckConn(){
+            LoadTrafficRule();
+
+            LoadRoadNode();
+
+            LoadCNode();
+
+            LoadCNodeConn();
+
+            LoadNodeConn();
+
+            BuildInfo();
+        }
+
+
+        bool RoadCheck::LoadTrafficRule() {
+            string basePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::SHP_FILE_PATH);
+            string filePath = basePath + "/" + "TRAFFICRULE";
+            ShpData shpFile(filePath);
+            if (!shpFile.isInit()) {
+                LOG(ERROR) << "Open shpFile :" << filePath << " Fail";
+                return false;
+            }
+
+            size_t recordNums = shpFile.getRecords();
+            for (size_t i = 0; i < recordNums; i++) {
+                SHPObject *shpObject = shpFile.readShpObject(i);
+                if (!shpObject || shpObject->nSHPType != SHPT_POINTZ)
+                    continue;
+
+                shared_ptr<DCTrafficRule> trafficRule = make_shared<DCTrafficRule>();
+
+                //读取属性信息
+                trafficRule->id_ = std::to_string(shpFile.readIntField(i, "ID"));
+                trafficRule->node_type_ = shpFile.readLongField(i, "NODE_TYPE");
+                trafficRule->node_conn_id_ = shpFile.readLongField(i, "NODECONN_I");
+                trafficRule->type_ = shpFile.readLongField(i, "TYPE");
+                trafficRule->vehicle_ = shpFile.readStringField(i, "VEHICLE");
+                trafficRule->time_ = shpFile.readStringField(i, "TIME");
+
+                size_t nVertices = shpObject->nVertices;
+                if (nVertices == 1) {
+                    shared_ptr<DCCoord> coord = make_shared<DCCoord>();
+                    coord->x_ = shpObject->padfX[0];
+                    coord->y_ = shpObject->padfY[0];
+                    coord->z_ = shpObject->padfZ[0];
+                    trafficRule->coord_ = coord;
+                }
+                map_traffic_rule_.insert(make_pair(stol(trafficRule->id_), trafficRule));
+                SHPDestroyObject(shpObject);
+            }
+            return true;
+        }
+
+        bool RoadCheck::LoadRoadNode() {
+            string basePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::SHP_FILE_PATH);
+            string filePath = basePath + "/" + "ROAD_NODE";
+            ShpData shpFile(filePath);
+            if (!shpFile.isInit()) {
+                LOG(ERROR) << "Open shpFile :" << filePath << " Fail";
+                return false;
+            }
+
+            size_t recordNums = shpFile.getRecords();
+            for (size_t i = 0; i < recordNums; i++) {
+                SHPObject *shpObject = shpFile.readShpObject(i);
+                if (!shpObject || shpObject->nSHPType != SHPT_POINTZ)
+                    continue;
+
+                shared_ptr<DCRoadNode> roadNode = make_shared<DCRoadNode>();
+
+                //读取属性信息
+                roadNode->id_ = std::to_string(shpFile.readIntField(i, "ID"));
+                roadNode->cnode_id_ = shpFile.readLongField(i, "C_NODE_ID");
+
+                size_t nVertices = shpObject->nVertices;
+                if (nVertices == 1) {
+                    shared_ptr<DCCoord> coord = make_shared<DCCoord>();
+                    coord->x_ = shpObject->padfX[0];
+                    coord->y_ = shpObject->padfY[0];
+                    coord->z_ = shpObject->padfZ[0];
+                    roadNode->coord_ = coord;
+                }
+                if(roadNode->cnode_id_>0){
+                    auto cnode_nodes = map_cnode_node.find(roadNode->cnode_id_);
+                    if(cnode_nodes!=map_cnode_node.end()){
+                        cnode_nodes->second.emplace_back(stol(roadNode->id_));
+                    } else{
+                        vector<long> node_ids;
+                        node_ids.emplace_back(stol(roadNode->id_));
+                        map_cnode_node.insert(make_pair(roadNode->cnode_id_,node_ids));
+                    }
+                }
+                map_road_nodes_.insert(make_pair(stol(roadNode->id_), roadNode));
+                SHPDestroyObject(shpObject);
+            }
+            return true;
+        }
+
+        bool RoadCheck::LoadCNode() {
+            string basePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::SHP_FILE_PATH);
+            string filePath = basePath + "/" + "C_NODE";
+            ShpData shpFile(filePath);
+            if (!shpFile.isInit()) {
+                LOG(ERROR) << "Open shpFile :" << filePath << " Fail";
+                return false;
+            }
+
+            size_t recordNums = shpFile.getRecords();
+            for (size_t i = 0; i < recordNums; i++) {
+                SHPObject *shpObject = shpFile.readShpObject(i);
+                if (!shpObject || shpObject->nSHPType != SHPT_POINTZ)
+                    continue;
+
+                shared_ptr<DCCNode> cNode = make_shared<DCCNode>();
+
+                //读取属性信息
+                cNode->id_ = std::to_string(shpFile.readIntField(i, "ID"));
+
+                size_t nVertices = shpObject->nVertices;
+                if (nVertices == 1) {
+                    shared_ptr<DCCoord> coord = make_shared<DCCoord>();
+                    coord->x_ = shpObject->padfX[0];
+                    coord->y_ = shpObject->padfY[0];
+                    coord->z_ = shpObject->padfZ[0];
+                    cNode->coord_ = coord;
+                }
+                map_cnodes_.insert(make_pair(stol(cNode->id_), cNode));
+                SHPDestroyObject(shpObject);
+            }
+            return true;
+        }
+
+        bool RoadCheck::LoadCNodeConn() {
+            string basePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::SHP_FILE_PATH);
+            string filePath = basePath + "/" + "C_NODECONN";
+            ShpData shpFile(filePath);
+            if (!shpFile.isInit()) {
+                LOG(ERROR) << "Open shpFile :" << filePath << " Fail";
+                return false;
+            }
+
+            size_t recordNums = shpFile.getRecords();
+            for (size_t i = 0; i < recordNums; i++) {
+                SHPObject *shpObject = shpFile.readShpObject(i);
+                if (!shpObject || shpObject->nSHPType != SHPT_POINTZ)
+                    continue;
+
+                shared_ptr<DCCNodeConn> cNodeConn = make_shared<DCCNodeConn>();
+
+                //读取属性信息
+                cNodeConn->id_ = std::to_string(shpFile.readIntField(i, "ID"));
+                cNodeConn->fRoad_id_ = shpFile.readLongField(i, "EROAD_ID");
+                cNodeConn->tRoad_id_ = shpFile.readLongField(i, "QROAD_ID");
+                cNodeConn->cNode_id_ = shpFile.readLongField(i, "C_NODE_ID");
+
+                auto froad_troads = map_froad_troad.find(cNodeConn->fRoad_id_);
+                if(froad_troads!= map_froad_troad.end()){
+                    froad_troads->second.emplace_back(cNodeConn->tRoad_id_);
+                }else{
+                    vector<long> troad_ids;
+                    troad_ids.emplace_back(cNodeConn->tRoad_id_);
+                    map_froad_troad.insert(make_pair(cNodeConn->fRoad_id_,troad_ids));
+                }
+
+                size_t nVertices = shpObject->nVertices;
+                if (nVertices == 1) {
+                    shared_ptr<DCCoord> coord = make_shared<DCCoord>();
+                    coord->x_ = shpObject->padfX[0];
+                    coord->y_ = shpObject->padfY[0];
+                    coord->z_ = shpObject->padfZ[0];
+                    cNodeConn->coord_ = coord;
+                }
+                map_cnode_conn_.insert(make_pair(stol(cNodeConn->id_), cNodeConn));
+                SHPDestroyObject(shpObject);
+            }
+            return true;
+        }
+
+        bool RoadCheck::LoadNodeConn() {
+            string basePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::SHP_FILE_PATH);
+            string filePath = basePath + "/" + "NODECONN";
+            ShpData shpFile(filePath);
+            if (!shpFile.isInit()) {
+                LOG(ERROR) << "Open shpFile :" << filePath << " Fail";
+                return false;
+            }
+
+            size_t recordNums = shpFile.getRecords();
+            for (size_t i = 0; i < recordNums; i++) {
+                SHPObject *shpObject = shpFile.readShpObject(i);
+                if (!shpObject || shpObject->nSHPType != SHPT_POINTZ)
+                    continue;
+
+                shared_ptr<DCNodeConn> nodeConn = make_shared<DCNodeConn>();
+
+                //读取属性信息
+                nodeConn->id_ = std::to_string(shpFile.readIntField(i, "ID"));
+                nodeConn->fRoad_id_ = shpFile.readLongField(i, "EROAD_ID");
+                nodeConn->tRoad_id_ = shpFile.readLongField(i, "QROAD_ID");
+                nodeConn->node_id_ = shpFile.readLongField(i, "NODE_ID");
+
+                size_t nVertices = shpObject->nVertices;
+                if (nVertices == 1) {
+                    shared_ptr<DCCoord> coord = make_shared<DCCoord>();
+                    coord->x_ = shpObject->padfX[0];
+                    coord->y_ = shpObject->padfY[0];
+                    coord->z_ = shpObject->padfZ[0];
+                    nodeConn->coord_ = coord;
+                }
+                map_node_conn_.insert(make_pair(stol(nodeConn->id_), nodeConn));
+                SHPDestroyObject(shpObject);
+            }
+            return true;
+        }
+
+        void RoadCheck::BuildInfo() {
+            // 填充road的 fnode 和 tnode
+            auto roads = map_data_manager_->roads_;
+            for (auto &iter : roads) {
+                long fNodeID = stol(iter.second->f_node_id);
+                long tNodeID = stol(iter.second->t_node_id);
+                if (map_road_nodes_.find(fNodeID) != map_road_nodes_.end()) {
+                    iter.second->fNode_ = map_road_nodes_[fNodeID];
+                }
+                if (map_road_nodes_.find(tNodeID) != map_road_nodes_.end()) {
+                    iter.second->tNode_ = map_road_nodes_[tNodeID];
+                }
+            }
+
+            // 填充roadnode中的 cnode
+            for (auto &iter : map_road_nodes_) {
+                long cNodeID = iter.second->cnode_id_;
+                if (map_cnodes_.find(cNodeID) != map_cnodes_.end()) {
+                    iter.second->cNode_ = map_cnodes_[cNodeID];
+                }
+            }
+
+            // 填充nodeconn中的froad 和troad 和roadnode
+            for (auto &iter : map_node_conn_) {
+                string fRoadID = to_string(iter.second->fRoad_id_);
+                string tRoadID = to_string(iter.second->tRoad_id_);
+                long nodeID = iter.second->node_id_;
+                if (roads.find(fRoadID) != roads.end()) {
+                    iter.second->fRoad_ = roads[fRoadID];
+                }
+                if (roads.find(tRoadID) != roads.end()) {
+                    iter.second->tRoad_ = roads[tRoadID];
+                }
+                if (map_road_nodes_.find(nodeID) != map_road_nodes_.end()) {
+                    iter.second->roadNode_ = map_road_nodes_[nodeID];
+                }
+
+            }
+
+            // 填充cnodeconn中的 froad 和 troad 和 cnode
+            for (auto &iter : map_cnode_conn_) {
+                string fRoadID = to_string(iter.second->fRoad_id_);
+                string tRoadID = to_string(iter.second->tRoad_id_);
+                long cNodeID = iter.second->cNode_id_;
+                if (roads.find(fRoadID) != roads.end()) {
+                    iter.second->fRoad_ = roads[fRoadID];
+                }
+                if (roads.find(tRoadID) != roads.end()) {
+                    iter.second->tRoad_ = roads[tRoadID];
+                }
+                if (map_cnodes_.find(cNodeID) != map_cnodes_.end()) {
+                    iter.second->cNode_ = map_cnodes_[cNodeID];
+                }
+            }
+            
+        }
+
     }
 }

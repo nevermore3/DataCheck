@@ -41,8 +41,6 @@ namespace kd {
             void check_road_node(shared_ptr<MapDataManager> mapDataManager,
                                  shared_ptr<CheckErrorOutput> errorOutput);
 
-
-        private:
             void SetMapDataManager(shared_ptr<MapDataManager> &mapDataManager);
 
             bool LoadLGLaneGroupIndex();
@@ -87,10 +85,45 @@ namespace kd {
                                         const shared_ptr<DCRoad> &ptr_road,
                                         const string &lane_group_id,
                                         const shared_ptr<DCDivider> &ptr_divider);
+
+            bool LoadTrafficRule();
+
+            bool LoadRoadNode();
+
+            bool LoadCNode();
+
+            bool LoadCNodeConn();
+
+            bool LoadNodeConn();
+
+            void BuildInfo();
+            //检查联通关系前数据加载
+            void preCheckConn();
+            //检查联通关系
+            void checkCNode();
+
         private:
             const string id = "road_check";
 
             shared_ptr<MapDataManager> map_data_manager_;
+
+            map<long, shared_ptr<DCTrafficRule>> map_traffic_rule_;
+
+            // roadnode
+            map<long, shared_ptr<DCRoadNode>> map_road_nodes_;
+
+            //cnode
+            map<long, shared_ptr<DCCNode>> map_cnodes_;
+
+            // nodeconn
+            map<long, shared_ptr<DCNodeConn>> map_node_conn_;
+
+            // cnodeconn
+            map<long, shared_ptr<DCCNodeConn>> map_cnode_conn_;
+            ///map<cnode_id,vector<road_node_id>>
+            map<long,vector<long>> map_cnode_node;
+            ///map<froad_id,vector<troad_id>>,需要对比的cconn表数据
+            map<long,vector<long>> map_froad_troad;
 
             // key: roadID, value:{key : from_index, value {pair<to_index, lgID>} }
             map<long, map<long, vector<pair<long, long>>>> map_road_lg_index_;

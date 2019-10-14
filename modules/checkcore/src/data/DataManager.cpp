@@ -1,7 +1,7 @@
 //
 
 #include <data/DataManager.h>
-
+#include "util/shp_file_load_util.h"
 #include "data/DataManager.h"
 
 namespace kd {
@@ -76,6 +76,34 @@ namespace kd {
                 road_vec.emplace_back(road_id);
                 lane_group2_roads_maps_.insert(make_pair(lane_group_id, road_vec));
             }
+       }
+       map<long,shared_ptr<KxsData>> MapDataManager::getKxfData(string modelName){
+           const auto &itr1 = map_kxf_data.find(modelName);
+           if (itr1 != map_kxf_data.end()) {
+               return itr1->second;
+           } else {
+               return no_data;
+           }
+       }
+       void MapDataManager::clearData(string modelName){
+           if(map_kxf_data.find(modelName)!=map_kxf_data.end()){
+               map_kxf_data.erase(modelName);
+           }
+       }
+       void MapDataManager::initRelation(string modelName){
+           ShpFileLoad::GetRelationData(modelName,map_kxf_data);
+       }
+
+       void MapDataManager::initPolyline(string modelName,bool initGeom){
+           ShpFileLoad::GetLineData(modelName,map_kxf_data,initGeom);
+       }
+
+       void MapDataManager::initPolygon(string modelName){
+           ShpFileLoad::GetLineData(modelName,map_kxf_data);
+       }
+
+       void MapDataManager::initKxsNode(string modelName){
+           ShpFileLoad::GetNodeData(modelName,map_kxf_data);
        }
    }
 }

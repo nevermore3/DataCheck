@@ -397,6 +397,16 @@ namespace kd {
             static shared_ptr<DCLaneError> createByKXS_05_023(string lane_id,string divider_id,double dis,shared_ptr<DCCoord> coord);
 
         };
+        /**
+        * 定位目标检查错误
+        */
+        class DCLocationTargetError : public DCError {
+        public:
+            explicit DCLocationTargetError(const string &checkModel);
+            static shared_ptr<DCLocationTargetError> createByKXS_06_003(long light_id,long lg_id,long road_id,shared_ptr<DCCoord> coord);
+
+        };
+
 
         /**
         * ADAS检查错误

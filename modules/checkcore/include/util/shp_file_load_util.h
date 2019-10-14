@@ -44,7 +44,7 @@ public:
 private:
     static void GetFieldInfo(DBFHandle dbfHandle,vector<string> &fieldNames,vector<DBFFieldType> &field_defs);
 
-    static string GetFieldValue(string fieldName,DBFFieldType dbfFieldType,DbfData dbfData,int index);
+    static string GetFieldValue(string fieldName,DBFFieldType dbfFieldType,DbfData &dbfData,int index);
 };
 
 

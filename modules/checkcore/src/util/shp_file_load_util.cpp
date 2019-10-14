@@ -91,19 +91,16 @@ void ShpFileLoad::GetRLoRoad(long type, map<string, shared_ptr<DCRLORoad>> &r_lo
          }
      }
 }
-string ShpFileLoad::GetFieldValue(string fieldName,DBFFieldType dbfFieldType,DbfData dbfData,int index){
+string ShpFileLoad::GetFieldValue(string fieldName,DBFFieldType dbfFieldType,DbfData &dbfData,int index){
     switch (dbfFieldType){
         case FTString:
             return dbfData.readStringField(index,fieldName);
         case FTInteger:
             return to_string(dbfData.readIntField(index,fieldName));
-            break;
         case FTLong:
             return to_string(dbfData.readLongField(index,fieldName));
-            break;
         case FTDouble:
             return to_string(dbfData.readDoubleField(index,fieldName));
-            break;
         default:
             cout << "error type not support" <<dbfFieldType<< endl;
             return "";
@@ -135,7 +132,7 @@ void ShpFileLoad::GetNodeData(string modelName,map<string, map<long, shared_ptr<
         int fieldSize = fieldName.size();
         node->id_ = shpFile.readIntField(i, ID);
         for(int j = 0;j<fieldSize;j++){
-            GetFieldValue(fieldName[j],field_defs[j],shpFile,i);
+            node->addProperty(fieldName[j],GetFieldValue(fieldName[j],field_defs[j],shpFile,i));
         }
 
         size_t nVertices = shpObject->nVertices;
@@ -176,7 +173,7 @@ void ShpFileLoad::GetLineData(string modelName,map<string, map<long, shared_ptr<
             shared_ptr<PolyLine> kxsdata = make_shared<PolyLine>();
             kxsdata->id_ = shpFile.readIntField(i, ID);
             for(int j = 0;j<fieldSize;j++){
-                GetFieldValue(fieldName[j],field_defs[j],shpFile,i);
+                kxsdata->addProperty(fieldName[j],GetFieldValue(fieldName[j],field_defs[j],shpFile,i));
             }
 
             SHPObject *shpObject = shpFile.readShpObject(i);
@@ -230,7 +227,7 @@ void ShpFileLoad::GetRelationData(string modelName,map<string, map<long, shared_
             shared_ptr<Relation> kxsdata = make_shared<Relation>();
             kxsdata->id_ = attDbfData.readIntField(i, ID);
             for(int j = 0;j<fieldSize;j++){
-                GetFieldValue(fieldName[j],field_defs[j],attDbfData,i);
+                kxsdata->addProperty(fieldName[j],GetFieldValue(fieldName[j],field_defs[j],attDbfData,i));
             }
             model_data.insert(make_pair(kxsdata->id_,kxsdata));
         }

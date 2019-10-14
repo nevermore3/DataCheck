@@ -40,14 +40,18 @@ namespace kd {
              * 交通灯分组正确性检查
              */
             void check_kxs_06_003();
-
+            /**
+             * 创建交通灯与分组的关系
+             */
             void BuildLight2Group();
-
+            /**
+             * 创建交通灯与道路关系
+             */
             void BuildLight2Road();
         private:
-
+            ///交通灯与分组的关系
             map<long,long> map_light_id_to_group_id;
-
+            ///交通灯与道路关系
             map<long,long> map_light_id_road_id;
 
             const string id = "LocationTargetCheck";

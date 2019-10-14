@@ -1329,6 +1329,20 @@ namespace kd {
             return error;
         }
 
+
+        DCLocationTargetError::DCLocationTargetError(const string &checkModel) : DCError(checkModel) {
+
+        }
+
+        shared_ptr<DCLocationTargetError> DCLocationTargetError::createByKXS_06_003(long light_id,long lg_id,long road_id,shared_ptr<DCCoord> coord){
+            shared_ptr<DCLocationTargetError> error = make_shared<DCLocationTargetError>(CHECK_ITEM_KXS_LM_003);
+            error->checkLevel_ = LEVEL_ERROR;
+            error->checkName = CHECK_ITEM_KXS_LM_003_DESC;
+            error->detail_ += "HD_TRAFFIC_LIGHT_GROUP TLG_ID["+to_string(lg_id)+"]中被分到同一个组的TRAFFIC_LIGHT["+to_string(light_id)+"]在HD_R_LO_ROAD中未关联同一条道路,ROAD_ID["+to_string(road_id)+"]";
+            error->coord = coord;
+            return error;
+        }
+
     }
 }
 

@@ -134,6 +134,8 @@ namespace kd {
             void CheckRoadGradesInterConnection();
             ///禁止通行信息检查
             void CheckProhibition();
+
+            void CheckRoadNode();
         private:
             const string id = "road_check";
             int item_data_total=0;
@@ -152,6 +154,8 @@ namespace kd {
             map<long, shared_ptr<DCCNodeConn>> map_cnode_conn_;
             ///map<cnode_id,vector<road_node_id>>
             map<long,vector<long>> map_cnode_node;
+            ///map<node_id,cnode_id>
+            map<long,long> map_node_cnode;
             ///map<froad_id_cnode,vector<troad_id>>,需要对比的cconn表数据
             map<string,vector<long>> map_froad_troad;
             ///map<troad_id,vector<froad_id>>,需要对比的cconn表数据
@@ -162,9 +166,9 @@ namespace kd {
             map<long, vector<shared_ptr<DCRoad>>> map_node_id_to_froad_;
 
             map<long, vector<shared_ptr<DCRoad>>> map_node_id_to_troad_;
-            ///map<froad_id,cnode_id>
+            ///map<froad_id,cnode_id>需要对比的cconn表数据
             map<long,set<long>> map_froad_to_cnode;
-            ///map<troad,cnode_id>
+            ///map<troad,cnode_id>需要对比的cconn表数据
             map<long,set<long>> map_troad_to_cnode;
 
             // key: roadID, value:{key : from_index, value {pair<to_index, lgID>} }

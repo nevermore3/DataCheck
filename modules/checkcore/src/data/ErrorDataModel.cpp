@@ -954,6 +954,22 @@ namespace kd {
 
             return error;
         }
+
+        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_015(long type,long rule_id,long conn_id) {
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_015);
+            error->checkName = CHECK_ITEM_KXS_ROAD_015_DESC;
+            if(type == 1){
+                error->detail_ += "简单路口的禁止通行信息关联的道路关系不存在,";
+            }else{
+                error->detail_ += "复杂路口的禁止通行信息关联的道路关系不存在,";
+            }
+            error->detail_ += "rule_id: ";
+            error->detail_ += to_string(rule_id);
+            error->detail_ += ",conn_id:";
+            error->detail_ += to_string(conn_id);
+            return error;
+        }
+
         /////////////////////////////////////////////////////////////////////////////////////////
         // DCLaneError
         /////////////////////////////////////////////////////////////////////////////////////////

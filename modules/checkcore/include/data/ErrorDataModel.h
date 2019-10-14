@@ -376,6 +376,7 @@ namespace kd {
 
             static shared_ptr<DCRoadCheckError> createByKXS_04_014(long type,long roadID);
 
+            static shared_ptr<DCRoadCheckError> createByKXS_04_015(long type,long rule_id,long conn_id);
         };
 
         /**

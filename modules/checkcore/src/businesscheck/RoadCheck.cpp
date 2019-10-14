@@ -276,6 +276,8 @@ namespace kd {
 
             // 检查道路等级通行
             CheckRoadGradesInterConnection();
+
+//            CheckRoadNode();
             return true;
         }
 
@@ -764,6 +766,8 @@ namespace kd {
                         node_ids.emplace_back(stol(roadNode->id_));
                         map_cnode_node.insert(make_pair(roadNode->cnode_id_,node_ids));
                     }
+
+                    map_node_cnode.insert(make_pair(stol(roadNode->id_),roadNode->cnode_id_));
                 }
                 map_road_nodes_.insert(make_pair(stol(roadNode->id_), roadNode));
                 SHPDestroyObject(shpObject);
@@ -1090,6 +1094,13 @@ namespace kd {
                         }
 
                     }
+//                    else{
+//                        ///禁止通行信息的简单路口联通关系不存在
+//
+//
+//                        auto ptr_error = DCRoadCheckError::createByKXS_04_015(1,it.first,it.second->node_conn_id_);
+//                        error_output()->saveError(ptr_error);
+//                    }
                 } else if( node_type == 2){
                     ///复杂路口
                     auto conn = map_cnode_conn_.find(it.second->node_conn_id_);
@@ -1106,9 +1117,16 @@ namespace kd {
                             map_prohibition_cconn.insert(make_pair(troad_id,froad_ids));
                         }
                     }
+//                    else{
+//                        ///禁止通行信息的复杂路口联通关系不存在
+//                        auto ptr_error = DCRoadCheckError::createByKXS_04_015(2,it.first,it.second->node_conn_id_);
+//                        error_output()->saveError(ptr_error);
+//                    }
 
                 }
             }
+//            error_output()->addCheckItemInfo(CHECK_ITEM_KXS_ROAD_015,map_traffic_rule_.size());
+
         }
         void RoadCheck::CheckNodesAndCNodeRelation(shared_ptr<CheckErrorOutput> &errorOutput) {
 
@@ -1285,6 +1303,26 @@ namespace kd {
 
             error_output()->addCheckItemInfo(CHECK_ITEM_KXS_ROAD_014,map_prohibition_conn.size()+map_prohibition_cconn.size());
 
+        }
+
+        void RoadCheck::CheckRoadNode(){
+            auto road = data_manager()->roads_;
+
+            for(auto it:road){
+                if(it.second->fow_ != 2){
+                    continue;
+                }
+                if(map_node_cnode.find(stol(it.second->f_node_id)) == map_node_cnode.end() || map_node_cnode.find(stol(it.second->t_node_id)) == map_node_cnode.end()){
+                    LOG(ERROR) << "error  error,"<< it.first;
+                }
+
+//                if(map_froad_to_cnode.find(stol(it.second->f_node_id)) == map_froad_to_cnode.end() && map_froad_to_cnode.find(stol(it.second->t_node_id)) == map_froad_to_cnode.end() &&
+//                        map_troad_to_cnode.find(stol(it.second->f_node_id)) == map_troad_to_cnode.end() && map_troad_to_cnode.find(stol(it.second->t_node_id)) == map_troad_to_cnode.end()
+//                ){
+//                    LOG(ERROR) << "error  error,"<< it.first;
+//                }
+
+            }
         }
 
     }

@@ -5,10 +5,7 @@
 #ifndef AUTOHDMAP_FUSIONCORE_DATAMANAGER_H
 #define AUTOHDMAP_FUSIONCORE_DATAMANAGER_H
 
-#include "CommonInclude.h"
-
 #include "MapDataModel.h"
-#include "DividerGeomModel.h"
 #include "TaskDataModel.h"
 #include "data/data_type.h"
 
@@ -77,6 +74,31 @@ namespace kd {
            // lane_group2_roads_maps_插入
            void insert_lane_group2_roads(string lane_group_id, string road_id);
 
+           map<long,shared_ptr<KxsData>> getKxfData(string modelName);
+
+           void clearData(string modelName);
+           /**
+            * 关系类型数据初始化到内存
+            * @param modelName 模型名称，表名称
+            */
+           void initRelation(string modelName);
+           /**
+            * line类型数据初始化到内存
+            * @param modelName 模型名称，表名称
+            * @param initGeom
+            */
+           void initPolyline(string modelName,bool initGeom=true);
+           /**
+            * 面对象初始化到内存
+            * @param modelName 模型名称，表名称
+            */
+           void initPolygon(string modelName);
+           /**
+            * 点对象初始化到内存
+            * @param modelName 模型名称，表名称
+            */
+           void initKxsNode(string modelName);
+
        public:
            // 所有的道路
            map<string, shared_ptr<DCRoad>> roads_;
@@ -120,6 +142,10 @@ namespace kd {
        public:
            // 是否道路是自动生成
            bool is_auto_road = false;
+
+       private:
+           map<long, shared_ptr<KxsData>> no_data;
+           map<string, map<long, shared_ptr<KxsData>>> map_kxf_data;
        };
 
     }

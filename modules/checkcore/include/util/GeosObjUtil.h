@@ -4,11 +4,9 @@
 
 #ifndef AUTOHDMAP_DATACHECK_GEOSOBJUTIL_H
 #define AUTOHDMAP_DATACHECK_GEOSOBJUTIL_H
-#include <data/DataManager.h>
 #include <geom/geo_util.h>
 #include <mvg/Coordinates.hpp>
 #include "data/DividerGeomModel.h"
-#include "CommonInclude.h"
 #include "KDGeoUtil.hpp"
 
 using namespace geos::geom;

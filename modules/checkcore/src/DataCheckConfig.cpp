@@ -29,7 +29,6 @@ namespace kd {
         const string DataCheckConfig::LANE_DIVIDER_DIRANGLE = "lane_divider_dir_angle";
         const string DataCheckConfig::LANE_NODE_ANGLE = "lane_node_angle";
         const string DataCheckConfig::LANE_ANGLE = "lane_angle";
-        const string DataCheckConfig::LANE_CURVATURE = "lane_curvature";
 
         const string DataCheckConfig::OBJECT_PL_BUFFER = "object_pl_buffer";
 
@@ -58,6 +57,10 @@ namespace kd {
         const string DataCheckConfig::OUTPUT_PATH = "output_path";
         const string DataCheckConfig::CHECK_FILE_PATH ="check_file_path";
         const string DataCheckConfig::NODE_RELEVANT_OBJ_SLOPE_ERROR = "node_relevant_obj_slope_error";
+        const string DataCheckConfig::SCH_HEADING_ERROR = "sch_heading_error";
+        const string DataCheckConfig::SCH_SLOPE_ERROR = "sch_slope_error";
+        const string DataCheckConfig::SCH_CURVATURE_ERROR = "sch_curvature_error";
+
 
         const string DataCheckConfig::SHP_FILE_PATH ="shp_data_input";
         const string DataCheckConfig::DB_INPUT_FILE ="db_input_file";

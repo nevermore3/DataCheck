@@ -248,6 +248,12 @@ namespace kd {
             //adasNode曲率检查
             CurvatureValueCheck(errorOutput);
 
+            //坡度值检查
+            SlopeValueCheck(errorOutput);
+
+            //航向角值检查
+            HeadingValueCheck(errorOutput);
+
             // 属性点间距离检查
             CheckAdjacentNodeDistance(errorOutput);
 

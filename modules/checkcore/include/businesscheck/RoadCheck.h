@@ -138,6 +138,8 @@ namespace kd {
             void CheckRoadNode();
         private:
             const string id = "road_check";
+            ///conde到内部道路的距离限制
+            const int dis_cnode_2_road = 50;
             int item_data_total=0;
             map<long, shared_ptr<DCTrafficRule>> map_traffic_rule_;
 

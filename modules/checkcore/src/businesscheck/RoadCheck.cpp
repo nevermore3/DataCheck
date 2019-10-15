@@ -11,8 +11,9 @@
 #include "util/product_shp_util.h"
 #include <shp/ShpData.hpp>
 #include <util/KDGeoUtil.hpp>
+#include "util/geos_obj_relation_util.h"
+#include "util/GeosObjUtil.h"
 using namespace kd::automap;
-
 namespace kd {
     namespace dc {
 
@@ -277,7 +278,7 @@ namespace kd {
             // 检查道路等级通行
             CheckRoadGradesInterConnection();
 
-//            CheckRoadNode();
+            CheckRoadNode();
             return true;
         }
 
@@ -1307,21 +1308,31 @@ namespace kd {
 
         void RoadCheck::CheckRoadNode(){
             auto road = data_manager()->roads_;
-
+            error_output()->addCheckItemInfo(CHECK_ITEM_KXS_ROAD_016,road.size());
             for(auto it:road){
                 if(it.second->fow_ != 2){
                     continue;
                 }
                 if(map_node_cnode.find(stol(it.second->f_node_id)) == map_node_cnode.end() || map_node_cnode.find(stol(it.second->t_node_id)) == map_node_cnode.end()){
-                    LOG(ERROR) << "error  error,"<< it.first;
+                    auto error = DCRoadCheckError::createByKXS_04_016(1,stol(it.first), it.second->fNode_->coord_);
+                    error_output()->saveError(error);
+                }else if(map_node_cnode.find(stol(it.second->f_node_id))->second != map_node_cnode.find(stol(it.second->t_node_id))->second){
+                    auto error = DCRoadCheckError::createByKXS_04_016(2,stol(it.first), it.second->fNode_->coord_,map_node_cnode.find(stol(it.second->f_node_id))->second,map_node_cnode.find(stol(it.second->t_node_id))->second);
+                    error_output()->saveError(error);
+                }else{
+                    int min_index;
+                    CoordinateSequence *sq = nullptr;
+                    sq = it.second->line_->getCoordinates();
+
+                    shared_ptr<DCCoord> cnode_coord = map_cnodes_.find(map_node_cnode.find(stol(it.second->t_node_id))->second)->second->coord_;
+                    shared_ptr<geos::geom::Point> point = GeosObjUtil::CreatePoint(cnode_coord);
+                    double dis_len = GeosObjRelationUtil::pt2LineDist(sq, point->getCoordinate(), min_index);
+                    LOG(INFO)<<"DIS:"<<dis_len;
+                    if(dis_len>dis_cnode_2_road){
+                        auto error = DCRoadCheckError::createByKXS_04_016(3,stol(it.first), cnode_coord,map_node_cnode.find(stol(it.second->f_node_id))->second);
+                        error_output()->saveError(error);
+                    }
                 }
-
-//                if(map_froad_to_cnode.find(stol(it.second->f_node_id)) == map_froad_to_cnode.end() && map_froad_to_cnode.find(stol(it.second->t_node_id)) == map_froad_to_cnode.end() &&
-//                        map_troad_to_cnode.find(stol(it.second->f_node_id)) == map_troad_to_cnode.end() && map_troad_to_cnode.find(stol(it.second->t_node_id)) == map_troad_to_cnode.end()
-//                ){
-//                    LOG(ERROR) << "error  error,"<< it.first;
-//                }
-
             }
         }
 

@@ -970,6 +970,33 @@ namespace kd {
             return error;
         }
 
+        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_016(long type,long road_id,shared_ptr<DCCoord> coord,long cconn_id,long cconn_id1) {
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_016);
+            error->checkName = CHECK_ITEM_KXS_ROAD_016_DESC;
+            error->coord = coord;
+            if(type == 1){
+                error->detail_ += "交叉点内部道路的首尾节点未被综合,";
+                error->detail_ += "road_id: ";
+                error->detail_ += to_string(road_id);
+            }else if(type == 2){
+                error->detail_ += "交叉点内部道路的首尾节点被多个综合交叉点关联,";
+                error->detail_ += "road_id: ";
+                error->detail_ += to_string(road_id);
+                error->detail_ += ",cconn_id1:";
+                error->detail_ += to_string(cconn_id);
+                error->detail_ += ",cconn_id2:";
+                error->detail_ += to_string(cconn_id1);
+            }else{
+                error->detail_ += "综合交叉点到所综合的道路距离大于50米,";
+                error->detail_ += "road_id: ";
+                error->detail_ += to_string(road_id);
+                error->detail_ += ",cconn_id:";
+                error->detail_ += to_string(cconn_id);
+            }
+
+            return error;
+        }
+
         /////////////////////////////////////////////////////////////////////////////////////////
         // DCLaneError
         /////////////////////////////////////////////////////////////////////////////////////////

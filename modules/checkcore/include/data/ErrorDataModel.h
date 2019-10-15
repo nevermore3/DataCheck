@@ -534,7 +534,7 @@ namespace kd {
         public:
             explicit PolyLineError(const string &checkModel) : DCError(checkModel) {}
 
-            static shared_ptr<PolyLineError> createByKXS_011_02(string line_id,shared_ptr<DCCoord> coord);
+            static shared_ptr<PolyLineError> createByKXS_011_002(int type,string line_id,shared_ptr<DCCoord> coord);
         };
 
     }

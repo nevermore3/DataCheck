@@ -1318,13 +1318,17 @@ namespace kd {
             return error;
         }
 
-        shared_ptr<PolyLineError> PolyLineError::createByKXS_011_02(string line_id,shared_ptr<DCCoord> coord){
+        shared_ptr<PolyLineError> PolyLineError::createByKXS_011_002(int type,string line_id,shared_ptr<DCCoord> coord){
             shared_ptr<PolyLineError> error = make_shared<PolyLineError>(CHECK_ITEM_KXS_LINE_002);
             error->checkLevel_ = LEVEL_ERROR;
             error->checkName = CHECK_ITEM_KXS_LINE_001_DESC;
-            error->detail_ += "HD_R_LO_ROAD表中停止线TYPE=2,LO_ID=[";
-            error->detail_ +=line_id;
-            error->detail_ +="]关联的ROAD错误!";
+            if(type == 1){
+                error->detail_ +="停止线在HD_R_LO_ROAD表中不存在,ID=["+line_id+"]";
+            }else{
+               error->detail_ += "HD_R_LO_ROAD表中停止线TYPE=2,LO_ID=[";
+               error->detail_ +=line_id;
+               error->detail_ +="]关联的ROAD错误!";
+            }
             error->coord = coord;
             return error;
         }

@@ -19,7 +19,7 @@ bool PolylineCheck::execute(shared_ptr<MapDataManager> mapDataManager, shared_pt
 
     preCheck();
     ///停止线与道路的关联关系正确性检查
-    check_kxs_011_02();
+    check_kxs_011_002();
 
 
     clearMeomery();
@@ -40,13 +40,13 @@ void PolylineCheck::preCheck() {
     ShpFileLoad::GetRLoRoad(2, rloroad);
 }
 
-void PolylineCheck::check_kxs_011_02() {
+void PolylineCheck::check_kxs_011_002() {
     auto roads = data_manager()->roads_;
     for (auto polyline:polylines) {
         string polyline_id = polyline.first;
         auto lo_road = rloroad.find(polyline.first);
         if (lo_road == rloroad.end()) {
-            shared_ptr<PolyLineError> polylineError = PolyLineError::createByKXS_011_02(polyline.first,
+            shared_ptr<PolyLineError> polylineError = PolyLineError::createByKXS_011_002(1,polyline.first,
                                                                                         polyline.second->coords[0]);
             error_output()->saveError(polylineError);
             continue;
@@ -60,7 +60,7 @@ void PolylineCheck::check_kxs_011_02() {
         CoordinateSequence *intersections = nullptr;
         bool iscross = KDGeoUtil::isLineCross(road->second->line_.get(), polyline.second->line_.get(), &intersections);
         if (!iscross) {
-            shared_ptr<PolyLineError> polylineError = PolyLineError::createByKXS_011_02(polyline.first,
+            shared_ptr<PolyLineError> polylineError = PolyLineError::createByKXS_011_002(2,polyline.first,
                                                                                         polyline.second->coords[0]);
             error_output()->saveError(polylineError);
         }

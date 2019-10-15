@@ -227,7 +227,7 @@
                    NAME="交通灯分组正确性检查"
                    LEVEL="error"
                    INFO="交通灯在HD_TRAFFIC_LIGHT_GROUP中找不到"
-                   SQL="select ID FROM HD_TRAFFICSIGN where ID not in(select TL_ID FROM HD_TRAFFIC_LIGHT_GROUP);"/>
+                   SQL="select ID FROM HD_TRAFFIC_LIGHT where ID not in(select TL_ID FROM HD_TRAFFIC_LIGHT_GROUP);"/>
     <datacheckitem ID="KXS-06-003"
                    NAME="交通灯分组正确性检查"
                    LEVEL="error"

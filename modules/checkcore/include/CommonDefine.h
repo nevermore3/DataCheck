@@ -78,8 +78,8 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ORG_030 = "KXS-01-030";
         const static std::string CHECK_ITEM_KXS_ORG_031 = "KXS-01-031";
         const static std::string CHECK_ITEM_KXS_ORG_032 = "KXS-01-032";
-        const static std::string CHECK_ITEM_KXS_ORG_033 = "KXS_01_033";
-        const static std::string CHECK_ITEM_KXS_ORG_034 = "KXS_01_034";
+        const static std::string CHECK_ITEM_KXS_ORG_033 = "KXS-01-033";
+        const static std::string CHECK_ITEM_KXS_ORG_034 = "KXS-01-034";
         const static std::string CHECK_ITEM_KXS_ORG_035 = "KXS-01-035";
 
 

@@ -223,5 +223,10 @@
                    LEVEL="error"
                    INFO="HD_R_LO_ROAD表中停止线不能与多条ROAD关联"
                    SQL="select LO_ID FROM HD_R_LO_ROAD where TYPE=2 group by LO_ID having COUNT(LO_ID)>1;"/>
+    <datacheckitem ID="KXS-04-017"
+                   NAME="道路节点孤立"
+                   LEVEL="error"
+                   INFO="HD_R_LO_ROAD表中停止线不能与多条ROAD关联"
+                   SQL="select ID FROM ROAD_NODE where ID NOT IN(select SNODE_ID from ROAD  union select ENODE_ID from ROAD);"/>
   </datacheck>
 </datachecks>

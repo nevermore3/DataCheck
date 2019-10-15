@@ -1327,7 +1327,6 @@ namespace kd {
                     shared_ptr<DCCoord> cnode_coord = map_cnodes_.find(map_node_cnode.find(stol(it.second->t_node_id))->second)->second->coord_;
                     shared_ptr<geos::geom::Point> point = GeosObjUtil::CreatePoint(cnode_coord);
                     double dis_len = GeosObjRelationUtil::pt2LineDist(sq, point->getCoordinate(), min_index);
-                    LOG(INFO)<<"DIS:"<<dis_len;
                     if(dis_len>dis_cnode_2_road){
                         auto error = DCRoadCheckError::createByKXS_04_016(3,stol(it.first), cnode_coord,map_node_cnode.find(stol(it.second->f_node_id))->second);
                         error_output()->saveError(error);

@@ -224,5 +224,6 @@ const char kTurnGuidance[] = "TURN_GUIDANCE";
 const char kTopoLaneGroup[] ="HD_TOPO_LANEGROUP";
 const char kLgRoadNodeIndex[] = "LG_ROADNODE_INDEX";
 const char kRLoRoad[]  = "HD_R_LO_ROAD";
+const char kTrafficLightGroup[] = "HD_TRAFFIC_LIGHT_GROUP";
 
 #endif //AUTOHDMAP_COMPILE_PRODUCT_SHP_UTIL_H

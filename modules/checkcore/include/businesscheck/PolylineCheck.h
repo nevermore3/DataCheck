@@ -36,7 +36,7 @@ namespace kd {
             /**
              * 检查停止线和关联road是否相交
              */
-            void check_kxs_011_02();
+            void check_kxs_011_002();
         private:
             ///检查信息缓存
             std::map<string,shared_ptr<DCPolyline>> polylines;

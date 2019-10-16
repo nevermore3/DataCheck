@@ -1318,13 +1318,31 @@ namespace kd {
             return error;
         }
 
-        shared_ptr<PolyLineError> PolyLineError::createByKXS_011_02(string line_id,shared_ptr<DCCoord> coord){
+        shared_ptr<PolyLineError> PolyLineError::createByKXS_011_002(int type,string line_id,shared_ptr<DCCoord> coord){
             shared_ptr<PolyLineError> error = make_shared<PolyLineError>(CHECK_ITEM_KXS_LINE_002);
             error->checkLevel_ = LEVEL_ERROR;
             error->checkName = CHECK_ITEM_KXS_LINE_001_DESC;
-            error->detail_ += "HD_R_LO_ROAD表中停止线TYPE=2,LO_ID=[";
-            error->detail_ +=line_id;
-            error->detail_ +="]关联的ROAD错误!";
+            if(type == 1){
+                error->detail_ +="停止线在HD_R_LO_ROAD表中不存在,ID=["+line_id+"]";
+            }else{
+               error->detail_ += "HD_R_LO_ROAD表中停止线TYPE=2,LO_ID=[";
+               error->detail_ +=line_id;
+               error->detail_ +="]关联的ROAD错误!";
+            }
+            error->coord = coord;
+            return error;
+        }
+
+
+        DCLocationTargetError::DCLocationTargetError(const string &checkModel) : DCError(checkModel) {
+
+        }
+
+        shared_ptr<DCLocationTargetError> DCLocationTargetError::createByKXS_06_003(long light_id,long lg_id,long road_id,shared_ptr<DCCoord> coord){
+            shared_ptr<DCLocationTargetError> error = make_shared<DCLocationTargetError>(CHECK_ITEM_KXS_LM_003);
+            error->checkLevel_ = LEVEL_ERROR;
+            error->checkName = CHECK_ITEM_KXS_LM_003_DESC;
+            error->detail_ += "HD_TRAFFIC_LIGHT_GROUP TLG_ID["+to_string(lg_id)+"]中被分到同一个组的TRAFFIC_LIGHT["+to_string(light_id)+"]在HD_R_LO_ROAD中未关联同一条道路,ROAD_ID["+to_string(road_id)+"]";
             error->coord = coord;
             return error;
         }

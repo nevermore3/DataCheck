@@ -615,6 +615,10 @@ namespace kd {
             // 通行方向前面的在前
             map<string, set<string>> t_lane_group2_conn_lg;
             for (const auto &pairLg : lane_group2_conn_lg_) {
+                if(virtual_lane_groups_maps_.find(pairLg.first)!=virtual_lane_groups_maps_.end()){
+                    continue;
+                }
+
                 auto f_lg_iter = f_lane_group2_conn_lg.find(pairLg.first);
 
                 if (f_lg_iter != f_lane_group2_conn_lg.end()) {

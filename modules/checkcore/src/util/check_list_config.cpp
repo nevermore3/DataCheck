@@ -261,6 +261,7 @@ void CheckListConfig::CheckID2CheckDesc() {
         //定位目标
         {CHECK_ITEM_KXS_LM_001, DESC_NAME(CHECK_ITEM_KXS_LM_001)},
         {CHECK_ITEM_KXS_LM_002, DESC_NAME(CHECK_ITEM_KXS_LM_002)},
+        {CHECK_ITEM_KXS_LM_003, DESC_NAME(CHECK_ITEM_KXS_LM_003)},
 
 
         //ADAS

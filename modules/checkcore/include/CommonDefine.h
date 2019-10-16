@@ -250,9 +250,11 @@ namespace kd {
         // 定位目标
         const static std::string CHECK_ITEM_KXS_LM_001 = "KXS-06-001";
         const static std::string CHECK_ITEM_KXS_LM_002 = "KXS-06-002";
+        const static std::string CHECK_ITEM_KXS_LM_003 = "KXS-06-003";
 
         const static std::string CHECK_ITEM_KXS_LM_001_DESC = "定位目标与道路的关联关系";
         const static std::string CHECK_ITEM_KXS_LM_002_DESC = "定位目标POINT高度值";
+        const static std::string CHECK_ITEM_KXS_LM_003_DESC = "交通灯分组正确性检查";
 
         // ADAS
         const static std::string CHECK_ITEM_KXS_ADAS_001 = "KXS-07-001";
@@ -293,8 +295,8 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_NORM_003_DESC = "";
 
         ///polyine类型数据相关检查
-        const static std::string CHECK_ITEM_KXS_LINE_001 ="KXS-11-01";
-        const static std::string CHECK_ITEM_KXS_LINE_002 ="KXS-11-02";
+        const static std::string CHECK_ITEM_KXS_LINE_001 ="KXS-11-001";
+        const static std::string CHECK_ITEM_KXS_LINE_002 ="KXS-11-002";
         const static std::string CHECK_ITEM_KXS_LINE_001_DESC = "停止线与道路的关联关系正确性检查";
 
     }

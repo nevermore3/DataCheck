@@ -200,7 +200,7 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ROAD_008_DESC = "道路形态点间距过近";
         const static std::string CHECK_ITEM_KXS_ROAD_009_DESC = "";
         const static std::string CHECK_ITEM_KXS_ROAD_010_DESC = "每一Road的形状点周围1.5米内必有一个关联该Road的AdasNode";
-        const static std::string CHECK_ITEM_KXS_ROAD_011_DESC = "";
+        const static std::string CHECK_ITEM_KXS_ROAD_011_DESC = "ADAS点到关联road的垂直距离检查";
 
 
         // 车道中心线

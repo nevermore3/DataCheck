@@ -882,6 +882,17 @@ namespace kd {
             return error;
         }
 
+        shared_ptr<DCRoadCheckError>DCRoadCheckError::createByKXS_04_011(long nodeID, shared_ptr<DCCoord> &coord) {
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_011);
+            error->detail_ += "ADAS NODE ID:";
+            error->detail_ += std::to_string(nodeID);
+            error->detail_ += ",离关联Road的垂直距离超过10cm";
+
+            error->coord = coord;
+            return error;
+
+        }
+
         /////////////////////////////////////////////////////////////////////////////////////////
         // DCLaneError
         /////////////////////////////////////////////////////////////////////////////////////////

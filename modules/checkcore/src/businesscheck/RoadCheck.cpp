@@ -254,6 +254,9 @@ namespace kd {
             // 每一Road的形状点周围1.5米内必有一个关联该Road的AdasNode
             RoadRelevantAdasNode(errorOutput);
 
+            // AdasNode点离关联Road的距离不超过0.1米
+            AdasNodeVerticalDistance(errorOutput);
+
             if (LoadLGLaneGroupIndex()) {
                 AdasNodeRelevantDividerSlope(errorOutput);
             }
@@ -328,6 +331,33 @@ namespace kd {
                         }
 
                         j++;
+                    }
+                }
+            }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
+        }
+
+        // AdasNode点离关联Road的距离不超过0.1米
+        void RoadCheck::AdasNodeVerticalDistance(shared_ptr<CheckErrorOutput> errorOutput) {
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_ROAD_011;
+            size_t total = 0;
+
+            for (const auto &adasNodes : map_obj_schs_) {
+                long roadID = adasNodes.first;
+                total += adasNodes.second.size();
+                string strRoadID = to_string(roadID);
+                if (map_data_manager_->roads_.find(strRoadID) == map_data_manager_->roads_.end()) {
+                    continue;
+                }
+                auto road = map_data_manager_->roads_[strRoadID];
+                for (const auto &node : adasNodes.second) {
+                    shared_ptr<geos::geom::Point> point = GeosObjUtil::CreatePoint(node->coord_);
+                    double distance = GeosObjUtil::GetVerticleDistance(road->line_, point);
+                    if (distance > 0.1) {
+                        auto error = DCRoadCheckError::createByKXS_04_011(stol(node->id_), node->coord_);
+                        errorOutput->saveError(error);
                     }
                 }
             }

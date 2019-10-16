@@ -5,6 +5,7 @@
 #include <data/ErrorDataModel.h>
 #include "data/DataManager.h"
 #include "DataCheckConfig.h"
+#include "util/check_list_config.h"
 
 #include "data/ErrorDataModel.h"
 
@@ -17,6 +18,7 @@ namespace kd {
 
         DCError::DCError(string checkModel) {
             checkId = checkModel;
+            checkName = CheckListConfig::getInstance().GetCheckItemDesc(checkModel);
         }
 
         string DCError::toString() {
@@ -858,6 +860,25 @@ namespace kd {
             }
             error->detail_ += "距离过近";
             error->sourceId = road_id;
+            return error;
+        }
+
+
+        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_010(long roadID, long index,
+                                                                          shared_ptr<DCCoord> &coord, int level) {
+
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_010);
+            error->checkLevel_ = LEVEL_ERROR;
+            error->detail_ += "Road ID:";
+            error->detail_ += std::to_string(roadID);
+            error->detail_ += ",属性点索引:";
+            error->detail_ += to_string(index);
+            if (level == 1) {
+                error->detail_ += ",Road节点周围1.5米内找不到ADASNODE";
+            } else if (level == 2) {
+                error->detail_ += ",道路起点和终点之处缺失关联的ADASNODE";
+            }
+            error->coord = coord;
             return error;
         }
 

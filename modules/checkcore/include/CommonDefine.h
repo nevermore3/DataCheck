@@ -194,6 +194,7 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ROAD_014 = "KXS-04-014";
         const static std::string CHECK_ITEM_KXS_ROAD_015 = "KXS-04-015";
         const static std::string CHECK_ITEM_KXS_ROAD_016 = "KXS-04-016";
+        const static std::string CHECK_ITEM_KXS_ROAD_017 = "KXS-04-017";
 
         const static std::string CHECK_ITEM_KXS_ROAD_001_DESC = "若车道组之间连通，则其内部的道路必然连通";
         const static std::string CHECK_ITEM_KXS_ROAD_002_DESC = "道路与车道组的两个车道边缘线应无交叉点。双向道路除外";
@@ -210,7 +211,8 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ROAD_013_DESC = "道路等级连通性检查";
         const static std::string CHECK_ITEM_KXS_ROAD_014_DESC = "禁止信息导致道路孤立检查";
         const static std::string CHECK_ITEM_KXS_ROAD_015_DESC = "禁止信息关联的道路关系不存在";
-        const static std::string CHECK_ITEM_KXS_ROAD_016_DESC = "内部道路未关联C_NODE";
+        const static std::string CHECK_ITEM_KXS_ROAD_016_DESC = "内部道路节点关联C_NODE检查";
+        const static std::string CHECK_ITEM_KXS_ROAD_017_DESC = "道路节点孤立";
 
         // 车道中心线
         const static std::string CHECK_ITEM_KXS_LANE_001 = "KXS-05-001";

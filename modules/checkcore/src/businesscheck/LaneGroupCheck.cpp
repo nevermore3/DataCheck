@@ -352,7 +352,8 @@ namespace kd {
                         for(auto da:leftDa){
                             findErr = checkDaTypeAndVirtual(da->type_,da->virtual_,is_vir);
                             if(CheckItemValid(CHECK_ITEM_KXS_LG_028)  && findErr){
-                                DCLaneGroupCheckError::createByKXS_03_028(laneGroup,da->id_,laneitem->leftDivider_->nodes_[0]->coord_);
+                                shared_ptr<DCError> ptr_error = DCLaneGroupCheckError::createByKXS_03_028(laneGroup,da->id_,laneitem->leftDivider_->nodes_[0]->coord_);
+                                error_output()->saveError(ptr_error);
                                 break;
                             }
                         }
@@ -364,7 +365,8 @@ namespace kd {
                         for (auto da:rightDa) {
                             findErr = checkDaTypeAndVirtual(da->type_, da->virtual_, is_vir);
                             if(CheckItemValid(CHECK_ITEM_KXS_LG_028) && findErr){
-                                DCLaneGroupCheckError::createByKXS_03_028(laneGroup,da->id_,laneitem->leftDivider_->nodes_[0]->coord_);
+                                shared_ptr<DCError> ptr_error = DCLaneGroupCheckError::createByKXS_03_028(laneGroup,da->id_,laneitem->leftDivider_->nodes_[0]->coord_);
+                                error_output()->saveError(ptr_error);
                                 break;
                             }
                         }
@@ -398,9 +400,11 @@ namespace kd {
                                         }
                                     }
                                 }
-                                if (CheckItemValid(CHECK_ITEM_KXS_LG_029) && !find)
-                                    DCLaneGroupCheckError::createByKXS_03_029(lanegroup.find(lane_group1_id)->second,
+                                if (CheckItemValid(CHECK_ITEM_KXS_LG_029) && !find){
+                                    shared_ptr<DCError> ptr_error = DCLaneGroupCheckError::createByKXS_03_029(lanegroup.find(lane_group1_id)->second,
                                                                               lanegroup.find(lane_group2_id)->second);
+                                    error_output()->saveError(ptr_error);
+                                }
                             }
                         }
                     }

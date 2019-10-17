@@ -69,6 +69,11 @@ namespace kd {
              */
             void AdasNodeVerticalDistance(shared_ptr<CheckErrorOutput> errorOutput);
 
+            /*
+             * 定位目标与道路关联关系存在性检查
+             */
+            void CheckRLORoad();
+
             /**
              * 结点重复
              * @param errorOutput

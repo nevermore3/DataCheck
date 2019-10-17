@@ -189,6 +189,7 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ROAD_009 = "KXS-04-009";
         const static std::string CHECK_ITEM_KXS_ROAD_010 = "KXS-04-010";
         const static std::string CHECK_ITEM_KXS_ROAD_011 = "KXS-04-011";
+        const static std::string CHECK_ITEM_KXS_ROAD_012 = "KXS-04-012";
 
         const static std::string CHECK_ITEM_KXS_ROAD_001_DESC = "若车道组之间连通，则其内部的道路必然连通";
         const static std::string CHECK_ITEM_KXS_ROAD_002_DESC = "道路与车道组的两个车道边缘线应无交叉点。双向道路除外";
@@ -201,6 +202,7 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ROAD_009_DESC = "";
         const static std::string CHECK_ITEM_KXS_ROAD_010_DESC = "每一Road的形状点周围1.5米内必有一个关联该Road的AdasNode";
         const static std::string CHECK_ITEM_KXS_ROAD_011_DESC = "ADAS点到关联road的垂直距离检查";
+        const static std::string CHECK_ITEM_KXS_ROAD_012_DESC = "定位目标与道路关联关系存在性检查";
 
 
         // 车道中心线

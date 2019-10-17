@@ -890,7 +890,19 @@ namespace kd {
 
             error->coord = coord;
             return error;
+        }
 
+        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_012(string type, long objID, int num) {
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_012);
+            error->checkLevel_ = LEVEL_ERROR;
+            error->detail_ += type;
+            error->detail_ += ", ID : ";
+            error->detail_ += to_string(objID);
+            error->detail_ += ", 关联road ";
+            error->detail_ += to_string(num);
+            error->detail_ += " 次";
+
+            return error;
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////

@@ -245,6 +245,8 @@ namespace kd {
 
             SetMapDataManager(mapDataManager);
 
+            set_error_output(errorOutput);
+
             //adasNode曲率检查
             CurvatureValueCheck(errorOutput);
 
@@ -256,6 +258,11 @@ namespace kd {
 
             // AdasNode点离关联Road的距离不超过0.1米
             AdasNodeVerticalDistance(errorOutput);
+
+            //定位目标与道路关联关系存在性检查
+            if (CheckItemValid(CHECK_ITEM_KXS_ROAD_012)) {
+                CheckRLORoad();
+            }
 
             if (LoadLGLaneGroupIndex()) {
                 AdasNodeRelevantDividerSlope(errorOutput);
@@ -363,6 +370,99 @@ namespace kd {
             }
             checkItemInfo->totalNum = total;
             errorOutput->addCheckItemInfo(checkItemInfo);
+        }
+
+        /*
+         * 定位目标与道路关联关系存在性检查
+         * 一个 定位目标HD_POLYGON，地面定位线HD_POLYLINE，杆HD_POINT，交通灯TRAFFIC_LIGHT，交通牌TRAFFIC_SIGN
+         * 检查其是否在表HD_R_LO_ROAD中被一个ROAD关联，若未被关联,报错。 若关联多次，报错（交通灯除外）
+         */
+        void RoadCheck::CheckRLORoad() {
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_ROAD_012;
+            size_t total = 0;
+
+            //Read File: HD_R_LO_ROAD
+            data_manager()->initRelation(kRLoRoad);
+            map<long, shared_ptr<KxsData>> rLoRoads = data_manager()->getKxfData(kRLoRoad);
+
+            //key: 类型ID, value: 同类型的目标ID
+            map<long, vector<long>> mapType2IDs;
+
+            for (const auto &iter : rLoRoads) {
+                long type = iter.second->getPropertyLong(TYPE);
+                long objID = iter.second->getPropertyLong(LO_ID);
+
+                if (mapType2IDs.find(type) == mapType2IDs.end()) {
+                    vector<long> array;
+                    array.push_back(objID);
+                    mapType2IDs.insert(make_pair(type, array));
+                } else {
+                    mapType2IDs[type].push_back(objID);
+                }
+            }
+
+            map<string, long> name2Type {{"polygon", 1},
+                                         {"polyline", 2},
+                                         {"point", 3},
+                                         {"trafficsign", 4},
+                                         {"trafficlight", 5}};
+
+            map<string, map<long, shared_ptr<KxsData>>> allData;
+
+            //Read File: HD_POLYGON
+            data_manager()->initPolygon(kPolygon);
+            map<long, shared_ptr<KxsData>> polygons = data_manager()->getKxfData(kPolygon);
+            allData.insert(make_pair("ploygon", polygons));
+
+            //ReadFile : HD_POLYLINE
+            data_manager()->initPolyline(kPolyline);
+            map<long, shared_ptr<KxsData>> polylines = data_manager()->getKxfData(kPolyline);
+            allData.insert(make_pair("polyline", polylines));
+
+            //ReadFile : HD_POINT
+            data_manager()->initKxsNode(kPoint);
+            map<long, shared_ptr<KxsData>>points = data_manager()->getKxfData(kPoint);
+            allData.insert(make_pair("point", points));
+
+            //ReadFile : TRAFFIC_LIGHT
+            data_manager()->initKxsNode(kTrafficLight);
+            map<long, shared_ptr<KxsData>>trafficlights = data_manager()->getKxfData(kTrafficLight);
+            allData.insert(make_pair("trafficlight", trafficlights));
+
+            //ReadFile : TRAFFIC_SIGN
+            data_manager()->initPolygon(kTrafficSign);
+            map<long, shared_ptr<KxsData>> trafficsigns = data_manager()->getKxfData(kTrafficSign);
+            allData.insert(make_pair("trafficsign", trafficsigns));
+
+
+            for (const auto &iter : allData) {
+                long type = name2Type[iter.first];
+                if (mapType2IDs.find(type) == mapType2IDs.end()) {
+                    continue;
+                }
+                total += iter.second.size();
+                for (const auto &obj : iter.second) {
+                    long id = obj.first;
+                    auto array = mapType2IDs[type];
+                    int num = count(array.begin(), array.end(), id);
+                    //// 交通灯可以关联多个road
+                    if (num == 1 || (num > 1 && iter.first == "trafficlight")) {
+                        continue;
+                    }
+
+                    auto error = DCRoadCheckError::createByKXS_04_012(iter.first, id, num);
+                    error_output()->saveError(error);
+                }
+            }
+            error_output()->addCheckItemInfo(checkItemInfo);
+
+            //clear memory
+            data_manager()->clearData(kPolygon);
+            data_manager()->clearData(kPoint);
+            data_manager()->clearData(kPolyline);
+            data_manager()->clearData(kTrafficSign);
+            data_manager()->clearData(kTrafficLight);
         }
 
         void RoadCheck::check_road_divider_intersect(shared_ptr<MapDataManager> mapDataManager,

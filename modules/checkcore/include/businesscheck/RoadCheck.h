@@ -123,7 +123,6 @@ namespace kd {
         private:
             const string id = "road_check";
 
-            shared_ptr<MapDataManager> map_data_manager_;
 
             map<long, shared_ptr<DCTrafficRule>> map_traffic_rule_;
 

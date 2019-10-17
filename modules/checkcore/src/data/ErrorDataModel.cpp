@@ -867,6 +867,7 @@ namespace kd {
                                                                           shared_ptr<DCCoord> &coord, int flag) {
             shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_009);
             string str = flag == 0 ? "起始节点" : "终止节点";
+
             error->checkLevel_ = LEVEL_ERROR;
             error->detail_ += "Road ID: ";
             error->detail_ += to_string(roadID);

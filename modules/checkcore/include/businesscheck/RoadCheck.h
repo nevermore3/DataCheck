@@ -56,6 +56,19 @@ namespace kd {
              */
             void AdasNodeRelevantDividerSlope(shared_ptr<CheckErrorOutput> &errorOutput);
 
+
+            /*
+             * 每一Road的形状点周围1.5米内必有一个关联该Road的AdasNode
+             * @param errorOutput
+             */
+            void RoadRelevantAdasNode(shared_ptr<CheckErrorOutput> &errorOutput);
+
+            /*
+             * AdasNode点离关联的Road的垂直距离不超过10cm
+             * @param errorOutput
+             */
+            void AdasNodeVerticalDistance(shared_ptr<CheckErrorOutput> errorOutput);
+
             /**
              * 结点重复
              * @param errorOutput

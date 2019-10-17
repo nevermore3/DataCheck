@@ -251,6 +251,12 @@ namespace kd {
             // 属性点间距离检查
             CheckAdjacentNodeDistance(errorOutput);
 
+            // 每一Road的形状点周围1.5米内必有一个关联该Road的AdasNode
+            RoadRelevantAdasNode(errorOutput);
+
+            // AdasNode点离关联Road的距离不超过0.1米
+            AdasNodeVerticalDistance(errorOutput);
+
             if (LoadLGLaneGroupIndex()) {
                 AdasNodeRelevantDividerSlope(errorOutput);
             }
@@ -262,9 +268,101 @@ namespace kd {
             check_road_node_height(mapDataManager, errorOutput);
             check_road_node(mapDataManager, errorOutput);
 
-
-
             return true;
+        }
+
+
+        /*
+         * 每一Road的形状点周围1.5米内必有一个关联该Road的AdasNode
+         */
+        void RoadCheck::RoadRelevantAdasNode(shared_ptr<CheckErrorOutput> &errorOutput) {
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_ROAD_010;
+            size_t total = 0;
+
+            double threshold = 1.5;
+            /*
+             * 1、找到一条Road对象
+             * 2、在map_obj_schs中找到对应 该Road对象的属性点集合
+             * 3、遍历该Road对象的形点
+             * 3、按照属性点中的obj_index索引，第一个遍历到的属性点就是离该形点最近的点
+             */
+            auto roads = map_data_manager_->roads_;
+            for (const auto &road : roads) {
+                long roadID = stol(road.first);
+                if (map_obj_schs_.find(roadID) == map_obj_schs_.end()) {
+                    continue;
+                }
+                auto adasNodes = map_obj_schs_[roadID];
+                total += road.second->nodes_.size();
+                // 关联同一个Road对象的属性点的索引
+                size_t j = 0;
+                for (size_t i = 0; i < road.second->nodes_.size(); i++) {
+                    while (j < adasNodes.size()) {
+                        if (adasNodes[j]->obj_index_ == i) {
+                            // 找到第一个和Road形点关联的属性点
+                            double distance = GeosObjUtil::get_length_of_node(road.second->nodes_[i], adasNodes[j]->coord_);
+                            if (distance > threshold) {
+                                auto error = DCRoadCheckError::createByKXS_04_010(roadID, i, road.second->nodes_[i], 1);
+                                errorOutput->saveError(error);
+                            }
+
+                            // Road的起点和终点之处（buffer20cm）必有一个关联该Road的AdasNode
+                            if (i == 0 || i == road.second->nodes_.size() - 1) {
+                                if (distance > 0.2) {
+                                    auto error = DCRoadCheckError::createByKXS_04_010(roadID, i, road.second->nodes_[i], 2);;
+                                    errorOutput->saveError(error);
+                                }
+                            }
+
+                            j++;
+                            break;
+                        }
+
+                        // 该形点没有被属性点关联
+                        if (j != 0 && (adasNodes[j-1]->obj_index_ < i && adasNodes[j]->obj_index_ > i)) {
+                            double distance1 = GeosObjUtil::get_length_of_node(road.second->nodes_[i], adasNodes[j-1]->coord_);
+                            double distance2 = GeosObjUtil::get_length_of_node(road.second->nodes_[i], adasNodes[j]->coord_);
+                            if (distance1 > threshold && distance2 > threshold) {
+                                auto error = DCRoadCheckError::createByKXS_04_010(roadID, i, road.second->nodes_[i], 1);
+                                errorOutput->saveError(error);
+                            }
+                            break;
+                        }
+
+                        j++;
+                    }
+                }
+            }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
+        }
+
+        // AdasNode点离关联Road的距离不超过0.1米
+        void RoadCheck::AdasNodeVerticalDistance(shared_ptr<CheckErrorOutput> errorOutput) {
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_ROAD_011;
+            size_t total = 0;
+
+            for (const auto &adasNodes : map_obj_schs_) {
+                long roadID = adasNodes.first;
+                total += adasNodes.second.size();
+                string strRoadID = to_string(roadID);
+                if (map_data_manager_->roads_.find(strRoadID) == map_data_manager_->roads_.end()) {
+                    continue;
+                }
+                auto road = map_data_manager_->roads_[strRoadID];
+                for (const auto &node : adasNodes.second) {
+                    shared_ptr<geos::geom::Point> point = GeosObjUtil::CreatePoint(node->coord_);
+                    double distance = GeosObjUtil::GetVerticleDistance(road->line_, point);
+                    if (distance > 0.1) {
+                        auto error = DCRoadCheckError::createByKXS_04_011(stol(node->id_), node->coord_);
+                        errorOutput->saveError(error);
+                    }
+                }
+            }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
         }
 
         void RoadCheck::check_road_divider_intersect(shared_ptr<MapDataManager> mapDataManager,

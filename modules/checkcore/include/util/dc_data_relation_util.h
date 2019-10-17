@@ -68,6 +68,16 @@ namespace kd {
             static double getLaneGroupDirection(shared_ptr<TopoLaneGroup> topo_lg, bool is_start);
 
             static long getLaneGroupPosition(double start_angle, double end_angle);
+            //检查两个分组之间的相邻关系
+            static void CheckLaneGroupAdjecent(unordered_map<long, shared_ptr<TopoLaneGroup>> &topo_lanegroups,
+                                               const unordered_map<long, set<long>> &divider_lanegroup_maps,
+                                               const unordered_map<long, shared_ptr<TopoDividerNodeExt>> topo_divider_nodes,
+                                               set<long> &group_ids, bool from_or_to);
+            //获得两个分组之间缺失的分组信息，结果存入group_ids
+            static bool GetMisMiddleGroup(const unordered_map<long, set<long>> &divider_lanegroup_maps,
+                                          const unordered_map<long, shared_ptr<TopoDividerNodeExt>> topo_divider_nodes,
+                                          set<long> &group_ids, bool from_or_to, const shared_ptr<DCDivider> left_lg_div,
+                                          const shared_ptr<DCDivider> right_lg_div);
 
         };
     }

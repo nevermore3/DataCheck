@@ -94,6 +94,7 @@ namespace kd {
             //增加车道组关联信息
             void AppendTopoLaneGroup(const shared_ptr<TopoLaneGroup> tlg, bool from_or_to);
 
+            bool DividerIsConcurrentNode(const shared_ptr<DCDivider> src_div, const shared_ptr<DCDivider> dst_div);
         public:
 
             //车道组id，同原始lanegroupid;

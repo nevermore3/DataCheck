@@ -76,7 +76,50 @@ namespace kd {
                 to_lanegroups_.emplace_back(tlg);
             }
         }
+        int TopoLaneGroup::Relation(const shared_ptr<TopoLaneGroup> tlg) {
+            if (tlg == nullptr) {
+                return -1;
+            }
 
+            //TODO 本处是最简单的逻辑判断，正常应该有很多的场景
+            shared_ptr<DCDivider> org_front_div = dividers_.front();
+            shared_ptr<DCDivider> org_back_div = dividers_.back();
+
+            shared_ptr<DCDivider> dst_front_div = tlg->dividers_.front();
+            shared_ptr<DCDivider> dst_back_div = tlg->dividers_.back();
+
+            bool conn_rel1 = DividerIsConcurrentNode(org_back_div, dst_front_div);
+            bool conn_rel2 = DividerIsConcurrentNode(org_front_div, dst_back_div);
+
+            if (conn_rel1 && !conn_rel2) {
+                return 0;
+            } else if (conn_rel2 && !conn_rel1) {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+
+        bool TopoLaneGroup::DividerIsConcurrentNode(const shared_ptr<DCDivider> src_div, const shared_ptr<DCDivider> dst_div) {
+            if (src_div == nullptr || dst_div == nullptr) {
+                return false;
+            }
+
+            long src_start_node = stol(src_div->nodes_.front()->id_);
+            long src_end_node = stol(src_div->nodes_.back()->id_);
+
+            long dst_start_node = stol(dst_div->nodes_.front()->id_);
+            long dst_end_node = stol(dst_div->nodes_.back()->id_);
+
+            if (src_start_node == dst_start_node ||
+                src_start_node == dst_end_node ||
+                src_end_node == dst_start_node ||
+                src_end_node == dst_end_node) {
+                return true;
+            }
+
+            return false;
+        }
         int TopoLaneGroup::GetLaneSpanWeight(const shared_ptr<TopoLaneGroup> tlg, bool from_or_to) {
             //获得要计算的车道线的起点和终点
             shared_ptr<DCDividerNode> fromNode = tlg->GetDividerNormalNode(0, true);

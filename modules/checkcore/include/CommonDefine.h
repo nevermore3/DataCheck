@@ -198,7 +198,7 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ROAD_006_DESC = "道路前后结点重复,前后点xy坐标相同（z值可能相同）";
         const static std::string CHECK_ITEM_KXS_ROAD_007_DESC = "道路结点出现拐点，或者角度过大";
         const static std::string CHECK_ITEM_KXS_ROAD_008_DESC = "道路形态点间距过近";
-        const static std::string CHECK_ITEM_KXS_ROAD_009_DESC = "";
+        const static std::string CHECK_ITEM_KXS_ROAD_009_DESC = "道路起始终止点坐标位置检查";
         const static std::string CHECK_ITEM_KXS_ROAD_010_DESC = "每一Road的形状点周围1.5米内必有一个关联该Road的AdasNode";
         const static std::string CHECK_ITEM_KXS_ROAD_011_DESC = "ADAS点到关联road的垂直距离检查";
 

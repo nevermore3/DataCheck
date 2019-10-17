@@ -13,8 +13,6 @@ namespace kd {
     namespace dc {
         class LocationTargetCheck : public IMapProcessor{
         public:
-
-            LocationTargetCheck() = default;
             /**
              * 获得对象唯一标识
              * @return 对象标识

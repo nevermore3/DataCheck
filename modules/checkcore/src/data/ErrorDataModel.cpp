@@ -657,9 +657,9 @@ namespace kd {
         shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>(CHECK_ITEM_KXS_LG_029);
         error->checkName = "车道组是否属于虚拟路口检查";
         error->detail_ += "车道组[";
-        error->detail_ += lg_id1;
+        error->detail_ += to_string(lg_id1);
         error->detail_ += "]和车道组[";
-        error->detail_ += lg_id2;
+        error->detail_ += to_string(lg_id2);
         error->detail_ += "]都是虚拟路口，不能相连";
         error->coord = make_shared<DCCoord>();
         shared_ptr<ErrNodeInfo> errNodeInfo;

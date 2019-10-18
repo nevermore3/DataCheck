@@ -41,6 +41,12 @@ namespace kd {
             //曲率值检查
             CurvatureValueCheck(errorOutput);
 
+            //坡度值检查
+            SlopeValueCheck(errorOutput);
+
+            //航向角检查
+            HeadingValueCheck(errorOutput);
+
             //相邻HD_DIVIDER_SCH点之间距离不超过1.3m
             CheckAdjacentNodeDistance(errorOutput);
 

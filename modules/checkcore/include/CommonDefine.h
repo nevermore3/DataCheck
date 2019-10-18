@@ -78,6 +78,8 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ORG_030 = "KXS-01-030";
         const static std::string CHECK_ITEM_KXS_ORG_031 = "KXS-01-031";
         const static std::string CHECK_ITEM_KXS_ORG_032 = "KXS-01-032";
+        const static std::string CHECK_ITEM_KXS_ORG_033 = "KXS-01-033";
+        const static std::string CHECK_ITEM_KXS_ORG_034 = "KXS-01-034";
         const static std::string CHECK_ITEM_KXS_ORG_035 = "KXS-01-035";
 
 
@@ -113,6 +115,8 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ORG_030_DESC = "Divider点完备性检查";
         const static std::string CHECK_ITEM_KXS_ORG_031_DESC = "属性点的曲率值检查";
         const static std::string CHECK_ITEM_KXS_ORG_032_DESC = "属性点之间距离不超过1.3m";
+        const static std::string CHECK_ITEM_KXS_ORG_033_DESC = "属性点的航向角检查";
+        const static std::string CHECK_ITEM_KXS_ORG_034_DESC = "属性点的坡度值检查";
         const static std::string CHECK_ITEM_KXS_ORG_035_DESC = "属性点的坡度和该属性点关联对象中距离最近的两个形点计算出的坡度对比";
 
 

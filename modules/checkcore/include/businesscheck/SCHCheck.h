@@ -18,8 +18,12 @@ namespace kd {
         class SCHCheck {
         public:
             SCHCheck(string &objName);
-            // 坡度检查
-            void SlopeCheck();
+
+            // 坡度值检查
+            void SlopeValueCheck(shared_ptr<CheckErrorOutput> &errorOutput);
+
+            // 航向角检查
+            void HeadingValueCheck(shared_ptr<CheckErrorOutput> &errorOutput);
 
             //曲率值检查
             void CurvatureValueCheck(shared_ptr<CheckErrorOutput> &errorOutput);

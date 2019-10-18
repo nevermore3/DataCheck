@@ -30,7 +30,6 @@ namespace kd {
             const static string LANE_DIVIDER_DIRANGLE;
             const static string LANE_NODE_ANGLE;
             const static string LANE_ANGLE;
-            const static string LANE_CURVATURE;
 
             const static string OBJECT_PL_BUFFER;
 
@@ -58,6 +57,9 @@ namespace kd {
             const static string OUTPUT_PATH;
             const static string CHECK_FILE_PATH;
             const static string NODE_RELEVANT_OBJ_SLOPE_ERROR;
+            const static string SCH_HEADING_ERROR;
+            const static string SCH_SLOPE_ERROR;
+            const static string SCH_CURVATURE_ERROR;
 
             const static string SHP_FILE_PATH;
             const static string DB_INPUT_FILE;

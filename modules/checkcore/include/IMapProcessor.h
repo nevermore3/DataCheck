@@ -10,7 +10,7 @@
 #include "storage/CheckErrorOutput.h"
 #include "util/check_list_config.h"
 #include <ResourceManager.h>
-
+#include "util/product_shp_util.h"
 namespace kd {
     namespace dc {
 

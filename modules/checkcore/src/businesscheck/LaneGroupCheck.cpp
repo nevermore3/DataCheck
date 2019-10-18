@@ -27,6 +27,8 @@ namespace kd {
 
             set_data_manager(data_manager);
             set_error_output(error_output);
+            preCheck();
+            BuildLaneGroup2Lanes();
 
             if (CheckItemValid(CHECK_ITEM_KXS_LG_001)) {
                 Check_kxs_03_001();
@@ -39,10 +41,30 @@ namespace kd {
             if (CheckItemValid(CHECK_ITEM_KXS_LG_004)) {
                 Check_kxs_03_004();
             }
-            if (CheckItemValid(CHECK_ITEM_KXS_LG_028) || CheckItemValid(CHECK_ITEM_KXS_LG_029)) {
-                check_kxs_03_028_029();
+            if (CheckItemValid(CHECK_ITEM_KXS_LG_028)) {
+                check_kxs_03_028();
             }
+            if (CheckItemValid(CHECK_ITEM_KXS_LG_029)) {
+                check_kxs_03_029();
+            }
+            clearMeomery();
             return false;
+        }
+        void LaneGroupCheck::preCheck(){
+            data_manager()->initRelation(kRLaneGroup);
+            data_manager()->initRelation(kLaneConnectivity);
+            data_manager()->initRelation(kLaneGroup);
+            BuildLaneGroup2Lanes();
+            BuildLaneConn();
+        }
+
+        void LaneGroupCheck::clearMeomery(){
+            data_manager()->clearData(kRLaneGroup);
+            data_manager()->clearData(kLaneConnectivity);
+            data_manager()->clearData(kLaneGroup);
+            map_lg_id_to_lanes.clear();
+            map_lane_id_to_lanes.clear();
+            map_lane_id_to_lg_id.clear();
         }
 
         void LaneGroupCheck::Check_kxs_03_004() {
@@ -309,40 +331,14 @@ namespace kd {
                 error_output()->saveError(ptr_error);
             }
         }
-        void LaneGroupCheck::check_kxs_03_028_029(){
+        void LaneGroupCheck::check_kxs_03_028(){
 
             ///车道组是否属于虚拟路口检查
-            map<string,set<string>> vir_lane_group;
             vector<string> lane_group_ids;
             auto lanegroup = data_manager()->laneGroups_;
             for(auto groupItem:lanegroup) {
-                long lane_id = stol(groupItem.first);
                 auto laneGroup = groupItem.second;
                 long is_vir = laneGroup->is_virtual_;
-                if(is_vir == 1){
-                    set<string> node_ids;
-                    for (auto laneitem:laneGroup->lanes_) {
-
-                        ///收集虚拟车道组div端点
-                        if (node_ids.find(laneitem->leftDivider_->fromNodeId_) == node_ids.end() && laneitem->leftDivider_->direction_ !=1) {
-                            node_ids.insert(laneitem->leftDivider_->fromNodeId_);
-                        }
-                        if (node_ids.find(laneitem->leftDivider_->toNodeId_) == node_ids.end() && laneitem->leftDivider_->direction_ !=1) {
-                            node_ids.insert(laneitem->leftDivider_->toNodeId_);
-                        }
-
-                        ///检查Lane的右侧车道线
-                        if (node_ids.find(laneitem->rightDivider_->fromNodeId_) == node_ids.end() &&laneitem->rightDivider_->direction_ !=1) {
-                            node_ids.insert(laneitem->rightDivider_->fromNodeId_);
-                        }
-                        if (node_ids.find(laneitem->rightDivider_->toNodeId_) == node_ids.end() && laneitem->rightDivider_->direction_ !=1) {
-                            node_ids.insert(laneitem->rightDivider_->toNodeId_);
-                        }
-                    }
-                    vir_lane_group.insert(make_pair(groupItem.first,node_ids));
-                    lane_group_ids.emplace_back(groupItem.first);
-                }
-
 
                 for (auto laneitem:laneGroup->lanes_) {
                     bool findErr = false;
@@ -351,7 +347,7 @@ namespace kd {
                         auto leftDa = laneitem->leftDivider_->atts_;
                         for(auto da:leftDa){
                             findErr = checkDaTypeAndVirtual(da->type_,da->virtual_,is_vir);
-                            if(CheckItemValid(CHECK_ITEM_KXS_LG_028)  && findErr){
+                            if(findErr){
                                 shared_ptr<DCError> ptr_error = DCLaneGroupCheckError::createByKXS_03_028(laneGroup,da->id_,laneitem->leftDivider_->nodes_[0]->coord_);
                                 error_output()->saveError(ptr_error);
                                 break;
@@ -364,7 +360,7 @@ namespace kd {
                         auto rightDa = laneitem->rightDivider_->atts_;
                         for (auto da:rightDa) {
                             findErr = checkDaTypeAndVirtual(da->type_, da->virtual_, is_vir);
-                            if(CheckItemValid(CHECK_ITEM_KXS_LG_028) && findErr){
+                            if(findErr){
                                 shared_ptr<DCError> ptr_error = DCLaneGroupCheckError::createByKXS_03_028(laneGroup,da->id_,laneitem->leftDivider_->nodes_[0]->coord_);
                                 error_output()->saveError(ptr_error);
                                 break;
@@ -376,33 +372,47 @@ namespace kd {
                     }
                 }
             }
-            ///虚拟车道组之间的连通性检查
-            int size = lane_group_ids.size();
-            if(size>1) {
-                for (int i = 0; i < size - 1; i++) {
-                    string lane_group1_id = lane_group_ids[i];
-                    auto lane1_node_ids = vir_lane_group.find(lane_group1_id)->second;
-                    for (int j = i + 1; j < size; j++) {
-                        string lane_group2_id = lane_group_ids[j];
-                        auto lane2_node_ids = vir_lane_group.find(lane_group2_id)->second;
-                        for (auto node_id:lane1_node_ids) {
-                            ///查找是否共点
-                            if (lane2_node_ids.find(node_id) != lane2_node_ids.end()) {
-                                ///排除双线车道线情况
-                                bool find = false;
-                                auto node_to_div = data_manager()->node_id2_dividers_maps_;
-                                auto node_topo = node_to_div.find(node_id);
-                                if (node_topo != node_to_div.end()) {
-                                    for (auto divider : node_topo->second) {
-                                        if (divider->direction_ == 1) {
-                                            find = true;
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (CheckItemValid(CHECK_ITEM_KXS_LG_029) && !find){
-                                    shared_ptr<DCError> ptr_error = DCLaneGroupCheckError::createByKXS_03_029(lanegroup.find(lane_group1_id)->second,
-                                                                              lanegroup.find(lane_group2_id)->second);
+
+
+            if(CheckItemValid(CHECK_ITEM_KXS_LG_028)) {
+                shared_ptr<CheckItemInfo> checkItem_028 = make_shared<CheckItemInfo>();
+                checkItem_028->checkId = CHECK_ITEM_KXS_LG_028;
+                checkItem_028->totalNum = lanegroup.size();
+                error_output()->addCheckItemInfo(checkItem_028);
+            }
+
+        }
+
+        void LaneGroupCheck::check_kxs_03_029(){
+
+            auto lane_group = data_manager()->getKxfData(kLaneGroup);
+            auto lane_conn = data_manager()->getKxfData(kLaneConnectivity);
+            set<long> vir_lg;
+            ///收集虚拟组
+            for(auto it:lane_group){
+                if(it.second->getPropertyLong(IS_VIR)!=1){
+                    continue;
+                }
+                vir_lg.insert(it.first);
+            }
+
+            for(auto it:vir_lg){
+                ///虚拟组下的Lane
+                auto lg_lanes = map_lg_id_to_lanes.find(it);
+                if(lg_lanes==map_lg_id_to_lanes.end()){
+                    continue;
+                }
+                for(auto lane_id : lg_lanes->second){
+                    ///lane连接的lane
+                    auto lane_to_lanes = map_lane_id_to_lanes.find(lane_id);
+                    if(lane_to_lanes != map_lane_id_to_lanes.end()){
+                        for(auto to_lane_id:lane_to_lanes->second){
+                           long lg_id = map_lane_id_to_lg_id.find(to_lane_id)->second;
+                            auto it_lg = lane_group.find(lg_id);
+                            if(it_lg!= lane_group.end()){
+                                auto lg = it_lg->second;
+                                if(lg->getPropertyLong(IS_VIR) == 1){
+                                    shared_ptr<DCError> ptr_error = DCLaneGroupCheckError::createByKXS_03_029(it,lg_id);
                                     error_output()->saveError(ptr_error);
                                 }
                             }
@@ -411,16 +421,10 @@ namespace kd {
                 }
             }
 
-            if(CheckItemValid(CHECK_ITEM_KXS_LG_028)) {
-                shared_ptr<CheckItemInfo> checkItem_028 = make_shared<CheckItemInfo>();
-                checkItem_028->checkId = CHECK_ITEM_KXS_LG_028;
-                checkItem_028->totalNum = lanegroup.size();
-                error_output()->addCheckItemInfo(checkItem_028);
-            }
             if(CheckItemValid(CHECK_ITEM_KXS_LG_029)) {
                 shared_ptr<CheckItemInfo> checkItem_029 = make_shared<CheckItemInfo>();
                 checkItem_029->checkId = CHECK_ITEM_KXS_LG_029;
-                checkItem_029->totalNum = size;
+                checkItem_029->totalNum = map_lane_id_to_lanes.size();
                 error_output()->addCheckItemInfo(checkItem_029);
             }
 
@@ -430,6 +434,39 @@ namespace kd {
                 return true;
             }
             return false;
+        }
+        void LaneGroupCheck::BuildLaneGroup2Lanes(){
+            auto r_lane_group = data_manager()->getKxfData(kRLaneGroup);
+            for(auto it:r_lane_group){
+                long lg_id = it.second->getPropertyLong(LG_ID);
+                long lane_id = it.second->getPropertyLong(LANE_ID);
+                auto lg_info = map_lg_id_to_lanes.find(lg_id);
+                if(map_lg_id_to_lanes.find(lg_id) == map_lg_id_to_lanes.end()){
+                    set<long> lanes;
+                    lanes.emplace(lane_id);
+                    map_lg_id_to_lanes.insert(make_pair(lg_id,lanes));
+                }else{
+                    lg_info->second.insert(lane_id);
+                }
+                if(map_lane_id_to_lg_id.find(lane_id) == map_lane_id_to_lg_id.end()){
+                    map_lane_id_to_lg_id.insert(make_pair(lane_id,lg_id));
+                }
+            }
+        }
+        void LaneGroupCheck::BuildLaneConn(){
+            auto lane_conn = data_manager()->getKxfData(kLaneConnectivity);
+            for(auto it:lane_conn){
+                long flane_id = it.second->getPropertyLong(FLANE_ID);
+                long tlane_id = it.second->getPropertyLong(TLANE_ID);
+                auto lg_info = map_lane_id_to_lanes.find(flane_id);
+                if(map_lane_id_to_lanes.find(flane_id) == map_lane_id_to_lanes.end()){
+                    set<long> lanes;
+                    lanes.emplace(tlane_id);
+                    map_lane_id_to_lanes.insert(make_pair(flane_id,lanes));
+                }else{
+                    lg_info->second.insert(tlane_id);
+                }
+            }
         }
     }
 }

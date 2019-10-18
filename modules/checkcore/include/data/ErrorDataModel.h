@@ -322,7 +322,7 @@ namespace kd {
 
             static shared_ptr<DCLaneGroupCheckError> createByKXS_03_028(shared_ptr<DCLaneGroup> lanelaneGroup,string daId, shared_ptr<DCCoord> coord);
 
-            static shared_ptr<DCLaneGroupCheckError> createByKXS_03_029(shared_ptr<DCLaneGroup> lanelaneGroup1,shared_ptr<DCLaneGroup> lanelaneGroup2);
+            static shared_ptr<DCLaneGroupCheckError> createByKXS_03_029(long lg_id1,long lg_id2);
 
         };
 

@@ -58,7 +58,14 @@ namespace kd {
             //每个HD_LANE_SCH点的坡度和关联的LANE对象中距离最近的两个形点计算出的坡度对比
             LaneSCHRelevantLaneSlope(errorOutput);
 
-            CheckLaneGroupEgde(errorOutput);
+            if (CheckItemValid(CHECK_ITEM_KXS_LANE_023)) {
+                CheckLaneGroupEgde(errorOutput);
+            }
+
+            if (CheckItemValid(CHECK_ITEM_KXS_LANE_024)) {
+                CheckLaneGroupEgde(errorOutput);
+            }
+
 
             return true;
         }
@@ -515,6 +522,9 @@ namespace kd {
                 auto error = DCLaneError::createByKXS_05_023(lane->id_,divider->id_,lane_to_edge_die_buffer,coord);
                 errorOutput->saveError(error);
             }
+        }
+        void checkLaneRLDivider(){
+
         }
 
         void LaneCheck::LaneSCHRelevantLaneSlope(shared_ptr<CheckErrorOutput> &errorOutput) {

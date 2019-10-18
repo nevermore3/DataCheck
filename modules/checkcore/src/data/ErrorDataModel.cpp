@@ -653,16 +653,14 @@ namespace kd {
             return error;
         }
         shared_ptr<DCLaneGroupCheckError>
-        DCLaneGroupCheckError::createByKXS_03_029(shared_ptr<DCLaneGroup> laneGroup1,shared_ptr<DCLaneGroup> laneGroup2) {
+        DCLaneGroupCheckError::createByKXS_03_029(long lg_id1,long lg_id2) {
         shared_ptr<DCLaneGroupCheckError> error = make_shared<DCLaneGroupCheckError>(CHECK_ITEM_KXS_LG_029);
         error->checkName = "车道组是否属于虚拟路口检查";
         error->detail_ += "车道组[";
-        error->detail_ += laneGroup1->id_;
+        error->detail_ += lg_id1;
         error->detail_ += "]和车道组[";
-        error->detail_ += laneGroup2->id_;
+        error->detail_ += lg_id2;
         error->detail_ += "]都是虚拟路口，不能相连";
-        error->taskId_ = laneGroup1->task_id_;
-        error->flag = laneGroup1->flag_;
         error->coord = make_shared<DCCoord>();
         shared_ptr<ErrNodeInfo> errNodeInfo;
         error->coord = make_shared<DCCoord>();
@@ -670,9 +668,9 @@ namespace kd {
         error->coord->y_ = 0;
         error->coord->z_ = 0;
         errNodeInfo = make_shared<ErrNodeInfo>(error->coord);
-        errNodeInfo->dataId = laneGroup1->id_;
-        errNodeInfo->dataType = DATA_TYPE_WAY;
-        errNodeInfo->dataLayer = MODEL_NAME_LANE;
+        errNodeInfo->dataId = lg_id1;
+        errNodeInfo->dataType = DATA_TYPE_RELATION;
+        errNodeInfo->dataLayer = MODEL_NAME_LANE_GROUP;
         error->errNodeInfo.emplace_back(errNodeInfo);
         return error;
     }

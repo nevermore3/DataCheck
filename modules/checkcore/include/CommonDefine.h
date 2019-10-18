@@ -227,6 +227,7 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_LANE_021 = "KXS-05-021";
         const static std::string CHECK_ITEM_KXS_LANE_022 = "KXS-05-022";
         const static std::string CHECK_ITEM_KXS_LANE_023 = "KXS-05-023";
+        const static std::string CHECK_ITEM_KXS_LANE_024 = "KXS-05-024";
 
         const static std::string CHECK_ITEM_KXS_LANE_001_DESC = "如果车道组之间是“封闭”的，则车道组之间的车道不会存在孤立的车道";
         const static std::string CHECK_ITEM_KXS_LANE_002_DESC = "车道中心线与车道线在5米内不能存在两个交点（只检查组内车道线有共点的做检查）";
@@ -251,7 +252,7 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_LANE_021_DESC = "";
         const static std::string CHECK_ITEM_KXS_LANE_022_DESC = "LANE_SCH与关联LANE距离检查";
         const static std::string CHECK_ITEM_KXS_LANE_023_DESC = "车道中心线与车行道边缘线距离检查";
-
+        const static std::string CHECK_ITEM_KXS_LANE_024_DESC = "车道关联左右侧车道线正确性检查";
 
         // 定位目标
         const static std::string CHECK_ITEM_KXS_LM_001 = "KXS-06-001";
@@ -303,6 +304,7 @@ namespace kd {
         ///polyine类型数据相关检查
         const static std::string CHECK_ITEM_KXS_LINE_001 ="KXS-11-001";
         const static std::string CHECK_ITEM_KXS_LINE_002 ="KXS-11-002";
+
         const static std::string CHECK_ITEM_KXS_LINE_001_DESC = "停止线与道路的关联关系正确性检查";
 
     }

@@ -19,6 +19,9 @@ public:
 
 private:
 
+    void preCheck();
+
+    void clearMeomery();
     /**
      * 车道组内的divider检查
      */
@@ -36,7 +39,11 @@ private:
     /**
      * 车道组是否属于虚拟路口检查
      */
-    void check_kxs_03_028_029();
+    void check_kxs_03_028();
+    /**
+     * 两个类型为虚拟路口的车道组不能相连
+     */
+    void check_kxs_03_029();
     /**
      * 车道组编号检查
      * @param mapDataManager
@@ -59,8 +66,18 @@ private:
     void check_divider_length(const string &lane_group, const vector<shared_ptr<DCDivider>> &ptr_dividers);
 
     bool checkDaTypeAndVirtual(long type_,long virtual_,long is_vir_);
+
+    void BuildLaneGroup2Lanes();
+
+    void BuildLaneConn();
 private:
     string id_ = "lane_group_check";
+    ///map<lg_id,set<lane_id>>
+    map<long,set<long>> map_lg_id_to_lanes;
+    ///map<lane_id,set<lane_id>>
+    map<long,set<long>> map_lane_id_to_lanes;
+    ///map<lane_id,lg_id>
+    map<long,long> map_lane_id_to_lg_id;
 };
 
 }  // namespace dc

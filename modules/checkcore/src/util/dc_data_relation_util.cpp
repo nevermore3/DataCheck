@@ -57,7 +57,7 @@ namespace kd {
                     LOG(ERROR) << "GetTopoLaneGroup failed! lane group : " << laneGroup.first;
                     continue;
                 }
-
+                long lg_id = laneGroup.first;
                 //根据相邻的两个车道线，查找其相邻的车道组
                 set<long> from_groups, to_groups;
                 const vector<shared_ptr<DCDivider>> &dividers = laneGroup.second;
@@ -65,6 +65,15 @@ namespace kd {
                     getLaneGroupRef(i, dividers.size(), topo_lanegroup, topo_lane_groups, from_groups, to_groups,
                                     topo_divider_nodes_, divider_lanegroup_maps);
                 }
+
+                //出入口时没有出入口标线时特殊场景处理
+                if(from_groups.size() == 0 && to_groups.size() == 0){
+                    //理论上不会出现孤立
+                }
+
+                //检查
+                CheckLaneGroupAdjecent(topo_lane_groups, divider_lanegroup_maps, topo_divider_nodes_, from_groups, true);
+                CheckLaneGroupAdjecent(topo_lane_groups, divider_lanegroup_maps, topo_divider_nodes_, to_groups, false);
 
                 for (auto lg : from_groups) {
                     shared_ptr<TopoLaneGroup> from_topo_lg = GetTopoLaneGroup(topo_lane_groups, lg); //此处肯定会有
@@ -193,7 +202,90 @@ namespace kd {
 
             return false;
         }
+        void DCDataRelationUtil::CheckLaneGroupAdjecent(unordered_map<long, shared_ptr<TopoLaneGroup>> &topo_lanegroups,
+                                                        const unordered_map<long, set<long>> &divider_lanegroup_maps,
+                                                        const unordered_map<long, shared_ptr<TopoDividerNodeExt>> topo_divider_nodes,
+                                                        set<long> &group_ids, bool from_or_to) {
 
+            if (group_ids.size() != 2) {
+                return;
+            }
+
+            vector<long> lg_ids;
+            lg_ids.insert(lg_ids.end(), group_ids.begin(), group_ids.end());
+            long lg_id1 = lg_ids[0];
+            long lg_id2 = lg_ids[1];
+
+            shared_ptr<TopoLaneGroup> topo_lanegroup1 = GetTopoLaneGroup(topo_lanegroups, lg_id1);
+            shared_ptr<TopoLaneGroup> topo_lanegroup2 = GetTopoLaneGroup(topo_lanegroups, lg_id2);
+
+            int relation = topo_lanegroup1->Relation(topo_lanegroup2);
+            if (relation == -1) { // 代表两者之间没有关联关系，需要特殊处理
+                shared_ptr<DCDivider> div1_left = topo_lanegroup1->dividers_.front();
+                shared_ptr<DCDivider> div1_right = topo_lanegroup1->dividers_.back();
+
+                shared_ptr<DCDivider> div2_left = topo_lanegroup2->dividers_.front();
+                shared_ptr<DCDivider> div2_right = topo_lanegroup2->dividers_.back();
+
+                if (GetMisMiddleGroup(divider_lanegroup_maps, topo_divider_nodes, group_ids, from_or_to,
+                                      div1_right, div2_left)) {
+                    return;
+                }
+
+                if (GetMisMiddleGroup(divider_lanegroup_maps, topo_divider_nodes, group_ids, from_or_to,
+                                      div2_right, div1_left)) {
+                    return;
+                }
+            }
+        }
+        bool DCDataRelationUtil::GetMisMiddleGroup(const unordered_map<long, set<long>> &divider_lanegroup_maps,
+                                                   const unordered_map<long, shared_ptr<TopoDividerNodeExt>> topo_divider_nodes,
+                                                   set<long> &group_ids, bool from_or_to,
+                                                   const shared_ptr<DCDivider> left_lg_div,
+                                                   const shared_ptr<DCDivider> right_lg_div) {
+
+            long left_node_id = from_or_to ? stol(left_lg_div->nodes_.back()->id_) : stol(left_lg_div->nodes_.front()->id_);
+            long right_node_id = from_or_to ? stol(right_lg_div->nodes_.back()->id_) : stol(right_lg_div->nodes_.front()->id_);
+
+            auto left_topo_node_it = topo_divider_nodes.find(left_node_id);
+            auto right_topo_node_it = topo_divider_nodes.find(right_node_id);
+            if (left_topo_node_it != topo_divider_nodes.end() && right_topo_node_it != topo_divider_nodes.end()) {
+                shared_ptr<TopoDividerNodeExt> left_toponode = left_topo_node_it->second;
+                shared_ptr<TopoDividerNodeExt> right_toponode = right_topo_node_it->second;
+
+                set<long> left_group_ids, right_group_ids;
+                map<long, shared_ptr<DCDivider>> &left_ref_divs = from_or_to ?
+                                                                  left_toponode->to_dividers_
+                                                                             : left_toponode->from_dividers_;
+                map<long, shared_ptr<DCDivider>> &right_ref_divs = from_or_to ?
+                                                                   right_toponode->to_dividers_
+                                                                              : right_toponode->from_dividers_;
+
+                for (auto itemit : left_ref_divs) {
+                    auto div_itemit = divider_lanegroup_maps.find(stol(itemit.second->id_));
+                    if (div_itemit != divider_lanegroup_maps.end()) {
+                        left_group_ids.insert(div_itemit->second.begin(), div_itemit->second.end());
+                    }
+                }
+
+                for (auto itemit : right_ref_divs) {
+                    auto div_itemit = divider_lanegroup_maps.find(stol(itemit.second->id_));
+                    if (div_itemit != divider_lanegroup_maps.end()) {
+                        right_group_ids.insert(div_itemit->second.begin(), div_itemit->second.end());
+                    }
+                }
+
+                for (long left_lg_id : left_group_ids) {
+                    auto itemit = right_group_ids.find(left_lg_id);
+                    if (itemit != right_group_ids.end()) {
+                        group_ids.insert(left_lg_id);
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
         void DCDataRelationUtil::buildDivider2NodeTopo(shared_ptr<DCDivider> divider, shared_ptr<DCDividerNode> node,
                                                        bool from_or_to,
                                                        unordered_map<long, shared_ptr<TopoDividerNodeExt>> &topo_divider_nodes_) {
@@ -349,11 +441,32 @@ namespace kd {
                     groups.insert(groupid);
                 }
             }
+            //特殊情况下，左、右两个节点会所索引到不同的分组，首先查找两组是否闭合
+            for (long left_groupid : group1) {
+                shared_ptr<TopoLaneGroup> left_group = GetTopoLaneGroup(topo_lanegroups, left_groupid);
+                if (left_group == nullptr)
+                    continue;
 
-            if (!insert) {
-                groups.insert(group1.begin(), group1.end());
-                groups.insert(group2.begin(), group2.end());
+                for (long right_groupid : group2) {
+                    shared_ptr<TopoLaneGroup> right_group = GetTopoLaneGroup(topo_lanegroups, right_groupid);
+                    if (right_group == nullptr)
+                        continue;
+
+                    if (left_group->Relation(right_group) == 0) {
+                        groups.insert(left_groupid);
+                        groups.insert(right_groupid);
+                        insert = true;
+                        break;
+                    }
+                }
+                if (insert) {
+                    break;
+                }
             }
+//            if (!insert) {
+//                groups.insert(group1.begin(), group1.end());
+//                groups.insert(group2.begin(), group2.end());
+//            }
         }
 
         void DCDataRelationUtil::findGroupAccordDivider(shared_ptr<TopoLaneGroup> topo_lg,

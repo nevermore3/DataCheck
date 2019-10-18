@@ -71,14 +71,14 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ORG_023 = "KXS-01-023";
         const static std::string CHECK_ITEM_KXS_ORG_024 = "KXS-01-024";
         const static std::string CHECK_ITEM_KXS_ORG_025 = "KXS-01-025";
-        const static std::string CHECK_ITEM_KXS_ORG_026 = "KXS_01_026";
-        const static std::string CHECK_ITEM_KXS_ORG_027 = "KXS_01_027";
-        const static std::string CHECK_ITEM_KXS_ORG_028 = "KXS_01_028";
-        const static std::string CHECK_ITEM_KXS_ORG_029 = "KXS_01_029";
-        const static std::string CHECK_ITEM_KXS_ORG_030 = "KXS_01_030";
-        const static std::string CHECK_ITEM_KXS_ORG_031 = "KXS_01_031";
-        const static std::string CHECK_ITEM_KXS_ORG_032 = "KXS_01_032";
-        const static std::string CHECK_ITEM_KXS_ORG_035 = "KXS_01_035";
+        const static std::string CHECK_ITEM_KXS_ORG_026 = "KXS-01-026";
+        const static std::string CHECK_ITEM_KXS_ORG_027 = "KXS-01-027";
+        const static std::string CHECK_ITEM_KXS_ORG_028 = "KXS-01-028";
+        const static std::string CHECK_ITEM_KXS_ORG_029 = "KXS-01-029";
+        const static std::string CHECK_ITEM_KXS_ORG_030 = "KXS-01-030";
+        const static std::string CHECK_ITEM_KXS_ORG_031 = "KXS-01-031";
+        const static std::string CHECK_ITEM_KXS_ORG_032 = "KXS-01-032";
+        const static std::string CHECK_ITEM_KXS_ORG_035 = "KXS-01-035";
 
 
         const static std::string CHECK_ITEM_KXS_ORG_001_DESC = "对象ID记录重复性检查";
@@ -189,6 +189,15 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ROAD_009 = "KXS-04-009";
         const static std::string CHECK_ITEM_KXS_ROAD_010 = "KXS-04-010";
         const static std::string CHECK_ITEM_KXS_ROAD_011 = "KXS-04-011";
+        const static std::string CHECK_ITEM_KXS_ROAD_012 = "KXS-04-012";
+        const static std::string CHECK_ITEM_KXS_ROAD_013 = "KXS-04-013";
+        const static std::string CHECK_ITEM_KXS_ROAD_014 = "KXS-04-014";
+        const static std::string CHECK_ITEM_KXS_ROAD_015 = "KXS-04-015";
+        const static std::string CHECK_ITEM_KXS_ROAD_016 = "KXS-04-016";
+        const static std::string CHECK_ITEM_KXS_ROAD_017 = "KXS-04-017";
+        const static std::string CHECK_ITEM_KXS_ROAD_018 = "KXS-04-018";
+        const static std::string CHECK_ITEM_KXS_ROAD_019 = "KXS-04-019";
+        const static std::string CHECK_ITEM_KXS_ROAD_020 = "KXS-04-020";
 
         const static std::string CHECK_ITEM_KXS_ROAD_001_DESC = "若车道组之间连通，则其内部的道路必然连通";
         const static std::string CHECK_ITEM_KXS_ROAD_002_DESC = "道路与车道组的两个车道边缘线应无交叉点。双向道路除外";
@@ -198,10 +207,19 @@ namespace kd {
         const static std::string CHECK_ITEM_KXS_ROAD_006_DESC = "道路前后结点重复,前后点xy坐标相同（z值可能相同）";
         const static std::string CHECK_ITEM_KXS_ROAD_007_DESC = "道路结点出现拐点，或者角度过大";
         const static std::string CHECK_ITEM_KXS_ROAD_008_DESC = "道路形态点间距过近";
-        const static std::string CHECK_ITEM_KXS_ROAD_009_DESC = "";
-        const static std::string CHECK_ITEM_KXS_ROAD_010_DESC = "每一Road的形状点周围1.5米内必有一个关联该Road的AdasNode";
-        const static std::string CHECK_ITEM_KXS_ROAD_011_DESC = "ADAS点到关联road的垂直距离检查";
 
+        const static std::string CHECK_ITEM_KXS_ROAD_009_DESC = "综合交叉点道路拓扑关系完备性检查";
+        const static std::string CHECK_ITEM_KXS_ROAD_010_DESC = "C_NODE与ROAD_NODE的关联关系错误";
+        const static std::string CHECK_ITEM_KXS_ROAD_011_DESC = "道路通行方向孤立检查";
+        const static std::string CHECK_ITEM_KXS_ROAD_012_DESC = "简单节点道路拓扑关系完备性检查";
+        const static std::string CHECK_ITEM_KXS_ROAD_013_DESC = "道路等级连通性检查";
+        const static std::string CHECK_ITEM_KXS_ROAD_014_DESC = "禁止信息导致道路孤立检查";
+        const static std::string CHECK_ITEM_KXS_ROAD_015_DESC = "禁止信息关联的道路关系不存在";
+        const static std::string CHECK_ITEM_KXS_ROAD_016_DESC = "内部道路节点关联C_NODE检查";
+        const static std::string CHECK_ITEM_KXS_ROAD_017_DESC = "道路节点孤立";
+        const static std::string CHECK_ITEM_KXS_ROAD_018_DESC = "";
+        const static std::string CHECK_ITEM_KXS_ROAD_019_DESC = "每一Road的形状点周围1.5米内必有一个关联该Road的AdasNode";
+        const static std::string CHECK_ITEM_KXS_ROAD_020_DESC = "ADAS点到关联road的垂直距离检查";
 
         // 车道中心线
         const static std::string CHECK_ITEM_KXS_LANE_001 = "KXS-05-001";

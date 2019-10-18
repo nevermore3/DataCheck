@@ -363,9 +363,34 @@ namespace kd {
             static shared_ptr<DCRoadCheckError> createByKXS_04_008(const string &road_id,
                                                                    const vector<shared_ptr<NodeCompareError>> &ptr_error_nodes);
 
-            static shared_ptr<DCRoadCheckError> createByKXS_04_010(long roadID, long index, shared_ptr<DCCoord> &coord, int level);
+            static shared_ptr<DCRoadCheckError> createByKXS_04_009(int type , const string &from_road_id,const string &to_road_id,shared_ptr<DCCoord> &coord);
 
-            static shared_ptr<DCRoadCheckError> createByKXS_04_011(long nodeID, shared_ptr<DCCoord> &coord);
+
+            static shared_ptr<DCRoadCheckError> createByKXS_04_010(long nodeID1, long nodeID2, long cNodeID1, long cNodeID2);
+
+            static shared_ptr<DCRoadCheckError> createByKXS_04_011(long roadID);
+
+            static shared_ptr<DCRoadCheckError> createByKXS_04_012(int type ,const string conn_id, const string &from_road_id,const string &to_road_id,shared_ptr<DCCoord> &coord);
+
+            static shared_ptr<DCRoadCheckError> createByKXS_04_013(long roadID, long roadClass);
+
+            static shared_ptr<DCRoadCheckError> createByKXS_04_014(long type,long roadID);
+
+            static shared_ptr<DCRoadCheckError> createByKXS_04_015(long type,long rule_id,long conn_id);
+            /**
+             * 综合交叉点内部道路的节点是否被综合检查
+             * @param type 1 交叉点内部道路的首尾节点未被综合;2 交叉点内部道路的首尾节点被多个综合交叉点关联;3 综合交叉点到所综合的道路距离大于50米
+             * @param road_id 道路ID
+             * @param cconn_id CNODE ID
+             * @param coord 参考坐标
+             * @return
+             */
+            static shared_ptr<DCRoadCheckError> createByKXS_04_016(long type,long road_id,shared_ptr<DCCoord> coord,long cconn_id=0,long cconn_id1=0);
+
+            static shared_ptr<DCRoadCheckError> createByKXS_04_019(long roadID, long index, shared_ptr<DCCoord> &coord, int level);
+
+            static shared_ptr<DCRoadCheckError> createByKXS_04_020(long nodeID, shared_ptr<DCCoord> &coord);
+
         };
 
         /**

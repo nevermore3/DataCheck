@@ -10,7 +10,7 @@
 #include <shp/ShpData.hpp>
 #include <storage/MapDataInput.h>
 #include "util/check_list_config.h"
-
+#include "util/product_shp_util.h"
 namespace kd {
     namespace dc {
         MapDataInput::MapDataInput(const shared_ptr<MapDataManager> &map_data_manager_,
@@ -578,7 +578,7 @@ namespace kd {
         bool MapDataInput::loadRoad() {
             bool bRet = true;
             // 读取车道组与道路的关联索引点
-            string lg_road__file = base_path_ + "/ROAD";
+            string lg_road__file = base_path_ + "/"+ROAD;
             ShpData lg_road_data(lg_road__file);
             if (lg_road_data.isInit()) {
                 auto &roads = map_data_manager_->roads_;
@@ -592,6 +592,8 @@ namespace kd {
                     ptr_road->sLanes_ = lg_road_data.readIntField(i, "S_LANES");
                     ptr_road->f_node_id = to_string(lg_road_data.readIntField(i, "SNODE_ID"));
                     ptr_road->t_node_id = to_string(lg_road_data.readIntField(i, "ENODE_ID"));
+                    ptr_road->fow_ = lg_road_data.readLongField(i, "FOW");
+                    ptr_road->r_class_ = lg_road_data.readLongField(i, "RCLASS");
                     ptr_road->fNode_ = nullptr;
                     ptr_road->tNode_ = nullptr;
 

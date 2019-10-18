@@ -862,10 +862,10 @@ namespace kd {
         }
 
 
-        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_010(long roadID, long index,
+        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_019(long roadID, long index,
                                                                           shared_ptr<DCCoord> &coord, int level) {
 
-            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_010);
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_019);
             error->checkLevel_ = LEVEL_ERROR;
             error->detail_ += "Road ID:";
             error->detail_ += std::to_string(roadID);
@@ -880,13 +880,150 @@ namespace kd {
             return error;
         }
 
-        shared_ptr<DCRoadCheckError>DCRoadCheckError::createByKXS_04_011(long nodeID, shared_ptr<DCCoord> &coord) {
-            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_011);
+        shared_ptr<DCRoadCheckError>DCRoadCheckError::createByKXS_04_020(long nodeID, shared_ptr<DCCoord> &coord) {
+            shared_ptr<DCRoadCheckError>
+            error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_020);
             error->detail_ += "ADAS NODE ID:";
             error->detail_ += std::to_string(nodeID);
             error->detail_ += ",离关联Road的垂直距离超过10cm";
 
             error->coord = coord;
+            return error;
+        }
+
+
+        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_009(int type , const string &from_road_id,const string &to_road_id,shared_ptr<DCCoord> &coord) {
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_009);
+            error->checkName = CHECK_ITEM_KXS_ROAD_009_DESC;
+            switch (type) {
+                case 1:
+                    error->detail_ += "C_NODECONN中缺少一条记录";
+                    break;
+                case 2:
+                    error->detail_ += "C_NODECONN中多出一条记录";
+                    break;
+                case 3:
+                    error->detail_ += "C_NODECONN记录的C_NODE_ID错误";
+                    break;
+            }
+            error->detail_ += "from_road_id:" + from_road_id;
+            error->detail_ += ",to_road_id:" + to_road_id;
+
+            error->coord = coord;
+            return error;
+        }
+        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_010(long nodeID1, long nodeID2, long cNodeID1, long cNodeID2) {
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_010);
+            error->checkName = CHECK_ITEM_KXS_ROAD_010_DESC;
+            error->detail_ += "nodeID1 是: ";
+            error->detail_ += to_string(nodeID1);
+            error->detail_ += ", 关联的 CNodeID1 是 : ";
+            error->detail_ += to_string(cNodeID1);
+            error->detail_ += ",nodeID2 是: ";
+            error->detail_ += to_string(nodeID2);
+            error->detail_ += ", 关联的 CNodeID2 是 : ";
+            error->detail_ += to_string(cNodeID2);
+
+            return error;
+        }
+
+        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_011(long roadID) {
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_011);
+            error->checkName = CHECK_ITEM_KXS_ROAD_011_DESC;
+            error->detail_ += "road ID 是: ";
+            error->detail_ += to_string(roadID);
+            error->detail_ += ", 其被孤立";
+            return error;
+        }
+
+        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_012(int type ,const string conn_id, const string &from_road_id,const string &to_road_id,shared_ptr<DCCoord> &coord) {
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_012);
+            error->checkName = CHECK_ITEM_KXS_ROAD_012_DESC;
+            switch (type) {
+                case 1:
+                    error->detail_ += "NODECONN中缺少一条记录";
+                    break;
+                case 2:
+                    error->detail_ += "NODECONN中多出一条记录:";
+                    error->detail_ += conn_id;
+                    break;
+                case 3:
+                    error->detail_ += "NODECONN记录的NODE_ID错误";
+                    break;
+                case 4:
+                    error->detail_ += "拓扑关系在NODECONN表中被重复记录";
+                    break;
+            }
+            error->detail_ += ",from_road_id:" + from_road_id;
+            error->detail_ += ",to_road_id:" + to_road_id;
+
+            error->coord = coord;
+            return error;
+        }
+
+        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_013(long roadID, long roadClass) {
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_013);
+            error->checkName = CHECK_ITEM_KXS_ROAD_013_DESC;
+            error->detail_ += "road ID 是: ";
+            error->detail_ += to_string(roadID);
+            error->detail_ += ", 其道路等级是 :";
+            error->detail_ += to_string(roadClass);
+            error->detail_ += ", 不连通";
+            return error;
+        }
+        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_014(long type,long roadID) {
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_014);
+            error->checkName = CHECK_ITEM_KXS_ROAD_014_DESC;
+            if(type == 1){
+                error->detail_ += "简单路口的禁止通行道路孤立,";
+            }else{
+                error->detail_ += "复杂路口的禁止通行道路孤立,";
+            }
+            error->detail_ += "road ID 是: ";
+            error->detail_ += to_string(roadID);
+
+            return error;
+        }
+
+        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_015(long type,long rule_id,long conn_id) {
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_015);
+            error->checkName = CHECK_ITEM_KXS_ROAD_015_DESC;
+            if(type == 1){
+                error->detail_ += "简单路口的禁止通行信息关联的道路关系不存在,";
+            }else{
+                error->detail_ += "复杂路口的禁止通行信息关联的道路关系不存在,";
+            }
+            error->detail_ += "rule_id: ";
+            error->detail_ += to_string(rule_id);
+            error->detail_ += ",conn_id:";
+            error->detail_ += to_string(conn_id);
+            return error;
+        }
+
+        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_016(long type,long road_id,shared_ptr<DCCoord> coord,long cconn_id,long cconn_id1) {
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_016);
+            error->checkName = CHECK_ITEM_KXS_ROAD_016_DESC;
+            error->coord = coord;
+            if(type == 1){
+                error->detail_ += "交叉点内部道路的首尾节点未被综合,";
+                error->detail_ += "road_id: ";
+                error->detail_ += to_string(road_id);
+            }else if(type == 2){
+                error->detail_ += "交叉点内部道路的首尾节点被多个综合交叉点关联,";
+                error->detail_ += "road_id: ";
+                error->detail_ += to_string(road_id);
+                error->detail_ += ",cconn_id1:";
+                error->detail_ += to_string(cconn_id);
+                error->detail_ += ",cconn_id2:";
+                error->detail_ += to_string(cconn_id1);
+            }else{
+                error->detail_ += "综合交叉点到所综合的道路距离大于50米,";
+                error->detail_ += "road_id: ";
+                error->detail_ += to_string(road_id);
+                error->detail_ += ",cconn_id:";
+                error->detail_ += to_string(cconn_id);
+            }
+
             return error;
 
         }
@@ -1345,7 +1482,7 @@ namespace kd {
 
         shared_ptr<DCSCHInfoError> DCSCHInfoError::createByKXS_01_035(string name, long objID, long index,
                                                                       double value1, double value2, double threshold) {
-            shared_ptr<DCSCHInfoError> error = make_shared<DCSCHInfoError>(CHECK_ITEM_KXS_ORG_035);
+            shared_ptr <DCSCHInfoError> error = make_shared<DCSCHInfoError>(CHECK_ITEM_KXS_ORG_035);
             error->checkLevel_ = LEVEL_ERROR;
             error->checkName = CHECK_ITEM_KXS_ORG_035_DESC;
             error->detail_ += "表名 :";

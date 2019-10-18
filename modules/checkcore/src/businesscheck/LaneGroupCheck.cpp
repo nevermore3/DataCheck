@@ -48,7 +48,7 @@ namespace kd {
                 check_kxs_03_029();
             }
             clearMeomery();
-            return false;
+            return true;
         }
         void LaneGroupCheck::preCheck(){
             data_manager()->initRelation(kRLaneGroup);

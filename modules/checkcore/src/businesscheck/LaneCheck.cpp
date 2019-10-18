@@ -29,8 +29,10 @@ namespace kd {
         }
 
         bool LaneCheck::execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) {
-
+            set_data_manager(mapDataManager);
+            set_error_output(errorOutput);
             SetMapDataManager(mapDataManager);
+            preCheck();
 
             check_lane_divider_intersect(mapDataManager, errorOutput);
 
@@ -63,13 +65,21 @@ namespace kd {
             }
 
             if (CheckItemValid(CHECK_ITEM_KXS_LANE_024)) {
-                CheckLaneGroupEgde(errorOutput);
+                checkLaneRLDivider();
             }
 
-
+            clearMeomery();
             return true;
         }
+        void LaneCheck::preCheck(){
+            data_manager()->initPolyline(kHdLane);
+            data_manager()->initPolyline(kDivider);
+        }
 
+        void LaneCheck::clearMeomery(){
+            data_manager()->clearData(kHdLane);
+            data_manager()->clearData(kDivider);
+        }
         void LaneCheck::check_lane_divider_intersect(shared_ptr<MapDataManager> mapDataManager,
                                                      shared_ptr<CheckErrorOutput> errorOutput) {
             const auto &ptr_lane_groups = mapDataManager->laneGroups_;
@@ -522,9 +532,28 @@ namespace kd {
                 auto error = DCLaneError::createByKXS_05_023(lane->id_,divider->id_,lane_to_edge_die_buffer,coord);
                 errorOutput->saveError(error);
             }
-        }
-        void checkLaneRLDivider(){
 
+
+        }
+        void LaneCheck::checkLaneRLDivider(){
+            auto lanes = data_manager()->getKxfData(kHdLane);
+            auto dividers = data_manager()->getKxfData(kDivider);
+            for(auto it:lanes){
+                auto lane = static_pointer_cast<PolyLine>(it.second);
+                long right_div_id = lane->getPropertyLong(DIVIDER_R);
+                long left_div_id = lane->getPropertyLong(DIVIDER_L);
+                auto right_div = static_pointer_cast<PolyLine>(dividers.find(right_div_id)->second);
+                auto left_div =  static_pointer_cast<PolyLine>(dividers.find(left_div_id)->second);
+                long left_div_no = left_div->getPropertyLong(DIVIDER_NO);
+                long right_div_no = right_div->getPropertyLong(DIVIDER_NO);
+                if( left_div_no!=right_div_no-1 ){
+                    auto error = DCLaneError::createByKXS_05_024(1,it.first,left_div_id,right_div_id,lane->coords_[0]);
+                    error_output()->saveError(error);
+                }
+
+            }
+
+            error_output()->addCheckItemInfo(CHECK_ITEM_KXS_LANE_024,lanes.size());
         }
 
         void LaneCheck::LaneSCHRelevantLaneSlope(shared_ptr<CheckErrorOutput> &errorOutput) {

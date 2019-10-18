@@ -152,6 +152,10 @@ namespace kd {
              * 车道关联左右侧车道线正确性检查
              */
             void checkLaneRLDivider();
+
+            void preCheck();
+
+            void clearMeomery();
         private:
 
             const string id = "lane_check";

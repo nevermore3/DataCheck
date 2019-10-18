@@ -400,6 +400,7 @@ namespace kd {
 
             static shared_ptr<DCLaneError> createByKXS_05_023(string lane_id,string divider_id,double dis,shared_ptr<DCCoord> coord);
 
+            static shared_ptr<DCLaneError> createByKXS_05_024(int type,long lane_id,long left_div_id,long right_div_id,shared_ptr<DCCoord> coord);
         };
         /**
         * 定位目标检查错误

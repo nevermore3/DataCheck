@@ -1057,7 +1057,22 @@ namespace kd {
             error->coord = coord;
             return error;
         }
+        shared_ptr<DCLaneError> DCLaneError::createByKXS_05_024(int type,long lane_id,long left_div_id,long right_div_id,shared_ptr<DCCoord> coord){
+            shared_ptr<DCLaneError> error = make_shared<DCLaneError>(CHECK_ITEM_KXS_LANE_024);
+            error->checkName = CHECK_ITEM_KXS_LANE_024_DESC;
+            error->checkLevel_ = LEVEL_ERROR;
+            switch(type){
+                case 1:
+                    error->detail_ += "车道["+to_string(lane_id)+"]的右侧车道线编号应该比左侧车道线编号大1";
+                    break;
+                case 2:
 
+                    break;
+            }
+            error->detail_ +=",位置:"+to_string(coord->x_)+","+to_string(coord->y_);
+            error->coord = coord;
+            return error;
+        }
         DCAdasError::DCAdasError(const string &checkModel) : DCError(checkModel) {
 
         }

@@ -1329,6 +1329,44 @@ namespace kd {
             return error;
         }
 
+        shared_ptr<DCSCHInfoError> DCSCHInfoError::createByKXS_01_033(long objID, long index, double value,
+                                                                      double threshold, string name) {
+            shared_ptr<DCSCHInfoError> error = make_shared<DCSCHInfoError>(CHECK_ITEM_KXS_ORG_033);
+            error->checkLevel_ = LEVEL_ERROR;
+            error->checkName = "属性点的航向角检查";
+            error->detail_ += "表名 ： ";
+            error->detail_ += name;
+            error->detail_ += ", Object ID : ";
+            error->detail_ += to_string(objID);
+            error->detail_ += ",属性点索引: ";
+            error->detail_ += to_string(index);
+            error->detail_ += ", 航向角值为 : ";
+            error->detail_ += to_string(value);
+            error->detail_ += ", 超过规定的 ";
+            error->detail_ += to_string(threshold);
+            return error;
+
+        }
+
+
+        shared_ptr<DCSCHInfoError> DCSCHInfoError::createByKXS_01_034(string name, long objID, long index, double value,
+                                                                      double threshold, shared_ptr<DCCoord> &coord) {
+            shared_ptr<DCSCHInfoError> error = make_shared<DCSCHInfoError>(CHECK_ITEM_KXS_ORG_034);
+            error->checkLevel_ = LEVEL_ERROR;
+            error->checkName = "属性点的坡度值检查";
+            error->detail_ += "表名: ";
+            error->detail_ += name;
+            error->detail_ += "相关联的对象ID :";
+            error->detail_ += objID;
+            error->detail_ += ",属性点索引: ";
+            error->detail_ += to_string(index);
+            error->detail_ += ", 坡度值为 :";
+            error->detail_ += to_string(value);
+            error->detail_ +=", 超过了阈值 :";
+            error->detail_ += to_string(threshold);
+            error->coord = coord;
+            return error;
+        }
 
         shared_ptr<DCSCHInfoError> DCSCHInfoError::createByKXS_01_035(string name, long objID, long index,
                                                                       double value1, double value2, double threshold) {

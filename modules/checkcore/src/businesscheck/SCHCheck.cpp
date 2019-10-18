@@ -5,6 +5,7 @@
 #include "util/CommonUtil.h"
 #include <util/KDGeoUtil.hpp>
 #include <util/GeosObjUtil.h>
+#include <util/GeometryUtil.h>
 #include <util/CommonCheck.h>
 #include "shp/ShpData.hpp"
 #include <algorithm>
@@ -117,19 +118,71 @@ namespace kd {
         }
 
         /*
-         * 每个属性点坡度 和前后两个属性点的坡度的均值比较 差值不能超过0.1
+         * 每个属性点的坡度值不能超过0.15 可以配置
          */
-        void SCHCheck::SlopeCheck() {
-//            double threshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::AVG_SLOPE_ERROR);
-//            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
-//            checkItemInfo->checkId = CHECK_ITEM_KXS_NORM_002;
-//            size_t  total = 0;
-//
+        void SCHCheck::SlopeValueCheck(shared_ptr<CheckErrorOutput> &errorOutput){
+            double threshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::SCH_SLOPE_ERROR);
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_ORG_034;
+            size_t  total = 0;
 
+            for (const auto &obj : map_obj_schs_) {
+                total += obj.second.size();
+                for (const auto &node : obj.second) {
+                    if (fabs(node->slope_) > threshold) {
+                        auto error = DCSCHInfoError::createByKXS_01_034(file_name_, obj.first, node->index_, node->slope_,
+                                                                        threshold, node->coord_);
+                        errorOutput->saveError(error);
+                    }
+                }
+                checkItemInfo->totalNum = total;
+                errorOutput->addCheckItemInfo(checkItemInfo);
+            }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
+        }
+
+        /*
+         * 对车道和车道线上某一个SCH点，根据同一条线上前后SCH的空间关系计算出航向角，与SCH上记录的航向角对比
+         * 误差不能超过15度 (可配置)
+         */
+        void SCHCheck::HeadingValueCheck(shared_ptr<CheckErrorOutput> &errorOutput) {
+            double threshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::SCH_HEADING_ERROR);
+
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_ORG_033;
+            size_t total = 0;
+            //航向角的计算：
+            //两个属性点组成的线段和开始属性点正北方向组成的线段之间的角度
+            double angle = 0;
+            for (const auto &obj : map_obj_schs_) {
+                total += obj.second.size();
+                vector<shared_ptr<DCSCHInfo>> nodes = obj.second;
+                if (nodes.size() < 2) {
+                    continue;
+                }
+                for (size_t i = 1; i < nodes.size(); i++) {
+                    /*
+                     * 计算 i-1 和 i 点组成的线段 和
+                     * i-1 和 i-1正北方向组成线段
+                     * 之间的夹角
+                     */
+                    angle = GeometryUtil::getAngleDiff(nodes[i-1]->coord_->x_, nodes[i-1]->coord_->y_,
+                                                       nodes[i-1]->coord_->x_, nodes[i-1]->coord_->y_ + 1,
+                                                       nodes[i-1]->coord_->x_, nodes[i-1]->coord_->y_,
+                                                       nodes[i]->coord_->x_,   nodes[i]->coord_->y_);
+                    if (fabs(angle - nodes[i-1]->heading_) > threshold) {
+                        auto error = DCSCHInfoError::createByKXS_01_033(obj.first, i-1, angle, threshold, file_name_);
+                        errorOutput->saveError(error);
+                    }
+                }
+            }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
         }
 
         void SCHCheck::CurvatureValueCheck(shared_ptr<CheckErrorOutput> &errorOutput) {
-            double threshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::LANE_CURVATURE);
+            double threshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::SCH_CURVATURE_ERROR);
             shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
             checkItemInfo->checkId = CHECK_ITEM_KXS_ORG_031;
             size_t  total = 0;

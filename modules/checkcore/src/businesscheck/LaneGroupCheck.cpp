@@ -316,26 +316,26 @@ namespace kd {
             vector<string> lane_group_ids;
             auto lanegroup = data_manager()->laneGroups_;
             for(auto groupItem:lanegroup) {
+                long lane_id = stol(groupItem.first);
                 auto laneGroup = groupItem.second;
                 long is_vir = laneGroup->is_virtual_;
                 if(is_vir == 1){
                     set<string> node_ids;
                     for (auto laneitem:laneGroup->lanes_) {
-                        if(laneitem->laneNo_ == 1) {
-                            ///收集虚拟车道组div端点
-                            if (node_ids.find(laneitem->leftDivider_->fromNodeId_) == node_ids.end()) {
-                                node_ids.insert(laneitem->leftDivider_->fromNodeId_);
-                            }
-                            if (node_ids.find(laneitem->leftDivider_->toNodeId_) == node_ids.end()) {
-                                node_ids.insert(laneitem->leftDivider_->toNodeId_);
-                            }
 
+                        ///收集虚拟车道组div端点
+                        if (node_ids.find(laneitem->leftDivider_->fromNodeId_) == node_ids.end() && laneitem->leftDivider_->direction_ !=1) {
+                            node_ids.insert(laneitem->leftDivider_->fromNodeId_);
                         }
+                        if (node_ids.find(laneitem->leftDivider_->toNodeId_) == node_ids.end() && laneitem->leftDivider_->direction_ !=1) {
+                            node_ids.insert(laneitem->leftDivider_->toNodeId_);
+                        }
+
                         ///检查Lane的右侧车道线
-                        if (node_ids.find(laneitem->rightDivider_->fromNodeId_) == node_ids.end()) {
+                        if (node_ids.find(laneitem->rightDivider_->fromNodeId_) == node_ids.end() &&laneitem->rightDivider_->direction_ !=1) {
                             node_ids.insert(laneitem->rightDivider_->fromNodeId_);
                         }
-                        if (node_ids.find(laneitem->rightDivider_->toNodeId_) == node_ids.end()) {
+                        if (node_ids.find(laneitem->rightDivider_->toNodeId_) == node_ids.end() && laneitem->rightDivider_->direction_ !=1) {
                             node_ids.insert(laneitem->rightDivider_->toNodeId_);
                         }
                     }

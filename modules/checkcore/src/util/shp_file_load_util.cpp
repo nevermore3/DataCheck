@@ -107,6 +107,13 @@ string ShpFileLoad::GetFieldValue(string fieldName,DBFFieldType dbfFieldType,Dbf
     }
 }
 void ShpFileLoad::GetNodeData(string modelName,map<string, map<long, shared_ptr<KxsData>>> &kxfdata){
+    if(modelName.length() == 0){
+        return;
+    }
+    if(kxfdata.find(modelName)!= kxfdata.end()){
+        kxfdata.erase(modelName);
+    }
+
     string basePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::SHP_FILE_PATH);
     string filePath = basePath + "/" + modelName;
     ShpData shpFile(filePath);
@@ -123,7 +130,7 @@ void ShpFileLoad::GetNodeData(string modelName,map<string, map<long, shared_ptr<
     size_t recordNums = shpFile.getRecords();
     for (size_t i = 0; i < recordNums; i++) {
         SHPObject *shpObject = shpFile.readShpObject(i);
-        if (!shpObject || shpObject->nSHPType != SHPT_POINT)
+        if (!shpObject || shpObject->nSHPType != SHPT_POINTZ)
             continue;
 
         shared_ptr<KxfNode> node = make_shared<KxfNode>();

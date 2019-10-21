@@ -41,7 +41,6 @@ namespace kd {
             void check_road_node(shared_ptr<MapDataManager> mapDataManager,
                                  shared_ptr<CheckErrorOutput> errorOutput);
 
-            void SetMapDataManager(shared_ptr<MapDataManager> &mapDataManager);
 
             bool LoadLGLaneGroupIndex();
 
@@ -68,6 +67,12 @@ namespace kd {
              * @param errorOutput
              */
             void AdasNodeVerticalDistance(shared_ptr<CheckErrorOutput> errorOutput);
+
+            /*
+             * 道路（ROAD）的开始节点（SNODE_ID）和结束节点（ENODE_ID）必须在道路的首节点和尾节点(根据通行方向确认)
+             */
+            void CheckStartEndNodeLocation(shared_ptr<CheckErrorOutput> &errorOutput);
+
 
             /**
              * 结点重复
@@ -118,7 +123,6 @@ namespace kd {
         private:
             const string id = "road_check";
 
-            shared_ptr<MapDataManager> map_data_manager_;
 
             map<long, shared_ptr<DCTrafficRule>> map_traffic_rule_;
 
@@ -140,6 +144,9 @@ namespace kd {
 
             // key: roadID, value:{key : from_index, value {pair<to_index, lgID>} }
             map<long, map<long, vector<pair<long, long>>>> map_road_lg_index_;
+
+            //roadnode
+
         };
     }
 }

@@ -21,9 +21,6 @@ namespace kd {
             return id;
         }
 
-        void RoadCheck::SetMapDataManager(shared_ptr<MapDataManager> &mapDataManager) {
-            map_data_manager_ = mapDataManager;
-        }
 
         bool RoadCheck::LoadLGLaneGroupIndex() {
             string basePath = DataCheckConfig::getInstance().getProperty(DataCheckConfig::SHP_FILE_PATH);
@@ -102,11 +99,11 @@ namespace kd {
         void RoadCheck::DoNode2DividerSlope(long lgID, long fromIndex, long toIndex, vector<shared_ptr<DCSCHInfo>> &nodes,
                                             shared_ptr<CheckErrorOutput> &errorOutput) {
             
-            if (map_data_manager_->laneGroups_.find(to_string(lgID)) == map_data_manager_->laneGroups_.end()) {
+            if (data_manager()->laneGroups_.find(to_string(lgID)) == data_manager()->laneGroups_.end()) {
                 return;
             }
             double threshold = DataCheckConfig::getInstance().getPropertyD(DataCheckConfig::NODE_RELEVANT_OBJ_SLOPE_ERROR);
-            auto laneGroup = map_data_manager_->laneGroups_[to_string(lgID)];
+            auto laneGroup = data_manager()->laneGroups_[to_string(lgID)];
             vector<shared_ptr<DCDivider>> dividers;
             for (const auto &lane : laneGroup->lanes_) {
                 dividers.push_back(lane->leftDivider_);
@@ -243,7 +240,7 @@ namespace kd {
 
         bool RoadCheck::execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput) {
 
-            SetMapDataManager(mapDataManager);
+            set_data_manager(mapDataManager);
 
             //adasNode曲率检查
             CurvatureValueCheck(errorOutput);
@@ -262,6 +259,9 @@ namespace kd {
 
             // AdasNode点离关联Road的距离不超过0.1米
             AdasNodeVerticalDistance(errorOutput);
+
+            // 检查road的起始终止坐标位置
+            CheckStartEndNodeLocation(errorOutput);
 
             if (LoadLGLaneGroupIndex()) {
                 AdasNodeRelevantDividerSlope(errorOutput);
@@ -293,7 +293,7 @@ namespace kd {
              * 3、遍历该Road对象的形点
              * 3、按照属性点中的obj_index索引，第一个遍历到的属性点就是离该形点最近的点
              */
-            auto roads = map_data_manager_->roads_;
+            auto roads = data_manager()->roads_;
             for (const auto &road : roads) {
                 long roadID = stol(road.first);
                 if (map_obj_schs_.find(roadID) == map_obj_schs_.end()) {
@@ -354,10 +354,10 @@ namespace kd {
                 long roadID = adasNodes.first;
                 total += adasNodes.second.size();
                 string strRoadID = to_string(roadID);
-                if (map_data_manager_->roads_.find(strRoadID) == map_data_manager_->roads_.end()) {
+                if (data_manager()->roads_.find(strRoadID) == data_manager()->roads_.end()) {
                     continue;
                 }
-                auto road = map_data_manager_->roads_[strRoadID];
+                auto road = data_manager()->roads_[strRoadID];
                 for (const auto &node : adasNodes.second) {
                     shared_ptr<geos::geom::Point> point = GeosObjUtil::CreatePoint(node->coord_);
                     double distance = GeosObjUtil::GetVerticleDistance(road->line_, point);
@@ -369,6 +369,57 @@ namespace kd {
             }
             checkItemInfo->totalNum = total;
             errorOutput->addCheckItemInfo(checkItemInfo);
+        }
+
+
+        /*
+         *  对于每一条road， 在roadnode中找到起fnode 和 tnode 和其形点比较坐标
+         */
+        void RoadCheck::CheckStartEndNodeLocation(shared_ptr<CheckErrorOutput> &errorOutput) {
+
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_ROAD_009;
+
+            //Read file:RoadNode
+            data_manager()->initKxsNode(kRoadNode);
+            map<long, shared_ptr<KxsData>> roadNodes = data_manager()->getKxfData(kRoadNode);
+
+            //Read file:Road
+            data_manager()->initPolyline(kRoad);
+            map<long, shared_ptr<KxsData>> roads = data_manager()->getKxfData(kRoad);
+
+            size_t total = roads.size();
+
+            //auto roads = map_data_manager_->roads_;
+            for (const auto &iter : roads) {
+                shared_ptr<PolyLine> road = static_pointer_cast<PolyLine>(iter.second);
+                vector<shared_ptr<DCCoord>> coords = road->coords_;
+                long sNodeID = road->getPropertyLong(SNODE_ID);
+                long eNodeID = road->getPropertyLong(ENODE_ID);
+
+                // 在ROADNODE表中 找到fnode 和 tnode
+                if (roadNodes.find(sNodeID) != roadNodes.end()) {
+                    auto sNode = static_pointer_cast<KxfNode>(roadNodes[sNodeID]);
+                    if (!(*(coords.front()) == *(sNode->coord_))) {
+                        auto error = DCRoadCheckError::createByKXS_04_009(iter.first, sNodeID, sNode->coord_, 0);
+                        errorOutput->saveError(error);
+                    }
+                }
+
+                if (roadNodes.find(eNodeID) != roadNodes.end()) {
+                    auto eNode = static_pointer_cast<KxfNode>(roadNodes[eNodeID]);
+                    if (!(*(coords.back()) == *(eNode->coord_))) {
+                        auto error = DCRoadCheckError::createByKXS_04_009(iter.first, eNodeID, eNode->coord_, 1);
+                        errorOutput->saveError(error);
+                    }
+                }
+
+            }
+            checkItemInfo->totalNum = total;
+            errorOutput->addCheckItemInfo(checkItemInfo);
+
+            // clear memory
+            data_manager()->clearData(kRoadNode);
         }
 
         void RoadCheck::check_road_divider_intersect(shared_ptr<MapDataManager> mapDataManager,
@@ -854,7 +905,7 @@ namespace kd {
 
         void RoadCheck::BuildInfo() {
             // 填充road的 fnode 和 tnode
-            auto roads = map_data_manager_->roads_;
+            auto roads = data_manager()->roads_;
             for (auto &iter : roads) {
                 long fNodeID = stol(iter.second->f_node_id);
                 long tNodeID = stol(iter.second->t_node_id);

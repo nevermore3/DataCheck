@@ -863,6 +863,22 @@ namespace kd {
             return error;
         }
 
+        shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_009(long roadID, long nodeID,
+                                                                          shared_ptr<DCCoord> &coord, int flag) {
+            shared_ptr<DCRoadCheckError> error = make_shared<DCRoadCheckError>(CHECK_ITEM_KXS_ROAD_009);
+            string str = flag == 0 ? "起始节点" : "终止节点";
+
+            error->checkLevel_ = LEVEL_ERROR;
+            error->detail_ += "Road ID: ";
+            error->detail_ += to_string(roadID);
+            error->detail_ += ",";
+            error->detail_ += str;
+            error->detail_ += ", Node ID : ";
+            error->detail_ += to_string(nodeID);
+            error->detail_ += ", 和road形点中的坐标不一致";
+            error->coord = coord;
+            return error;
+        }
 
         shared_ptr<DCRoadCheckError> DCRoadCheckError::createByKXS_04_010(long roadID, long index,
                                                                           shared_ptr<DCCoord> &coord, int level) {

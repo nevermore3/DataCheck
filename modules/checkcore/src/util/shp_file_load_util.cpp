@@ -130,7 +130,7 @@ void ShpFileLoad::GetNodeData(string modelName,map<string, map<long, shared_ptr<
     size_t recordNums = shpFile.getRecords();
     for (size_t i = 0; i < recordNums; i++) {
         SHPObject *shpObject = shpFile.readShpObject(i);
-        if (!shpObject || shpObject->nSHPType != SHPT_POINTZ)
+        if (!shpObject)
             continue;
 
         shared_ptr<KxfNode> node = make_shared<KxfNode>();

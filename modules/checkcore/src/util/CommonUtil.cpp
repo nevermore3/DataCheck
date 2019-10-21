@@ -142,9 +142,8 @@ namespace kd {
             vector<shared_ptr<DCDivider>> ret_ptr_dividers;
             set<string> tag_divider;
             const auto &ptr_lanes = get_lanes_by_lg(mapDataManager, lane_group_id);
-            bool is_first = true;
             for (const auto &lane : ptr_lanes) {
-                if (is_first) {
+
                     if (tag_divider.find(lane->leftDivider_->id_) == tag_divider.end()) {
                         ret_ptr_dividers.emplace_back(lane->leftDivider_);
                         tag_divider.insert(lane->leftDivider_->id_);
@@ -153,13 +152,6 @@ namespace kd {
                         ret_ptr_dividers.emplace_back(lane->rightDivider_);
                         tag_divider.insert(lane->rightDivider_->id_);
                     }
-                    is_first = false;
-                } else {
-                    if (tag_divider.find(lane->rightDivider_->id_) == tag_divider.end()) {
-                        ret_ptr_dividers.emplace_back(lane->rightDivider_);
-                        tag_divider.insert(lane->rightDivider_->id_);
-                    }
-                }
             }
             return ret_ptr_dividers;
         }

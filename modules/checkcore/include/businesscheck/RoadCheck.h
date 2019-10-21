@@ -41,7 +41,6 @@ namespace kd {
             void check_road_node(shared_ptr<MapDataManager> mapDataManager,
                                  shared_ptr<CheckErrorOutput> errorOutput);
 
-
             bool LoadLGLaneGroupIndex();
 
             void DoNode2DividerSlope(long lgID, long fromIndex, long toIndex, vector<shared_ptr<DCSCHInfo>> &nodes,
@@ -114,16 +113,53 @@ namespace kd {
 
             bool LoadNodeConn();
 
+
             void BuildInfo();
+
+            void BuildNodeID2Road();
+            ///禁止通行信息MAP
+            void BuildProhibitionMap();
+            //
+            void CheckNodesAndCNodeRelation(shared_ptr<CheckErrorOutput> &errorOutput);
             //检查联通关系前数据加载
             void preCheckConn();
             //检查联通关系
-            void checkCNode();
+            void checkCNodeConn();
+            ///
+            void checkNodeConn();
+            /**
+             * 根据进入road获取关联的退出道路
+             * @param from_road_id
+             * @param t_road_set
+             */
+            void getTRoadByFRoad(long cnode_id,long from_road_id,set<long> &t_road_set);
+            /**
+             * 查找复杂路口内部道路可通达的道路
+             * @param from_road_id 进入道路
+             * @param insideRoad 内部道路
+             * @param t_road_ids 需要对比的退出道路集合
+             * @param checkedNodes 已经遍历过的内部道路集合
+             */
+            void findAccessibleRoad(long cnode_id,long from_road_id,shared_ptr<DCRoad> insideRoad,long t_road_end_node_id,set<long> &t_road_ids,set<long> &checkedNodes);
 
+            /*
+             * 道路通行方向孤立检查
+             */
+            void CheckIsolatedRoad();
+
+            /*
+             * 道路等级连通性检查
+             */
+            void CheckRoadGradesInterConnection();
+            ///禁止通行信息检查
+            void CheckProhibition();
+
+            void CheckRoadNode();
         private:
             const string id = "road_check";
-
-
+            ///conde到内部道路的距离限制
+            const int dis_cnode_2_road = 50;
+            int item_data_total=0;
             map<long, shared_ptr<DCTrafficRule>> map_traffic_rule_;
 
             // roadnode
@@ -139,14 +175,33 @@ namespace kd {
             map<long, shared_ptr<DCCNodeConn>> map_cnode_conn_;
             ///map<cnode_id,vector<road_node_id>>
             map<long,vector<long>> map_cnode_node;
-            ///map<froad_id,vector<troad_id>>,需要对比的cconn表数据
-            map<long,vector<long>> map_froad_troad;
+            ///map<node_id,cnode_id>
+            map<long,long> map_node_cnode;
+            ///map<froad_id_cnode,vector<troad_id>>,需要对比的cconn表数据
+            map<string,vector<long>> map_froad_troad;
+            ///map<troad_id,vector<froad_id>>,需要对比的cconn表数据
+            map<long,vector<long>> map_cconn_troad_froad;
+            ///map<troad_id,vector<froad_id>>,需要对比的conn表数据
+            map<long,vector<long>> map_conn_troad_froad;
+            // key : nodeID, value: {roads}
+            map<long, vector<shared_ptr<DCRoad>>> map_node_id_to_froad_;
+
+            map<long, vector<shared_ptr<DCRoad>>> map_node_id_to_troad_;
+            ///map<froad_id,cnode_id>需要对比的cconn表数据
+            map<long,set<long>> map_froad_to_cnode;
+            ///map<troad,cnode_id>需要对比的cconn表数据
+            map<long,set<long>> map_troad_to_cnode;
 
             // key: roadID, value:{key : from_index, value {pair<to_index, lgID>} }
             map<long, map<long, vector<pair<long, long>>>> map_road_lg_index_;
 
-            //roadnode
 
+            ///map<froad_id_troad_id,node_id> 使用过程中有删除数据
+            map<string,long> map_ft_road_id_node_id_to_conn_id;
+            ///map<troad_id,vector<froad_id>>
+            map<long,vector<long>> map_prohibition_cconn;
+            ///map<troad_id,vector<froad_id>>
+            map<long,vector<long>> map_prohibition_conn;
         };
     }
 }

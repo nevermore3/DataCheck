@@ -2,7 +2,6 @@
 // Created by ubuntu on 19-10-14.
 //
 #include "businesscheck/LocationTargetCheck.h"
-#include "util/product_shp_util.h"
 
 bool LocationTargetCheck:: execute(shared_ptr<MapDataManager> mapDataManager, shared_ptr<CheckErrorOutput> errorOutput){
 

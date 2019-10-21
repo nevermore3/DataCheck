@@ -513,6 +513,12 @@ namespace kd {
 
             //对象的长度
             double len_;
+
+            //道路构成
+            long fow_;
+
+            //道路等级
+            long r_class_;
         };
 
         /**
@@ -920,6 +926,28 @@ namespace kd {
             shared_ptr<DCCoord> coord_;
         };
 
+
+        class DCTrafficRule : public DCModel {
+        public:
+            // 节点类型： 1、简单路口 2、复杂路口
+            long node_type_;
+
+            // 关联拓扑关系
+            long node_conn_id_;
+
+            // 转向禁止类型 1、强制禁止信息 2、门禁禁止 3、交通管制
+            long type_;
+
+            // 限制车辆类型
+            string vehicle_;
+
+            // 限制时间
+            string time_;
+
+            // 坐标
+            shared_ptr<DCCoord> coord_;
+        };
+
         /**
          * 线对象，HD_POLYLINE
          */
@@ -963,27 +991,6 @@ namespace kd {
              //方向
              long direction_;
          };
-
-        class DCTrafficRule : public DCModel {
-        public:
-            // 节点类型： 1、简单路口 2、复杂路口
-            long node_type_;
-
-            // 关联拓扑关系
-            long node_conn_id_;
-
-            // 转向禁止类型 1、强制禁止信息 2、门禁禁止 3、交通管制
-            long type_;
-
-            // 限制车辆类型
-            string vehicle_;
-
-            // 限制时间
-            string time_;
-
-            // 坐标
-            shared_ptr<DCCoord> coord_;
-        };
 
     }
 }

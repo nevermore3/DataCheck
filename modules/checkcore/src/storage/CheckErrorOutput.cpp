@@ -269,9 +269,11 @@ namespace kd {
             error_check_levels_.insert(CHECK_ITEM_KXS_LANE_021);
             error_check_levels_.insert(CHECK_ITEM_KXS_LANE_022);
             error_check_levels_.insert(CHECK_ITEM_KXS_LANE_023);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LANE_024);
 
             error_check_levels_.insert(CHECK_ITEM_KXS_LM_001);
             error_check_levels_.insert(CHECK_ITEM_KXS_LM_002);
+            error_check_levels_.insert(CHECK_ITEM_KXS_LM_003);
 
             //数据一致性检查
             error_check_levels_.insert(CHECK_ITEM_KXS_LENGTH_001);

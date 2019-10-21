@@ -246,6 +246,8 @@ namespace kd {
 
             set_error_output(errorOutput);
 
+            set_error_output(errorOutput);
+
             //adasNode曲率检查
             CurvatureValueCheck(errorOutput);
 
@@ -266,6 +268,12 @@ namespace kd {
 
             // 检查road的起始终止坐标位置
             CheckStartEndNodeLocation(errorOutput);
+
+            //定位目标与道路关联关系存在性检查
+            if (CheckItemValid(CHECK_ITEM_KXS_ROAD_021)) {
+                CheckRLORoad();
+            }
+
 
             if (LoadLGLaneGroupIndex()) {
                 AdasNodeRelevantDividerSlope(errorOutput);
@@ -442,6 +450,84 @@ namespace kd {
 
             // clear memory
             data_manager()->clearData(kRoadNode);
+        }
+
+        /*
+         * 定位目标与道路关联关系存在性检查
+         * 一个 定位目标HD_POLYGON，地面定位线HD_POLYLINE，杆HD_POINT，交通灯TRAFFIC_LIGHT，交通牌TRAFFIC_SIGN
+         * 检查其是否在表HD_R_LO_ROAD中被一个ROAD关联，若未被关联,报错。 若关联多次，报错（交通灯除外）
+         */
+        void RoadCheck::CheckRLORoad() {
+            shared_ptr<CheckItemInfo> checkItemInfo = make_shared<CheckItemInfo>();
+            checkItemInfo->checkId = CHECK_ITEM_KXS_ROAD_021;
+            size_t total = 0;
+
+            //Read File: HD_R_LO_ROAD
+            data_manager()->initRelation(kRLoRoad);
+            map<long, shared_ptr<KxsData>> rLoRoads = data_manager()->getKxfData(kRLoRoad);
+
+            if (rLoRoads.empty()) {
+                return;
+            }
+
+            //key: 类型ID, value: 同类型的目标ID
+            map<long, vector<long>> mapType2IDs;
+
+            for (const auto &iter : rLoRoads) {
+                long type = iter.second->getPropertyLong(TYPE);
+                long objID = iter.second->getPropertyLong(LO_ID);
+
+                if (mapType2IDs.find(type) == mapType2IDs.end()) {
+                    vector<long> array;
+                    array.push_back(objID);
+                    mapType2IDs.insert(make_pair(type, array));
+                } else {
+                    mapType2IDs[type].push_back(objID);
+                }
+            }
+
+            map<string, long> name2Type {{kPolygon, 1},
+                                         {kPolyline, 2},
+                                         {kPoint, 3},
+                                         {kTrafficSign, 4},
+                                         {kTrafficLight, 5}};
+
+            // key: tableName, value: loadFuntion
+            map<string, function<void(string)>> name2Function {
+                    {kPolygon, bind(&MapDataManager::initPolygon, data_manager(), std::placeholders::_1)},
+                    {kPolyline, bind(&MapDataManager::initPolyline, data_manager(), std::placeholders::_1, true)},
+                    {kPoint, bind(&MapDataManager::initKxsNode, data_manager(), std::placeholders::_1)},
+                    {kTrafficSign, bind(&MapDataManager::initPolygon, data_manager(), std::placeholders::_1)},
+                    {kTrafficLight, bind(&MapDataManager::initKxsNode, data_manager(), std::placeholders::_1)}
+            };
+
+            for (const auto &iter : name2Function) {
+                string tableName = iter.first;
+                auto loadFunction = iter.second;
+                if (mapType2IDs.find(name2Type[tableName]) == mapType2IDs.end()) {
+                    continue;
+                }
+                long type = name2Type[tableName];
+                // Read File
+                loadFunction(tableName);
+                map<long, shared_ptr<KxsData>> objs = data_manager()->getKxfData(tableName);
+
+                for (const auto &obj : objs) {
+                    long id = obj.first;
+                    auto array = mapType2IDs[type];
+                    int num = count(array.begin(), array.end(), id);
+                    //// 交通灯可以关联多个road
+                    if (num == 1 || (num > 1 && tableName == kTrafficLight)) {
+                        continue;
+                    }
+
+                    auto error = DCRoadCheckError::createByKXS_04_021(tableName, id, num);
+                    error_output()->saveError(error);
+                }
+                // clear memory
+                data_manager()->clearData(tableName);
+            }
+            error_output()->addCheckItemInfo(checkItemInfo);
         }
 
         void RoadCheck::check_road_divider_intersect(shared_ptr<MapDataManager> mapDataManager,

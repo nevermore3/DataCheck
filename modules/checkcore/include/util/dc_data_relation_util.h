@@ -1,6 +1,3 @@
-//
-// Created by zhangxingang on 19-8-15.
-//
 
 #ifndef AUTOHDMAP_DATACHECK_DC_DATA_RELATION_UTIL_H
 #define AUTOHDMAP_DATACHECK_DC_DATA_RELATION_UTIL_H

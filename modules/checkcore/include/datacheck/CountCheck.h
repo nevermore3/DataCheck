@@ -1,7 +1,3 @@
-//
-// Created by ubuntu on 2019/8/23.
-//
-
 #ifndef AUTOHDMAP_DATACHECK_COUNTCHECK_H
 #define AUTOHDMAP_DATACHECK_COUNTCHECK_H
 

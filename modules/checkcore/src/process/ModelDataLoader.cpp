@@ -1,9 +1,4 @@
 #include <utility>
-
-//
-// Created by gaoyanhong on 2018/3/29.
-//
-
 #include <DataCheckConfig.h>
 #include "process/ModelDataLoader.h"
 

@@ -1,6 +1,3 @@
-//
-// Created by ubuntu on 2019/9/9.
-//
 
 #include "util/distance.h"
 

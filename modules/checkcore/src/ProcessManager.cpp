@@ -1,6 +1,3 @@
-//
-// Created by gaoyanhong on 2018/3/14.
-//
 
 #include "ProcessManager.h"
 #include <util/TimerUtil.h>

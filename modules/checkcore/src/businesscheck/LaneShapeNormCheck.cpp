@@ -1,6 +1,3 @@
-//
-// Created by gaoyanhong on 2018/4/2.
-//
 
 //third party
 #include "geos/indexQuadtree.h"

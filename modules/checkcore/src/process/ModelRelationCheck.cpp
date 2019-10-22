@@ -1,6 +1,3 @@
-//
-// Created by gaoyanhong on 2018/3/29.
-//
 
 #include <process/ModelCheckFunc.h>
 #include "process/ModelRelationCheck.h"

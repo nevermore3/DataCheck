@@ -1,6 +1,3 @@
-//
-// Created by gaoyanhong on 2018/3/28.
-//
 
 #include <DataCheckConfig.h>
 #include "storage/CheckTaskInput.h"

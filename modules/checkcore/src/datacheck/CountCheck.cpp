@@ -1,6 +1,4 @@
-//
-// Created by ubuntu on 2019/8/23.
-//
+
 #include "datacheck/CountCheck.h"
 #include <util/FileUtil.h>
 #include <storage/CheckTaskInput.h>

@@ -1,6 +1,3 @@
-//
-// Created by zhangxingang on 19-1-17.
-//
 
 #ifndef AUTOHDMAP_DATACHECK_LaneGroupRelationCheck_H
 #define AUTOHDMAP_DATACHECK_LaneGroupRelationCheck_H

@@ -1,6 +1,4 @@
-//
-// Created by gaoyanhong on 2019/7/23.
-//
+
 
 #ifndef AUTOHDMAP_COMPILE_TASKINFO_H
 #define AUTOHDMAP_COMPILE_TASKINFO_H

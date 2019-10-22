@@ -1,6 +1,4 @@
-//
-// Created by zhangxingang on 19-1-21.
-//
+
 
 #ifndef AUTOHDMAP_DATACHECK_LANEGROUPTOPOCHECK_H
 #define AUTOHDMAP_DATACHECK_LANEGROUPTOPOCHECK_H

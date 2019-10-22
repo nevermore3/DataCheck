@@ -1,6 +1,3 @@
-//
-// Created by ubuntu on 2019/9/10.
-//
 
 #include "businesscheck/DividerCheck.h"
 #include <util/FileUtil.h>

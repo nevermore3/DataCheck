@@ -1,7 +1,3 @@
-//
-// Created by gaoyanhong on 2018/3/30.
-//
-
 
 #include "businesscheck/DividerTopoCheck.h"
 

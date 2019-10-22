@@ -1,6 +1,3 @@
-//
-// Created by zhangxingang on 19-6-17.
-//
 
 #include <util/CommonUtil.h>
 #include <util/GeosObjUtil.h>

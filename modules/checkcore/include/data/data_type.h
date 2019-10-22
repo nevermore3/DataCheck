@@ -1,6 +1,3 @@
-//
-// Created by zhangxingang on 19-8-15.
-//
 
 #ifndef AUTOHDMAP_DATACHECK_DATATYPE_H
 #define AUTOHDMAP_DATACHECK_DATATYPE_H

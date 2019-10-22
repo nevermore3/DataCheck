@@ -1,6 +1,3 @@
-//
-// Created by ubuntu on 19-9-3.
-//
 
 #include "businesscheck/DividerSplitCheck.h"
 #include "CommonDefine.h"

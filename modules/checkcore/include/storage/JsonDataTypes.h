@@ -1,6 +1,4 @@
-//
-// Created by ubuntu on 19-6-19.
-//
+
 
 #ifndef AUTOHDMAP_DATACHECK_JSONDATATYPES_H
 #define AUTOHDMAP_DATACHECK_JSONDATATYPES_H

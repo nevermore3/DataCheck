@@ -1,6 +1,3 @@
-//
-// Created by gaoyanhong on 2018/4/3.
-//
 
 #include <util/TimerUtil.h>
 #include "MapProcessManager.h"

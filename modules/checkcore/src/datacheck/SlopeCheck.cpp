@@ -1,6 +1,4 @@
-//
-// Created by ubuntu on 2019/9/5.
-//
+
 #include "datacheck/SlopeCheck.h"
 #include <util/FileUtil.h>
 #include <storage/CheckTaskInput.h>

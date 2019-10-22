@@ -1,6 +1,4 @@
-//
-// Created by ubuntu on 9/19/19.
-//
+
 #include "businesscheck/SCHCheck.h"
 #include "util/CommonUtil.h"
 #include <util/KDGeoUtil.hpp>

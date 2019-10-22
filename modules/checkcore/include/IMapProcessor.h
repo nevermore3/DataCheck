@@ -1,6 +1,4 @@
-//
-// Created by gaoyanhong on 2018/3/29.
-//
+
 
 #ifndef AUTOHDMAP_DATACHECK_IMAPPROCESSOR_H
 #define AUTOHDMAP_DATACHECK_IMAPPROCESSOR_H

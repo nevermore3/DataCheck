@@ -1,6 +1,3 @@
-//
-// Created by zhangxingang on 19-8-15.
-//
 
 #include <util/dc_data_relation_util.h>
 #include <util/CommonUtil.h>

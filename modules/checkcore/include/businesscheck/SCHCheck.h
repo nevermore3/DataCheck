@@ -1,6 +1,3 @@
-//
-// Created by ubuntu on 9/19/19.
-//
 
 #ifndef AUTOHDMAP_DATACHECK_SCHCHECK_H
 #define AUTOHDMAP_DATACHECK_SCHCHECK_H

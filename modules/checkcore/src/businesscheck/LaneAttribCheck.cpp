@@ -1,8 +1,4 @@
-//
-// Created by gaoyanhong on 2018/4/1.
-//
 
-//core
 #include "geom/geo_util.h"
 
 using namespace geo;

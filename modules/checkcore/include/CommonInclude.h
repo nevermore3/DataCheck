@@ -1,7 +1,3 @@
-//
-// Created by gaoyanhong on 2018/3/14.
-//
-// 本文件用于引用常用的系统文件、工具类等
 
 #ifndef AUTOHDMAP_FUSIONCORE_COMMONINCLUDE_H
 #define AUTOHDMAP_FUSIONCORE_COMMONINCLUDE_H

@@ -1,6 +1,3 @@
-//
-// Created by zhangxingang on 19-2-18.
-//
 
 #ifndef AUTOHDMAP_DATACHECK_GEOSOBJUTIL_H
 #define AUTOHDMAP_DATACHECK_GEOSOBJUTIL_H

@@ -1,6 +1,3 @@
-//
-// Created by gaoyanhong on 2018/3/28.
-//
 
 #include "data/MapDataModel.h"
 #include "util/GeosObjUtil.h"

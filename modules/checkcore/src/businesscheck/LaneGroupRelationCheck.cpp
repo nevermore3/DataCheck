@@ -1,6 +1,4 @@
-//
-// Created by zhangxingang on 19-1-17.
-//
+
 
 #include <businesscheck/LaneGroupRelationCheck.h>
 #include <util/CommonUtil.h>

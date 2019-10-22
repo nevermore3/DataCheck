@@ -1,7 +1,3 @@
-//
-// Created by gaoyanhong on 2018/3/1.
-//
-
 #include "data/DividerGeomModel.h"
 
 //thirdprty

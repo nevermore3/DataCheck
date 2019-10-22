@@ -1,6 +1,3 @@
-//
-// Created by ubuntu on 2019/8/22.
-//
 
 #include <model/ConsistencyCheckModel.h>
 #include <shp/shapefil.h>

@@ -1,7 +1,3 @@
-//
-// Created by gaoyanhong on 2018/4/1.
-//
-
 #ifndef AUTOHDMAP_DATACHECK_LANEATTRIBCHECK_H
 #define AUTOHDMAP_DATACHECK_LANEATTRIBCHECK_H
 

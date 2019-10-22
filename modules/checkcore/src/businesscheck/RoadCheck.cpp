@@ -1,6 +1,3 @@
-//
-// Created by zhangxingang on 19-1-25.
-//
 
 #include <businesscheck/RoadCheck.h>
 #include "util/CommonUtil.h"

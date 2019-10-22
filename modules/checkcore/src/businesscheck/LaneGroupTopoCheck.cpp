@@ -1,6 +1,4 @@
-//
-// Created by zhangxingang on 19-1-21.
-//
+
 #include <businesscheck/LaneGroupTopoCheck.h>
 
 #include "businesscheck/LaneGroupTopoCheck.h"

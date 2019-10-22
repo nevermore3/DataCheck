@@ -1,6 +1,3 @@
-//
-// Created by zhangxingang on 19-8-15.
-//
 
 #include <data/data_type.h>
 #include <util/CommonUtil.h>

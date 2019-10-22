@@ -1,6 +1,3 @@
-//
-// Created by zhangxingang on 19-6-18.
-//
 
 #ifndef AUTOHDMAP_DATACHECK_MODELINPUT_H
 #define AUTOHDMAP_DATACHECK_MODELINPUT_H

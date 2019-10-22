@@ -1,6 +1,3 @@
-//
-// Created by zhangxingang on 19-6-13.
-//
 
 #include <businesscheck/JsonDataLoader.h>
 #include <util/FileUtil.h>

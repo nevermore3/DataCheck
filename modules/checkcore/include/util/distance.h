@@ -1,6 +1,3 @@
-//
-// Created by ubuntu on 2019/9/9.
-//
 
 #ifndef AUTOHDMAP_DATACHECK_DISTANCE_H
 #define AUTOHDMAP_DATACHECK_DISTANCE_H

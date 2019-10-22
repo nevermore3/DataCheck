@@ -1,6 +1,3 @@
-//
-// Created by yuanjinfa on 2018/4/12.
-//
 
 #include <util/TimerUtil.h>
 #include "ModelProcessManager.h"

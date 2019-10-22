@@ -1,6 +1,3 @@
-//
-// Created by zhangxingang on 19-1-18.
-//
 
 #ifndef AUTOHDMAP_DATACHECK_COMMONUTIL_H
 #define AUTOHDMAP_DATACHECK_COMMONUTIL_H

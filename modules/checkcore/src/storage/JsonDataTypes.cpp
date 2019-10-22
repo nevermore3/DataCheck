@@ -1,6 +1,3 @@
-//
-// Created by ubuntu on 19-6-19.
-//
 
 #include "storage/JsonDataTypes.h"
 #include <unistd.h>

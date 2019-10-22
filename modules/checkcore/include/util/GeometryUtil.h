@@ -1,6 +1,3 @@
-//
-// Created by Jiang Tao on 2018/11/1.
-//
 
 #ifndef AUTOHDMAP_COMPILE_GEOMETRYUTIL_H
 #define AUTOHDMAP_COMPILE_GEOMETRYUTIL_H

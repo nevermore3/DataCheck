@@ -1,7 +1,3 @@
-//
-// Created by zhangxingang on 19-6-13.
-//
-
 #include <storage/JsonDataInput.h>
 
 #include <shp/shapefil.h>

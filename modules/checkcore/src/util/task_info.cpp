@@ -1,6 +1,3 @@
-//
-// Created by gaoyanhong on 2019/7/23.
-//
 
 #include "util/task_info.h"
 

@@ -1,7 +1,3 @@
-//
-// Created by zhangxingang on 19-6-13.
-//
-
 #ifndef AUTOHDMAP_DATACHECK_JSONDATALOADER_H
 #define AUTOHDMAP_DATACHECK_JSONDATALOADER_H
 #include <api/KDSService.h>

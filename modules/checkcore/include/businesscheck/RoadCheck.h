@@ -1,6 +1,3 @@
-//
-// Created by zhangxingang on 19-1-25.
-//
 
 #ifndef AUTOHDMAP_DATACHECK_ROADCHECK_H
 #define AUTOHDMAP_DATACHECK_ROADCHECK_H

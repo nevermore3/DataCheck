@@ -1,6 +1,3 @@
-//
-// Created by gaoyanhong on 2018/3/29.
-//
 
 #include <data/DataManager.h>
 #include "process/ModelCheckFunc.h"

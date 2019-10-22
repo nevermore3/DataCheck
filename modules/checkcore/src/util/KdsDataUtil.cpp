@@ -1,6 +1,3 @@
-//
-// Created by zhangxingang on 19-6-14.
-//
 
 #include <util/KdsDataUtil.h>
 

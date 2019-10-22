@@ -1,6 +1,3 @@
-//
-// Created by zhangxingang on 19-1-25.
-//
 
 #include "businesscheck/LaneCheck.h"
 #include <geos/geom/GeometryFactory.h>

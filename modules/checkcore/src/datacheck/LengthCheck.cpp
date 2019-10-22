@@ -1,6 +1,3 @@
-//
-// Created by ubuntu on 2019/8/21.
-//
 
 #include <datacheck/LengthCheck.h>
 #include <util/FileUtil.h>

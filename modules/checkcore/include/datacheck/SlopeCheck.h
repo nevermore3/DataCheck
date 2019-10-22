@@ -1,7 +1,3 @@
-//
-// Created by ubuntu on 2019/9/5.
-//
-
 #ifndef AUTOHDMAP_DATACHECK_SLOPECHECK_H
 #define AUTOHDMAP_DATACHECK_SLOPECHECK_H
 

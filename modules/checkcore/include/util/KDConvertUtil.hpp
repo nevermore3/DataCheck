@@ -1,6 +1,4 @@
-//
-// Created by gaoyanhong on 2018/3/20.
-//
+
 
 #ifndef AUTOHDMAP_FUSIONCORE_KDCONVERTUTIL_H
 #define AUTOHDMAP_FUSIONCORE_KDCONVERTUTIL_H

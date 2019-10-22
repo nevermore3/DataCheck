@@ -1,6 +1,3 @@
-//
-// Created by zhangxingang on 19-2-18.
-//
 
 #include <util/GeosObjUtil.h>
 #include <mvg/Coordinates.hpp>

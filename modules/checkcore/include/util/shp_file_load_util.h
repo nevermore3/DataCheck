@@ -1,6 +1,4 @@
-//
-// Created by ubuntu on 19-9-27.
-//
+
 
 #ifndef AUTOHDMAP_DATACHECK_SHP_FILE_LOAD_UTIL_H
 #define AUTOHDMAP_DATACHECK_SHP_FILE_LOAD_UTIL_H

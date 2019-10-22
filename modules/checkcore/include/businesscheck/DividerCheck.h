@@ -1,7 +1,3 @@
-//
-// Created by ubuntu on 2019/9/10.
-//
-
 #ifndef AUTOHDMAP_DATACHECK_DIVIDERCHECK_H
 #define AUTOHDMAP_DATACHECK_DIVIDERCHECK_H
 

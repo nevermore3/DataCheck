@@ -1,7 +1,3 @@
-//
-// Created by zhangxingang on 19-2-19.
-//
-
 #include <businesscheck/AdasCheck.h>
 #include <shp/shapefil.h>
 #include <shp/ShpData.hpp>

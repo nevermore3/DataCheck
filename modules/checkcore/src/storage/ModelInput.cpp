@@ -1,7 +1,3 @@
-//
-// Created by zhangxingang on 19-6-18.
-//
-
 #include "storage/ModelInput.h"
 #include <storage/CheckTaskInput.h>
 #include <storage/ModelInput.h>

@@ -1,7 +1,3 @@
-//
-// Created by Jiang Tao on 2018/11/1.
-//
-
 #include <cmath>
 #include "geom/geo_util.h"
 #include <util/GeometryUtil.h>

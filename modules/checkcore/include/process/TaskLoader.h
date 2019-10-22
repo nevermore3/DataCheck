@@ -1,6 +1,4 @@
-//
-// Created by zhangxingang on 19-6-17.
-//
+
 
 #ifndef AUTOHDMAP_DATACHECK_TASKLOADER_H
 #define AUTOHDMAP_DATACHECK_TASKLOADER_H

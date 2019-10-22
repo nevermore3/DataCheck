@@ -1,6 +1,3 @@
-//
-// Created by zhangxingang on 19-6-17.
-//
 
 #include <process/TaskLoader.h>
 #include <storage/CheckTaskInput.h>

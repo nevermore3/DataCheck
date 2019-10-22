@@ -1,7 +1,3 @@
-//
-// Created by ubuntu on 2019/8/21.
-//
-
 #ifndef AUTOHDMAP_DATACHECK_LENGTHCHECK_H
 #define AUTOHDMAP_DATACHECK_LENGTHCHECK_H
 

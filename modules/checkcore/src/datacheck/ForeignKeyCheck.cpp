@@ -1,6 +1,3 @@
-//
-// Created by ubuntu on 2019/9/2.
-//
 
 #include "datacheck/ForeignKeyCheck.h"
 #include <util/FileUtil.h>

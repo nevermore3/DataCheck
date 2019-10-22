@@ -1,7 +1,3 @@
-//
-// Created by zhangxingang on 19-2-19.
-//
-
 #ifndef AUTOHDMAP_DATACHECK_ADASCHECK_H
 #define AUTOHDMAP_DATACHECK_ADASCHECK_H
 

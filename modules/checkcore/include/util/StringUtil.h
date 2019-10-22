@@ -1,6 +1,3 @@
-//
-// Created by zhangxingang on 19-1-15.
-//
 
 #ifndef AUTOHDMAP_DATACHECK_STRINGUTIL_H
 #define AUTOHDMAP_DATACHECK_STRINGUTIL_H

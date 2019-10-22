@@ -1,6 +1,3 @@
-//
-// Created by ubuntu on 19-7-2.
-//
 
 #include "storage/ErrorReportJsonOutput.h"
 #include <unistd.h>

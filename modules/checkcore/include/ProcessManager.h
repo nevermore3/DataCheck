@@ -1,7 +1,3 @@
-//
-// Created by gaoyanhong on 2018/3/14.
-//
-
 #ifndef AUTOHDMAP_ROADFUSION_PROCESSMANAGER_H
 #define AUTOHDMAP_ROADFUSION_PROCESSMANAGER_H
 

@@ -1,6 +1,4 @@
-//
-// Created by ubuntu on 2019/8/27.
-//
+
 #include "datacheck/TableDescCheck.h"
 #include <util/FileUtil.h>
 #include <storage/CheckTaskInput.h>

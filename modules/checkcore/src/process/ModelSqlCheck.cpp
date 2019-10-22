@@ -1,6 +1,3 @@
-//
-// Created by zhangxingang on 19-1-14.
-//
 
 #include <process/ModelSqlCheck.h>
 #include <DataCheckConfig.h>

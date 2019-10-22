@@ -1,6 +1,4 @@
-//
-// Created by ubuntu on 19-2-18.
-//
+
 
 #ifndef AUTOHDMAP_COMPILE_PRODUCT_SHP_UTIL_H
 #define AUTOHDMAP_COMPILE_PRODUCT_SHP_UTIL_H

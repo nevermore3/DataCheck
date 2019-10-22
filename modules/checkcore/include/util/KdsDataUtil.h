@@ -1,6 +1,4 @@
-//
-// Created by zhangxingang on 19-6-14.
-//
+
 
 #ifndef AUTOHDMAP_DATACHECK_KDSDATAUTIL_H
 #define AUTOHDMAP_DATACHECK_KDSDATAUTIL_H

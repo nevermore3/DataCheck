@@ -1,6 +1,3 @@
-//
-// Created by ubuntu on 19-9-29.
-//
 
 #ifndef AUTOHDMAP_DATACHECK_POLYLINECHECK_H
 #define AUTOHDMAP_DATACHECK_POLYLINECHECK_H

@@ -1,6 +1,3 @@
-//
-// Created by zhangxingang on 19-6-11.
-//
 
 #include <util/CommonCheck.h>
 #include <util/GeosObjUtil.h>

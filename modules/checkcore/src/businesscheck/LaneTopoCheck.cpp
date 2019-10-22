@@ -1,6 +1,3 @@
-//
-// Created by gaoyanhong on 2018/4/5.
-//
 
 #include <util/CommonUtil.h>
 #include <shp/ShpData.hpp>

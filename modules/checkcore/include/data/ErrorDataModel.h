@@ -1,6 +1,3 @@
-//
-// Created by gaoyanhong on 2018/3/28.
-//
 
 #ifndef AUTOHDMAP_DATACHECK_ERRORDATAMODEL_H
 #define AUTOHDMAP_DATACHECK_ERRORDATAMODEL_H

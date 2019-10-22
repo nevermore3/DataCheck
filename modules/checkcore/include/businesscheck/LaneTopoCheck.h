@@ -1,6 +1,3 @@
-//
-// Created by gaoyanhong on 2018/4/5.
-//
 
 #ifndef AUTOHDMAP_DATACHECK_LANETOPOCHECK_H
 #define AUTOHDMAP_DATACHECK_LANETOPOCHECK_H

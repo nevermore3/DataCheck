@@ -1,6 +1,3 @@
-//
-// Created by zhangxingang on 19-1-15.
-//
 
 #include "util/StringUtil.h"
 

@@ -1,6 +1,3 @@
-//
-// Created by gaoyanhong on 2018/2/26.
-//
 
 #ifndef AUTOHDMAP_FUSIONCORE_FUSIONMODEL_H
 #define AUTOHDMAP_FUSIONCORE_FUSIONMODEL_H

@@ -1,6 +1,4 @@
-//
-// Created by zhangxingang on 19-1-14.
-//
+
 
 #ifndef AUTOHDMAP_DATACHECK_MODELSQLCHECK_H
 #define AUTOHDMAP_DATACHECK_MODELSQLCHECK_H

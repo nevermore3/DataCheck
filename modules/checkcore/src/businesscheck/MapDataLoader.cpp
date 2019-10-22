@@ -1,6 +1,3 @@
-//
-// Created by gaoyanhong on 2018/3/29.
-//
 
 #include <util/dc_data_relation_util.h>
 #include "businesscheck/MapDataLoader.h"

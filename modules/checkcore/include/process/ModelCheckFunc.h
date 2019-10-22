@@ -1,6 +1,3 @@
-//
-// Created by yuanjinfa on 2018/4/16.
-//
 
 #ifndef AUTOHDMAP_DATACHECK_MODELCHECK_H
 #define AUTOHDMAP_DATACHECK_MODELCHECK_H

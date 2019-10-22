@@ -1,6 +1,4 @@
-//
-// Created by gaoyh on 19-2-7.
-//
+
 
 #ifndef AUTOHDMAP_COMPILE_GEOS_OBJ_RELATION_UTIL_H
 #define AUTOHDMAP_COMPILE_GEOS_OBJ_RELATION_UTIL_H

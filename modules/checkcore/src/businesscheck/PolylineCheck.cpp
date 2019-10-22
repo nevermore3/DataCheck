@@ -1,6 +1,3 @@
-//
-// Created by ubuntu on 19-9-29.
-//
 
 #include <util/shp_file_load_util.h>
 #include "businesscheck/PolylineCheck.h"
